@@ -13,8 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: archive drcloud 
-        run: tar cvfz ./drcloud.tar.gz *
+      - name: Make Directory
+        run: mkdir -p deploy
+
+      - name: Copy Jar
+        run: cp ./build/libs/*.jar ./deploy
+
+      - name: Make zip file
+        run: zip -r ./alcohol-deploy.zip ./deploy
       
       - name: AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -24,11 +30,18 @@ jobs:
           aws-region: ap-northeast-2
         
       - name: upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./drcloud.tar.gz s3://github-action-codedeploy-s3/alcohol-image/
+        run: aws s3 cp --region ap-northeast-2 --acl private ./alcohol-deploy.zip s3://alcohol-image/
+        
+
+      - name: Copy appspec.yml
+        run: cp appspec.yml ./deploy
         
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
           --application-name alcohol
           --deployment-config-name CodeDeployDefault.OneAtATime
           --deployment-group-name alcohol-image-group
-          --s3-location bucket=github-action-codedeploy-s3,bundleType=tgz,key=archive/drcloud.tar.gz
+          --s3-location bucket=github-action-codedeploy-s3,key=alcohol.zip,bundleType=zip
+          
+        
+
