@@ -1,0 +1,34 @@
+name: CI-MAIN
+
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: archive drcloud 
+        run: tar cvfz ./drcloud.tar.gz *
+      
+      - name: AWS configure credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with: 
+          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.SECRET_KEY }}
+          aws-region: ap-northeast-2
+        
+      - name: upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./drcloud.tar.gz s3://github-action-codedeploy-s3/alcohol-image/
+        
+      - name: deploy with AWS codeDeploy
+        run: aws deploy create-deployment
+          --application-name alcohol
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name alcohol-image-group
+          --s3-location bucket=github-action-codedeploy-s3,bundleType=tgz,key=archive/drcloud.tar.gz
