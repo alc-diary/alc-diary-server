@@ -50,8 +50,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_KEY }}
-        run: aws deploy create-deployment \
-          --application-name alc-diary \
-          --deployment-group-name alc-diary-group \
-          --file-exists-behavior OVERWRITE \
-          --s3-location bucket=alc-diary,bundleType=zip,key=$GITHUB_SHA.zip --region ap-northeast-2
+        run: aws deploy create-deployment --application-name alc-diary --deployment-group-name alc-diary-group --file-exists-behavior OVERWRITE --s3-location bucket=alc-diary,bundleType=zip,key=$GITHUB_SHA.zip --region ap-northeast-2
