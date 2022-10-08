@@ -18,6 +18,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public ApiResponseModel<HelloResponse> hello() {
+
         return new ApiResponseModel<>(true, "message", helloUseCase.getHello());
     }
 }
