@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-function find_idle_profile()
-{
+function find_idle_profile() {
   RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/profile)
 
   if [ ${RESPONSE_CODE} -ge 400 ]
@@ -22,8 +21,7 @@ function find_idle_profile()
   echo "${IDLE_PROFILE}"
 }
 
-function find_idle_port()
-{
+function find_idle_port() {
   IDLE_PROFILE=$(find_idle_profile)
 
   if [ ${IDLE_PROFILE} == product-1 ]
