@@ -8,7 +8,7 @@ REPOSITORY=/home/ec2-user/app
 PROJECT_NAME=alc-diary
 
 echo "> 새 애플리케이션 배포"
-JAR_NAME=alc-diary-0.0.1-SNAPSHOT.jar
+JAR_NAME=$REPOSITORY/alc-diary-0.0.1-SNAPSHOT.jar
 
 echo "> JAR Name: $JAR_NAME"
 
