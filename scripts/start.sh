@@ -7,18 +7,22 @@ source ${ABSDIR}/profile.sh
 REPOSITORY=/home/ec2-user/app
 PROJECT_NAME=alc-diary
 
-echo "> 새 애플리케이션 배포"
+echo "> Build file copy"
+echo "> cp $REPOSITORY/test/*.jar $REPOSITORY/"
+cp $REPOSITORY/test/*.jar $REPOSITORY/
+
+echo "> new application deploy"
 JAR_NAME=$REPOSITORY/alc-diary-0.0.1-SNAPSHOT.jar
 
 echo "> JAR Name: $JAR_NAME"
 
-echo "> $JAR_NAME 에 실행 권한 추가"
+echo "> Grant +x to $JAR_NAME "
 chmod +x $JAR_NAME
 
-echo "> $JAR_NAME 실행"
+echo "> execute $JAR_NAME"
 IDLE_PROFILE=$(find_idle_profile)
 
-echo "> $JAR_NAME 를 profile=$IDLE_PROFILE 로 실행"
+echo "> Execute $JAR_NAME profile=$IDLE_PROFILE"
 nohup java -jar \
   -Dspring.config.location=classpath:/application-$IDLE_PROFILE.yml \
   -Dspring.profiles.active=$IDLE_PROFILE \
