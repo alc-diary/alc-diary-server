@@ -12,7 +12,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc
     username: admin
-    password: admin1234
+    password: alcth123
 
   jpa:
     hibernate:
@@ -21,3 +21,7 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+  devtools:
+    livereload:
+      enabled: true
