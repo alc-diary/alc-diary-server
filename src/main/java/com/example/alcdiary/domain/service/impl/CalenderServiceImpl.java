@@ -1,5 +1,7 @@
 package com.example.alcdiary.domain.service.impl;
 
+import com.example.alcdiary.domain.exception.AlcException;
+import com.example.alcdiary.domain.exception.error.CalenderError;
 import com.example.alcdiary.domain.model.CalenderModel;
 import com.example.alcdiary.domain.repository.CalenderRepository;
 import com.example.alcdiary.domain.service.CalenderService;
@@ -15,7 +17,8 @@ public class CalenderServiceImpl implements CalenderService {
 
     @Override
     public CalenderModel find(Long calenderId) {
-        Calender calender = calenderRepository.findById(calenderId).orElseThrow(RuntimeException::new);
+        Calender calender = calenderRepository.findById(calenderId)
+                .orElseThrow(() -> new AlcException(CalenderError.NOT_FOUND_CALENDER));
         return CalenderModel.builder()
                 .id(calender.getId())
                 .title(calender.getTitle())
