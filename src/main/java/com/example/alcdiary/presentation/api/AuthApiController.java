@@ -28,4 +28,9 @@ public class AuthApiController {
         log.info(kakaoToken);
         authService.kakaoLogin(kakaoToken);
     }
+
+    @GetMapping("/login")
+    public void login() {
+        authService.login();
+    }
 }
