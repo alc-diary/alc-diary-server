@@ -12,7 +12,7 @@ public class UserModel {
     private Gender gender;
     private String profileImgUrl;
 
-    enum Gender {
+    public enum Gender {
 
         MAN, WOMAN,
     }
