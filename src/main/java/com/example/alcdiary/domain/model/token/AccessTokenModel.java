@@ -8,5 +8,4 @@ import lombok.Getter;
 public class AccessTokenModel {
 
     private String token;
-    private Long expiredAt;
 }

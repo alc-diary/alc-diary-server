@@ -10,16 +10,12 @@ import lombok.Getter;
 public class KakaoLoginResponse {
 
     private String accessToken;
-    private Long accessTokenExpiredAt;
     private String refreshToken;
-    private Long refreshTokenExpiredAt;
 
     public static KakaoLoginResponse from(LoginResult loginResult) {
         return KakaoLoginResponse.builder()
                 .accessToken(loginResult.getAccessToken())
-                .accessTokenExpiredAt(loginResult.getAccessTokenExpiredAt())
                 .refreshToken(loginResult.getRefreshToken())
-                .refreshTokenExpiredAt(loginResult.getRefreshTokenExpiredAt())
                 .build();
     }
 }

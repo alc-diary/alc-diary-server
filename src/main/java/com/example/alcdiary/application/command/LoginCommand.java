@@ -1,5 +1,6 @@
 package com.example.alcdiary.application.command;
 
+import com.example.alcdiary.domain.model.UserModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,13 +8,6 @@ import lombok.Getter;
 @Getter
 public class LoginCommand {
 
-    private Service service;
+    private UserModel.SocialType socialType;
     private String token;
-
-    public enum Service {
-
-        KAKAO,
-        GOOGLE,
-        ALC,
-    }
 }
