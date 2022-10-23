@@ -1,9 +1,11 @@
 package com.example.alcdiary.domain.service;
 
+import com.example.alcdiary.domain.model.AuthModel;
 import com.example.alcdiary.domain.model.UserModel;
-import com.example.alcdiary.domain.model.token.TokenModel;
 
 public interface UserService {
 
-    UserModel getBy(TokenModel tokenModel);
+    UserModel save(UserModel userModel);
+
+    UserModel getBy(AuthModel authModel);
 }

@@ -1,6 +1,7 @@
 package com.example.alcdiary.application.result;
 
-import com.example.alcdiary.domain.model.token.TokenModel;
+import com.example.alcdiary.domain.model.token.AccessTokenModel;
+import com.example.alcdiary.domain.model.token.RefreshTokenModel;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,16 +11,12 @@ import lombok.Getter;
 public class LoginResult {
 
     private String accessToken;
-    private Long accessTokenExpiredAt;
     private String refreshToken;
-    private Long refreshTokenExpiredAt;
 
-    public static LoginResult from(TokenModel tokenModel) {
+    public static LoginResult from(AccessTokenModel accessTokenModel, RefreshTokenModel refreshTokenModel) {
         return LoginResult.builder()
-                .accessToken(tokenModel.getAccessTokenModel().getToken())
-                .accessTokenExpiredAt(tokenModel.getAccessTokenModel().getExpiredAt())
-                .refreshToken(tokenModel.getRefreshTokenModel().getToken())
-                .refreshTokenExpiredAt(tokenModel.getRefreshTokenModel().getExpiredAt())
+                .accessToken(accessTokenModel.getToken())
+                .refreshToken(refreshTokenModel.getToken())
                 .build();
     }
 }

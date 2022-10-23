@@ -1,6 +1,7 @@
 package com.example.alcdiary.presentation.dto.request;
 
 import com.example.alcdiary.application.command.LoginCommand;
+import com.example.alcdiary.domain.model.UserModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class KakaoLoginRequest {
 
     public LoginCommand toLoginCommand() {
         return new LoginCommand(
-                LoginCommand.Service.KAKAO,
+                UserModel.SocialType.KAKAO,
                 token
         );
     }
