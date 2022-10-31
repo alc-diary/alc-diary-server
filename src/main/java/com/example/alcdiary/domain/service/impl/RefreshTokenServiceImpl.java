@@ -8,6 +8,8 @@ import com.example.alcdiary.domain.util.uuid.UUIDProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
@@ -20,7 +22,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String token = uuidProvider.createUUID();
         RefreshTokenModel refreshTokenModel = RefreshTokenModel.builder()
                 .token(token)
-                .expiredAt(1000L)
+                .expiredAt(LocalDateTime.now().plusMonths(1))
                 .userModel(userModel)
                 .build();
 
