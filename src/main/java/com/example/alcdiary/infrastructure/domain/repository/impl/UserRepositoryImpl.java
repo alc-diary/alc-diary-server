@@ -20,13 +20,13 @@ public class UserRepositoryImpl implements UserRepository {
         User user = User.from(userModel);
         User savedUser = userJpaRepository.save(user);
 
-        return savedUser.toModel();
+        return savedUser.convertToDomainModel();
     }
 
     @Override
-    public UserModel findById(Long userId) {
+    public UserModel findById(String userId) {
         return userJpaRepository.findById(userId)
-                .map(User::toModel)
+                .map(User::convertToDomainModel)
                 .orElseThrow(() -> new AlcException(UserError.NOT_FOUND_USER));
     }
 }

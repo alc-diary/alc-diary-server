@@ -3,8 +3,10 @@ package com.example.alcdiary.infrastructure.entity.user;
 import com.example.alcdiary.domain.model.UserModel;
 import com.example.alcdiary.infrastructure.entity.BaseEntity;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -13,7 +15,7 @@ import javax.persistence.*;
 public class User extends BaseEntity {
 
     @Id
-    private Long id;
+    private String id;
 
     @Column(name = "email")
     private String email;
@@ -24,17 +26,26 @@ public class User extends BaseEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private UserModel.Gender gender;
 
-    @Builder(access = AccessLevel.PRIVATE)
-    public User(Long id, String email, String nickname, String profileImageUrl, UserModel.Gender gender) {
+    @Builder
+    private User(
+            String id,
+            String email,
+            String nickname,
+            String profileImageUrl,
+            UserModel.Gender gender,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.gender = gender;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public static User from(UserModel userModel) {
@@ -44,17 +55,18 @@ public class User extends BaseEntity {
                 .nickname(userModel.getNickname())
                 .profileImageUrl(userModel.getProfileImageUrl())
                 .gender(userModel.getGender())
+                .createdAt(userModel.getCreatedAt())
+                .updatedAt(userModel.getUpdatedAt())
                 .build();
     }
 
-    public UserModel toModel() {
+    public UserModel convertToDomainModel() {
         return UserModel.builder()
                 .id(id)
                 .email(email)
                 .nickname(nickname)
                 .profileImageUrl(profileImageUrl)
                 .gender(gender)
-                .socialType(null)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
                 .build();
