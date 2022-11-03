@@ -1,9 +1,7 @@
 package com.example.alcdiary.domain.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,23 +9,23 @@ import java.time.LocalDateTime;
 @Builder
 public class UserModel {
 
-    private Long id;
+    private String id;
     private String email;
     private String nickname;
     private String profileImageUrl;
     private Gender gender;
-    private SocialType socialType;
+    private OnBoardingStatus onBoardingStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public enum SocialType {
-
-        KAKAO,
-        GOOGLE,
-    }
 
     public enum Gender {
 
         MAN, WOMAN,
     }
+
+    public enum OnBoardingStatus {
+
+        DEFAULT, DONE,
+    }
+
 }

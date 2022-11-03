@@ -1,5 +1,6 @@
 package com.example.alcdiary.domain.model;
 
+import com.example.alcdiary.domain.enums.SocialType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class AuthModel {
 
-    private UserModel.SocialType socialType;
+    private SocialType socialType;
     private Long id;
     private String email;
     private String profileImageUrl;

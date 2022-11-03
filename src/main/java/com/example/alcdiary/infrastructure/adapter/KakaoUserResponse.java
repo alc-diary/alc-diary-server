@@ -15,14 +15,14 @@ public class KakaoUserResponse {
     private KakaoAccount kakao_account;
 
     @Getter
-    static class Properties {
+    public static class Properties {
 
         private String profile_image;
         private String thumbnail_image;
     }
 
     @Getter
-    static class KakaoAccount {
+    public static class KakaoAccount {
 
         private Boolean profile_image_needs_agreement;
         private Profile profile;
@@ -33,7 +33,7 @@ public class KakaoUserResponse {
         private String email;
 
         @Getter
-        static class Profile {
+        public static class Profile {
 
             private String thumbnail_image_url;
             private String profile_image_url;

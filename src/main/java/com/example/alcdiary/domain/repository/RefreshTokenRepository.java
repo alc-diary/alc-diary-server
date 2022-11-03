@@ -5,4 +5,8 @@ import com.example.alcdiary.domain.model.token.RefreshTokenModel;
 public interface RefreshTokenRepository {
 
     RefreshTokenModel save(RefreshTokenModel refreshTokenModel);
+
+    RefreshTokenModel findByUserId(String userId);
+
+    RefreshTokenModel findByToken(String token);
 }
