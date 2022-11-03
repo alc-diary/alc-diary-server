@@ -28,6 +28,13 @@ dependencies {
 	// MySQL Dirver
 	runtimeOnly 'mysql:mysql-connector-java'
 
+	// thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
