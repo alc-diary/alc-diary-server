@@ -5,5 +5,5 @@ import com.example.alcdiary.domain.model.token.AccessTokenModel;
 
 public interface AccessTokenService {
 
-    AccessTokenModel getBy(UserModel userModel);
+    AccessTokenModel generate(UserModel userModel);
 }

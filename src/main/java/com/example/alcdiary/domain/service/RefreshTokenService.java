@@ -5,5 +5,7 @@ import com.example.alcdiary.domain.model.token.RefreshTokenModel;
 
 public interface RefreshTokenService {
 
-    RefreshTokenModel getBy(UserModel userModel);
+    RefreshTokenModel generate(UserModel userModel);
+
+    RefreshTokenModel getBy(String bearerToken);
 }

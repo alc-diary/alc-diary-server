@@ -4,11 +4,17 @@ import com.example.alcdiary.domain.model.UserModel;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class RefreshTokenModel {
 
     private String token;
-    private Long expiredAt;
+    private LocalDateTime expiredAt;
     private UserModel userModel;
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expiredAt);
+    }
 }

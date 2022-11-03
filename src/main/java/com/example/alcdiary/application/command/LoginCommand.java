@@ -1,5 +1,6 @@
 package com.example.alcdiary.application.command;
 
+import com.example.alcdiary.domain.enums.SocialType;
 import com.example.alcdiary.domain.model.UserModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,6 @@ import lombok.Getter;
 @Getter
 public class LoginCommand {
 
-    private UserModel.SocialType socialType;
+    private SocialType socialType;
     private String token;
 }
