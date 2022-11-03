@@ -1,5 +1,7 @@
 package com.example.alcdiary.domain.service.impl;
 
+import com.example.alcdiary.domain.exception.AlcException;
+import com.example.alcdiary.domain.exception.error.AuthError;
 import com.example.alcdiary.domain.model.UserModel;
 import com.example.alcdiary.domain.model.token.RefreshTokenModel;
 import com.example.alcdiary.domain.repository.RefreshTokenRepository;
@@ -18,7 +20,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public RefreshTokenModel getBy(UserModel userModel) {
+    public RefreshTokenModel generate(UserModel userModel) {
         String token = uuidProvider.createUUID();
         RefreshTokenModel refreshTokenModel = RefreshTokenModel.builder()
                 .token(token)
@@ -27,5 +29,23 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .build();
 
         return refreshTokenRepository.save(refreshTokenModel);
+    }
+
+    @Override
+    public RefreshTokenModel getBy(String bearerToken) {
+        String refreshToken = getRefreshTokenByBearerToken(bearerToken);
+        RefreshTokenModel refreshTokenModel = refreshTokenRepository.findByToken(refreshToken);
+        if (refreshTokenModel.isExpired()) {
+            throw new AlcException(AuthError.EXPIRED_REFRESH_TOKEN);
+        }
+        return refreshTokenModel;
+    }
+
+    private static String getRefreshTokenByBearerToken(String bearerToken) {
+        if (!bearerToken.startsWith("Bearer ")) {
+            throw new AlcException(AuthError.INVALID_AUTHORIZATION_HEADER);
+        }
+        String refreshToken = bearerToken.substring("Bearer ".length());
+        return refreshToken;
     }
 }

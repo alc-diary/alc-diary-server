@@ -23,9 +23,9 @@ public class RefreshToken {
     private LocalDateTime expiredAt;
 
     @Column(name = "user_id", nullable = false, updatable = false)
-    private Long userId;
+    private String userId;
 
-    public RefreshTokenModel toModel(UserModel userModel) {
+    public RefreshTokenModel convertToDomainModel(UserModel userModel) {
         return RefreshTokenModel.builder()
                 .token(this.token)
                 .expiredAt(this.expiredAt)

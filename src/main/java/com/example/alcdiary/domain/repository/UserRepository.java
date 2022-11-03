@@ -6,5 +6,5 @@ public interface UserRepository {
 
     UserModel save(UserModel userModel);
 
-    UserModel findById(Long userId);
+    UserModel findById(String userId);
 }

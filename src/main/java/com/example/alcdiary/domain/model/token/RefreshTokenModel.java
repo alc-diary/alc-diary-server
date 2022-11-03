@@ -13,4 +13,8 @@ public class RefreshTokenModel {
     private String token;
     private LocalDateTime expiredAt;
     private UserModel userModel;
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expiredAt);
+    }
 }

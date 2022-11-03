@@ -14,7 +14,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     private final JwtProvider jwtProvider;
 
     @Override
-    public AccessTokenModel getBy(UserModel userModel) {
+    public AccessTokenModel generate(UserModel userModel) {
         String token = jwtProvider.createToken(userModel);
         return AccessTokenModel.builder()
                 .token(token)

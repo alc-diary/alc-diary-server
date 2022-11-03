@@ -6,5 +6,7 @@ public interface RefreshTokenRepository {
 
     RefreshTokenModel save(RefreshTokenModel refreshTokenModel);
 
-    RefreshTokenModel findByUserId(Long userId);
+    RefreshTokenModel findByUserId(String userId);
+
+    RefreshTokenModel findByToken(String token);
 }

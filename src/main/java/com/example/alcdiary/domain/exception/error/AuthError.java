@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 public enum AuthError implements ErrorModel {
 
     INVALID_AUTHORIZATION_HEADER("Invalid authorization header"),
+    EXPIRED_REFRESH_TOKEN("Expired refresh token"),
+    INVALID_REFRESH_TOKEN("Invalid refresh token"),
+    EXPIRED_ACCESS_TOKEN("Expired access token"),
+    INVALID_ACCESS_TOKEN("Invalid access token"),
     ;
 
     private final String message;
