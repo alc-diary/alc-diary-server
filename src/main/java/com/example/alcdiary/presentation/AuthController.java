@@ -23,9 +23,9 @@ public class AuthController {
 
     @PostMapping("/kakao")
     public ResponseEntity<ResponseDto<KakaoLoginResponse>> kakaoLogin(
-            @RequestBody KakaoLoginRequest request
+            @RequestHeader("Authorization") String bearerToken
     ) {
-        LoginResult loginResult = loginUseCase.execute(request.toLoginCommand());
+        LoginResult loginResult = loginUseCase.execute(bearerToken);
         KakaoLoginResponse response = KakaoLoginResponse.from(loginResult);
         return new ResponseDto<>(response)
                 .toResponseEntity();
