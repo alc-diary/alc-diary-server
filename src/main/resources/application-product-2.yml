@@ -23,7 +23,3 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-
-  devtools:
-    livereload:
-      enabled: true
