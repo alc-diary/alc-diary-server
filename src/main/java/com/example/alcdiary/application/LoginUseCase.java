@@ -5,5 +5,5 @@ import com.example.alcdiary.application.result.LoginResult;
 
 public interface LoginUseCase {
 
-    LoginResult execute(LoginCommand loginCommand);
+    LoginResult execute(String bearerToken);
 }
