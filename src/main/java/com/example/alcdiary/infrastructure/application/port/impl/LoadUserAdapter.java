@@ -29,7 +29,7 @@ public class LoadUserAdapter implements LoadUserPort {
                 RestTemplate restTemplate = new RestTemplate();
 
                 HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.add("Authorization", "Bearer " + token);
+                httpHeaders.add("Authorization", token);
                 HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
                 UriComponents uri = UriComponentsBuilder

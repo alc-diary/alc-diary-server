@@ -24,8 +24,8 @@ public class LoginUseCaseImpl implements LoginUseCase {
     private final RefreshTokenService refreshTokenService;
 
     @Override
-    public LoginResult execute(LoginCommand loginCommand) {
-        UserModel userModel = loadUserPort.load(SocialType.KAKAO, loginCommand.getToken());
+    public LoginResult execute(String bearerToken) {
+        UserModel userModel = loadUserPort.load(SocialType.KAKAO, bearerToken);
         AccessTokenModel accessTokenModel = accessTokenService.generate(userModel);
         RefreshTokenModel refreshTokenModel = refreshTokenService.generate(userModel);
 
