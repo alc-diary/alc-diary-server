@@ -1,6 +1,7 @@
 package com.example.alcdiary.infrastructure.domain.repository.impl;
 
 import com.example.alcdiary.domain.exception.AlcException;
+import com.example.alcdiary.domain.exception.error.AuthError;
 import com.example.alcdiary.domain.exception.error.UserError;
 import com.example.alcdiary.domain.model.token.RefreshTokenModel;
 import com.example.alcdiary.domain.repository.RefreshTokenRepository;
@@ -36,14 +37,23 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     public RefreshTokenModel findByUserId(String userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(() -> new AlcException(UserError.NOT_FOUND_USER));
         return refreshTokenJpaRepository.findByUserId(userId)
+                .orElseThrow(() -> new AlcException(AuthError.INVALID_REFRESH_TOKEN))
                 .convertToDomainModel(user.convertToDomainModel());
     }
 
     @Override
     public RefreshTokenModel findByToken(String token) {
-        RefreshToken refreshToken = refreshTokenJpaRepository.findByToken(token);
+        RefreshToken refreshToken = refreshTokenJpaRepository.findByToken(token)
+                .orElseThrow(() -> new AlcException(AuthError.INVALID_REFRESH_TOKEN));
         User user = userJpaRepository.findById(refreshToken.getUserId())
                 .orElseThrow(() -> new AlcException(UserError.NOT_FOUND_USER));
         return refreshToken.convertToDomainModel(user.convertToDomainModel());
+    }
+
+    @Override
+    public void delete(RefreshTokenModel refreshTokenModel) {
+        RefreshToken refreshToken = refreshTokenJpaRepository.findByToken(refreshTokenModel.getToken())
+                .orElseThrow(() -> new AlcException(AuthError.INVALID_REFRESH_TOKEN));
+        refreshTokenJpaRepository.delete(refreshToken);
     }
 }

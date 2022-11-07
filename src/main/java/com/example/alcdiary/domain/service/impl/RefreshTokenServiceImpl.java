@@ -36,6 +36,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String refreshToken = getRefreshTokenByBearerToken(bearerToken);
         RefreshTokenModel refreshTokenModel = refreshTokenRepository.findByToken(refreshToken);
         if (refreshTokenModel.isExpired()) {
+            refreshTokenRepository.delete(refreshTokenModel);
             throw new AlcException(AuthError.EXPIRED_REFRESH_TOKEN);
         }
         return refreshTokenModel;
@@ -45,7 +46,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         if (!bearerToken.startsWith("Bearer ")) {
             throw new AlcException(AuthError.INVALID_AUTHORIZATION_HEADER);
         }
-        String refreshToken = bearerToken.substring("Bearer ".length());
-        return refreshToken;
+        return bearerToken.substring("Bearer ".length());
     }
 }

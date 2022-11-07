@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "REFRESH_TOKEN")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "REFRESH_TOKEN", indexes = @Index(name = "idx_user_id", columnList = "user_id", unique = true))
 @Entity
 public class RefreshToken {
 
@@ -19,7 +19,7 @@ public class RefreshToken {
     @Id
     private String token;
 
-    @Column(name = "expired_at", nullable = false, updatable = false)
+    @Column(name = "expired_at", nullable = false)
     private LocalDateTime expiredAt;
 
     @Column(name = "user_id", nullable = false, updatable = false)

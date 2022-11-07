@@ -9,4 +9,6 @@ public interface RefreshTokenRepository {
     RefreshTokenModel findByUserId(String userId);
 
     RefreshTokenModel findByToken(String token);
+
+    void delete(RefreshTokenModel refreshTokenModel);
 }

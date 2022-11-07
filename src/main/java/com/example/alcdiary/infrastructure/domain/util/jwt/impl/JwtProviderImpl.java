@@ -13,15 +13,16 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.Date;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class JwtProviderImpl implements JwtProvider {
 
     private final UserJpaRepository userJpaRepository;
@@ -40,14 +41,14 @@ public class JwtProviderImpl implements JwtProvider {
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer("alc-server")
-                .setIssuedAt(new Date())
                 .claim("userId", userModel.getId())
-                .claim("issuedAt", now)
-                .claim("expiredAt", now.plusMinutes(5))
+                .claim("issuedAt", now.toString())
+                .claim("expiredAt", now.plusMinutes(5).toString())
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
+    @Transactional
     @Override
     public UserModel resolveToken(String authorizationHeader) {
         validateAuthorizationHeader(authorizationHeader);
@@ -58,13 +59,17 @@ public class JwtProviderImpl implements JwtProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        LocalDateTime expiredAt = (LocalDateTime) claims.get("expiredAt");
+        LocalDateTime expiredAt = LocalDateTime.parse(
+                (String) claims.get("expiredAt"),
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        );
         String userId = (String) claims.get("userId");
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
             throw new AlcException(AuthError.EXPIRED_ACCESS_TOKEN);
         }
-        RefreshToken refreshToken = refreshTokenJpaRepository.findByUserId(userId);
+        RefreshToken refreshToken = refreshTokenJpaRepository.findByUserId(userId)
+                .orElseThrow(() -> new AlcException(AuthError.INVALID_REFRESH_TOKEN));
         refreshToken.updateExpiredAt();
 
         return userJpaRepository.findById(userId)
