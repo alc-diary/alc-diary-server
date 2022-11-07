@@ -32,4 +32,8 @@ public class RefreshToken {
                 .userModel(userModel)
                 .build();
     }
+
+    public void updateExpiredAt() {
+        expiredAt = LocalDateTime.now().plusMonths(1);
+    }
 }

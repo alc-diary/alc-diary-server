@@ -7,5 +7,5 @@ public interface JwtProvider {
 
     String createToken(UserModel userModel);
 
-    Claims resolveToken(String token);
+    UserModel resolveToken(String token);
 }
