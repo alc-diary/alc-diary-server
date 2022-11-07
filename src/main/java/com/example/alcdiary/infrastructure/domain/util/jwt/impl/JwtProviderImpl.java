@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Date;
 
 @RequiredArgsConstructor
 @Component
@@ -39,6 +40,7 @@ public class JwtProviderImpl implements JwtProvider {
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer("alc-server")
+                .setIssuedAt(new Date())
                 .claim("userId", userModel.getId())
                 .claim("issuedAt", now)
                 .claim("expiredAt", now.plusMinutes(5))
