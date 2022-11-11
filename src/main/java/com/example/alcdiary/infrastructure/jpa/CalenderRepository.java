@@ -1,4 +1,4 @@
-package com.example.alcdiary.domain.repository;
+package com.example.alcdiary.infrastructure.jpa;
 
 import com.example.alcdiary.infrastructure.entity.Calender;
 import org.springframework.data.jpa.repository.JpaRepository;
