@@ -8,7 +8,7 @@ import lombok.Getter;
 public class SaveUserInfoCommand {
 
     private EUserTheme theme;
-    private String username;
+    private String nickname;
     private EUserAlcoholType alcoholType;
     private int drinkCapacity;
     private int resolutionDays;

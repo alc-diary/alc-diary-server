@@ -31,7 +31,7 @@ public class RequestFilter extends OncePerRequestFilter {
         }
 
         String bearerToken = request.getHeader("Authorization");
-        if (!jwtProvider.validateToken(bearerToken.substring("Bearer ".length()))) {
+        if (!jwtProvider.validateToken(bearerToken)) {
             throw new AlcException(AuthError.EXPIRED_ACCESS_TOKEN);
         }
 

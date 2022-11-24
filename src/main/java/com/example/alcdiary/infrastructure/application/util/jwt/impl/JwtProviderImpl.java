@@ -35,8 +35,8 @@ class JwtProviderImpl implements JwtProvider {
     }
 
     @Override
-    public boolean validateToken(String token) {
-        Jws<Claims> claims = getClaims(token);
+    public boolean validateToken(String bearerToken) {
+        Jws<Claims> claims = getClaims(bearerToken);
         return claims
                 .getBody()
                 .getExpiration()
@@ -44,18 +44,30 @@ class JwtProviderImpl implements JwtProvider {
     }
 
     @Override
-    public UserIdModel getKey(String token) {
-        Jws<Claims> claims = getClaims(token);
+    public UserIdModel getKey(String bearerToken) {
+        Jws<Claims> claims = getClaims(bearerToken);
         return UserIdModel.from(claims.getBody().getId());
     }
 
-    private Jws<Claims> getClaims(String token) {
+    private Jws<Claims> getClaims(String bearerToken) {
+        if (!validBearerToken(bearerToken)) {
+            throw new AlcException(AuthError.INVALID_ACCESS_TOKEN);
+        }
+        String refreshToken = getPureToken(bearerToken);
         try {
             return Jwts.parser()
                     .setSigningKey(env.getProperty("server.secret"))
-                    .parseClaimsJws(token);
+                    .parseClaimsJws(refreshToken);
         } catch (Exception e) {
             throw new AlcException(AuthError.INVALID_ACCESS_TOKEN);
         }
+    }
+
+    private boolean validBearerToken(String bearerToken) {
+        return bearerToken.startsWith("Bearer ");
+    }
+
+    private String getPureToken(String bearerToken) {
+        return bearerToken.substring("Bearer ".length());
     }
 }
