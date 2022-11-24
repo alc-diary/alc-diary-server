@@ -1,12 +1,11 @@
 package com.example.alcdiary.presentation;
 
 import com.example.alcdiary.application.GetRandomNicknameUseCase;
+import com.example.alcdiary.application.SaveUserInfoUseCase;
+import com.example.alcdiary.application.command.SaveUserInfoCommand;
 import com.example.alcdiary.application.result.GetRandomNicknameResult;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -14,14 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final GetRandomNicknameUseCase getRandomNicknameUseCase;
+    private final SaveUserInfoUseCase saveUserInfoUseCase;
 
     @GetMapping("/nickname/random")
     public GetRandomNicknameResult getRandomNickname() {
         return getRandomNicknameUseCase.execute();
     }
-    //
-    // @PostMapping("/info")
-    // public SaveUserInfoResult saveUserInfo() {
-    //     return null;
-    // }
+
+    @PostMapping("/info")
+    public void saveUserInfo(
+            @RequestHeader("Authorization") String bearerToken,
+            @RequestBody SaveUserInfoCommand command
+    ) {
+        saveUserInfoUseCase.execute(bearerToken, command);
+    }
 }

@@ -9,5 +9,5 @@ public interface JwtProvider {
 
     boolean validateToken(String token);
 
-    UserIdModel getKey(String token);
+    UserIdModel getKey(String bearerToken);
 }

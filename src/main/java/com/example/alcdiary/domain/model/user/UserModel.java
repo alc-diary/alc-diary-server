@@ -19,6 +19,22 @@ public class UserModel {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public void updateOnBoardingUserInfo(
+            EUserTheme theme,
+            String nickname,
+            EUserAlcoholType alcoholType,
+            int drinkCapacity,
+            int resolutionDays
+    ) {
+        UserDrinkingCapacityModel drinkingCapacityModel = UserDrinkingCapacityModel.of(alcoholType, drinkCapacity);
+        UserPromiseModel promiseModel = UserPromiseModel.from(resolutionDays);
+        this.theme = theme;
+        this.nickname = nickname;
+        this.drinkingCapacityModel = drinkingCapacityModel;
+        this.promise = promiseModel;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     private UserModel() {
     }
 
