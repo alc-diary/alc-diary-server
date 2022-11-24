@@ -6,9 +6,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Table(name = "user")
 @Entity
 public class User extends BaseEntity {
@@ -35,8 +32,8 @@ public class User extends BaseEntity {
     private EUserGender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "age_group")
-    private EUserAgeGroup ageGroup;
+    @Column(name = "age_range")
+    private EUserAgeRange ageRange;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "alcohol_type")
@@ -48,34 +45,71 @@ public class User extends BaseEntity {
     @Column(name = "resolution_days")
     private int resolutionDays;
 
-    public UserModel toDomainModel() {
-        return UserModel.builder()
-                .id(UserIdModel.fromString(id))
-                .email(email)
-                .nickname(nickname)
-                .profileImageUrl(profileImageUrl)
-                .theme(theme)
-                .gender(gender)
-                .ageGroup(ageGroup)
-                .drinkingCapacityModel(new UserDrinkingCapacityModel(alcoholType, drinkCapacity))
-                .promise(new UserPromise(resolutionDays))
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
-                .build();
+    protected User() {
     }
 
-    public static User fromDomainModel(UserModel userModel) {
-        return User.builder()
-                .id(userModel.getId().parse())
-                .email(userModel.getEmail())
-                .nickname(userModel.getNickname())
-                .profileImageUrl(userModel.getProfileImageUrl())
-                .theme(userModel.getTheme())
-                .gender(userModel.getGender())
-                .ageGroup(userModel.getAgeGroup())
-                .alcoholType(userModel.getDrinkingCapacityModel().getAlcoholType())
-                .drinkCapacity(userModel.getDrinkingCapacityModel().getCapacity())
-                .resolutionDays(userModel.getPromise().getResolutionDays())
-                .build();
+    public User(
+            String id,
+            String email,
+            String nickname,
+            String profileImageUrl,
+            EUserTheme theme,
+            EUserGender gender,
+            EUserAgeRange ageGroup,
+            EUserAlcoholType alcoholType,
+            int drinkCapacity,
+            int resolutionDays
+    ) {
+        this.id = id;
+        this.email = email;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+        this.theme = theme;
+        this.gender = gender;
+        this.ageRange = ageGroup;
+        this.alcoholType = alcoholType;
+        this.drinkCapacity = drinkCapacity;
+        this.resolutionDays = resolutionDays;
+    }
+
+    public UserModel convertToDomainModel() {
+        return UserModel.of(
+                UserIdModel.from(this.id),
+                this.email,
+                this.nickname,
+                this.profileImageUrl,
+                this.theme,
+                this.gender,
+                this.ageRange,
+                UserDrinkingCapacityModel.of(this.alcoholType, this.drinkCapacity),
+                UserPromiseModel.from(this.resolutionDays),
+                this.createdAt,
+                this.updatedAt
+        );
+    }
+
+    public static User from(UserModel userModel) {
+        EUserAlcoholType alcoholType = null;
+        int drinkCapacity = 0;
+        int resolutionDays = 0;
+        if (userModel.getDrinkingCapacityModel() != null) {
+            alcoholType = userModel.getDrinkingCapacityModel().getAlcoholType();
+            drinkCapacity = userModel.getDrinkingCapacityModel().getCapacity();
+        }
+        if (userModel.getPromise() != null) {
+            resolutionDays = userModel.getPromise().getResolutionDays();
+        }
+        return new User(
+                userModel.getId().parse(),
+                userModel.getEmail(),
+                userModel.getProfileImageUrl(),
+                userModel.getProfileImageUrl(),
+                userModel.getTheme(),
+                userModel.getGender(),
+                userModel.getAgeRange(),
+                alcoholType,
+                drinkCapacity,
+                resolutionDays
+        );
     }
 }

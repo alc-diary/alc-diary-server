@@ -8,5 +8,5 @@ import com.example.alcdiary.domain.model.user.UserModel;
 public interface KakaoLoginUseCase {
 
     // KakaoLoginResult execute(KakaoLoginCommand command);
-    UserModel execute(KakaoLoginCommand command);
+    KakaoLoginResult execute(KakaoLoginCommand command);
 }

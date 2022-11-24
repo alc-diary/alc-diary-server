@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class KakaoLoginResult {
+public class ReIssueAccessTokenResult {
 
     private String accessToken;
     private String refreshToken;
 
-    public static KakaoLoginResult from(String accessToken, RefreshTokenModel refreshTokenModel) {
-        KakaoLoginResult result = new KakaoLoginResult();
+    public static ReIssueAccessTokenResult of(String accessToken, RefreshTokenModel refreshTokenModel) {
+        ReIssueAccessTokenResult result = new ReIssueAccessTokenResult();
         result.accessToken = accessToken;
         result.refreshToken = refreshTokenModel.getToken();
         return result;
