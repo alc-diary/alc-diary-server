@@ -10,24 +10,34 @@ public class UserIdModel {
     private long id;
     private EUserServiceType serviceType;
 
-    public UserIdModel(long id, EUserServiceType serviceType) {
-        this.id = id;
-        this.serviceType = serviceType;
+    private UserIdModel() {
+    }
+
+    public static UserIdModel from(String s) {
+        UserIdModel userIdModel = new UserIdModel();
+
+        userIdModel.id = Long.parseLong(s.substring(1));
+
+        String serviceCode = s.substring(0, 1);
+        if (serviceCode.equals("K")) {
+            userIdModel.serviceType = EUserServiceType.KAKAO;
+        } else if (serviceCode.equals("G")) {
+            userIdModel.serviceType = EUserServiceType.GOOGLE;
+        } else {
+            throw new AlcException(CommonError.INVALID_PARAMETER);
+        }
+
+        return userIdModel;
+    }
+
+    public static UserIdModel of(long id, EUserServiceType serviceType) {
+        UserIdModel userIdModel = new UserIdModel();
+        userIdModel.id = id;
+        userIdModel.serviceType = serviceType;
+        return userIdModel;
     }
 
     public String parse() {
         return serviceType.getCode() + id;
-    }
-
-    public static UserIdModel fromString(String s) {
-        String code = s.substring(0, 1);
-        long id = Long.parseLong(s.substring(1));
-        if (code.equals("K")) {
-            return new UserIdModel(id, EUserServiceType.KAKAO);
-        }
-        if (code.equals("G")) {
-            return new UserIdModel(id, EUserServiceType.GOOGLE);
-        }
-        throw new AlcException(CommonError.INVALID_PARAMETER);
     }
 }

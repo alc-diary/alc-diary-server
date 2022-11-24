@@ -1,5 +1,6 @@
 server:
   port: 8080
+  secret: ALC_DIARY_SECRET_KEY
 
 spring:
   application:
@@ -27,4 +28,3 @@ spring:
   devtools:
     livereload:
       enabled: true
-

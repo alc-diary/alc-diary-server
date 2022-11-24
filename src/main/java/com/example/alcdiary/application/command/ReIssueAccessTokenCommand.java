@@ -5,13 +5,13 @@ import com.example.alcdiary.domain.exception.error.AuthError;
 import lombok.Getter;
 
 @Getter
-public class KakaoLoginCommand {
+public class ReIssueAccessTokenCommand {
 
     private String bearerToken;
 
-    public KakaoLoginCommand(String bearerToken) {
+    public ReIssueAccessTokenCommand(String bearerToken) {
         if (!bearerToken.startsWith("Bearer ")) {
-            throw new AlcException(AuthError.INVALID_KAKAO_TOKEN);
+            throw new AlcException(AuthError.EXPIRED_REFRESH_TOKEN);
         }
         this.bearerToken = bearerToken;
     }

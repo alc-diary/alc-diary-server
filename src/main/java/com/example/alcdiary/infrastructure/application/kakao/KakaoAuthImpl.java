@@ -1,4 +1,4 @@
-package com.example.alcdiary.infrastructure.kakao;
+package com.example.alcdiary.infrastructure.application.kakao;
 
 import com.example.alcdiary.application.kakao.KakaoAuth;
 import com.example.alcdiary.application.kakao.model.KakaoResponse;
@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RequiredArgsConstructor
 @Component
-public class KakaoAuthImpl implements KakaoAuth {
+class KakaoAuthImpl implements KakaoAuth {
 
     private final String kakaoHost = "https://kapi.kakao.com";
 

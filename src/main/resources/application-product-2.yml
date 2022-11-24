@@ -1,5 +1,6 @@
 server:
   port: 8082
+  secret: ALC_DIARY_SECRET_KEY
 
 spring:
   application:
@@ -23,3 +24,6 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+jwt:
+  secret: alc-diary

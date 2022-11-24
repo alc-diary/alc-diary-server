@@ -8,8 +8,13 @@ public class UserDrinkingCapacityModel {
     private EUserAlcoholType alcoholType;
     private int capacity;
 
-    public UserDrinkingCapacityModel(EUserAlcoholType alcoholType, int capacity) {
-        this.alcoholType = alcoholType;
-        this.capacity = capacity;
+    private UserDrinkingCapacityModel() {
+    }
+
+    public static UserDrinkingCapacityModel of(EUserAlcoholType alcoholType, int capacity) {
+        UserDrinkingCapacityModel userDrinkingCapacityModel = new UserDrinkingCapacityModel();
+        userDrinkingCapacityModel.alcoholType = alcoholType;
+        userDrinkingCapacityModel.capacity = capacity;
+        return userDrinkingCapacityModel;
     }
 }
