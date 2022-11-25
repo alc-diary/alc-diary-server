@@ -22,6 +22,20 @@ public class Nickname {
     public enum ELocation {
 
         FIRST,
-        SECOND
+        SECOND;
+
+        public static ELocation from(String s) {
+            return ELocation.valueOf(s);
+        }
+    }
+
+    protected Nickname() {
+    }
+
+    public static Nickname of(String keyword, ELocation location) {
+        Nickname nickname = new Nickname();
+        nickname.keyword = keyword;
+        nickname.location = location;
+        return nickname;
     }
 }

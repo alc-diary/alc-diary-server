@@ -1,4 +1,4 @@
-package com.example.alcdiary.presentation;
+package com.example.alcdiary.presentation.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-public class ProfileController {
+public class ProfileRestController {
 
     private final Environment env;
 

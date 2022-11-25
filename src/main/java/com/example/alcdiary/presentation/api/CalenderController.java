@@ -1,4 +1,4 @@
-package com.example.alcdiary.presentation;
+package com.example.alcdiary.presentation.api;
 
 import com.example.alcdiary.application.FindCalenderUseCase;
 import com.example.alcdiary.presentation.dto.response.GetCalenderResponse;

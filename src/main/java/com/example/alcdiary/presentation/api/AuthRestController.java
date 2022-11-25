@@ -1,4 +1,4 @@
-package com.example.alcdiary.presentation;
+package com.example.alcdiary.presentation.api;
 
 import com.example.alcdiary.application.KakaoLoginUseCase;
 import com.example.alcdiary.application.ReIssueAccessTokenUseCase;
@@ -8,14 +8,13 @@ import com.example.alcdiary.application.result.KakaoLoginResult;
 import com.example.alcdiary.application.result.ReIssueAccessTokenResult;
 import com.example.alcdiary.application.util.jwt.JwtProvider;
 import com.example.alcdiary.domain.model.user.UserIdModel;
-import com.example.alcdiary.domain.model.user.UserModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @RestController
-public class AuthController {
+public class AuthRestController {
 
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
     private final KakaoLoginUseCase kakaoLoginUseCase;
