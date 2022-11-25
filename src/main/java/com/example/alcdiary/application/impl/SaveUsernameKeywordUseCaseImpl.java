@@ -6,8 +6,10 @@ import com.example.alcdiary.application.util.keyword.KeywordUtils;
 import com.example.alcdiary.application.util.keyword.dto.SaveKeywordDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 class SaveUsernameKeywordUseCaseImpl implements SaveUsernameKeywordUseCase {
 
