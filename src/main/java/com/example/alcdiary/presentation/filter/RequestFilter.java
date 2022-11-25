@@ -4,6 +4,8 @@ import com.example.alcdiary.application.util.jwt.JwtProvider;
 import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.AuthError;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -16,6 +18,7 @@ import java.io.IOException;
 public class RequestFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final Logger log = LoggerFactory.getLogger(RequestFilter.class);
 
     @Override
     protected void doFilterInternal(
@@ -24,8 +27,8 @@ public class RequestFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String path = request.getRequestURI();
-        System.out.println(path);
-        if (path.startsWith("/auth")) {
+        log.info(request.getRequestURI());
+        if (path.equals("/") || path.startsWith("/auth") || path.startsWith("/admin") || path.equals("/favicon.ico") || path.startsWith("/static")) {
             filterChain.doFilter(request, response);
             return;
         }

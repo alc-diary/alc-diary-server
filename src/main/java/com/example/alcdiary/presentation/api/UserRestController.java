@@ -1,4 +1,4 @@
-package com.example.alcdiary.presentation;
+package com.example.alcdiary.presentation.api;
 
 import com.example.alcdiary.application.GetRandomNicknameUseCase;
 import com.example.alcdiary.application.SaveUserInfoUseCase;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 @RestController
-public class UserController {
+public class UserRestController {
 
     private final GetRandomNicknameUseCase getRandomNicknameUseCase;
     private final SaveUserInfoUseCase saveUserInfoUseCase;

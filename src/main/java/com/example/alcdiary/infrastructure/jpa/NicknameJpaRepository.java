@@ -23,4 +23,6 @@ public interface NicknameJpaRepository extends JpaRepository<Nickname, NicknameP
             "LIMIT 1 ",
     nativeQuery = true)
     List<Nickname> findByLocation(String location);
+
+    List<Nickname> findByLocation(Nickname.ELocation location);
 }

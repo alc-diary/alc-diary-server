@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row align-items-start">
+            <div class="col">
+                <label for="firstKeywordForm" class="form-label">first keyword</label>
+                <form action="/admin/user/username/keyword" method="post" id="firstKeywordForm">
+                    <input type="text" name="keyword" class="form-control"/>
+                    <input type="hidden" name="location" value="FIRST"/>
+                    <button type="submit" class="btn btn-secondary">전송</button>
+                </form>
+                <div class="d-flex flex-wrap">
+                    <div th:each="keyword : ${firstKeywordList}">
+                        <form action="/admin/user/username/keyword/delete" method="post">
+                            <input type="hidden" name="keyword" th:value="|${keyword}|"/>
+                            <input type="hidden" name="location" value="FIRST"/>
+                            <button th:text="|${keyword}|" type="submit" class="btn btn-primary m-1"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <label for="secondKeywordForm" class="form-label">second keyword</label>
+                <form action="/admin/user/username/keyword" method="post" id="secondKeywordForm">
+                    <input type="text" name="keyword" class="form-control"/>
+                    <input type="hidden" name="location" value="SECOND"/>
+                    <button type="submit" class="btn btn-secondary">전송</button>
+                </form>
+                <div class="d-flex flex-wrap">
+                    <div th:each="keyword : ${secondKeywordList}">
+                        <form action="/admin/user/username/keyword/delete" method="post">
+                            <input type="hidden" name="keyword" th:value="|${keyword}|"/>
+                            <input type="hidden" name="location" value="SECOND"/>
+                            <button th:text="|${keyword}|" type="submit" class="btn btn-primary m-1"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

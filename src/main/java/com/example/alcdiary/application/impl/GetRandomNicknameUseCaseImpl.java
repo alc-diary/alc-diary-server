@@ -2,7 +2,7 @@ package com.example.alcdiary.application.impl;
 
 import com.example.alcdiary.application.GetRandomNicknameUseCase;
 import com.example.alcdiary.application.result.GetRandomNicknameResult;
-import com.example.alcdiary.application.util.nickname.NicknameUtils;
+import com.example.alcdiary.application.util.keyword.KeywordUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 class GetRandomNicknameUseCaseImpl implements GetRandomNicknameUseCase {
 
-    private final NicknameUtils nicknameUtils;
+    private final KeywordUtils keywordUtils;
 
     @Override
     public GetRandomNicknameResult execute() {
-        String nickname = nicknameUtils.generateNickname();
+        String nickname = keywordUtils.generateNickname();
         return GetRandomNicknameResult.from(nickname);
     }
 }
