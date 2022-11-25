@@ -3,6 +3,7 @@ package com.example.alcdiary.presentation.filter;
 import com.example.alcdiary.application.util.jwt.JwtProvider;
 import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.AuthError;
+import com.example.alcdiary.domain.model.user.UserIdModel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,9 @@ public class RequestFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String path = request.getRequestURI();
-        log.info(request.getRequestURI());
+        String requestURI = request.getRequestURI();
         if (path.equals("/") || path.startsWith("/auth") || path.startsWith("/admin") || path.equals("/favicon.ico") || path.startsWith("/static")) {
+            log.info("end-point: {}", requestURI);
             filterChain.doFilter(request, response);
             return;
         }
@@ -37,7 +39,8 @@ public class RequestFilter extends OncePerRequestFilter {
         if (!jwtProvider.validateToken(bearerToken)) {
             throw new AlcException(AuthError.EXPIRED_ACCESS_TOKEN);
         }
-
+        UserIdModel userIdModel = jwtProvider.getKey(bearerToken);
+        log.info("end-point: {}, userId: {}", requestURI, userIdModel.parse());
         filterChain.doFilter(request, response);
     }
 }

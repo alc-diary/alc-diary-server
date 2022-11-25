@@ -5,14 +5,14 @@ import lombok.Getter;
 @Getter
 public class UserPromiseModel {
 
-    private int resolutionDays;
+    private int decideDays;
 
     private UserPromiseModel() {
     }
 
-    public static UserPromiseModel from(int resolutionDays) {
+    public static UserPromiseModel from(int decideDays) {
         UserPromiseModel userPromiseModel = new UserPromiseModel();
-        userPromiseModel.resolutionDays = resolutionDays;
+        userPromiseModel.decideDays = decideDays;
         return userPromiseModel;
     }
 }

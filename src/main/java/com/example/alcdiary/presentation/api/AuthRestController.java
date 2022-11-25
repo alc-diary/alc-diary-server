@@ -18,9 +18,8 @@ public class AuthRestController {
 
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
     private final KakaoLoginUseCase kakaoLoginUseCase;
-    private final JwtProvider jwtProvider;
 
-    @PostMapping ("/access-token/re-issue")
+    @PostMapping ("/access-token/reissue")
     public ReIssueAccessTokenResult reIssueAccessToken(
             @RequestHeader("Authorization") String bearerToken
     ) {
@@ -34,13 +33,5 @@ public class AuthRestController {
     ) {
         KakaoLoginCommand command = new KakaoLoginCommand(bearerToken);
         return kakaoLoginUseCase.execute(command);
-    }
-
-    @GetMapping("/test")
-    public UserIdModel test(
-            @RequestHeader("Authorization") String bearerToken
-    ) {
-        UserIdModel userIdModel = jwtProvider.getKey(bearerToken.substring("Bearer ".length()));
-        return userIdModel;
     }
 }
