@@ -24,10 +24,10 @@ public class UserModel {
             String nickname,
             EUserAlcoholType alcoholType,
             int drinkCapacity,
-            int resolutionDays
+            int decideDays
     ) {
         UserDrinkingCapacityModel drinkingCapacityModel = UserDrinkingCapacityModel.of(alcoholType, drinkCapacity);
-        UserPromiseModel promiseModel = UserPromiseModel.from(resolutionDays);
+        UserPromiseModel promiseModel = UserPromiseModel.from(decideDays);
         this.theme = theme;
         this.nickname = nickname;
         this.drinkingCapacityModel = drinkingCapacityModel;

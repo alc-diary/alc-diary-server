@@ -11,5 +11,5 @@ public class SaveUserInfoCommand {
     private String nickname;
     private EUserAlcoholType alcoholType;
     private int drinkCapacity;
-    private int resolutionDays;
+    private int decideDays;
 }

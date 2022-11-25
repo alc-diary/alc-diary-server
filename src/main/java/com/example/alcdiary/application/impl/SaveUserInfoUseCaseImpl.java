@@ -27,7 +27,7 @@ class SaveUserInfoUseCaseImpl implements SaveUserInfoUseCase {
                 command.getNickname(),
                 command.getAlcoholType(),
                 command.getDrinkCapacity(),
-                command.getResolutionDays()
+                command.getDecideDays()
         );
         userService.save(findUserModel);
     }

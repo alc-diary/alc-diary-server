@@ -43,7 +43,7 @@ public class User extends BaseEntity {
     private int drinkCapacity;
 
     @Column(name = "resolution_days")
-    private int resolutionDays;
+    private int decideDays;
 
     protected User() {
     }
@@ -58,7 +58,7 @@ public class User extends BaseEntity {
             EUserAgeRange ageGroup,
             EUserAlcoholType alcoholType,
             int drinkCapacity,
-            int resolutionDays
+            int decideDays
     ) {
         this.id = id;
         this.email = email;
@@ -69,7 +69,7 @@ public class User extends BaseEntity {
         this.ageRange = ageGroup;
         this.alcoholType = alcoholType;
         this.drinkCapacity = drinkCapacity;
-        this.resolutionDays = resolutionDays;
+        this.decideDays = decideDays;
     }
 
     public UserModel convertToDomainModel() {
@@ -82,7 +82,7 @@ public class User extends BaseEntity {
                 this.gender,
                 this.ageRange,
                 UserDrinkingCapacityModel.of(this.alcoholType, this.drinkCapacity),
-                UserPromiseModel.from(this.resolutionDays),
+                UserPromiseModel.from(this.decideDays),
                 this.createdAt,
                 this.updatedAt
         );
@@ -91,13 +91,13 @@ public class User extends BaseEntity {
     public static User from(UserModel userModel) {
         EUserAlcoholType alcoholType = null;
         int drinkCapacity = 0;
-        int resolutionDays = 0;
+        int decideDays = 0;
         if (userModel.getDrinkingCapacityModel() != null) {
             alcoholType = userModel.getDrinkingCapacityModel().getAlcoholType();
             drinkCapacity = userModel.getDrinkingCapacityModel().getCapacity();
         }
         if (userModel.getPromise() != null) {
-            resolutionDays = userModel.getPromise().getResolutionDays();
+            decideDays = userModel.getPromise().getDecideDays();
         }
         return new User(
                 userModel.getId().parse(),
@@ -109,7 +109,7 @@ public class User extends BaseEntity {
                 userModel.getAgeRange(),
                 alcoholType,
                 drinkCapacity,
-                resolutionDays
+                decideDays
         );
     }
 }
