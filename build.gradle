@@ -31,7 +31,7 @@ dependencies {
 	// thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 	// jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
