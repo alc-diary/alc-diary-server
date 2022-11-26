@@ -20,17 +20,12 @@ public class AdminController {
     private final SaveUsernameKeywordUseCase saveUsernameKeywordUseCase;
     private final DeleteUsernameKeywordUseCase deleteUsernameKeywordUseCase;
 
-    @GetMapping
-    public String adminHome() {
-        return "admin";
-    }
-
     @GetMapping("/user")
     public String userTab(Model model) {
         GetRandomKeywordListResult result = getRandomKeywordListUseCase.execute();
         model.addAttribute("firstKeywordList", result.getFirstKeywordList());
         model.addAttribute("secondKeywordList", result.getSecondKeywordList());
-        return "/pages/user";
+        return "pages/user";
     }
 
     @PostMapping("/user/username/keyword")
@@ -55,6 +50,6 @@ public class AdminController {
 
     @GetMapping("/login/kakao")
     public String kakaoLoginPage() {
-        return "/pages/kakao-login";
+        return "pages/kakao-login";
     }
 }
