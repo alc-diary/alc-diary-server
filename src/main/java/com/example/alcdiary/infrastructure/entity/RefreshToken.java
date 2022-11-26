@@ -1,39 +1,44 @@
 package com.example.alcdiary.infrastructure.entity;
 
-import com.example.alcdiary.domain.model.UserModel;
-import com.example.alcdiary.domain.model.token.RefreshTokenModel;
-import lombok.*;
+import com.example.alcdiary.domain.model.RefreshTokenModel;
+import com.example.alcdiary.domain.model.user.UserModel;
+import lombok.Getter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "REFRESH_TOKEN", indexes = @Index(name = "idx_user_id", columnList = "user_id", unique = true))
 @Entity
 public class RefreshToken {
 
-    @Column(name = "token", length = 50)
+    @Column(name = "token")
     @Id
     private String token;
 
-    @Column(name = "expired_at", nullable = false)
-    private LocalDateTime expiredAt;
-
-    @Column(name = "user_id", nullable = false, updatable = false)
+    @Column(name = "user_id")
     private String userId;
 
-    public RefreshTokenModel convertToDomainModel(UserModel userModel) {
-        return RefreshTokenModel.builder()
-                .token(this.token)
-                .expiredAt(this.expiredAt)
-                .userModel(userModel)
-                .build();
+    @Column(name = "expired_at")
+    private LocalDateTime expiredAt;
+
+    public RefreshToken() {
     }
 
-    public void updateExpiredAt() {
-        expiredAt = LocalDateTime.now().plusMonths(1);
+    public static RefreshToken from(RefreshTokenModel refreshTokenModel) {
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.token = refreshTokenModel.getToken();
+        refreshToken.userId = refreshTokenModel.getUser().getId().parse();
+        refreshToken.expiredAt = refreshTokenModel.getExpiredAt();
+        return refreshToken;
+    }
+
+    public RefreshTokenModel convertToDomainModel(User user) {
+        return RefreshTokenModel.of(
+                this.token,
+                user.convertToDomainModel(),
+                this.expiredAt
+        );
     }
 }

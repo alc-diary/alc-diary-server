@@ -1,14 +1,9 @@
 package com.example.alcdiary.domain.repository;
 
-import com.example.alcdiary.domain.model.token.RefreshTokenModel;
+import com.example.alcdiary.domain.model.RefreshTokenModel;
 
 public interface RefreshTokenRepository {
 
     RefreshTokenModel save(RefreshTokenModel refreshTokenModel);
-
-    RefreshTokenModel findByUserId(String userId);
-
-    RefreshTokenModel findByToken(String token);
-
-    void delete(RefreshTokenModel refreshTokenModel);
+    RefreshTokenModel findByToken(String refreshToken);
 }
