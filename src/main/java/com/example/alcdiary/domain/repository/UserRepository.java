@@ -1,10 +1,11 @@
 package com.example.alcdiary.domain.repository;
 
-import com.example.alcdiary.domain.model.UserModel;
+import com.example.alcdiary.domain.model.user.UserIdModel;
+import com.example.alcdiary.domain.model.user.UserModel;
 
 public interface UserRepository {
 
     UserModel save(UserModel userModel);
 
-    UserModel findById(String userId);
+    UserModel findById(UserIdModel userId);
 }

@@ -1,5 +1,6 @@
 server:
   port: 8081
+  secret: ALC_DIARY_SECRET_KEY
 
 spring:
   application:
@@ -17,8 +18,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#      naming:
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         show_sql: true
