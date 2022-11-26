@@ -30,7 +30,7 @@ public class RequestFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         System.out.println(path);
         String requestURI = request.getRequestURI();
-        if (path.equals("/") || path.startsWith("/auth") || path.startsWith("/admin") || path.equals("/favicon.ico") || path.startsWith("/static")) {
+        if (path.equals("/") || path.startsWith("/auth") || path.startsWith("/admin") || path.equals("/favicon.ico") || path.startsWith("/static") || path.equals("/profile")) {
             log.info("end-point: {}", requestURI);
             filterChain.doFilter(request, response);
             return;
