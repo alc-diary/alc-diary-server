@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AdminController {
 
-
     private final GetRandomKeywordListUseCase getRandomKeywordListUseCase;
     private final SaveUsernameKeywordUseCase saveUsernameKeywordUseCase;
     private final DeleteUsernameKeywordUseCase deleteUsernameKeywordUseCase;
