@@ -7,6 +7,9 @@ public enum EUserGender {
     UNKNOWN;
 
     public static EUserGender from(String s) {
+        if (s == null) {
+            return UNKNOWN;
+        }
         if (s.equals("male")) {
             return MALE;
         }

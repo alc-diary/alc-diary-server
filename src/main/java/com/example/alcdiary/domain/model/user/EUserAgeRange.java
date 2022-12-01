@@ -19,6 +19,9 @@ public enum EUserAgeRange {
     UNKNOWN;
 
     public static EUserAgeRange from(String s) {
+        if (s == null) {
+            return UNKNOWN;
+        }
         switch (s) {
             case "1~9":
                 return UNDER_TEN;
