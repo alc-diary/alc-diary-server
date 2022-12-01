@@ -102,7 +102,7 @@ public class User extends BaseEntity {
         return new User(
                 userModel.getId().parse(),
                 userModel.getEmail(),
-                userModel.getProfileImageUrl(),
+                userModel.getNickname(),
                 userModel.getProfileImageUrl(),
                 userModel.getTheme(),
                 userModel.getGender(),

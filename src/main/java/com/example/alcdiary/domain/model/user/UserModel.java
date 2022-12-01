@@ -52,12 +52,12 @@ public class UserModel {
         } else {
             userModel.email = "";
         }
+        userModel.nickname = "";
         if (profileImageUrl != null) {
             userModel.profileImageUrl = profileImageUrl;
         } else {
             userModel.profileImageUrl = "";
         }
-        userModel.profileImageUrl = profileImageUrl;
         userModel.theme = EUserTheme.UNKNOWN;
         userModel.gender = gender;
         userModel.ageRange = ageRange;
