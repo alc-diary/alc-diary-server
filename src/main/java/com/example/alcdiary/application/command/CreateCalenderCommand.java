@@ -13,6 +13,8 @@ import java.sql.Time;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateCalenderCommand {
+    private String userId;
+
     private String title;
 
     private String[] friends;

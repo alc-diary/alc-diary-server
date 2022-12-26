@@ -17,6 +17,9 @@ public class Calender extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id")
+    private String userId;
+
     @Column(name = "title", length = 20, nullable = false)
     private String title;
 
@@ -42,11 +45,13 @@ public class Calender extends BaseEntity {
 
     @Builder
     public Calender(
+            String userId,
             String title,
             String contents,
             String drinks,
             String hangOver
     ) {
+        this.userId = userId;
         this.title = title;
         this.contents = contents;
         this.drinks = drinks;
