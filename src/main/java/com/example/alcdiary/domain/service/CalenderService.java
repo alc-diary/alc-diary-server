@@ -5,7 +5,7 @@ import com.example.alcdiary.domain.model.calender.CalenderModel;
 
 public interface CalenderService {
 
-    CalenderModel find(Long calenderId);
+    CalenderModel find(String userId, Long calenderId);
 
     void save(CreateCalenderCommand command);
 }
