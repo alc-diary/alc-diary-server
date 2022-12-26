@@ -3,21 +3,21 @@ package com.example.alcdiary.presentation.api;
 import com.example.alcdiary.application.CalenderUseCase;
 import com.example.alcdiary.application.command.CreateCalenderCommand;
 import com.example.alcdiary.presentation.dto.request.CreateCalenderRequest;
-import com.example.alcdiary.presentation.dto.response.GetCalenderResponse;
+import com.example.alcdiary.presentation.dto.response.FindCalenderResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
 public class CalenderController {
-
     private final CalenderUseCase calenderUseCase;
 
-    @GetMapping(value = "/calender/{calenderId}")
-    public GetCalenderResponse find(
+    @GetMapping(value = "/calender/{userId}/{calenderId}")
+    public FindCalenderResponse find(
+            @PathVariable String userId,
             @PathVariable(name = "calenderId") Long calenderId
     ) {
-        return calenderUseCase.find(calenderId).toResponse();
+        return calenderUseCase.find(userId,calenderId).toResponse();
     }
 
 
