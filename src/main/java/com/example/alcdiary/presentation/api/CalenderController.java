@@ -13,24 +13,30 @@ public class CalenderController {
 
     private final CalenderUseCase calenderUseCase;
 
-    @GetMapping(value = "/calender/{calender_id}")
+    @GetMapping(value = "/calender/{calenderId}")
     public GetCalenderResponse find(
-            @PathVariable(name = "calender_id") Long calenderId
+            @PathVariable(name = "calenderId") Long calenderId
     ) {
         return calenderUseCase.find(calenderId).toResponse();
     }
 
 
-    @PostMapping(value = "/calender/{user_id}")
+    @PostMapping(value = "/calender/{userId}")
     public void create(
-            @RequestBody CreateCalenderRequest request
-    ) {
+            @RequestBody CreateCalenderRequest request,
+            @PathVariable String userId) {
         calenderUseCase.create(
                 CreateCalenderCommand.builder()
+                        .userId(userId)
                         .title(request.getTitle())
+                        .friends(request.getFriends())
+                        .drinks(request.getDrinks())
+                        .hangOver(request.getHangOver())
+                        .drinkStartTime(request.getDrinkStartTime())
+                        .drinkEndTime(request.getDrinkEndTime())
+                        .imageUrl(request.getImageUrl())
                         .contents(request.getContents())
-                        .drinkType(request.getDrinkType())
-                        .hangOver(request.getHangOver()).build()
+                        .build()
         );
     }
 }
