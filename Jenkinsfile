@@ -8,6 +8,15 @@ pipeline {
     agent any
 
     stages {
+        stage('start') {
+            steps {
+                slackSend(
+                    channel: '#test',
+                    color: '#FFFF00',
+                    message: '배포 시작'
+                )
+            }
+        }
         stage('Pull Codes from Github') {
             steps {
                 checkout scm
@@ -35,17 +44,6 @@ pipeline {
                         docker.image("alc-diary:${currentBuild.number}").push()
                     }
                 }
-//                 withAWS(region:"${region}", credentials:"aws-key") {
-//                     ecrLogin()
-//                     sh """
-//                         curl -O https://amazon-ecr-credential-helper-releases.s3.ap-northeast-2.amazonaws.com/0.4.0/linux-amd64/${ecrLoginHelper}
-//                         chmod +x ${ecrLoginHelper}
-//                         mv ${ecrLoginHelper} /usr/local/bin/
-//                         docker build -t alc-diary .
-//                         docker tag alc-diary:latest 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
-//                         docker push 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
-//                      """
-//                 }
             }
         }
         stage('Deploy to AWS EC2 VM') {
@@ -56,6 +54,25 @@ pipeline {
                       docker run -d -p 80:8080 -t ${ecrUrl}/${repository}:${currentBuild.number};'"
                 }
             }
+            post {
+                success {
+                    slackSend {
+                        channel: '#test',
+                        color: '#2C953C',
+                        message: '배포 성공'
+                    }
+                }
+                failure {
+                    slackSend {
+                        channel: '#test',
+                        color: '#FF3232',
+                        message: '배포 실패'
+                    }
+                }
+            }
+        }
+        stage('Send slack notification') {
+
         }
     }
 }
