@@ -10,7 +10,6 @@ plugins {
 	id 'org.springframework.boot' version '2.7.3'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
 	id 'java'
-	id 'com.google.cloud.tools.jib' version '3.3.1'
 }
 
 group = 'com.example'
@@ -53,29 +52,4 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-jib {
-	from {
-		image = 'adoptopenjdk/openjdk11@sha256:fb54ed3516242995d86c53346463a3509f9baf74a9178c066bdbcc5c1bdafc66'
-	}
-	container {
-
-		mainClass = 'com.test.StartApplication'
-		jvmFlags = ['-Xms512m', '-Xmx512m', '-Xdebug', '-XshowSettings:vm', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseContainerSupport']
-		ports = ['8080']
-
-		environment = [SPRING_OUTPUT_ANSI_ENABLED: "ALWAYS"]
-		labels = [version:project.version, name:project.name, group:project.group]
-
-		creationTime = 'USE_CURRENT_TIMESTAMP'
-		format = 'Docker'
-	}
-	extraDirectories {
-		paths {
-			path {
-				from = file('build/libs')
-			}
-		}
-	}
 }
