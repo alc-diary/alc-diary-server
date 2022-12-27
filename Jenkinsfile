@@ -56,18 +56,18 @@ pipeline {
             }
             post {
                 success {
-                    slackSend {
+                    slackSend(
                         channel: '#test',
                         color: '#2C953C',
                         message: '배포 성공'
-                    }
+                    )
                 }
                 failure {
-                    slackSend {
+                    slackSend(
                         channel: '#test',
                         color: '#FF3232',
                         message: '배포 실패'
-                    }
+                    )
                 }
             }
         }
