@@ -5,7 +5,7 @@ def repository="alc-diary"
 def deployHost="13.125.231.232"
 
 pipeline {
-    agent { dockerfile true }
+    agent any
 
     stages {
         stage('Pull Codes from Github') {
@@ -24,11 +24,11 @@ pipeline {
             steps {
                 withAWS(region:"${region}", credentials:"aws-key") {
                     ecrLogin()
+                    def image = docker.build("alc-diary:${currentBuild.number}")
                     sh """
                         curl -O https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com/0.4.0/linux-amd64/${ecrLoginHelper}
                         chmod +x ${ecrLoginHelper}
                         mv ${ecrLoginHelper} /usr/local/bin/
-                        docker build -t alc-diary .
                         docker tag alc-diary:${currentBuild.number} 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:latest
                      """
                 }
