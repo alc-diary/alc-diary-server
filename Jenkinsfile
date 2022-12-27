@@ -4,6 +4,8 @@ def ecrUrl="101253377448.dkr.ecr.ap-northeast-2.amazonaws.com"
 def repository="alc-diary"
 def deployHost="13.125.231.232"
 
+docker.build("alc-diary:${currentBuild.number}")
+
 pipeline {
     agent any
 
@@ -22,7 +24,6 @@ pipeline {
         }
         stage('Build Docker Image by Jib & Push to AWS ECR Repository') {
             steps {
-                docker.build("alc-diary:${currentBuild.number}")
                 withAWS(region:"${region}", credentials:"aws-key") {
                     ecrLogin()
                     sh """
