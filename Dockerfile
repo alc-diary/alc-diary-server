@@ -3,7 +3,7 @@ FROM adoptopenjdk/openjdk11@sha256:5454cc66dfdb61e8292051d6d9f4ef2c220b468171dc7
 RUN mkdir /app
 WORKDIR /app
 
-ADD ./build/libs/*.jar /app/app.jar/
+ADD ./build/libs/*.jar /app/app.jar
 
 EXPOSE 8080
 
