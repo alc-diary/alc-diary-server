@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Build Docker Image by Jib & Push to AWS ECR Repository') {
             steps {
-                withAWS(region:"${region}", credential:"aws-key") {
+                withAWS(region:"${region}", credentials:"aws-key") {
                     ecrLogin()
                     sh """
                         curl -O https://amazon-ecr-credential-helper-release.s3.us-east-2.amazonaws.com/0.6.0/linux-amd64/${ecrLoginHelper}
