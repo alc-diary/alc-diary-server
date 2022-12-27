@@ -5,7 +5,7 @@ def repository="alc-diary"
 def deployHost="13.125.231.232"
 
 pipeline {
-    agent any
+    agent { dockerfile true }
 
     stages {
         stage('Pull Codes from Github') {
