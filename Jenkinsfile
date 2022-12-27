@@ -20,19 +20,32 @@ pipeline {
                 """
             }
         }
-        stage('Build Docker Image by Jib & Push to AWS ECR Repository') {
+        stage('Dockerizing project by dockerfile') {
             steps {
-                withAWS(region:"${region}", credentials:"aws-key") {
-                    ecrLogin()
-                    sh """
-                        curl -O https://amazon-ecr-credential-helper-releases.s3.ap-northeast-2.amazonaws.com/0.4.0/linux-amd64/${ecrLoginHelper}
-                        chmod +x ${ecrLoginHelper}
-                        mv ${ecrLoginHelper} /usr/local/bin/
-                        docker build -t alc-diary .
-                        docker tag alc-diary:latest 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
-                        docker push 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
-                     """
+                sh """
+                    docker build -t alc-diary .
+                    docker tag alc-diary:latest alc-diary:${currentBuild.number}
+                """
+            }
+        }
+        stage('Push to AWS ECR Repository') {
+            steps {
+                script {
+                    docker.withRegistry("https://${ecrUrl}", "ecr:${region}:aws-key") {
+                        docker.image("alc-diary:${currentBuild.number}").push()
+                    }
                 }
+//                 withAWS(region:"${region}", credentials:"aws-key") {
+//                     ecrLogin()
+//                     sh """
+//                         curl -O https://amazon-ecr-credential-helper-releases.s3.ap-northeast-2.amazonaws.com/0.4.0/linux-amd64/${ecrLoginHelper}
+//                         chmod +x ${ecrLoginHelper}
+//                         mv ${ecrLoginHelper} /usr/local/bin/
+//                         docker build -t alc-diary .
+//                         docker tag alc-diary:latest 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
+//                         docker push 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
+//                      """
+//                 }
             }
         }
         stage('Deploy to AWS EC2 VM') {
