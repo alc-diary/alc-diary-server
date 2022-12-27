@@ -59,13 +59,9 @@ jib {
 	from {
 		image = 'adoptopenjdk/openjdk11:alpine-jre'
 	}
-//	to {
-//		image = 'taeyeongg/alc-diary'
-//		tags = ['1.0']
-//	}
 	container {
-//		entrypoint = ['java', '-Dspring.profiles.active=local', '-jar', 'alc-diary-0.0.1-SNAPSHOT.jar']
-		mainClass = 'com.example.alcdiary.AlcDiaryApplication'
+
+		mainClass = 'com.test.StartApplication'
 		jvmFlags = ['-Xms512m', '-Xmx512m', '-Xdebug', '-XshowSettings:vm', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseContainerSupport']
 		ports = ['8080']
 
