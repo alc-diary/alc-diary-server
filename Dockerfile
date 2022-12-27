@@ -3,8 +3,6 @@ FROM adoptopenjdk/openjdk11@sha256:5454cc66dfdb61e8292051d6d9f4ef2c220b468171dc7
 RUN mkdir /app
 WORKDIR /app
 
-RUN ls ./build/libs
-
 COPY ./build/libs/alc-diary-0.0.1-SNAPSHOT.jar.jar /app/app.jar
 
 EXPOSE 8080
