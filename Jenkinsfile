@@ -71,8 +71,5 @@ pipeline {
                 }
             }
         }
-        stage('Send slack notification') {
-
-        }
     }
 }
