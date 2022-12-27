@@ -24,7 +24,7 @@ pipeline {
             steps {
                 withAWS(region:"${region}", credentials:"aws-key") {
                     ecrLogin()
-                    def image = docker.build("alc-diary:${currentBuild.number}")
+                    docker.build("alc-diary:${currentBuild.number}")
                     sh """
                         curl -O https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com/0.4.0/linux-amd64/${ecrLoginHelper}
                         chmod +x ${ecrLoginHelper}
