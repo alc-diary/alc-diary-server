@@ -30,7 +30,7 @@ pipeline {
                         mv ${ecrLoginHelper} /usr/local/bin/
                         docker build -t alc-diary .
                         docker tag alc-diary:${currentBuild.number} 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
-                        docker push 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:latest
+                        docker push 101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary:${currentBuild.number}
                      """
                 }
             }
