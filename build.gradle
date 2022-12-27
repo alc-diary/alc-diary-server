@@ -51,17 +51,13 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
-jar {
-	enabled = false
-}
-
-tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+tasks.named('test') {
+	useJUnitPlatform()
 }
 
 jib {
 	from {
-		image = 'adoptopenjdk/openjdk11:alpine-jre'
+		image = 'adoptopenjdk@sha256:fb54ed3516242995d86c53346463a3509f9baf74a9178c066bdbcc5c1bdafc66'
 	}
 	container {
 
