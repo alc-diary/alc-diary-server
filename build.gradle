@@ -57,7 +57,7 @@ tasks.named('test') {
 
 jib {
 	from {
-		image = 'adoptopenjdk@sha256:fb54ed3516242995d86c53346463a3509f9baf74a9178c066bdbcc5c1bdafc66'
+		image = 'openjdk@sha256:fb54ed3516242995d86c53346463a3509f9baf74a9178c066bdbcc5c1bdafc66'
 	}
 	container {
 
