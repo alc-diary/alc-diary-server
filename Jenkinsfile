@@ -1,4 +1,4 @@
-def mainDir=""
+def mainDir="src/main"
 def ecrLoginHelper="docker-credential-ecr-login"
 def region="ap-northeast-2"
 def ecrUrl="101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary"
