@@ -1,7 +1,7 @@
 def mainDir="./"
 def ecrLoginHelper="docker-credential-ecr-login"
 def region="ap-northeast-2"
-def ecrUrl="101253377448.dkr.ecr.ap-northeast-2.amazonaws.com/alc-diary"
+def ecrUrl="101253377448.dkr.ecr.ap-northeast-2.amazonaws.com"
 def repository="alc-diary"
 def deployHost="172.31.13.119"
 
