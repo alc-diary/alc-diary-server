@@ -3,6 +3,10 @@ def region="ap-northeast-2"
 def ecrUrl="101253377448.dkr.ecr.ap-northeast-2.amazonaws.com"
 def repository="alc-diary"
 def deployHost="13.125.231.232"
+def SLACK_CHANNEL_NAME="#test"
+def SLACK_START_COLOR="#FFFF00"
+def SLACK_SUCCESS_COLOR="#2C953C"
+def SLACK_FAIL_COLOR="#FF3232"
 
 pipeline {
     agent any
@@ -11,8 +15,8 @@ pipeline {
         stage('start') {
             steps {
                 slackSend(
-                    channel: '#test',
-                    color: '#FFFF00',
+                    channel: SLACK_CHANNEL_NAME,
+                    color: SLACK_START_COLOR,
                     message: '배포 시작'
                 )
             }
@@ -57,15 +61,15 @@ pipeline {
             post {
                 success {
                     slackSend(
-                        channel: '#test',
-                        color: '#2C953C',
+                        channel: SLACK_CHANNEL_NAME,
+                        color: SLACK_SUCCESS_COLOR,
                         message: '배포 성공'
                     )
                 }
                 failure {
                     slackSend(
-                        channel: '#test',
-                        color: '#FF3232',
+                        channel: SLACK_CHANNEL_NAME,
+                        color: SLACK_FAIL_COLOR,
                         message: '배포 실패'
                     )
                 }
