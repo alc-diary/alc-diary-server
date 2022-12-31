@@ -56,6 +56,6 @@ jobs:
           port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
             docker rm -f $(docker ps -qa)
-            docker rmi taeyeongg/alc-diary
+            docker rmi -f $(docker images -q)
             docker pull taeyeongg/alc-diary:main
             docker run -d -p 80:8080 --name alc taeyeongg/alc-diary:main
