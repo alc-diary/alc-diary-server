@@ -53,3 +53,4 @@ public class AdminController {
         return "pages/kakao-login";
     }
 }
+
