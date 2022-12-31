@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 @RequiredArgsConstructor
 @Service
 public class CalenderServiceImpl implements CalenderService {
@@ -28,8 +26,14 @@ public class CalenderServiceImpl implements CalenderService {
             return CalenderModel.builder()
                     .id(calender.getId())
                     .title(calender.getTitle())
+                    .drinkStartTime(calender.getDrinkStartTime())
+                    .drinkEndTime(calender.getDrinkEndTime())
+                    .createdAt(calender.getCreatedAt())
+                    .friends(calender.getFriends().split(","))
                     .hangOver(calender.getHangOver())
+                    .contents(calender.getContents())
                     .drinks(objectMapper.readValue(calender.getDrinks(), DrinksModel[].class))
+                    .imageUrl(calender.getImageUrl().split(","))
                     .build();
         } catch (Throwable e) {
             throw new AlcException(CalenderError.NOT_FOUND_CALENDER);
@@ -43,12 +47,12 @@ public class CalenderServiceImpl implements CalenderService {
                     Calender.builder()
                             .userId(command.getUserId())
                             .title(command.getTitle())
-                            .friends(mapToString(command.getFriends()))
+                            .friends(command.getFriends())
                             .drinks(objectMapper.writeValueAsString(command.getDrinks()))
                             .hangOver(command.getHangOver())
                             .drinkStartTime(command.getDrinkStartTime())
                             .drinkEndTime(command.getDrinkEndTime())
-                            .imageUrl(mapToString(command.getImageUrl()))
+                            .imageUrl(command.getImageUrl())
                             .contents(command.getContents())
                             .build()
             );
@@ -57,7 +61,7 @@ public class CalenderServiceImpl implements CalenderService {
         }
     }
 
-    <T> String mapToString(T[] data) {
-        return Arrays.toString(data);
-    }
+//    <T> String mapToString(T[] data) {
+//        return Arrays.toString(data);
+//    }
 }
