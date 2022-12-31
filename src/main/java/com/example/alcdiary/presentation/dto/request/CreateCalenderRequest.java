@@ -15,7 +15,7 @@ public class CreateCalenderRequest {
     @NotNull
     private String title;
 
-    private String[] friends;
+    private String friends;
 
     @NotNull
     private DrinksModel[] drinks;
@@ -28,7 +28,7 @@ public class CreateCalenderRequest {
     private Time drinkEndTime;
 
     // TODO: multipart로 개선
-    private String[] imageUrl;
+    private String imageUrl;
 
     @NotNull
     private String contents;

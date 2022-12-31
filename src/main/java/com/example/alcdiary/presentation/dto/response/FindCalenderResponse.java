@@ -14,7 +14,14 @@ public class FindCalenderResponse {
     private Long calenderId;
 
     private String title;
-    private String hangOver;
+
+    private String drinkTime;
+    private String[] friends;
 
     private DrinksModel[] drinks;
+    private Integer totalDrinkCount;
+    private String hangOver;
+    private String contents;
+
+    private String[] imageUrl;
 }
