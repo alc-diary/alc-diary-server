@@ -53,6 +53,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
             docker rm -f $(docker ps -qa)
             docker rmi taeyeongg/alc-diary
