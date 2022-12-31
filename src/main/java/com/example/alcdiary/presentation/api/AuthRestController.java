@@ -34,4 +34,9 @@ public class AuthRestController {
         KakaoLoginCommand command = new KakaoLoginCommand(bearerToken);
         return kakaoLoginUseCase.execute(command);
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 }
