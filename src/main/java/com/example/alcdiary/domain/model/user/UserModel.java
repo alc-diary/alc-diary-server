@@ -47,17 +47,9 @@ public class UserModel {
     ) {
         UserModel userModel = new UserModel();
         userModel.id = idModel;
-        if (email != null) {
-            userModel.email = email;
-        } else {
-            userModel.email = "";
-        }
+        userModel.email = email;
         userModel.nickname = "";
-        if (profileImageUrl != null) {
-            userModel.profileImageUrl = profileImageUrl;
-        } else {
-            userModel.profileImageUrl = "";
-        }
+        userModel.profileImageUrl = profileImageUrl;
         userModel.theme = EUserTheme.UNKNOWN;
         userModel.gender = gender;
         userModel.ageRange = ageRange;
