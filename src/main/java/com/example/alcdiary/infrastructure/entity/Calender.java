@@ -1,6 +1,9 @@
 package com.example.alcdiary.infrastructure.entity;
 
+import com.example.alcdiary.domain.model.calender.DrinkReportConverter;
+import com.example.alcdiary.domain.model.calender.DrinkReportModel;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.sql.Time;
@@ -11,20 +14,19 @@ import java.sql.Time;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "calender")
+@DynamicUpdate
 public class Calender extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", updatable = false)
     private String userId;
 
     @Column(name = "title", length = 20, nullable = false)
     private String title;
 
-    @Column(name = "friends")
-    private String friends;
     @Column(name = "drinks", nullable = false)
     private String drinks;
     @Column(name = "hang_over")
@@ -42,19 +44,47 @@ public class Calender extends BaseEntity {
     @Column(name = "contents", nullable = false)
     private String contents;
 
+    @Column(name = "drink_report")
+    @Convert(converter = DrinkReportConverter.class)
+    private DrinkReportModel drinkReport;
+
 
     @Builder
     public Calender(
             String userId,
             String title,
-            String contents,
             String drinks,
-            String hangOver
+            String hangOver,
+            Time drinkStartTime,
+            Time drinkEndTime,
+            String imageUrl,
+            String contents
     ) {
         this.userId = userId;
         this.title = title;
-        this.contents = contents;
         this.drinks = drinks;
         this.hangOver = hangOver;
+        this.drinkStartTime = drinkStartTime;
+        this.drinkEndTime = drinkEndTime;
+        this.imageUrl = imageUrl;
+        this.contents = contents;
+    }
+
+    public void update(
+            String title,
+            String drinks,
+            String hangOver,
+            Time drinkStartTime,
+            Time drinkEndTime,
+            String imageUrl,
+            String contents) {
+        this.title = title;
+        this.drinks = drinks;
+        this.hangOver = hangOver;
+        this.drinkStartTime = drinkStartTime;
+        this.drinkEndTime = drinkEndTime;
+        this.imageUrl = imageUrl;
+        this.contents = contents;
+
     }
 }

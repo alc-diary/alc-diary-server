@@ -1,0 +1,41 @@
+package com.example.alcdiary.infrastructure.entity;
+
+import com.example.alcdiary.domain.enums.EditRole;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "user_calender")
+public class UserCalender {
+    @Id
+    @Column(name = "user_id")
+    private String userId;
+
+    @Column(name = "calender_id")
+    private Long calenderId;
+
+    @Column(name = "edit_role")
+    private EditRole editRole;
+
+
+    public UserCalender(
+            String userId,
+            Long calenderId,
+            EditRole editRole
+    ) {
+        this.userId = userId;
+        this.calenderId = calenderId;
+        this.editRole = editRole;
+    }
+
+}
