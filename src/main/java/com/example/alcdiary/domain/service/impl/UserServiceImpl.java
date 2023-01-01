@@ -7,6 +7,8 @@ import com.example.alcdiary.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 class UserServiceImpl implements UserService {
@@ -16,6 +18,11 @@ class UserServiceImpl implements UserService {
     @Override
     public UserModel save(UserModel userModel) {
         return userRepository.save(userModel);
+    }
+
+    @Override
+    public Optional<UserModel> findByNickname(String nickname) {
+        return userRepository.findByNickname(nickname);
     }
 
     @Override
