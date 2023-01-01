@@ -61,7 +61,12 @@ public class CalenderServiceImpl implements CalenderService {
         }
     }
 
-//    <T> String mapToString(T[] data) {
-//        return Arrays.toString(data);
-//    }
+    @Override
+    public void delete(Long calenderId) {
+        try {
+            calenderRepository.deleteById(calenderId);
+        } catch (Exception exception) {
+            throw new AlcException(CalenderError.DELETE_ERROR_CALENDER);
+        }
+    }
 }

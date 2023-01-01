@@ -8,4 +8,8 @@ public interface CalenderService {
     CalenderModel find(String userId, Long calenderId);
 
     void save(CreateCalenderCommand command);
+
+//    void update(CreateCalenderCommand command, Long calenderId);
+
+    void delete(Long calenderId);
 }
