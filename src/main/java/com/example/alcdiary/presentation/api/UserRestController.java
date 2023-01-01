@@ -2,6 +2,7 @@ package com.example.alcdiary.presentation.api;
 
 import com.example.alcdiary.application.GetRandomNicknameUseCase;
 import com.example.alcdiary.application.SaveUserInfoUseCase;
+import com.example.alcdiary.application.command.GetNicknameIsAvailableCommand;
 import com.example.alcdiary.application.command.SaveUserInfoCommand;
 import com.example.alcdiary.application.result.GetRandomNicknameResult;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,14 @@ public class UserRestController {
     @GetMapping("/nickname/random")
     public GetRandomNicknameResult getRandomNickname() {
         return getRandomNicknameUseCase.execute();
+    }
+
+    @GetMapping("/nickname/valid")
+    public void getNicknameIsAvailable(
+            @RequestParam String content
+    ) {
+        GetNicknameIsAvailableCommand command = new GetNicknameIsAvailableCommand(content);
+
     }
 
     @PostMapping("/info")
