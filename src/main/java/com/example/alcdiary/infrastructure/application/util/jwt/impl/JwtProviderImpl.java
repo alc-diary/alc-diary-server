@@ -19,7 +19,7 @@ import java.util.Date;
 class JwtProviderImpl implements JwtProvider {
 
     private final Environment env;
-    private static long TOKEN_VALID_PERIOD_MILLI = 5 * 60 * 1000L;
+    private static long TOKEN_VALID_PERIOD_MILLI = 30 * 24 * 60 * 60 * 1000L;
 
     @Override
     public String generateToken(UserIdModel userIdModel) {
