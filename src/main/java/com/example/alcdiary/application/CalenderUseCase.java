@@ -5,7 +5,7 @@ import com.example.alcdiary.application.result.FindCalenderResult;
 
 public interface CalenderUseCase {
 
-    FindCalenderResult find(Long calenderId);
+    FindCalenderResult find(String userId, Long calenderId);
 
     void create(CreateCalenderCommand command);
 }

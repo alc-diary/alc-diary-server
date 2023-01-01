@@ -1,9 +1,9 @@
 package com.example.alcdiary.infrastructure.entity;
 
-import com.example.alcdiary.domain.enums.DrinkType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Time;
 
 @Getter
 @Builder
@@ -17,29 +17,44 @@ public class Calender extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id")
+    private String userId;
+
     @Column(name = "title", length = 20, nullable = false)
     private String title;
+
+    @Column(name = "friends")
+    private String friends;
+    @Column(name = "drinks", nullable = false)
+    private String drinks;
+    @Column(name = "hang_over")
+    private String hangOver;
+
+    @Column(name = "drink_start_time")
+    private Time drinkStartTime;
+
+    @Column(name = "drink_end_time")
+    private Time drinkEndTime;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Column(name = "contents", nullable = false)
     private String contents;
 
-    @Column(name = "drink_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private DrinkType drinkType;
-
-    @Column(name = "hang_over")
-    private String hangOver;
 
     @Builder
     public Calender(
+            String userId,
             String title,
             String contents,
-            DrinkType drinkType,
+            String drinks,
             String hangOver
     ) {
+        this.userId = userId;
         this.title = title;
         this.contents = contents;
-        this.drinkType = drinkType;
+        this.drinks = drinks;
         this.hangOver = hangOver;
     }
 }
