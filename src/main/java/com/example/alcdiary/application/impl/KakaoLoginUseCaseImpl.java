@@ -31,10 +31,10 @@ class KakaoLoginUseCaseImpl implements KakaoLoginUseCase {
         KakaoResponse kakaoResponse = kakaoAuth.getUserInfo(command.getBearerToken());
         UserModel userModel = UserModel.of(
                 UserIdModel.of(kakaoResponse.getId(), EUserServiceType.KAKAO),
-                kakaoResponse.getKakao_account().getEmail(),
-                kakaoResponse.getKakao_account().getProfile().getProfile_image_url(),
-                EUserGender.from(kakaoResponse.getKakao_account().getGender()),
-                EUserAgeRange.from(kakaoResponse.getKakao_account().getAge_range())
+                kakaoResponse.getKakao_account().getEmail() != null ? kakaoResponse.getKakao_account().getEmail() : null,
+                kakaoResponse.getKakao_account().getProfile() != null && kakaoResponse.getKakao_account().getProfile().getProfile_image_url() != null ? kakaoResponse.getKakao_account().getProfile().getProfile_image_url() : null,
+                kakaoResponse.getKakao_account().getGender() != null ? EUserGender.from(kakaoResponse.getKakao_account().getGender()) : null,
+                kakaoResponse.getKakao_account().getAge_range() != null ? EUserAgeRange.from(kakaoResponse.getKakao_account().getAge_range()) : null
         );
         UserModel findUserModel;
         try {
