@@ -9,6 +9,7 @@ import com.example.alcdiary.application.result.GetRandomKeywordListResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -33,7 +34,10 @@ public class AdminController {
             @RequestParam String keyword,
             @RequestParam String location
     ) {
-        SaveUsernameKeywordCommand command = new SaveUsernameKeywordCommand(keyword, location);
+        if (!StringUtils.hasText(keyword.trim())) {
+            throw new IllegalArgumentException("keyword must has text");
+        }
+        SaveUsernameKeywordCommand command = new SaveUsernameKeywordCommand(keyword.trim(), location);
         saveUsernameKeywordUseCase.execute(command);
         return "redirect:/admin/user";
     }
