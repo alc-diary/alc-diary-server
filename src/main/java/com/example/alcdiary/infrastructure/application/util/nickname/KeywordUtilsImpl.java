@@ -7,6 +7,7 @@ import com.example.alcdiary.application.util.keyword.dto.SaveKeywordDto;
 import com.example.alcdiary.infrastructure.entity.Nickname;
 import com.example.alcdiary.infrastructure.entity.NicknamePK;
 import com.example.alcdiary.infrastructure.jpa.NicknameJpaRepository;
+import com.example.alcdiary.infrastructure.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 class KeywordUtilsImpl implements KeywordUtils {
 
     private final NicknameJpaRepository nicknameJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Override
     public String generateNickname() {
@@ -27,8 +29,14 @@ class KeywordUtilsImpl implements KeywordUtils {
         Nickname second = nicknameJpaRepository
                 .findByLocation(Nickname.ELocation.SECOND.toString())
                 .get(0);
-
-        return first.getKeyword() + " " + second.getKeyword();
+        String generatedNickname = first.getKeyword() + " " + second.getKeyword();
+        String randomNickname = generatedNickname;
+        while (userJpaRepository.findByNickname(randomNickname).isPresent()) {
+            randomNickname = generatedNickname;
+            int randomNumber = 1 + (int) Math.floor(Math.random() * 999);
+            randomNickname += randomNumber;
+        }
+        return randomNickname;
     }
 
     @Override
