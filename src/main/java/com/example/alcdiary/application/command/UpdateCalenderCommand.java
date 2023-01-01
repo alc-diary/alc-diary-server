@@ -1,6 +1,5 @@
 package com.example.alcdiary.application.command;
 
-import com.example.alcdiary.domain.model.calender.DrinkReportModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,7 @@ import java.sql.Time;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCalenderCommand {
+public class UpdateCalenderCommand {
     private String userId;
 
     private String title;
@@ -29,6 +28,4 @@ public class CreateCalenderCommand {
     private String imageUrl;
 
     private String contents;
-
-    private DrinkReportModel drinkReport;
 }

@@ -22,7 +22,6 @@ public class FindCalenderResult {
 
     private String drinkTime;
 
-    private String[] friends;
 
     private DrinksModel[] drinks;
     private String hangOver;
@@ -37,7 +36,6 @@ public class FindCalenderResult {
         return FindCalenderResult.builder()
                 .calenderId(calenderModel.getId())
                 .title(calenderModel.getTitle())
-                .friends(calenderModel.getFriends())
                 .drinkTime(calenderModel.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) + drinkTimes)
                 .drinks(calenderModel.getDrinks())
                 .hangOver(calenderModel.getHangOver())
@@ -51,7 +49,6 @@ public class FindCalenderResult {
                 .calenderId(calenderId)
                 .title(title)
                 .drinkTime(drinkTime)
-                .friends(friends)
                 .drinks(drinks)
                 .totalDrinkCount(Arrays.stream(drinks)
                         .mapToInt(DrinksModel::getQuantity).sum())

@@ -16,7 +16,6 @@ public class FindCalenderResponse {
     private String title;
 
     private String drinkTime;
-    private String[] friends;
 
     private DrinksModel[] drinks;
     private Integer totalDrinkCount;
