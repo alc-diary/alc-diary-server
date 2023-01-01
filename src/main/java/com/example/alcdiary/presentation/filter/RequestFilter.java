@@ -41,6 +41,7 @@ public class RequestFilter extends OncePerRequestFilter {
             throw new AlcException(AuthError.EXPIRED_ACCESS_TOKEN);
         }
         UserIdModel userIdModel = jwtProvider.getKey(bearerToken);
+        request.setAttribute("userIdModel", userIdModel);
         log.info("end-point: {}, userId: {}", requestURI, userIdModel.parse());
         filterChain.doFilter(request, response);
     }
