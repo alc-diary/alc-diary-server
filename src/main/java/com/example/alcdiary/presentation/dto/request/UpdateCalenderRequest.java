@@ -1,23 +1,22 @@
-package com.example.alcdiary.application.command;
+package com.example.alcdiary.presentation.dto.request;
 
-import com.example.alcdiary.domain.model.calender.DrinkReportModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CreateCalenderCommand {
-    private String userId;
+@AllArgsConstructor
+public class UpdateCalenderRequest {
 
+    @NotNull
     private String title;
 
+    @NotNull
     private DrinksModel[] drinks;
 
     private String hangOver;
@@ -29,6 +28,4 @@ public class CreateCalenderCommand {
     private String imageUrl;
 
     private String contents;
-
-    private DrinkReportModel drinkReport;
 }

@@ -17,7 +17,6 @@ public class CalenderModel {
     private Time drinkEndTime;
 
     private LocalDateTime createdAt;
-    private String[] friends;
 
     private DrinksModel[] drinks;
     private String hangOver;
