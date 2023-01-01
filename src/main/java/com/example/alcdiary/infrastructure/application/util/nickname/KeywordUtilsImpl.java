@@ -31,12 +31,15 @@ class KeywordUtilsImpl implements KeywordUtils {
                 .get(0);
         String generatedNickname = first.getKeyword() + " " + second.getKeyword();
         String randomNickname = generatedNickname;
-        int count = 0;
-        while (userJpaRepository.findByNickname(randomNickname).isPresent() && count < 10) {
+        int count = 1;
+        while (userJpaRepository.findByNickname(randomNickname).isPresent() && count <= 10) {
             randomNickname = generatedNickname;
             int randomNumber = 1 + (int) Math.floor(Math.random() * 999);
             randomNickname += randomNumber;
             count++;
+        }
+        if (count == 10) {
+            throw new IllegalArgumentException("please retry");
         }
         return randomNickname;
     }
