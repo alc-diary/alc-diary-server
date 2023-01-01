@@ -7,6 +7,7 @@ import com.example.alcdiary.application.command.GetNicknameIsAvailableCommand;
 import com.example.alcdiary.application.command.SaveUserInfoCommand;
 import com.example.alcdiary.application.result.GetNicknameIsAvailableResult;
 import com.example.alcdiary.application.result.GetRandomNicknameResult;
+import com.example.alcdiary.application.util.keyword.KeywordUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
