@@ -10,6 +10,8 @@ import com.example.alcdiary.infrastructure.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Repository
 class UserRepositoryImpl implements UserRepository {
@@ -29,5 +31,11 @@ class UserRepositoryImpl implements UserRepository {
                 .findById(userId.parse())
                 .orElseThrow(() -> new AlcException(UserError.NOT_FOUND_USER));
         return user.convertToDomainModel();
+    }
+
+    @Override
+    public Optional<UserModel> findByNickname(String nickname) {
+        return userJpaRepository.findByNickname(nickname)
+                .map(User::convertToDomainModel);
     }
 }
