@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/calender")
 public class CalenderController {
     private final CalenderUseCase calenderUseCase;
 
-    @GetMapping(value = "/calender/{userId}/{calenderId}")
+    /**
+     * 캘린더 상세 조회
+     */
+    @GetMapping(value = "/{userId}/{calenderId}")
     public FindCalenderResponse find(
             @PathVariable String userId,
             @PathVariable(name = "calenderId") Long calenderId
@@ -20,8 +24,15 @@ public class CalenderController {
         return calenderUseCase.find(userId,calenderId).toResponse();
     }
 
+    /**
+     *  캘린더 월별 조회 / 일별 조회
+     */
+    @GetMapping(value = "")
+    public void  search() {
 
-    @PostMapping(value = "/calender/{userId}")
+    }
+
+    @PostMapping(value = "/{userId}")
     public void create(
             @RequestBody CreateCalenderRequest request,
             @PathVariable String userId) {
@@ -38,5 +49,23 @@ public class CalenderController {
                         .contents(request.getContents())
                         .build()
         );
+    }
+
+    /**
+     *  캘린더 내용 수정
+     */
+    @PutMapping(value = "")
+    public void update() {
+
+    }
+
+    /**
+     *  캘린더 삭제, 권한
+     */
+    @DeleteMapping(value = "/{calenderId}")
+    public void delete(
+            @PathVariable String calenderId,
+            @RequestParam UserIdModel userIdModel) {
+
     }
 }
