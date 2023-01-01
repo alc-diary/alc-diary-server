@@ -14,8 +14,9 @@ public class CalenderUseCaseImpl implements CalenderUseCase {
     private final CalenderService calenderService;
 
     @Override
-    public FindCalenderResult find(Long calenderId) {
-        return new FindCalenderResult().fromModel(calenderService.find(calenderId));
+    public FindCalenderResult find(String userId, Long calenderId){
+         return new FindCalenderResult().
+                fromModel(calenderService.find(userId,calenderId));
     }
 
     @Override
