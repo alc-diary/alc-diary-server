@@ -2,17 +2,15 @@ package com.example.alcdiary.application.command;
 
 import com.example.alcdiary.domain.model.calender.DrinkReportModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 
 @Getter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class CreateCalenderCommand {
     private String userId;
 
