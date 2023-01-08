@@ -3,13 +3,16 @@ package com.example.alcdiary.domain.service.impl;
 import com.example.alcdiary.application.command.CreateCalenderCommand;
 import com.example.alcdiary.application.command.SearchCalenderCommand;
 import com.example.alcdiary.application.command.UpdateCalenderCommand;
+import com.example.alcdiary.domain.enums.EditRole;
 import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.CalenderError;
 import com.example.alcdiary.domain.model.calender.CalenderModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
 import com.example.alcdiary.domain.service.CalenderService;
 import com.example.alcdiary.infrastructure.entity.Calender;
+import com.example.alcdiary.infrastructure.entity.UserCalender;
 import com.example.alcdiary.infrastructure.jpa.CalenderRepository;
+import com.example.alcdiary.infrastructure.jpa.UserCalenderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CalenderServiceImpl implements CalenderService {
     private final CalenderRepository calenderRepository;
+    private final UserCalenderRepository userCalenderRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -50,22 +54,25 @@ public class CalenderServiceImpl implements CalenderService {
 
     @Override
     @Transactional
-    public void save(CreateCalenderCommand command) {
-        // TODO: user_calender 도 저장해야함
+    public void saveUserAndCalenderData(CreateCalenderCommand command) {
         try {
-            calenderRepository.save(
-                    Calender.builder()
-                            .userId(command.getUserId())
-                            .title(command.getTitle())
-                            .drinks(objectMapper.writeValueAsString(command.getDrinks()))
-                            .hangOver(command.getHangOver())
-                            .drinkStartTime(command.getDrinkStartTime())
-                            .drinkEndTime(command.getDrinkEndTime())
-                            .imageUrl(command.getImageUrl())
-                            .contents(command.getContents())
-                            .drinkReport(command.getDrinkReport())
-                            .build()
-            );
+            Calender calender = Calender.builder()
+                    .userId(command.getUserId())
+                    .title(command.getTitle())
+                    .drinks(objectMapper.writeValueAsString(command.getDrinks()))
+                    .hangOver(command.getHangOver())
+                    .drinkStartTime(command.getDrinkStartTime())
+                    .drinkEndTime(command.getDrinkEndTime())
+                    .imageUrl(command.getImageUrl())
+                    .contents(command.getContents())
+                    .drinkReport(command.getDrinkReport())
+                    .build();
+            calenderRepository.save(calender);
+            userCalenderRepository.save(UserCalender.builder()
+                    .editRole(EditRole.EDITOR)
+                    .userId(command.getUserId())
+                    .calenderId(calender.getId())
+                    .build());
         } catch (Throwable e) {
             throw new AlcException(CalenderError.COULD_NOT_SAVE);
         }
@@ -74,7 +81,6 @@ public class CalenderServiceImpl implements CalenderService {
     @Override
     @Transactional
     public void update(UpdateCalenderCommand command, Long calenderId) {
-        // TODO: user_calender 권한 조회 시 userId와 일치하는 것만
         Calender calender = calenderRepository.findById(calenderId).orElseThrow(() -> new AlcException(CalenderError.NOT_FOUND_CALENDER));
         try {
             calender.update(
@@ -90,9 +96,8 @@ public class CalenderServiceImpl implements CalenderService {
     @Override
     @Transactional
     public void delete(Long calenderId, String userId) {
-        // TODO: user_calender 권한 조회 시 userId와 일치하는 것만
         try {
-            calenderRepository.deleteCalenderById(calenderId, userId);
+            calenderRepository.deleteCalenderByUserIdAndId(userId, calenderId);
         } catch (Exception exception) {
             throw new AlcException(CalenderError.DELETE_ERROR_CALENDER);
         }
