@@ -16,6 +16,8 @@ public class UpdateCalenderRequest {
     @NotNull
     private String title;
 
+    private String[] friends;
+
     @NotNull
     private DrinksModel[] drinks;
 

@@ -15,6 +15,8 @@ public class CreateCalenderRequest {
     @NotNull
     private String title;
 
+    private String[] friends;
+
     @NotNull
     private DrinksModel[] drinks;
     private String hangOver;

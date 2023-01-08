@@ -17,6 +17,8 @@ public class UpdateCalenderCommand {
 
     private String title;
 
+    private String[] friends;
+
     private DrinksModel[] drinks;
 
     private String hangOver;

@@ -13,6 +13,8 @@ public class CalenderModel {
     private Long id;
     private String title;
 
+    private String[] friends;
+
     private Time drinkStartTime;
     private Time drinkEndTime;
 

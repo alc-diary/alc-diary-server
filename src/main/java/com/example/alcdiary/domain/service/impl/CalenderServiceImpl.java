@@ -21,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -68,17 +71,14 @@ public class CalenderServiceImpl implements CalenderService {
                     .drinks(objectMapper.writeValueAsString(command.getDrinks()))
                     .hangOver(command.getHangOver())
                     .drinkStartTime(command.getDrinkStartTime())
-                    .drinkEndTime((command.getDrinkEndTime()== null) ? Time.valueOf(LocalDateTime.now().toLocalTime()): command.getDrinkEndTime())
+                    .drinkEndTime((command.getDrinkEndTime() == null) ? Time.valueOf(LocalDateTime.now().toLocalTime()) : command.getDrinkEndTime())
                     .imageUrl(command.getImageUrl())
                     .contents(command.getContents())
                     .drinkReport(DrinkType.calculate(command.getDrinks()))
                     .build();
             calenderRepository.save(calender);
-            userCalenderRepository.save(UserCalender.builder()
-                    .editRole(EditRole.EDITOR)
-                    .userId(command.getUserId())
-                    .calenderId(calender.getId())
-                    .build());
+
+            saveUserCalenders(command, calender.getId());
         } catch (Throwable e) {
             throw new AlcException(CalenderError.COULD_NOT_SAVE);
         }
@@ -103,9 +103,28 @@ public class CalenderServiceImpl implements CalenderService {
     @Transactional
     public void delete(Long calenderId, String userId) {
         try {
-            calenderRepository.deleteCalenderByUserIdAndId(userId, calenderId);
+            calenderRepository.deleteCalenderById(calenderId);
         } catch (Exception exception) {
             throw new AlcException(CalenderError.DELETE_ERROR_CALENDER);
         }
+    }
+
+
+    private void saveUserCalenders(CreateCalenderCommand command, Long calenderId) {
+        ArrayList<UserCalender> userCalenders = new ArrayList<>();
+        userCalenders.add(UserCalender.builder()
+                .editRole(EditRole.EDITOR)
+                .userId(command.getUserId())
+                .calenderId(calenderId)
+                .build());
+
+        List<UserCalender> viewer = Arrays.stream(command.getFriends())
+                .map(friend -> UserCalender.builder().editRole(EditRole.VIEWER)
+                        .userId(friend)
+                        .calenderId(calenderId).build())
+                .toList();
+        userCalenders.addAll(viewer);
+
+        userCalenderRepository.saveAll(userCalenders);
     }
 }
