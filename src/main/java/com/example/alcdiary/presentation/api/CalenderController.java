@@ -60,18 +60,9 @@ public class CalenderController {
     }
 
     /**
-     * 캘린더 간편저장(메인)
-     */
-    @PostMapping(value = "/easy")
-    public void createEasy() {
-
-    }
-
-
-    /**
      * 캘린더 내용 수정
      */
-    @PutMapping(value = "/{calenderId}")
+    @PatchMapping(value = "/{calenderId}")
     public void update(@PathVariable Long calenderId,
                        @RequestAttribute UserIdModel userIdModel,
                        @RequestBody UpdateCalenderRequest request) {
