@@ -9,5 +9,5 @@ public interface CalenderRepository extends JpaRepository<Calender, Long> {
 
     Optional<Calender> findByUserIdAndId(String userId, Long id);
 
-    void deleteCalenderByUserIdAndId(String userId,Long calenderId);
+    void deleteCalenderById(Long calenderId);
 }

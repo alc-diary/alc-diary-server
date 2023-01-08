@@ -16,6 +16,8 @@ public class CreateCalenderCommand {
 
     private String title;
 
+    private String [] friends;
+
     private DrinksModel[] drinks;
 
     private String hangOver;
