@@ -1,5 +1,6 @@
 package com.example.alcdiary.application.result;
 
+import com.example.alcdiary.domain.enums.DrinkType;
 import com.example.alcdiary.domain.model.calender.CalenderModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
 import com.example.alcdiary.presentation.dto.response.FindCalenderResponse;
@@ -7,7 +8,6 @@ import lombok.*;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
 @Getter
 @NoArgsConstructor
@@ -19,6 +19,8 @@ public class FindCalenderResult {
     private Long calenderId;
 
     private String title;
+
+    private String[] friends;
 
     private String drinkTime;
 
@@ -36,6 +38,7 @@ public class FindCalenderResult {
         return FindCalenderResult.builder()
                 .calenderId(calenderModel.getId())
                 .title(calenderModel.getTitle())
+                .friends(calenderModel.getFriends())
                 .drinkTime(calenderModel.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) + drinkTimes)
                 .drinks(calenderModel.getDrinks())
                 .hangOver(calenderModel.getHangOver())
@@ -48,10 +51,10 @@ public class FindCalenderResult {
         return FindCalenderResponse.builder()
                 .calenderId(calenderId)
                 .title(title)
+                .friends(friends)
                 .drinkTime(drinkTime)
                 .drinks(drinks)
-                .totalDrinkCount(Arrays.stream(drinks)
-                        .mapToInt(DrinksModel::getQuantity).sum())
+                .totalDrinkCount(DrinkType.calculateTotalDrinks(drinks))
                 .hangOver(hangOver)
                 .contents(contents)
                 .imageUrl(imageUrl)
