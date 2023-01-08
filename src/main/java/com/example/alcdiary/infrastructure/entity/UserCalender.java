@@ -12,12 +12,14 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@IdClass(UserCalenderPK.class)
 @Table(name = "user_calender")
 public class UserCalender {
     @Id
     @Column(name = "user_id")
     private String userId;
 
+    @Id
     @Column(name = "calender_id")
     private Long calenderId;
 
