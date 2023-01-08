@@ -31,6 +31,11 @@ public class CalenderUseCaseImpl implements CalenderUseCase {
     }
 
     @Override
+    public void createSimple(CreateCalenderCommand command) {
+        calenderService.saveUserAndCalenderData(command);
+    }
+
+    @Override
     public void update(UpdateCalenderCommand command, Long calenderId) {
         if (!userCalenderService.validateUserRole(command.getUserId(), calenderId)) return;
         calenderService.update(command, calenderId);

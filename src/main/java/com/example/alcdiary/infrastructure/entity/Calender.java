@@ -3,6 +3,7 @@ package com.example.alcdiary.infrastructure.entity;
 import com.example.alcdiary.domain.model.calender.DrinkReportConverter;
 import com.example.alcdiary.domain.model.calender.DrinkReportModel;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.sql.Time;
 @Entity
 @Table(name = "calender")
 @DynamicUpdate
+@DynamicInsert
 public class Calender extends BaseEntity {
 
     @Id
@@ -41,7 +43,7 @@ public class Calender extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "contents", nullable = false)
+    @Column(name = "contents")
     private String contents;
 
     @Column(name = "drink_report")

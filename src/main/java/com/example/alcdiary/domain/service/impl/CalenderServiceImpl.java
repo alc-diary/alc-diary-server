@@ -3,6 +3,7 @@ package com.example.alcdiary.domain.service.impl;
 import com.example.alcdiary.application.command.CreateCalenderCommand;
 import com.example.alcdiary.application.command.SearchCalenderCommand;
 import com.example.alcdiary.application.command.UpdateCalenderCommand;
+import com.example.alcdiary.domain.enums.DrinkType;
 import com.example.alcdiary.domain.enums.EditRole;
 import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.CalenderError;
@@ -18,12 +19,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class CalenderServiceImpl implements CalenderService {
     private final CalenderRepository calenderRepository;
     private final UserCalenderRepository userCalenderRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final String DEFAULT_TITLE = "오늘의 음주 기록";
 
     @Override
     public CalenderModel find(String userId, Long calenderId) {
@@ -58,14 +64,14 @@ public class CalenderServiceImpl implements CalenderService {
         try {
             Calender calender = Calender.builder()
                     .userId(command.getUserId())
-                    .title(command.getTitle())
+                    .title((command.getTitle() == null) ? DEFAULT_TITLE : command.getTitle())
                     .drinks(objectMapper.writeValueAsString(command.getDrinks()))
                     .hangOver(command.getHangOver())
                     .drinkStartTime(command.getDrinkStartTime())
-                    .drinkEndTime(command.getDrinkEndTime())
+                    .drinkEndTime((command.getDrinkEndTime()== null) ? Time.valueOf(LocalDateTime.now().toLocalTime()): command.getDrinkEndTime())
                     .imageUrl(command.getImageUrl())
                     .contents(command.getContents())
-                    .drinkReport(command.getDrinkReport())
+                    .drinkReport(DrinkType.calculate(command.getDrinks()))
                     .build();
             calenderRepository.save(calender);
             userCalenderRepository.save(UserCalender.builder()
