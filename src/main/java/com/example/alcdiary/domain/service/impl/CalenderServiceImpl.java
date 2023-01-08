@@ -63,7 +63,7 @@ public class CalenderServiceImpl implements CalenderService {
 
     @Override
     @Transactional
-    public void saveUserAndCalenderData(CreateCalenderCommand command) {
+    public void save(CreateCalenderCommand command) {
         try {
             Calender calender = Calender.builder()
                     .userId(command.getUserId())
@@ -77,8 +77,7 @@ public class CalenderServiceImpl implements CalenderService {
                     .drinkReport(DrinkType.calculate(command.getDrinks()))
                     .build();
             calenderRepository.save(calender);
-
-            saveUserCalenders(command, calender.getId());
+            saveUserCalenders(command,calender.getId());
         } catch (Throwable e) {
             throw new AlcException(CalenderError.COULD_NOT_SAVE);
         }
@@ -119,7 +118,8 @@ public class CalenderServiceImpl implements CalenderService {
                 .build());
 
         List<UserCalender> viewer = Arrays.stream(command.getFriends())
-                .map(friend -> UserCalender.builder().editRole(EditRole.VIEWER)
+                .map(friend -> UserCalender.builder()
+                        .editRole(EditRole.VIEWER)
                         .userId(friend)
                         .calenderId(calenderId).build())
                 .toList();

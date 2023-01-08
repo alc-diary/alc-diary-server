@@ -27,12 +27,12 @@ public class CalenderUseCaseImpl implements CalenderUseCase {
     @Override
     public void create(CreateCalenderCommand command) {
         command.setDrinkReport(DrinkType.calculate(command.getDrinks()));
-        calenderService.saveUserAndCalenderData(command);
+        calenderService.save(command);
     }
 
     @Override
     public void createSimple(CreateCalenderCommand command) {
-        calenderService.saveUserAndCalenderData(command);
+        calenderService.save(command);
     }
 
     @Override

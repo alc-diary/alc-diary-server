@@ -12,7 +12,7 @@ public interface CalenderService {
 
     Calender[] search(SearchCalenderCommand command);
 
-    void saveUserAndCalenderData(CreateCalenderCommand command);
+    void save(CreateCalenderCommand command);
 
     void update(UpdateCalenderCommand command, Long calenderId);
 
