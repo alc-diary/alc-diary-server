@@ -9,7 +9,9 @@ import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.CalenderError;
 import com.example.alcdiary.domain.model.calender.CalenderModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
+import com.example.alcdiary.domain.model.calender.UserCalenderModel;
 import com.example.alcdiary.domain.service.CalenderService;
+import com.example.alcdiary.infrastructure.domain.repository.impl.UserCalenderRepositoryImpl;
 import com.example.alcdiary.infrastructure.entity.Calender;
 import com.example.alcdiary.infrastructure.entity.UserCalender;
 import com.example.alcdiary.infrastructure.jpa.CalenderRepository;
@@ -29,6 +31,7 @@ import java.util.List;
 @Service
 public class CalenderServiceImpl implements CalenderService {
     private final CalenderRepository calenderRepository;
+    private final UserCalenderRepositoryImpl userCalenderRepositoryImpl;
     private final UserCalenderRepository userCalenderRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -37,11 +40,12 @@ public class CalenderServiceImpl implements CalenderService {
     @Override
     public CalenderModel find(String userId, Long calenderId) {
         try {
-            Calender calender = calenderRepository.findByUserIdAndId(userId, calenderId)
-                    .orElseThrow(() -> new AlcException(CalenderError.NOT_FOUND_CALENDER));
+            UserCalenderModel result = userCalenderRepositoryImpl.findCalenders(userId, calenderId);
+            Calender calender = result.getCalender();
             return CalenderModel.builder()
                     .id(calender.getId())
                     .title(calender.getTitle())
+                    .friends(result.getFriends().toArray(new String[0]))
                     .drinkStartTime(calender.getDrinkStartTime())
                     .drinkEndTime(calender.getDrinkEndTime())
                     .createdAt(calender.getCreatedAt())
@@ -77,7 +81,7 @@ public class CalenderServiceImpl implements CalenderService {
                     .drinkReport(DrinkType.calculate(command.getDrinks()))
                     .build();
             calenderRepository.save(calender);
-            saveUserCalenders(command,calender.getId());
+            saveUserCalenders(command, calender.getId());
         } catch (Throwable e) {
             throw new AlcException(CalenderError.COULD_NOT_SAVE);
         }

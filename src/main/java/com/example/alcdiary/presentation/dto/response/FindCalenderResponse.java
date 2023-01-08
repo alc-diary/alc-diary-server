@@ -15,6 +15,8 @@ public class FindCalenderResponse {
 
     private String title;
 
+    private String[] friends;
+
     private String drinkTime;
 
     private DrinksModel[] drinks;

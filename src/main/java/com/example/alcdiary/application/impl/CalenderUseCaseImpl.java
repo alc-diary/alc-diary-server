@@ -19,7 +19,6 @@ public class CalenderUseCaseImpl implements CalenderUseCase {
 
     @Override
     public FindCalenderResult find(String userId, Long calenderId) {
-        // TODO: user_calender에서 join 걸어서 찾기
         return new FindCalenderResult().
                 fromModel(calenderService.find(userId, calenderId));
     }
