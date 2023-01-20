@@ -4,13 +4,15 @@ import com.example.alcdiary.application.command.CreateCalenderCommand;
 import com.example.alcdiary.application.command.SearchCalenderCommand;
 import com.example.alcdiary.application.command.UpdateCalenderCommand;
 import com.example.alcdiary.domain.model.calender.CalenderModel;
-import com.example.alcdiary.infrastructure.entity.Calender;
+import com.example.alcdiary.domain.model.calender.SearchCalenderModel;
+
+import java.util.List;
 
 public interface CalenderService {
 
     CalenderModel find(String userId, Long calenderId);
 
-    Calender[] search(SearchCalenderCommand command);
+    List<SearchCalenderModel>  search(SearchCalenderCommand command);
 
     void save(CreateCalenderCommand command);
 

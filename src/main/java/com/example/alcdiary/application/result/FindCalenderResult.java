@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -25,7 +26,7 @@ public class FindCalenderResult {
     private String drinkTime;
 
 
-    private DrinksModel[] drinks;
+    private List<DrinksModel> drinks;
     private String hangOver;
     private String contents;
 
