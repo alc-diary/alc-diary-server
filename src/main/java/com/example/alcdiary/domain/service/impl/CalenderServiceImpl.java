@@ -9,6 +9,7 @@ import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.CalenderError;
 import com.example.alcdiary.domain.model.calender.CalenderModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
+import com.example.alcdiary.domain.model.calender.SearchCalenderModel;
 import com.example.alcdiary.domain.model.calender.UserCalenderModel;
 import com.example.alcdiary.domain.service.CalenderService;
 import com.example.alcdiary.infrastructure.domain.repository.impl.UserCalenderRepositoryImpl;
@@ -16,7 +17,6 @@ import com.example.alcdiary.infrastructure.entity.Calender;
 import com.example.alcdiary.infrastructure.entity.UserCalender;
 import com.example.alcdiary.infrastructure.jpa.CalenderRepository;
 import com.example.alcdiary.infrastructure.jpa.UserCalenderRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +25,7 @@ import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,8 +34,6 @@ public class CalenderServiceImpl implements CalenderService {
     private final CalenderRepository calenderRepository;
     private final UserCalenderRepositoryImpl userCalenderRepositoryImpl;
     private final UserCalenderRepository userCalenderRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private static final String DEFAULT_TITLE = "오늘의 음주 기록";
 
     @Override
@@ -51,7 +50,7 @@ public class CalenderServiceImpl implements CalenderService {
                     .createdAt(calender.getCreatedAt())
                     .hangOver(calender.getHangOver())
                     .contents(calender.getContents())
-                    .drinks(objectMapper.readValue(calender.getDrinks(), DrinksModel[].class))
+                    .drinks(calender.getDrinks())
                     .imageUrl(calender.getImageUrl().split(","))
                     .build();
         } catch (Throwable e) {
@@ -60,9 +59,19 @@ public class CalenderServiceImpl implements CalenderService {
     }
 
     @Override
-    public Calender[] search(SearchCalenderCommand command) {
-//        Calender[] calenders = calenderRepository.search(CalenderSpec.searchWith(command.getMonth(), command.getDay()));
-        return new Calender[0];
+    public List<SearchCalenderModel> search(SearchCalenderCommand command) {
+        try {
+            List<Calender> calenders = userCalenderRepositoryImpl.search(command.getMonth(), command.getDay(), command.getUserId());
+            return calenders.stream().map(calender -> new SearchCalenderModel(
+                    calender.getId(),
+                    calender.getTitle(),
+                    calender.getDrinks().stream().max(Comparator.comparing(DrinksModel::getQuantity)).get().getType().name(),
+                    calender.getDrinks().stream().mapToLong(DrinksModel::getQuantity).sum(),
+                    calender.getDrinkStartTime().toString()
+            )).toList();
+        } catch (Throwable e) {
+            throw new AlcException(CalenderError.NOT_FOUND_CALENDER);
+        }
     }
 
     @Override
@@ -72,7 +81,7 @@ public class CalenderServiceImpl implements CalenderService {
             Calender calender = Calender.builder()
                     .userId(command.getUserId())
                     .title((command.getTitle() == null) ? DEFAULT_TITLE : command.getTitle())
-                    .drinks(objectMapper.writeValueAsString(command.getDrinks()))
+                    .drinks(command.getDrinks())
                     .hangOver(command.getHangOver())
                     .drinkStartTime(command.getDrinkStartTime())
                     .drinkEndTime((command.getDrinkEndTime() == null) ? Time.valueOf(LocalDateTime.now().toLocalTime()) : command.getDrinkEndTime())
@@ -93,7 +102,7 @@ public class CalenderServiceImpl implements CalenderService {
         Calender calender = calenderRepository.findById(calenderId).orElseThrow(() -> new AlcException(CalenderError.NOT_FOUND_CALENDER));
         try {
             calender.update(
-                    command.getTitle(), objectMapper.writeValueAsString(command.getDrinks()),
+                    command.getTitle(), command.getDrinks(),
                     command.getHangOver(), command.getDrinkStartTime(),
                     command.getDrinkEndTime(), command.getImageUrl(), command.getContents()
             );

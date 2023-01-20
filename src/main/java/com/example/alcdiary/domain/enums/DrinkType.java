@@ -3,7 +3,7 @@ package com.example.alcdiary.domain.enums;
 import com.example.alcdiary.domain.model.calender.DrinkReportModel;
 import com.example.alcdiary.domain.model.calender.DrinksModel;
 
-import java.util.Arrays;
+import java.util.List;
 
 public enum DrinkType {
     SOJU(800, 70),
@@ -20,12 +20,12 @@ public enum DrinkType {
     }
 
     // TODO: 마신 잔 수 세는 계산기 필요
-    public static Integer calculateTotalDrinks(DrinksModel[] drinks) {
-        return Arrays.stream(drinks)
+    public static Integer calculateTotalDrinks(List<DrinksModel> drinks) {
+        return drinks.stream()
                 .mapToInt(DrinksModel::getQuantity).sum();
     }
 
-    public static DrinkReportModel calculate(DrinksModel[] drinksModel) {
+    public static DrinkReportModel calculate(List<DrinksModel> drinksModel) {
         int prices = 0;
         int calories = 0;
         //  가격 * 수량
