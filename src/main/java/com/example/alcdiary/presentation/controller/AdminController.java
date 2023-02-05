@@ -35,7 +35,7 @@ public class AdminController {
             @RequestParam String location
     ) {
         if (!StringUtils.hasText(keyword.trim())) {
-            throw new IllegalArgumentException("keyword must has text");
+            throw new IllegalArgumentException("keyword must have text");
         }
         SaveUsernameKeywordCommand command = new SaveUsernameKeywordCommand(keyword.trim(), location);
         saveUsernameKeywordUseCase.execute(command);
