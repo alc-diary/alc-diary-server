@@ -58,6 +58,8 @@ public class CalenderUseCaseImpl implements CalenderUseCase {
                 calender.calenderId(),
                 calender.title(),
                 calender.drinkType(),
+                calender.userProfileImageUrls(),
+                calender.userId(),
                 calender.drinkCount(),
                 calender.drinkTime()
         )).toList();
