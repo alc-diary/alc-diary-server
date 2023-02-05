@@ -7,10 +7,7 @@ import com.example.alcdiary.domain.enums.DrinkType;
 import com.example.alcdiary.domain.enums.EditRole;
 import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.CalenderError;
-import com.example.alcdiary.domain.model.calender.CalenderModel;
-import com.example.alcdiary.domain.model.calender.DrinksModel;
-import com.example.alcdiary.domain.model.calender.SearchCalenderModel;
-import com.example.alcdiary.domain.model.calender.UserCalenderModel;
+import com.example.alcdiary.domain.model.calender.*;
 import com.example.alcdiary.domain.service.CalenderService;
 import com.example.alcdiary.infrastructure.domain.repository.impl.UserCalenderRepositoryImpl;
 import com.example.alcdiary.infrastructure.entity.Calender;
@@ -61,13 +58,15 @@ public class CalenderServiceImpl implements CalenderService {
     @Override
     public List<SearchCalenderModel> search(SearchCalenderCommand command) {
         try {
-            List<Calender> calenders = userCalenderRepositoryImpl.search(command.getMonth(), command.getDay(), command.getUserId());
-            return calenders.stream().map(calender -> new SearchCalenderModel(
-                    calender.getId(),
-                    calender.getTitle(),
-                    calender.getDrinks().stream().max(Comparator.comparing(DrinksModel::getQuantity)).get().getType().name(),
-                    calender.getDrinks().stream().mapToLong(DrinksModel::getQuantity).sum(),
-                    calender.getDrinkStartTime().toString()
+            List<CalenderAndUserDataModel> calenderAndUsers = userCalenderRepositoryImpl.search(command.getMonth(), command.getDay(), command.getUserId());
+            return calenderAndUsers.stream().map(calenderAndUserDataModel -> new SearchCalenderModel(
+                    calenderAndUserDataModel.getCalenderId(),
+                    calenderAndUserDataModel.getTitle(),
+                    calenderAndUserDataModel.getDrinkType().stream().max(Comparator.comparing(DrinksModel::getQuantity)).get().getType().name(),
+                    calenderAndUserDataModel.getUserProfileImageUrls(),
+                    calenderAndUserDataModel.getUserId(),
+                    calenderAndUserDataModel.getDrinkType().stream().mapToLong(DrinksModel::getQuantity).sum(),
+                    calenderAndUserDataModel.getDrinkStartTime().toString() + calenderAndUserDataModel.getDrinkEndTime().toString()
             )).toList();
         } catch (Throwable e) {
             throw new AlcException(CalenderError.NOT_FOUND_CALENDER);
