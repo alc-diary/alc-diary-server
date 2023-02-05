@@ -11,5 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchCalenderCommand {
     private Integer month;
+
     private Integer day;
+
+    private String userId;
 }

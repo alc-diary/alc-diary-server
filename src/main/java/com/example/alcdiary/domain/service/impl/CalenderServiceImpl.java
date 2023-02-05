@@ -3,38 +3,51 @@ package com.example.alcdiary.domain.service.impl;
 import com.example.alcdiary.application.command.CreateCalenderCommand;
 import com.example.alcdiary.application.command.SearchCalenderCommand;
 import com.example.alcdiary.application.command.UpdateCalenderCommand;
+import com.example.alcdiary.domain.enums.DrinkType;
+import com.example.alcdiary.domain.enums.EditRole;
 import com.example.alcdiary.domain.exception.AlcException;
 import com.example.alcdiary.domain.exception.error.CalenderError;
-import com.example.alcdiary.domain.model.calender.CalenderModel;
-import com.example.alcdiary.domain.model.calender.DrinksModel;
+import com.example.alcdiary.domain.model.calender.*;
 import com.example.alcdiary.domain.service.CalenderService;
+import com.example.alcdiary.infrastructure.domain.repository.impl.UserCalenderRepositoryImpl;
 import com.example.alcdiary.infrastructure.entity.Calender;
+import com.example.alcdiary.infrastructure.entity.UserCalender;
 import com.example.alcdiary.infrastructure.jpa.CalenderRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.alcdiary.infrastructure.jpa.UserCalenderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class CalenderServiceImpl implements CalenderService {
     private final CalenderRepository calenderRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final UserCalenderRepositoryImpl userCalenderRepositoryImpl;
+    private final UserCalenderRepository userCalenderRepository;
+    private static final String DEFAULT_TITLE = "오늘의 음주 기록";
 
     @Override
     public CalenderModel find(String userId, Long calenderId) {
         try {
-            Calender calender = calenderRepository.findByUserIdAndId(userId, calenderId)
-                    .orElseThrow(() -> new AlcException(CalenderError.NOT_FOUND_CALENDER));
+            UserCalenderModel result = userCalenderRepositoryImpl.findCalenders(userId, calenderId);
+            Calender calender = result.getCalender();
             return CalenderModel.builder()
                     .id(calender.getId())
                     .title(calender.getTitle())
+                    .friends(result.getFriends().toArray(new String[0]))
                     .drinkStartTime(calender.getDrinkStartTime())
                     .drinkEndTime(calender.getDrinkEndTime())
                     .createdAt(calender.getCreatedAt())
                     .hangOver(calender.getHangOver())
                     .contents(calender.getContents())
-                    .drinks(objectMapper.readValue(calender.getDrinks(), DrinksModel[].class))
+                    .drinks(calender.getDrinks())
                     .imageUrl(calender.getImageUrl().split(","))
                     .build();
         } catch (Throwable e) {
@@ -43,29 +56,40 @@ public class CalenderServiceImpl implements CalenderService {
     }
 
     @Override
-    public Calender[] search(SearchCalenderCommand command) {
-//        Calender[] calenders = calenderRepository.search(CalenderSpec.searchWith(command.getMonth(), command.getDay()));
-        return new Calender[0];
+    public List<SearchCalenderModel> search(SearchCalenderCommand command) {
+        try {
+            List<CalenderAndUserDataModel> calenderAndUsers = userCalenderRepositoryImpl.search(command.getMonth(), command.getDay(), command.getUserId());
+            return calenderAndUsers.stream().map(calenderAndUserDataModel -> new SearchCalenderModel(
+                    calenderAndUserDataModel.getCalenderId(),
+                    calenderAndUserDataModel.getTitle(),
+                    calenderAndUserDataModel.getDrinkType().stream().max(Comparator.comparing(DrinksModel::getQuantity)).get().getType().name(),
+                    calenderAndUserDataModel.getUserProfileImageUrls(),
+                    calenderAndUserDataModel.getUserId(),
+                    calenderAndUserDataModel.getDrinkType().stream().mapToLong(DrinksModel::getQuantity).sum(),
+                    calenderAndUserDataModel.getDrinkStartTime().toString() + calenderAndUserDataModel.getDrinkEndTime().toString()
+            )).toList();
+        } catch (Throwable e) {
+            throw new AlcException(CalenderError.NOT_FOUND_CALENDER);
+        }
     }
 
     @Override
     @Transactional
     public void save(CreateCalenderCommand command) {
-        // TODO: user_calender 도 저장해야함
         try {
-            calenderRepository.save(
-                    Calender.builder()
-                            .userId(command.getUserId())
-                            .title(command.getTitle())
-                            .drinks(objectMapper.writeValueAsString(command.getDrinks()))
-                            .hangOver(command.getHangOver())
-                            .drinkStartTime(command.getDrinkStartTime())
-                            .drinkEndTime(command.getDrinkEndTime())
-                            .imageUrl(command.getImageUrl())
-                            .contents(command.getContents())
-                            .drinkReport(command.getDrinkReport())
-                            .build()
-            );
+            Calender calender = Calender.builder()
+                    .userId(command.getUserId())
+                    .title((command.getTitle() == null) ? DEFAULT_TITLE : command.getTitle())
+                    .drinks(command.getDrinks())
+                    .hangOver(command.getHangOver())
+                    .drinkStartTime(command.getDrinkStartTime())
+                    .drinkEndTime((command.getDrinkEndTime() == null) ? Time.valueOf(LocalDateTime.now().toLocalTime()) : command.getDrinkEndTime())
+                    .imageUrl(command.getImageUrl())
+                    .contents(command.getContents())
+                    .drinkReport(DrinkType.calculate(command.getDrinks()))
+                    .build();
+            calenderRepository.save(calender);
+            saveUserCalenders(command, calender.getId());
         } catch (Throwable e) {
             throw new AlcException(CalenderError.COULD_NOT_SAVE);
         }
@@ -74,11 +98,10 @@ public class CalenderServiceImpl implements CalenderService {
     @Override
     @Transactional
     public void update(UpdateCalenderCommand command, Long calenderId) {
-        // TODO: user_calender 권한 조회 시 userId와 일치하는 것만
         Calender calender = calenderRepository.findById(calenderId).orElseThrow(() -> new AlcException(CalenderError.NOT_FOUND_CALENDER));
         try {
             calender.update(
-                    command.getTitle(), objectMapper.writeValueAsString(command.getDrinks()),
+                    command.getTitle(), command.getDrinks(),
                     command.getHangOver(), command.getDrinkStartTime(),
                     command.getDrinkEndTime(), command.getImageUrl(), command.getContents()
             );
@@ -90,11 +113,30 @@ public class CalenderServiceImpl implements CalenderService {
     @Override
     @Transactional
     public void delete(Long calenderId, String userId) {
-        // TODO: user_calender 권한 조회 시 userId와 일치하는 것만
         try {
-            calenderRepository.deleteCalenderById(calenderId, userId);
+            calenderRepository.deleteCalenderById(calenderId);
         } catch (Exception exception) {
             throw new AlcException(CalenderError.DELETE_ERROR_CALENDER);
         }
+    }
+
+
+    private void saveUserCalenders(CreateCalenderCommand command, Long calenderId) {
+        ArrayList<UserCalender> userCalenders = new ArrayList<>();
+        userCalenders.add(UserCalender.builder()
+                .editRole(EditRole.EDITOR)
+                .userId(command.getUserId())
+                .calenderId(calenderId)
+                .build());
+
+        List<UserCalender> viewer = Arrays.stream(command.getFriends())
+                .map(friend -> UserCalender.builder()
+                        .editRole(EditRole.VIEWER)
+                        .userId(friend)
+                        .calenderId(calenderId).build())
+                .toList();
+        userCalenders.addAll(viewer);
+
+        userCalenderRepository.saveAll(userCalenders);
     }
 }

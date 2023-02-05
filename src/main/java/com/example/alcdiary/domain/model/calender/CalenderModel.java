@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -13,12 +14,14 @@ public class CalenderModel {
     private Long id;
     private String title;
 
+    private String[] friends;
+
     private Time drinkStartTime;
     private Time drinkEndTime;
 
     private LocalDateTime createdAt;
 
-    private DrinksModel[] drinks;
+    private List<DrinksModel> drinks;
     private String hangOver;
     private String contents;
 

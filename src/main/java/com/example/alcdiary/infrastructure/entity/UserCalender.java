@@ -6,25 +6,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@IdClass(UserCalenderPK.class)
 @Table(name = "user_calender")
 public class UserCalender {
     @Id
     @Column(name = "user_id")
     private String userId;
 
+    @Id
     @Column(name = "calender_id")
     private Long calenderId;
 
     @Column(name = "edit_role")
+    @Enumerated(EnumType.STRING)
     private EditRole editRole;
 
 
