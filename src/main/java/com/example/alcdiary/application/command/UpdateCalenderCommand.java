@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+import java.util.List;
 
 @Getter
 @Builder
@@ -17,7 +18,9 @@ public class UpdateCalenderCommand {
 
     private String title;
 
-    private DrinksModel[] drinks;
+    private String[] friends;
+
+    private List<DrinksModel> drinks;
 
     private String hangOver;
 

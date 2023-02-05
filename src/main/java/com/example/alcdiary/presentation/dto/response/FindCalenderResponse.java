@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +17,11 @@ public class FindCalenderResponse {
 
     private String title;
 
+    private String[] friends;
+
     private String drinkTime;
 
-    private DrinksModel[] drinks;
+    private List<DrinksModel> drinks;
     private Integer totalDrinkCount;
     private String hangOver;
     private String contents;

@@ -2,11 +2,15 @@ package com.example.alcdiary.infrastructure.entity;
 
 import com.example.alcdiary.domain.model.calender.DrinkReportConverter;
 import com.example.alcdiary.domain.model.calender.DrinkReportModel;
+import com.example.alcdiary.domain.model.calender.DrinksModel;
+import com.example.alcdiary.domain.model.calender.DrinksModelConverter;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,6 +19,7 @@ import java.sql.Time;
 @Entity
 @Table(name = "calender")
 @DynamicUpdate
+@DynamicInsert
 public class Calender extends BaseEntity {
 
     @Id
@@ -28,7 +33,8 @@ public class Calender extends BaseEntity {
     private String title;
 
     @Column(name = "drinks", nullable = false)
-    private String drinks;
+    @Convert(converter = DrinksModelConverter.class)
+    private List<DrinksModel> drinks;
     @Column(name = "hang_over")
     private String hangOver;
 
@@ -41,7 +47,7 @@ public class Calender extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "contents", nullable = false)
+    @Column(name = "contents")
     private String contents;
 
     @Column(name = "drink_report")
@@ -53,12 +59,13 @@ public class Calender extends BaseEntity {
     public Calender(
             String userId,
             String title,
-            String drinks,
+            List<DrinksModel> drinks,
             String hangOver,
             Time drinkStartTime,
             Time drinkEndTime,
             String imageUrl,
             String contents
+//            DrinkReportModel drinkReport
     ) {
         this.userId = userId;
         this.title = title;
@@ -68,11 +75,12 @@ public class Calender extends BaseEntity {
         this.drinkEndTime = drinkEndTime;
         this.imageUrl = imageUrl;
         this.contents = contents;
+//        this.drinkReport = drinkReport;
     }
 
     public void update(
             String title,
-            String drinks,
+            List<DrinksModel> drinks,
             String hangOver,
             Time drinkStartTime,
             Time drinkEndTime,
@@ -85,6 +93,6 @@ public class Calender extends BaseEntity {
         this.drinkEndTime = drinkEndTime;
         this.imageUrl = imageUrl;
         this.contents = contents;
-
+//        this.drinkReport = drinkReport;
     }
 }
