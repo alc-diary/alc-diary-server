@@ -5,7 +5,6 @@ import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.util.StringUtils;
 
@@ -35,10 +34,9 @@ public class Calender extends BaseEntity {
     @Column(name = "drink_end_date_time")
     private LocalDateTime drinkEndDateTime;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "json")
-    // TODO: 컨버터
-    private List<DrinkModel> drinkModel;
+    @Column(name = "drink_models")
+    @Convert(converter = DrinkModelConverter.class)
+    private List<DrinkModel> drinkModels;
 
     @Embedded
     public CalenderImage image;
@@ -50,14 +48,14 @@ public class Calender extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModel, CalenderImage image, String condition, User user) {
-        if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModel.isEmpty() || user == null)
+    public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String condition, User user) {
+        if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
             throw new DomainException();
         this.title = title;
         this.contents = contents;
         this.drinkStartDateTime = drinkStartDateTime;
         this.drinkEndDateTime = drinkEndDateTime;
-        this.drinkModel = drinkModel;
+        this.drinkModels = drinkModels;
         this.image = image;
         this.condition = condition;
         this.user = user;
