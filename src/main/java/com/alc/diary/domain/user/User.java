@@ -1,5 +1,6 @@
 package com.alc.diary.domain.user;
 
+import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
