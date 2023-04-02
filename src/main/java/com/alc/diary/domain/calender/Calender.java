@@ -45,14 +45,14 @@ public class Calender extends BaseEntity {
     @Embedded
     public CalenderImage image;
 
-    @Column(name = "drink_conditions", length = 10)
-    private String condition;
+    @Column(name = "drink_condition", length = 10)
+    private String drinkCondition;
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String condition, User user) {
+    public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String drinkCondition, User user) {
         if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
             throw new DomainException(CalenderError.INVALID_PARAMETER_INCLUDE);
         this.title = title;
@@ -61,7 +61,7 @@ public class Calender extends BaseEntity {
         this.drinkEndDateTime = drinkEndDateTime;
         this.drinkModels = drinkModels;
         this.image = image;
-        this.condition = condition;
+        this.drinkCondition = drinkCondition;
         this.user = user;
     }
 }
