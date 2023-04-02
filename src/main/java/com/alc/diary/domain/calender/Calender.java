@@ -1,5 +1,6 @@
 package com.alc.diary.domain.calender;
 
+import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.vladmihalcea.hibernate.type.json.JsonType;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @TypeDef(name = "json", typeClass = JsonType.class)
 @Table(name = "calender")
-public class Calender {
+public class Calender extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,7 +49,6 @@ public class Calender {
     @JoinColumn(name = "user_id", updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-
 
     public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModel, CalenderImage image, String condition, User user) {
         if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModel.isEmpty() || user == null)
