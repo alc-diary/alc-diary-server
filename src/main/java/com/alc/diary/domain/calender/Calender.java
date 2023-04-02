@@ -28,8 +28,8 @@ public class Calender extends BaseEntity {
     @Column(name = "title", length = 20)
     private String title;
 
-    @Column(name = "contents")
     @Lob
+    @Column(name = "contents")
     private String contents;
 
     @Column(name = "drink_start_date_time")
@@ -38,17 +38,17 @@ public class Calender extends BaseEntity {
     @Column(name = "drink_end_date_time")
     private LocalDateTime drinkEndDateTime;
 
-    @Column(name = "drink_models")
+    @Column(name = "drink_models", length = 500)
     @Convert(converter = DrinkModelConverter.class)
     private List<DrinkModel> drinkModels;
 
     @Embedded
     public CalenderImage image;
 
-    @Column(name = "condition", length = 10)
+    @Column(name = "drink_conditions", length = 10)
     private String condition;
 
-    @JoinColumn(name = "user_id", updatable = false)
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
@@ -56,12 +56,12 @@ public class Calender extends BaseEntity {
         if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
             throw new DomainException(CalenderError.INVALID_PARAMETER_INCLUDE);
         this.title = title;
-        this.contents = contents;
-        this.drinkStartDateTime = drinkStartDateTime;
-        this.drinkEndDateTime = drinkEndDateTime;
-        this.drinkModels = drinkModels;
-        this.image = image;
-        this.condition = condition;
-        this.user = user;
+        // this.contents = contents;
+        // this.drinkStartDateTime = drinkStartDateTime;
+        // this.drinkEndDateTime = drinkEndDateTime;
+        // this.drinkModels = drinkModels;
+        // this.image = image;
+        // this.condition = condition;
+        // this.user = user;
     }
 }
