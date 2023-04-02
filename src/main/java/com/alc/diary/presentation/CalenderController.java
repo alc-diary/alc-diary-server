@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/calender")
 public class CalenderController {
-    @PostMapping(value = "")
+    @PostMapping(value = "/")
     public void save() {
 
     }
