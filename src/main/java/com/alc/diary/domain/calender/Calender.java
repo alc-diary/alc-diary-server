@@ -56,12 +56,12 @@ public class Calender extends BaseEntity {
         if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
             throw new DomainException(CalenderError.INVALID_PARAMETER_INCLUDE);
         this.title = title;
-        // this.contents = contents;
-        // this.drinkStartDateTime = drinkStartDateTime;
-        // this.drinkEndDateTime = drinkEndDateTime;
-        // this.drinkModels = drinkModels;
-        // this.image = image;
-        // this.condition = condition;
-        // this.user = user;
+        this.contents = contents;
+        this.drinkStartDateTime = drinkStartDateTime;
+        this.drinkEndDateTime = drinkEndDateTime;
+        this.drinkModels = drinkModels;
+        this.image = image;
+        this.condition = condition;
+        this.user = user;
     }
 }
