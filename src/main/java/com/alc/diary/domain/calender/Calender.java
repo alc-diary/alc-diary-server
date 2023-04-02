@@ -2,7 +2,7 @@ package com.alc.diary.domain.calender;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
-import com.alc.diary.domain.exception.error.CalenderError;
+import com.alc.diary.domain.calender.error.CalenderError;
 import com.alc.diary.domain.user.User;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.NoArgsConstructor;
