@@ -1,4 +1,4 @@
-package com.alc.diary.domain.calender;
+package com.alc.diary.domain.calender.model;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
