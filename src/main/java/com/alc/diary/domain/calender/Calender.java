@@ -5,7 +5,6 @@ import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.util.StringUtils;
 
@@ -35,10 +34,8 @@ public class Calender extends BaseEntity {
     @Column(name = "drink_end_date_time")
     private LocalDateTime drinkEndDateTime;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "json")
-    // TODO: 컨버터
-    private List<DrinkModel> drinkModel;
+    @Column(name = "drink_models")
+    private List<DrinkModel> drinkModels;
 
     @Embedded
     public CalenderImage image;
@@ -57,7 +54,7 @@ public class Calender extends BaseEntity {
         this.contents = contents;
         this.drinkStartDateTime = drinkStartDateTime;
         this.drinkEndDateTime = drinkEndDateTime;
-        this.drinkModel = drinkModel;
+        this.drinkModels = drinkModel;
         this.image = image;
         this.condition = condition;
         this.user = user;
