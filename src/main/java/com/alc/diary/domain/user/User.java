@@ -50,8 +50,8 @@ public class User extends BaseEntity {
     private String profileImage;
 
     @Builder
-    public User(String nickname, String socialType, int drinkAmount, String nonAlcoholGoal, String descriptionStyle) {
-        if (!StringUtils.hasText(nickname) || !StringUtils.hasText(socialType) || !StringUtils.hasText(nonAlcoholGoal) || !StringUtils.hasText(descriptionStyle)) {
+    public User(String nickname, SocialType socialType, int drinkAmount, int nonAlcoholGoal, DescriptionStyle descriptionStyle) {
+        if (!StringUtils.hasText(nickname) || socialType == null || descriptionStyle == null) {
             throw new DomainException();
         }
         this.nickname = nickname;
