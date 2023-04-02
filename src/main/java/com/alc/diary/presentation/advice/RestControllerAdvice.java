@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class RestControllerAdvice {
 
     @ExceptionHandler(value = DomainException.class)
-    void errorHandler(DomainException exception) {
-        // TODO
+    void domainExceptionHandler(DomainException exception) {
+
     }
 }
