@@ -28,6 +28,9 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Column(name = "social_id", length = 50, updatable = false)
+    private String socialId;
+
     @Column(name = "drink_amount", nullable = false)
     private int drinkAmount;
     @Column(name = "non_alcohol_goal", nullable = false)
@@ -52,14 +55,36 @@ public class User extends BaseEntity {
     private String profileImage;
 
     @Builder
-    public User(String nickname, SocialType socialType, int drinkAmount, int nonAlcoholGoal, DescriptionStyle descriptionStyle) {
-        if (!StringUtils.hasText(nickname) || socialType == null || descriptionStyle == null) {
+    public User(
+        String nickname,
+        SocialType socialType,
+        String socialId,
+        int drinkAmount,
+        int nonAlcoholGoal,
+        DescriptionStyle descriptionStyle,
+        String email,
+        GenderType gender,
+        AgeRangeType ageRange,
+        String profileImage
+    ) {
+        if (!StringUtils.hasText(nickname)) {
+            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
+        }
+        if (socialType == null) {
+            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
+        }
+        if (descriptionStyle == null) {
             throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
         }
         this.nickname = nickname;
         this.socialType = socialType;
+        this.socialId = socialId;
         this.drinkAmount = drinkAmount;
         this.nonAlcoholGoal = nonAlcoholGoal;
         this.descriptionStyle = descriptionStyle;
+        this.email = email;
+        this.gender = gender;
+        this.ageRange = ageRange;
+        this.profileImage = profileImage;
     }
 }
