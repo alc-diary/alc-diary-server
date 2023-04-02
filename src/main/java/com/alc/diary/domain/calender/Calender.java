@@ -2,6 +2,7 @@ package com.alc.diary.domain.calender;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.exception.error.CalenderError;
 import com.alc.diary.domain.user.User;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.NoArgsConstructor;
@@ -50,7 +51,7 @@ public class Calender extends BaseEntity {
 
     public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String condition, User user) {
         if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
-            throw new DomainException();
+            throw new DomainException(CalenderError.NO_ENTITY_FOUND);
         this.title = title;
         this.contents = contents;
         this.drinkStartDateTime = drinkStartDateTime;

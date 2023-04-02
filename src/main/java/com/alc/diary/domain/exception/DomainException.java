@@ -1,5 +1,8 @@
 package com.alc.diary.domain.exception;
 
-public class DomainException extends RuntimeException {
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+public class DomainException extends RuntimeException {
+    private final ErrorModel errorModel;
 }

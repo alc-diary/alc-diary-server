@@ -2,6 +2,7 @@ package com.alc.diary.domain.user;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.exception.error.UserError;
 import com.alc.diary.domain.user.enums.AgeRangeType;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 import com.alc.diary.domain.user.enums.GenderType;
@@ -52,7 +53,7 @@ public class User extends BaseEntity {
     @Builder
     public User(String nickname, SocialType socialType, int drinkAmount, int nonAlcoholGoal, DescriptionStyle descriptionStyle) {
         if (!StringUtils.hasText(nickname) || socialType == null || descriptionStyle == null) {
-            throw new DomainException();
+            throw new DomainException(UserError.NO_ENTITY_FOUND);
         }
         this.nickname = nickname;
         this.socialType = socialType;
