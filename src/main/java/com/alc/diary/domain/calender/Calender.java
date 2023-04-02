@@ -35,6 +35,7 @@ public class Calender extends BaseEntity {
     private LocalDateTime drinkEndDateTime;
 
     @Column(name = "drink_models")
+    @Convert(converter = DrinkModelConverter.class)
     private List<DrinkModel> drinkModels;
 
     @Embedded
@@ -47,14 +48,14 @@ public class Calender extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModel, CalenderImage image, String condition, User user) {
-        if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModel.isEmpty() || user == null)
+    public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String condition, User user) {
+        if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
             throw new DomainException();
         this.title = title;
         this.contents = contents;
         this.drinkStartDateTime = drinkStartDateTime;
         this.drinkEndDateTime = drinkEndDateTime;
-        this.drinkModels = drinkModel;
+        this.drinkModels = drinkModels;
         this.image = image;
         this.condition = condition;
         this.user = user;
