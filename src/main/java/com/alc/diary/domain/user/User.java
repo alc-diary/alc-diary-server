@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     @Column(name = "nickname", length = 14)
     private String nickname;
 
-    @Column(name = "social_type", nullable = false, updatable = false)
+    @Column(name = "social_type", length = 20, nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
@@ -33,17 +33,18 @@ public class User extends BaseEntity {
     @Column(name = "non_alcohol_goal", nullable = false)
     private int nonAlcoholGoal;
 
-    @Column(name = "description_style", nullable = false)
+    @Column(name = "description_style", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private DescriptionStyle descriptionStyle;
 
     @Column(name = "email", length = 100, updatable = false)
     private String email;
 
-    @Column(name = "gender", updatable = false)
+    @Column(name = "gender", length = 20, updatable = false)
+    @Enumerated(EnumType.STRING)
     private GenderType gender;
 
-    @Column(name = "age_range", updatable = false)
+    @Column(name = "age_range", length = 20, updatable = false)
     @Enumerated(EnumType.STRING)
     private AgeRangeType ageRange;
 
