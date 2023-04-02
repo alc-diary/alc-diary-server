@@ -16,7 +16,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nickname")
+    @Column(name = "nickname", length = 14)
     private String nickname;
 
     @Column(name = "social_type", updatable = false)
@@ -29,7 +29,7 @@ public class User extends BaseEntity {
     @Column(name = "description_style")
     private String descriptionStyle;
 
-    @Column(name = "email", updatable = false)
+    @Column(name = "email", length = 100, updatable = false)
     private String email;
 
     @Column(name = "gender", updatable = false)
@@ -38,7 +38,7 @@ public class User extends BaseEntity {
     @Column(name = "age_range", updatable = false)
     private String ageRange;
 
-    @Column(name = "profile_image")
+    @Column(name = "profile_image", length = 1000)
     private String profileImage;
 
     @Builder

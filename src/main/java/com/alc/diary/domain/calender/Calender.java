@@ -22,7 +22,7 @@ public class Calender extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", length = 20)
     private String title;
 
     @Column(name = "contents")
