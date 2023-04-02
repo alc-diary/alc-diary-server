@@ -51,7 +51,7 @@ public class Calender extends BaseEntity {
 
     public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String condition, User user) {
         if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
-            throw new DomainException(CalenderError.NO_ENTITY_FOUND);
+            throw new DomainException(CalenderError.INVALID_PARAMETER_INCLUDE);
         this.title = title;
         this.contents = contents;
         this.drinkStartDateTime = drinkStartDateTime;
