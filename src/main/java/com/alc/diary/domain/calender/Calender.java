@@ -41,7 +41,7 @@ public class Calender extends BaseEntity {
     @Embedded
     public CalenderImage image;
 
-    @Column(name = "condition")
+    @Column(name = "condition", length = 10)
     private String condition;
 
     @JoinColumn(name = "user_id", updatable = false)
