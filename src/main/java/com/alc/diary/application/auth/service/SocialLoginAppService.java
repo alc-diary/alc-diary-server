@@ -6,6 +6,9 @@ import com.alc.diary.application.auth.dto.response.SocialLoginAppResponse;
 import com.alc.diary.application.auth.strategy.dto.SocialLoginStrategyResponse;
 import com.alc.diary.application.auth.factory.SocialLoginStrategyFactory;
 import com.alc.diary.application.auth.strategy.SocialLoginStrategy;
+import com.alc.diary.domain.auth.RefreshToken;
+import com.alc.diary.domain.auth.policy.DefaultExpiredPolicy;
+import com.alc.diary.domain.auth.repository.RefreshTokenRepository;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 import com.alc.diary.domain.user.repository.UserRepository;
@@ -13,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -21,8 +28,9 @@ import java.util.UUID;
 public class SocialLoginAppService {
 
     private final SocialLoginStrategyFactory socialLoginStrategyFactory;
-    private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public SocialLoginAppResponse login(SocialLoginAppRequest request) {
@@ -30,19 +38,27 @@ public class SocialLoginAppService {
                 socialLoginStrategyFactory.getSocialLoginStrategy(request.socialType());
         SocialLoginStrategyResponse socialLoginStrategyResponse =
                 socialLoginStrategy.login(new SocialLoginStrategyRequest(request.socialAccessToken()));
-        User findUser = userRepository.findBySocialTypeAndSocialId(request.socialType(), socialLoginStrategyResponse.socialUserId())
+        User findUser =
+            userRepository.findBySocialTypeAndSocialId(request.socialType(), socialLoginStrategyResponse.socialUserId())
                 .orElseGet(() -> {
                     User user = User.builder(
-                                    request.socialType(),
-                                    socialLoginStrategyResponse.socialUserId(),
-                                    DescriptionStyle.MILD)
-                            .build();
-                    User savedUser = userRepository.save(user);
-                    return savedUser;
+                            request.socialType(),
+                            socialLoginStrategyResponse.socialUserId(),
+                            DescriptionStyle.MILD)
+                        .build();
+                    return userRepository.save(user);
                 });
 
         String accessToken = jwtService.generateToken(findUser.getId());
-        String refreshToken = UUID.randomUUID().toString();
-        return new SocialLoginAppResponse(accessToken, refreshToken);
+        Clock currentTimeClock = Clock.systemDefaultZone();
+        RefreshToken refreshToken = new RefreshToken(
+            findUser,
+            currentTimeClock,
+            () -> UUID.randomUUID().toString(),
+            new DefaultExpiredPolicy()
+        );
+        RefreshToken savedRefreshToken = refreshTokenRepository.save(refreshToken);
+
+        return new SocialLoginAppResponse(accessToken, savedRefreshToken.getToken());
     }
 }
