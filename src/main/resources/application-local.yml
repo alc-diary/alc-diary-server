@@ -1,7 +1,3 @@
-  #    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc
-#    username: admin
-#    password: alcth123
 server:
   port: 8080
   secret: ALC_DIARY_SECRET_KEY
