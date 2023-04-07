@@ -1,4 +1,4 @@
-package com.alc.diary.infrastructure.persistence;
+package com.alc.diary.infrastructure.persistence.user;
 
 import com.alc.diary.domain.user.repository.CustomUserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;

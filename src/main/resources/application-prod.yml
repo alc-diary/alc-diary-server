@@ -1,7 +1,4 @@
-  #    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc
-#    username: admin
-#    password: alcth123
+
 server:
   port: 8080
   secret: ALC_DIARY_SECRET_KEY
@@ -9,12 +6,11 @@ server:
 spring:
   application:
     name: alc-diary-server
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:~/alc;MODE=mysql
-    username: sa
-    password:
   jpa:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc
+    username: admin
+    password: alcth123
     hibernate:
       ddl-auto: create
     properties:
