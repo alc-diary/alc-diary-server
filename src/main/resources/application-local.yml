@@ -1,3 +1,7 @@
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc
+#    username: admin
+#    password: alcth123
 server:
   port: 8080
   secret: ALC_DIARY_SECRET_KEY
@@ -6,13 +10,13 @@ spring:
   application:
     name: alc-diary-server
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc
-    username: admin
-    password: alcth123
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/alc;MODE=mysql
+    username: sa
+    password:
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
@@ -20,3 +24,21 @@ spring:
   mvc:
     path match:
       matching-strategy: ant_path_matcher
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 1000
+        read-timeout: 3000
+        logger-level: NONE
+      kakao-client:
+        connect-timeout: 1000
+        read-timeout: 10000
+        logger-level: HEADERS

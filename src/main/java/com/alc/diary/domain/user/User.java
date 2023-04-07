@@ -7,16 +7,22 @@ import com.alc.diary.domain.user.enums.AgeRangeType;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 import com.alc.diary.domain.user.enums.GenderType;
 import com.alc.diary.domain.user.enums.SocialType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
-@Entity
+@Getter
+@Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor
-@Table(name = "user")
+@AllArgsConstructor
+@Table(name = "users")
+@Entity
 public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,12 +34,13 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    @Column(name = "social_id", length = 50, updatable = false)
+    @Column(name = "social_id", length = 50, nullable = false, updatable = false)
     private String socialId;
 
-    @Column(name = "drink_amount", nullable = false)
+    @Column(name = "drink_amount")
     private int drinkAmount;
-    @Column(name = "non_alcohol_goal", nullable = false)
+
+    @Column(name = "non_alcohol_goal")
     private int nonAlcoholGoal;
 
     @Column(name = "description_style", length = 20, nullable = false)
@@ -54,7 +61,17 @@ public class User extends BaseEntity {
     @Column(name = "profile_image", length = 1000)
     private String profileImage;
 
-    @Builder
+    public static UserBuilder builder(
+            SocialType socialType,
+            String socialId,
+            DescriptionStyle descriptionStyle
+    ) {
+        return innerBuilder()
+                .socialType(socialType)
+                .socialId(socialId)
+                .descriptionStyle(descriptionStyle);
+    }
+
     public User(
         String nickname,
         SocialType socialType,

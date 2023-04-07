@@ -1,4 +1,4 @@
-package com.alc.diary.infrastructure.persistence;
+package com.alc.diary.infrastructure.persistence.calender;
 
 import com.alc.diary.domain.calender.repository.CustomCalenderRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
