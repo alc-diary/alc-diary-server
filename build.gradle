@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '16'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
@@ -15,6 +15,20 @@ repositories {
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
+    }
+}
+
+ext {
+    // Feign
+    set('springCloudVersion', '2021.0.5')
+
+    // StringUtils
+    set('commonsLangVersion', '3.12.0')
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
 }
 
@@ -45,6 +59,12 @@ dependencies {
     // swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    // Feign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // StringUtils
+    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
     // test
     testImplementation 'org.projectlombok:lombok:1.18.22'

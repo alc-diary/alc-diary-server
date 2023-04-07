@@ -2,7 +2,7 @@ package com.alc.diary.application.user;
 
 import org.junit.jupiter.api.Test;
 
-class SignInUseCaseTest {
+class SocialLoginAppServiceTest {
 
     @Test
     void execute() {
