@@ -26,13 +26,13 @@ public class KakaoLoginService implements SocialLoginStrategy {
     @Override
     public SocialLoginStrategyResponse login(SocialLoginStrategyRequest request) {
         String bearerToken = "Bearer " + request.socialAccessToken();
-        ResponseEntity<KakaoLoginResponse> kakaoLoginResponseResponseEntity = kakaoFeignClient.kakaoLogin(bearerToken);
-        if (kakaoLoginResponseResponseEntity.getStatusCode().isError()) {
+        ResponseEntity<KakaoLoginResponse> kakaoResponseEntity = kakaoFeignClient.kakaoLogin(bearerToken);
+        if (kakaoResponseEntity.getStatusCode().isError()) {
             throw new IllegalArgumentException("Kakao authentication error");
         }
-        KakaoLoginResponse kakaoLoginResponse = kakaoLoginResponseResponseEntity.getBody();
-        assert kakaoLoginResponse != null;
-        Optional<KakaoAccount> kakaoAccountOptional = Optional.of(kakaoLoginResponse.getKakaoAccount());
+        KakaoLoginResponse kakaoResponse = kakaoResponseEntity.getBody();
+        assert kakaoResponse != null;
+        Optional<KakaoAccount> kakaoAccountOptional = Optional.of(kakaoResponse.getKakaoAccount());
         Optional<Profile> profileOptional = kakaoAccountOptional.map(KakaoAccount::getProfile);
 
         String profileImageUrl = profileOptional.map(Profile::getProfileImageUrl).orElse(null);
@@ -63,7 +63,7 @@ public class KakaoLoginService implements SocialLoginStrategy {
 
         return new SocialLoginStrategyResponse(
             SocialType.KAKAO,
-            String.valueOf(kakaoLoginResponse.getId()),
+            String.valueOf(kakaoResponse.getId()),
             profileImageUrl,
             email,
             gender,
