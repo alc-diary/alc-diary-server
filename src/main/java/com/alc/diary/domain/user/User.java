@@ -2,11 +2,8 @@ package com.alc.diary.domain.user;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
-import com.alc.diary.domain.user.enums.AgeRangeType;
-import com.alc.diary.domain.user.enums.DescriptionStyle;
-import com.alc.diary.domain.user.enums.GenderType;
-import com.alc.diary.domain.user.enums.SocialType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,6 +44,14 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DescriptionStyle descriptionStyle;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "alcohol_type", length = 20)
+    private AlcoholType alcoholType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20)
+    private UserStatus status;
+
     @Column(name = "email", length = 100, updatable = false)
     private String email;
 
@@ -62,46 +67,14 @@ public class User extends BaseEntity {
     private String profileImage;
 
     public static UserBuilder builder(
-            SocialType socialType,
-            String socialId,
-            DescriptionStyle descriptionStyle
-    ) {
-        return innerBuilder()
-                .socialType(socialType)
-                .socialId(socialId)
-                .descriptionStyle(descriptionStyle);
-    }
-
-    public User(
-        String nickname,
         SocialType socialType,
         String socialId,
-        int drinkAmount,
-        int nonAlcoholGoal,
-        DescriptionStyle descriptionStyle,
-        String email,
-        GenderType gender,
-        AgeRangeType ageRange,
-        String profileImage
+        DescriptionStyle descriptionStyle
     ) {
-        if (!StringUtils.hasText(nickname)) {
-            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
-        }
-        if (socialType == null) {
-            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
-        }
-        if (descriptionStyle == null) {
-            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
-        }
-        this.nickname = nickname;
-        this.socialType = socialType;
-        this.socialId = socialId;
-        this.drinkAmount = drinkAmount;
-        this.nonAlcoholGoal = nonAlcoholGoal;
-        this.descriptionStyle = descriptionStyle;
-        this.email = email;
-        this.gender = gender;
-        this.ageRange = ageRange;
-        this.profileImage = profileImage;
+        return innerBuilder()
+            .socialType(socialType)
+            .socialId(socialId)
+            .descriptionStyle(descriptionStyle)
+            .status(UserStatus.ON_BOARDING);
     }
 }

@@ -1,6 +1,7 @@
 package com.alc.diary.presentation.advice;
 
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.presentation.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,16 @@ public class RestControllerAdvice {
                 e.getErrorModel().getMessage(),
                 null
             );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
         log.error("Unknown error", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.getDefault());
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ErrorResponse.getDefault(e.getMessage()));
     }
 }
