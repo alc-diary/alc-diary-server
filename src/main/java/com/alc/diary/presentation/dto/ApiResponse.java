@@ -17,6 +17,14 @@ public class ApiResponse<T> {
     private String message;
     private T data;
 
+    public static ApiResponse<Void> getSuccess() {
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
+        apiResponse.status = HttpStatus.OK.value();
+        apiResponse.code = "S0000";
+        apiResponse.message = "success";
+        return apiResponse;
+    }
+
     public static <T> ApiResponse<T> getSuccess(T data) {
         ApiResponse<T> apiResponse = new ApiResponse<>();
         apiResponse.status = HttpStatus.OK.value();

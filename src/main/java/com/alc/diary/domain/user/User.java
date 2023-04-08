@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
@@ -24,7 +23,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nickname", length = 14)
+    @Column(name = "nickname", length = 14, unique = true)
     private String nickname;
 
     @Column(name = "social_type", length = 20, nullable = false, updatable = false)
@@ -75,6 +74,30 @@ public class User extends BaseEntity {
             .socialType(socialType)
             .socialId(socialId)
             .descriptionStyle(descriptionStyle)
-            .status(UserStatus.ON_BOARDING);
+            .status(UserStatus.ONBOARDING);
+    }
+
+    public void onboarding(
+        DescriptionStyle descriptionStyle,
+        String nickname,
+        AlcoholType alcoholType,
+        int drinkAmount,
+        int nonAlcoholGoal
+    ) {
+        if (descriptionStyle == null) {
+            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
+        }
+        if (nickname == null) {
+            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
+        }
+        if (alcoholType == null) {
+            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
+        }
+        this.descriptionStyle = descriptionStyle;
+        this.nickname = nickname;
+        this.alcoholType = alcoholType;
+        this.drinkAmount = drinkAmount;
+        this.nonAlcoholGoal = nonAlcoholGoal;
+        this.status = UserStatus.ACTIVE;
     }
 }

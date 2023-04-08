@@ -1,6 +1,8 @@
 package com.alc.diary.application.user;
 
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
+import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
+import com.alc.diary.application.user.dto.response.CheckNicknameDuplicateAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.domain.exception.DomainException;
@@ -14,8 +16,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class UserAppService {
@@ -36,6 +40,7 @@ public class UserAppService {
         );
     }
 
+    @Transactional
     public void createRandomNicknameToken(CreateRandomNicknameTokenAppRequest request) {
         NicknameToken nicknameToken = new NicknameToken(request.ordinal(), request.nicknameToken());
         try {
@@ -53,5 +58,28 @@ public class UserAppService {
             .orElseThrow(RuntimeException::new);
 
         return new GetRandomNicknameAppResponse(firstToken.getToken() + secondToken.getToken());
+    }
+
+    public CheckNicknameDuplicateAppResponse checkNicknameDuplicate(String nickname) {
+        if (userRepository.findByNickname(nickname).isPresent()) {
+            return new CheckNicknameDuplicateAppResponse(true);
+        }
+        return new CheckNicknameDuplicateAppResponse(false);
+    }
+
+    @Transactional
+    public void updateUserOnboardingInfo(Long userId, UpdateUserOnboardingInfoAppRequest request) {
+        User findUser = userRepository.findById(userId)
+            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        if (userRepository.findByNickname(request.nickname()).isPresent()) {
+            throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
+        }
+        findUser.onboarding(
+            request.descriptionStyle(),
+            request.nickname(),
+            request.alcoholType(),
+            request.drinkAmount(),
+            request.nonAlcoholGoal()
+        );
     }
 }
