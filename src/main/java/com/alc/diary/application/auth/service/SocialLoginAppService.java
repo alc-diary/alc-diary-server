@@ -45,6 +45,10 @@ public class SocialLoginAppService {
                             request.socialType(),
                             socialLoginStrategyResponse.socialUserId(),
                             DescriptionStyle.MILD)
+                        .profileImage(socialLoginStrategyResponse.profileImage())
+                        .email(socialLoginStrategyResponse.email())
+                        .gender(socialLoginStrategyResponse.gender())
+                        .ageRange(socialLoginStrategyResponse.ageRange())
                         .build();
                     return userRepository.save(user);
                 });
