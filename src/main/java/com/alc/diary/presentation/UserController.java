@@ -1,13 +1,12 @@
 package com.alc.diary.presentation;
 
 import com.alc.diary.application.user.UserAppService;
+import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
+import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,5 +20,18 @@ public class UserController {
         @RequestAttribute Long userId
     ) {
         return ApiResponse.getSuccess(userAppService.getUser(userId));
+    }
+
+    @PostMapping("/nickname-token")
+    public ApiResponse<Void> createNicknameToken(
+        @RequestBody CreateRandomNicknameTokenAppRequest request
+    ) {
+        userAppService.createRandomNicknameToken(request);
+        return ApiResponse.getCreated();
+    }
+
+    @GetMapping("/nickname-token")
+    public ApiResponse<GetRandomNicknameAppResponse> getRandomNickname() {
+        return ApiResponse.getSuccess(userAppService.getRandomNickname());
     }
 }

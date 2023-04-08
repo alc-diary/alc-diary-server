@@ -1,10 +1,13 @@
 package com.alc.diary.presentation.filter;
 
 import com.alc.diary.application.auth.service.JwtService;
+import com.alc.diary.domain.auth.error.AuthError;
+import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.error.UserError;
+import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -22,12 +25,12 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTH_HEADER_NAME = "Authorization";
     private final JwtService jwtService;
+    private final UserRepository userRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
-        System.out.println(path);
         if (
             path.startsWith("/api/v1/auth")
             || path.startsWith("/h2-console")
@@ -37,15 +40,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String bearerToken = request.getHeader(AUTH_HEADER_NAME);
-        String accessToken = bearerToken.substring("Bearer ".length());
-        if (!jwtService.validateToken(accessToken)) {
-            handlerExceptionResolver.resolveException(request, response, null, new IllegalArgumentException("test"));
-            return;
+        try {
+            String bearerToken = request.getHeader(AUTH_HEADER_NAME);
+            if (bearerToken == null) {
+                throw new DomainException(AuthError.NO_AUTHORIZATION_HEADER);
+            }
+            String accessToken = bearerToken.substring("Bearer ".length());
+            if (!jwtService.validateToken(accessToken)) {
+                throw new DomainException(AuthError.EXPIRED_ACCESS_TOKEN);
+            }
+            long userId = jwtService.getUserIdFromToken(accessToken);
+            long findUserId = userRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
+                .getId();
+            if (!userRepository.findById(userId).isPresent()) {
+                throw new DomainException(UserError.USER_NOT_FOUND);
+            }
+            request.setAttribute("userId", findUserId);
+            log.info("end-point: {}, userId: {}", path, findUserId);
+            filterChain.doFilter(request, response);
+        } catch (DomainException e) {
+            handlerExceptionResolver.resolveException(request, response, null, e);
+        } catch (Exception e) {
+            handlerExceptionResolver.resolveException(request, response, null, e);
         }
-        long userId = jwtService.getUserIdFromToken(accessToken);
-        request.setAttribute("userId", userId);
-        log.info("end-point: {}, userId: {}", path, userId);
-        filterChain.doFilter(request, response);
     }
 }
