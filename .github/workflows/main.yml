@@ -58,8 +58,8 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
-          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          username: ubuntu
+          password: ${{ secrets.AWS_SSH_SECRET_KEY }}
           port: 22
           script: |
             docker rm -f $(docker ps -aq)
