@@ -1,9 +1,13 @@
 package com.alc.diary.presentation;
 
+import com.alc.diary.application.auth.dto.request.ReissueAccessTokenAppRequest;
 import com.alc.diary.application.auth.dto.request.SocialLoginAppRequest;
+import com.alc.diary.application.auth.dto.response.ReissueAccessTokenAppResponse;
 import com.alc.diary.application.auth.dto.response.SocialLoginAppResponse;
+import com.alc.diary.application.auth.service.RefreshTokenAppService;
 import com.alc.diary.application.auth.service.SocialLoginAppService;
 import com.alc.diary.domain.user.enums.SocialType;
+import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,17 +17,25 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final SocialLoginAppService socialLoginAppService;
+    private final RefreshTokenAppService refreshTokenAppService;
 
     @PostMapping("/social-login")
-    public SocialLoginAppResponse socialLogin(
-            @RequestHeader("Authorization") String bearerToken,
-            @RequestParam SocialType socialType
+    public ApiResponse<SocialLoginAppResponse> socialLogin(
+        @RequestHeader("Authorization") String bearerToken,
+        @RequestParam SocialType socialType
     ) {
         if (bearerToken != null && !bearerToken.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid Authorization");
         }
         String socialAccessToken = bearerToken.substring("Bearer ".length());
         SocialLoginAppRequest request = new SocialLoginAppRequest(socialType, socialAccessToken);
-        return socialLoginAppService.login(request);
+        return ApiResponse.getSuccess(socialLoginAppService.login(request));
+    }
+
+    @PostMapping("/access-token/reissue")
+    public ApiResponse<ReissueAccessTokenAppResponse> reissueAccessToken(
+        @RequestBody ReissueAccessTokenAppRequest request
+    ) {
+        return ApiResponse.getSuccess(refreshTokenAppService.reissueToken(request));
     }
 }
