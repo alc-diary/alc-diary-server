@@ -13,7 +13,7 @@ public class RestControllerAdvice {
 
     @ExceptionHandler(value = DomainException.class)
     public ResponseEntity<ErrorResponse> domainExceptionHandler(DomainException e) {
-        log.error("Domain exception", e);
+        log.error("error code: {}, error message: {}", e.getErrorModel().getCode(), e.getErrorModel().getMessage(), e);
         ErrorResponse errorResponse =
             new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -28,7 +28,7 @@ public class RestControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
-        log.error("Unknown error", e);
+        log.error("error message: {}",e.getMessage(), e);
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponse.getDefault(e.getMessage()));
