@@ -1,65 +1,33 @@
-name: Java CI with Gradle
+name: CI/CD Pipeline
 
 on:
   push:
-    tags: [ "alc-main*" ]
+    branches:
+      - feature/deploy
 
 jobs:
-  check-branch:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Execute check branch
-        run: exit 0
-    permissions:
-      contents: read
-      packages: write
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    needs: check-branch
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
         with:
-          java-version: '11'
-          distribution: 'temurin'
+          java-version: 17
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: build
+      - name: Build with gradle
+        run: ./gradlew clean build
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: taeyeongg/alc-diary
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: EC2 Docker run
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.REMOTE_SSH_PORT }}
-          script: |
-            docker rm -f $(docker ps -qa)
-            docker rmi -f $(docker images -q)
-            docker pull taeyeongg/alc-diary:main
-            docker run -d -p 80:8080 --name alc taeyeongg/alc-diary:main
+#      - name: Login to Amazon ECR
+#        id:
+#        uses: aws-actions/amazon-ecr-login@v1
+#
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          push: true
+#          tags: ${{ steps.login-ecr.outputs.registry }}/taeyeongg:${ github.sha }}
