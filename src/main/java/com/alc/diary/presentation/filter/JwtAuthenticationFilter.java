@@ -7,6 +7,7 @@ import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,13 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
+    private final String[] whiteList = new String[]{"/api/v1/auth", "/h2-console", "/swagger-ui/", "/swagger-resources", "/v3/api-docs"};
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (
-            path.startsWith("/api/v1/auth")
-            || path.startsWith("/h2-console")
-        ) {
+        if (StringUtils.startsWithAny(path, whiteList)) {
             log.info("end-point: {}", path);
             filterChain.doFilter(request, response);
             return;
@@ -51,8 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             long userId = jwtService.getUserIdFromToken(accessToken);
             long findUserId = userRepository.findById(userId)
-                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
-                .getId();
+                    .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
+                    .getId();
             if (!userRepository.findById(userId).isPresent()) {
                 throw new DomainException(UserError.USER_NOT_FOUND);
             }
