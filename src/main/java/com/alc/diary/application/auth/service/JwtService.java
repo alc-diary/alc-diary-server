@@ -1,6 +1,8 @@
 package com.alc.diary.application.auth.service;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,16 +25,16 @@ public class JwtService {
 
     public String generateToken(long userId) {
         return Jwts.builder()
-            .setSubject(String.valueOf(userId))
-            .setIssuedAt(Date.from(currentTime))
-            .setExpiration(Date.from(currentTime.plusMillis(TOKEN_VALID_PERIOD_MILLI)))
-            .signWith(SignatureAlgorithm.HS256, serverSecret)
-            .compact();
+                .setSubject(String.valueOf(userId))
+                .setIssuedAt(Date.from(currentTime))
+                .setExpiration(Date.from(currentTime.plusMillis(TOKEN_VALID_PERIOD_MILLI)))
+                .signWith(SignatureAlgorithm.HS256, serverSecret)
+                .compact();
     }
 
     public long getUserIdFromToken(String token) {
         Claims claims = getClaims(token);
-        return Integer.parseInt(claims.getSubject());
+        return Long.parseLong(claims.getSubject());
     }
 
     public boolean validateToken(String token) {
