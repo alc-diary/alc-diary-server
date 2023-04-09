@@ -38,6 +38,7 @@ jobs:
 #            ${{ steps.login-ecr.outputs.registry }}/alc-diary:${{ github.sha }}
 #            ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
 #
+
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
