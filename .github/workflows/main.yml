@@ -38,13 +38,19 @@ jobs:
 #            ${{ steps.login-ecr.outputs.registry }}/alc-diary:${{ github.sha }}
 #            ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
 #
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
       - name: Build & Push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           tags: |
-            taeyeongg/alc-diary:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
 
       - name: Deploy to EC2
         id: deploy-ec2
@@ -56,5 +62,5 @@ jobs:
           port: 22
           script: |
             docker rm -f $(docker ps -aq)
-            docker pull taeyeongg/alc-diary:latest
-            docker run --rm -d -p 8080:8080 taeyeongg/alc-diary:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
+            docker run --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
