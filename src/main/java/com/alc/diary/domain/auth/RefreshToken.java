@@ -1,5 +1,6 @@
 package com.alc.diary.domain.auth;
 
+import com.alc.diary.domain.auth.policy.DefaultExpiredPolicy;
 import com.alc.diary.domain.auth.policy.TokenExpiredPolicy;
 import com.alc.diary.domain.auth.policy.TokenGeneratePolicy;
 import com.alc.diary.domain.user.User;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Table(name = "refresh_tokens")
@@ -16,13 +18,14 @@ public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
 
-    @Column(name = "token", length = 40)
+    @Column(name = "token", length = 40, nullable = false, updatable = false)
     private String token;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -30,6 +33,9 @@ public class RefreshToken {
 
     @Column(name = "expired_at", nullable = false, updatable = false)
     private LocalDateTime expiredAt;
+
+    @Column(name = "is_expired", nullable = false)
+    private boolean isExpired;
 
     public RefreshToken(
         User user,
@@ -41,8 +47,22 @@ public class RefreshToken {
         this.token = tokenGeneratePolicy.generate();
         this.createdAt = LocalDateTime.now(currentTime);
         this.expiredAt = tokenExpiredPolicy.calculate(currentTime);
+        this.isExpired = false;
+    }
+
+    public static RefreshToken getDefault(User user) {
+        return new RefreshToken(
+            user,
+            Clock.systemDefaultZone(),
+            () -> UUID.randomUUID().toString(),
+            new DefaultExpiredPolicy()
+        );
     }
 
     public RefreshToken() {
+    }
+
+    public void expired() {
+        this.isExpired = true;
     }
 }

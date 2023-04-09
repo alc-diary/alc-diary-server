@@ -23,11 +23,11 @@ public class JwtService {
 
     public String generateToken(long userId) {
         return Jwts.builder()
-                .setSubject(String.valueOf(userId))
-                .setIssuedAt(Date.from(currentTime))
-                .setExpiration(Date.from(currentTime.plusMillis(TOKEN_VALID_PERIOD_MILLI)))
-                .signWith(SignatureAlgorithm.HS256, serverSecret)
-                .compact();
+            .setSubject(String.valueOf(userId))
+            .setIssuedAt(Date.from(currentTime))
+            .setExpiration(Date.from(currentTime.plusMillis(TOKEN_VALID_PERIOD_MILLI)))
+            .signWith(SignatureAlgorithm.HS256, serverSecret)
+            .compact();
     }
 
     public long getUserIdFromToken(String token) {

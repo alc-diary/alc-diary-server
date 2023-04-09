@@ -11,6 +11,6 @@ public class DefaultExpiredPolicy implements TokenExpiredPolicy {
         Instant instant = Instant.now(currentTime);
         ZoneId zoneId = currentTime.getZone();
         return LocalDateTime.ofInstant(instant, zoneId)
-            .plusHours(1L);
+            .plusMonths(1L);
     }
 }
