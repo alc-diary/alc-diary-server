@@ -37,3 +37,16 @@ jobs:
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/alc-diary:${{ github.sha }}
             ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
+
+      - name: Deploy to EC2
+        id: deploy-ec2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          password: ${{ secrets.AWS_EC2_PASSWORD }}
+          port: 22
+          script: |
+            docker rm -f $(docker ps -aq)
+            docker pull ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
+            docker run --rm -d -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
