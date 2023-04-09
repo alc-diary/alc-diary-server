@@ -8,6 +8,7 @@ import com.alc.diary.domain.calender.model.DrinkModelConverter;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.vladmihalcea.hibernate.type.json.JsonType;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.util.StringUtils;
@@ -50,8 +51,9 @@ public class Calender extends BaseEntity {
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    public User user;
 
+    @Builder
     public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String drinkCondition, User user) {
         if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
             throw new DomainException(CalenderError.INVALID_PARAMETER_INCLUDE);
@@ -63,5 +65,15 @@ public class Calender extends BaseEntity {
         this.image = image;
         this.drinkCondition = drinkCondition;
         this.user = user;
+    }
+
+    public static Calender Of(String title, LocalDateTime drinkStartDateTime, List<DrinkModel> drinkModels, User user) {
+        return Calender.builder()
+                .title(title)
+                .drinkStartDateTime(drinkStartDateTime)
+                .drinkEndDateTime(LocalDateTime.now())
+                .drinkModels(drinkModels)
+                .user(user)
+                .build();
     }
 }
