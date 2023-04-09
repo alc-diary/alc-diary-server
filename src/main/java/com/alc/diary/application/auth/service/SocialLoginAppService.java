@@ -54,13 +54,7 @@ public class SocialLoginAppService {
                 });
 
         String accessToken = jwtService.generateToken(findUser.getId());
-        Clock currentTimeClock = Clock.systemDefaultZone();
-        RefreshToken refreshToken = new RefreshToken(
-            findUser,
-            currentTimeClock,
-            () -> UUID.randomUUID().toString(),
-            new DefaultExpiredPolicy()
-        );
+        RefreshToken refreshToken = RefreshToken.getDefault(findUser);
         RefreshToken savedRefreshToken = refreshTokenRepository.save(refreshToken);
 
         return new SocialLoginAppResponse(accessToken, savedRefreshToken.getToken());
