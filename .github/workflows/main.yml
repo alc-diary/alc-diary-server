@@ -64,4 +64,4 @@ jobs:
           script: |
             docker rm -f $(docker ps -aq)
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
-            docker run --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
+            docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
