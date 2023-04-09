@@ -2,7 +2,7 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
 import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
-import com.alc.diary.application.user.dto.response.CheckNicknameDuplicateAppResponse;
+import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.domain.exception.DomainException;
@@ -60,11 +60,11 @@ public class UserAppService {
         return new GetRandomNicknameAppResponse(firstToken.getToken() + secondToken.getToken());
     }
 
-    public CheckNicknameDuplicateAppResponse checkNicknameDuplicate(String nickname) {
+    public CheckNicknameAvailableAppResponse checkNicknameAvailable(String nickname) {
         if (userRepository.findByNickname(nickname).isPresent()) {
-            return new CheckNicknameDuplicateAppResponse(true);
+            return new CheckNicknameAvailableAppResponse(false);
         }
-        return new CheckNicknameDuplicateAppResponse(false);
+        return new CheckNicknameAvailableAppResponse(true);
     }
 
     @Transactional
