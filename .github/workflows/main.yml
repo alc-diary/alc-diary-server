@@ -34,4 +34,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/alc-diary:${ github.sha }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/alc-diary:${{ github.sha }}
