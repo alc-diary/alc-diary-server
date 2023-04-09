@@ -20,12 +20,6 @@ spring:
   mvc:
     path match:
       matching-strategy: ant_path_matcher
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
 
 feign:
   client:
