@@ -59,7 +59,7 @@ jobs:
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ubuntu
-          password: ${{ secrets.AWS_SSH_SECRET_KEY }}
+          key: ${{ secrets.AWS_SSH_SECRET_KEY }}
           port: 22
           script: |
             docker rm -f $(docker ps -aq)
