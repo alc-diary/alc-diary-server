@@ -21,22 +21,30 @@ jobs:
       - name: Build with gradle
         run: ./gradlew clean build
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#        env:
+#          AWS_REGION: ${{ secrets.AWS_REGION }}
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Build and push Docker image
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          push: true
+#          tags: |
+#            ${{ steps.login-ecr.outputs.registry }}/alc-diary:${{ github.sha }}
+#            ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
+#
+      - name: Build & Push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           tags: |
-            ${{ steps.login-ecr.outputs.registry }}/alc-diary:${{ github.sha }}
-            ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
+            taeyeongg/alc-diary:latest
 
       - name: Deploy to EC2
         id: deploy-ec2
@@ -48,5 +56,5 @@ jobs:
           port: 22
           script: |
             docker rm -f $(docker ps -aq)
-            docker pull ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
-            docker run --rm -d -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/alc-diary:latest
+            docker pull taeyeongg/alc-diary:latest
+            docker run --rm -d -p 8080:8080 taeyeongg/alc-diary:latest
