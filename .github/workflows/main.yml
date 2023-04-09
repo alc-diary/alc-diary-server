@@ -44,7 +44,7 @@ jobs:
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_EC2_USERNAME }}
-          password: ${{ secrets.AWS_EC2_PASSWORD }}
+          password: alc-diary
           port: 22
           script: |
             docker rm -f $(docker ps -aq)
