@@ -30,7 +30,15 @@
     }
 
     function sendUserInfoToServer(userInfo) {
-
+        fetch("https://api.alc-diary.shop/api/v1/auth/kakao", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userInfo)
+        })
+            .then(res => res.json())
+            .then(data => console.log(data));
     }
 </script>
 </html>
