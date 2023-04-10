@@ -2,6 +2,7 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
+import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.NicknameToken;
@@ -15,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -47,6 +51,16 @@ public class UserAppService {
             log.error("Duplicate nickname token", e);
             throw new DomainException(UserError.DUPLICATE_NICKNAME_TOKEN);
         }
+    }
+
+    public GetRandomNicknameTokens getRandomNicknameTokens() {
+        List<String> firstNicknameTokens = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.FIRST).stream()
+                .map(NicknameToken::getToken)
+                .collect(Collectors.toList());
+        List<String> secondNicknameTokens = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.SECOND).stream()
+                .map(NicknameToken::getToken)
+                .collect(Collectors.toList());
+        return new GetRandomNicknameTokens(firstNicknameTokens, secondNicknameTokens);
     }
 
     public GetRandomNicknameAppResponse getRandomNickname() {
