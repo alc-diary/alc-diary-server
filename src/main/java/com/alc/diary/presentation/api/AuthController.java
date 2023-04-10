@@ -7,6 +7,7 @@ import com.alc.diary.application.auth.dto.response.SocialLoginAppResponse;
 import com.alc.diary.application.auth.service.RefreshTokenAppService;
 import com.alc.diary.application.auth.service.SocialLoginAppService;
 import com.alc.diary.domain.user.enums.SocialType;
+import com.alc.diary.infrastructure.external.client.feign.kakao.dto.response.KakaoLoginResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +38,12 @@ public class AuthController {
         @RequestBody ReissueAccessTokenAppRequest request
     ) {
         return ApiResponse.getSuccess(refreshTokenAppService.reissueToken(request));
+    }
+
+    @PostMapping("/kakao")
+    public ApiResponse<SocialLoginAppResponse> kakaoLogin(
+            @RequestBody KakaoLoginResponse request
+    ) {
+        return ApiResponse.getSuccess(socialLoginAppService.kakaoLogin(request));
     }
 }
