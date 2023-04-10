@@ -40,7 +40,7 @@ public class AuthController {
         return ApiResponse.getSuccess(refreshTokenAppService.reissueToken(request));
     }
 
-    @PostMapping("/kakao")
+    @PostMapping("/kakao/success")
     public ApiResponse<SocialLoginAppResponse> kakaoLogin(
             @RequestBody KakaoLoginResponse request
     ) {
