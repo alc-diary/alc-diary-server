@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <button onclick="kakaoLogin()">카카오 로그인</button>
+</body>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+    Kakao.init('f836705a66924b3b51cda0643f40573d');
+
+    function kakaoLogin() {
+        Kakao.Auth.login({
+            success: function(authObj) {
+                Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: function(res) {
+                        // 서버로 사용자 정보 전송
+                        sendUserInfoToServer(res);
+                    },
+                    fail: function(error) {
+                        console.log(error);
+                    }
+                });
+            },
+            fail: function(error) {
+                console.log(error);
+            }
+        });
+    }
+
+    function sendUserInfoToServer(userInfo) {
+        // 사용자 정보를 서버로 전송하는 코드를 작성하세요.
+        // 예를 들어, Ajax를 사용하여 서버에 사용자 정보를 전송할 수 있습니다.
+    }
+</script>
+</html>

@@ -28,7 +28,7 @@ public class RestControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
-        log.error("error message: {}",e.getMessage(), e);
+        log.error("Error - Message: {}",e.getMessage(), e);
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponse.getDefault(e.getMessage()));

@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    private final String[] whiteList = new String[]{"/api/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs"};
+    private final String[] whiteList = new String[]{"/api/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs", "/kakao"};
     private final String[] equalsList = new String[]{"/favicon.ico"};
 
     @Override
