@@ -39,7 +39,7 @@
         })
             .then(res => res.json())
             .then(data => {
-                window.location.herf = `https://api.alc-diary.shop/kakao/redirect?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`;
+                window.location.href = `https://api.alc-diary.shop/kakao/redirect?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`;
             });
     }
 </script>
