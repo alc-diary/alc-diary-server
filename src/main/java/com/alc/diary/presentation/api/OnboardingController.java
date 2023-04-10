@@ -1,4 +1,4 @@
-package com.alc.diary.presentation;
+package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.onboarding.OnboardingAppService;
 import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
