@@ -30,7 +30,7 @@
     }
 
     function sendUserInfoToServer(userInfo) {
-        fetch("https://api.alc-diary.shop/kakao/login/success", {
+        fetch("https://api.alc-diary.shop/api/v1/auth/kakao/success", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -38,7 +38,9 @@
             body: JSON.stringify(userInfo)
         })
             .then(res => res.json())
-            .then(data => console.log(data));
+            .then(data => {
+                window.location.herf = `https://api.alc-diary.shop/kakao/redirect?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`;
+            });
     }
 </script>
 </html>
