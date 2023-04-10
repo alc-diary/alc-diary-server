@@ -13,7 +13,7 @@ public class RestControllerAdvice {
 
     @ExceptionHandler(value = DomainException.class)
     public ResponseEntity<ErrorResponse> domainExceptionHandler(DomainException e) {
-        log.error("error code: {}, error message: {}", e.getErrorModel().getCode(), e.getErrorModel().getMessage(), e);
+        log.error("Error - Code: {}, Message: {}", e.getErrorModel().getCode(), e.getErrorModel().getMessage(), e);
         ErrorResponse errorResponse =
             new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
