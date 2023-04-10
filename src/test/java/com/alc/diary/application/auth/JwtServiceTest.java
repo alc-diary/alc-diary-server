@@ -18,12 +18,12 @@ class JwtServiceTest {
     private static final String INVALID_TOKEN = // expired at 2023-04-01T00:29:59+09:00
             "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNjgwMjcyOTk5LCJleHAiOjE2ODAyNzY1OTl9.be8K23Ajyoh1ig3vnMlm9l-14UUSukTg69uhR0cIZQk";
 
-    private JwtService jwtService;
+    // private JwtService jwtService;
 
-    @BeforeEach
-    void setUp() {
-        jwtService = new JwtService();
-    }
+    // @BeforeEach
+    // void setUp() {
+    //     jwtService = new JwtService();
+    // }
 
     // @Test
     // void jwt_test() {
@@ -52,4 +52,10 @@ class JwtServiceTest {
     //     assertThat(jwtService.validateToken(jwt))
     //             .isFalse();
     // }
+
+    @Test
+    void generateToken_test() {
+        JwtService jwtService = new JwtService("ALC_DIARY_SECRET_KEY", Clock.fixed(Instant.now().minusSeconds(10000), ZoneId.of("Asia/Seoul")));
+        System.out.println(jwtService.generateToken(1));
+    }
 }

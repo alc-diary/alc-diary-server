@@ -29,26 +29,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    private final String[] whiteList = new String[]{"/api/v1/auth", "/h2-console", "/swagger-ui/", "/swagger-resources", "/v3/api-docs"};
+    private final String[] whiteList = new String[]{"/api/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs"};
+    private final String[] equalsList = new String[]{"/favicon.ico"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (StringUtils.startsWithAny(path, whiteList)) {
-            log.info("end-point: {}", path);
+        if (
+                StringUtils.startsWithAny(path, whiteList)
+                        || StringUtils.equalsAny(path, equalsList)
+        ) {
+            log.info("Request - Method: {}, URL: {}", request.getMethod(), path);
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String bearerToken = request.getHeader(AUTH_HEADER_NAME);
-            if (bearerToken == null) {
-                throw new DomainException(AuthError.NO_AUTHORIZATION_HEADER);
-            }
-            String accessToken = bearerToken.substring("Bearer ".length());
-            if (!jwtService.validateToken(accessToken)) {
-                throw new DomainException(AuthError.EXPIRED_ACCESS_TOKEN);
-            }
+            String accessToken = getAccessToken(request);
+            jwtService.validateToken(accessToken);
             long userId = jwtService.getUserIdFromToken(accessToken);
             long findUserId = userRepository.findById(userId)
                     .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
@@ -57,12 +55,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new DomainException(UserError.USER_NOT_FOUND);
             }
             request.setAttribute("userId", findUserId);
-            log.info("end-point: {}, userId: {}", path, findUserId);
+            log.info("Request - Method:{}, URL: {}, Access Token: {}, User Id: {}", request.getMethod(), path, request.getHeader("Authorization"), findUserId);
             filterChain.doFilter(request, response);
         } catch (DomainException e) {
+            log.info("Request - Method:{}, URL: {}, Access Token: {}", request.getMethod(), path, request.getHeader("Authorization"));
             handlerExceptionResolver.resolveException(request, response, null, e);
         } catch (Exception e) {
+            log.info("Request - Method:{}, URL: {}, Access Token: {}", request.getMethod(), path, request.getHeader("Authorization"));
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
+    }
+
+    private static String getAccessToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTH_HEADER_NAME);
+        if (bearerToken == null) {
+            throw new DomainException(AuthError.NO_AUTHORIZATION_HEADER);
+        }
+        if (!bearerToken.startsWith("Bearer ")) {
+            throw new DomainException(AuthError.INVALID_BEARER_TOKEN_FORMAT);
+        }
+        String accessToken = bearerToken.substring("Bearer ".length());
+        return accessToken;
     }
 }
