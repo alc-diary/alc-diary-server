@@ -1,4 +1,4 @@
-package com.alc.diary.presentation;
+package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.auth.dto.request.ReissueAccessTokenAppRequest;
 import com.alc.diary.application.auth.dto.request.SocialLoginAppRequest;
