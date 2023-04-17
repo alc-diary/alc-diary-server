@@ -25,7 +25,10 @@
                 <input type="hidden" name="ordinal" value="FIRST"/>
             </form>
             <div class="nickname-token-wrapper" th:each="tokenDto : ${randomNicknameTokens.firstNicknameTokens()}">
-                <div class="nickname-token" th:data-token-id="${tokenDto.id()}" th:text="${tokenDto.token()}"></div>
+                <form action="/admin/nickname/delete" method="post">
+                    <input type="hidden" name="tokenId" th:value="|${tokenDto.id()}|"/>
+                    <button class="nickname-token" th:text="${tokenDto.token()}"></button>
+                </form>
             </div>
         </div>
         <div class="nickname-tokens">
@@ -36,23 +39,13 @@
                 <input type="hidden" name="ordinal" value="SECOND"/>
             </form>
             <div class="nickname-token-wrapper" th:each="tokenDto : ${randomNicknameTokens.secondNicknameTokens()}">
-                <div class="nickname-token" th:data-token-id="${tokenDto.id()}" th:text="${tokenDto.token()}"></div>
+                <form action="/admin/nickname/delete" method="post">
+                    <input type="hidden" name="tokenId" th:value="|${tokenDto.id()}|"/>
+                    <button class="nickname-token" th:text="${tokenDto.token()}"></button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 </body>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        function tokenClick(e) {
-            console.log(e);
-            console.log(e.target.dataset.tokenId);
-        }
-
-        const tokenElements = document.querySelectorAll('.nickname-token');
-        tokenElements.forEach(element => {
-            element.addEventListener('click', tokenClick)
-        });
-    })
-</script>
 </html>

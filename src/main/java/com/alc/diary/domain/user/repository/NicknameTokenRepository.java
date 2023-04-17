@@ -24,5 +24,5 @@ public interface NicknameTokenRepository extends Repository<NicknameToken, Long>
 
     List<NicknameToken> findByOrdinal(NicknameTokenOrdinal ordinal);
 
-    Optional<NicknameToken> findByOrdinalAndToken(NicknameTokenOrdinal ordinal, String token);
+    void deleteById(Long id);
 }

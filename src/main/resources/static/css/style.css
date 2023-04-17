@@ -69,7 +69,9 @@ div {
 
 .nickname-token {
     text-align: center;
-    margin: 5px 10px;
+    border: 0;
+    background-color: transparent;
+    padding: 5px 10px;
 }
 
 .nickname-header {
