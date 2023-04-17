@@ -24,8 +24,8 @@
                 <input class="nickname-token-form-input" type="text" name="keyword"/>
                 <input type="hidden" name="ordinal" value="FIRST"/>
             </form>
-            <div class="nickname-token-wrapper" th:each="token : ${randomNicknameTokens.firstNicknameTokens()}">
-                <div class="nickname-token" th:text="${token}"></div>
+            <div class="nickname-token-wrapper" th:each="tokenDto : ${randomNicknameTokens.firstNicknameTokens()}">
+                <div class="nickname-token" th:data-token-id="${tokenDto.id()}" th:text="${tokenDto.token()}"></div>
             </div>
         </div>
         <div class="nickname-tokens">
@@ -35,11 +35,24 @@
                 <input class="nickname-token-form-input" type="text" name="keyword"/>
                 <input type="hidden" name="ordinal" value="SECOND"/>
             </form>
-            <div class="nickname-token-wrapper" th:each="token : ${randomNicknameTokens.secondNicknameTokens()}">
-                <div class="nickname-token" th:text="${token}"></div>
+            <div class="nickname-token-wrapper" th:each="tokenDto : ${randomNicknameTokens.secondNicknameTokens()}">
+                <div class="nickname-token" th:data-token-id="${tokenDto.id()}" th:text="${tokenDto.token()}"></div>
             </div>
         </div>
     </div>
 </div>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function tokenClick(e) {
+            console.log(e);
+            console.log(e.target.dataset.tokenId);
+        }
+
+        const tokenElements = document.querySelectorAll('.nickname-token');
+        tokenElements.forEach(element => {
+            element.addEventListener('click', tokenClick)
+        });
+    })
+</script>
 </html>
