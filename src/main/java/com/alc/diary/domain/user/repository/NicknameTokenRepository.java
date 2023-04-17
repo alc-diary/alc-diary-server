@@ -23,4 +23,6 @@ public interface NicknameTokenRepository extends Repository<NicknameToken, Long>
     Optional<NicknameToken> findByOrdinalOrderByRandLimit1(NicknameTokenOrdinal ordinal);
 
     List<NicknameToken> findByOrdinal(NicknameTokenOrdinal ordinal);
+
+    Optional<NicknameToken> findByOrdinalAndToken(NicknameTokenOrdinal ordinal, String token);
 }

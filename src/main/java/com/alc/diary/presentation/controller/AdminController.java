@@ -7,14 +7,7 @@ import com.alc.diary.domain.user.enums.NicknameTokenOrdinal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/admin")
@@ -29,14 +22,14 @@ public class AdminController {
     }
 
     @GetMapping("/nickname")
-    public String nickname(Model model) {
+    public String getNicknameTokens(Model model) {
         GetRandomNicknameTokens randomNicknameTokens = userAppService.getRandomNicknameTokens();
         model.addAttribute("randomNicknameTokens", randomNicknameTokens);
         return "admin-nickname";
     }
 
     @PostMapping("/nickname")
-    public String nickname(
+    public String createNicknameToken(
             @RequestParam NicknameTokenOrdinal ordinal,
             @RequestParam String keyword
     ) {
@@ -44,5 +37,13 @@ public class AdminController {
         System.out.println(ordinal);
         System.out.println(keyword);
         return "redirect:/admin/nickname";
+    }
+
+    @DeleteMapping("/nickname")
+    public String deleteNickname(
+            @RequestParam NicknameTokenOrdinal ordinal,
+            @RequestParam String keyword
+    ) {
+        return null;
     }
 }

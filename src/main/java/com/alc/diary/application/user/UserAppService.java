@@ -54,13 +54,13 @@ public class UserAppService {
     }
 
     public GetRandomNicknameTokens getRandomNicknameTokens() {
-        List<String> firstNicknameTokens = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.FIRST).stream()
-                .map(NicknameToken::getToken)
+        List<GetRandomNicknameTokens.NicknameTokenDto> firstNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.FIRST).stream()
+                .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
                 .collect(Collectors.toList());
-        List<String> secondNicknameTokens = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.SECOND).stream()
-                .map(NicknameToken::getToken)
+        List<GetRandomNicknameTokens.NicknameTokenDto> secondNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.SECOND).stream()
+                .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
                 .collect(Collectors.toList());
-        return new GetRandomNicknameTokens(firstNicknameTokens, secondNicknameTokens);
+        return new GetRandomNicknameTokens(firstNicknameTokenDtos, secondNicknameTokenDtos);
     }
 
     public GetRandomNicknameAppResponse getRandomNickname() {
@@ -70,5 +70,10 @@ public class UserAppService {
             .orElseThrow(RuntimeException::new);
 
         return new GetRandomNicknameAppResponse(firstToken.getToken() + secondToken.getToken());
+    }
+
+    @Transactional
+    public void deleteNicknameToken(NicknameTokenOrdinal ordinal, String keyword) {
+        nicknameTokenRepository.findByOrdinalAndToken(ordinal, keyword);
     }
 }
