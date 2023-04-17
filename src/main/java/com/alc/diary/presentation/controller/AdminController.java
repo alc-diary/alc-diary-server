@@ -34,16 +34,14 @@ public class AdminController {
             @RequestParam String keyword
     ) {
         userAppService.createRandomNicknameToken(new CreateRandomNicknameTokenAppRequest(ordinal, keyword));
-        System.out.println(ordinal);
-        System.out.println(keyword);
         return "redirect:/admin/nickname";
     }
 
-    @DeleteMapping("/nickname")
+    @PostMapping("/nickname/delete")
     public String deleteNickname(
-            @RequestParam NicknameTokenOrdinal ordinal,
-            @RequestParam String keyword
+            @RequestParam Long tokenId
     ) {
-        return null;
+        userAppService.deleteNicknameToken(tokenId);
+        return "redirect:/admin/nickname";
     }
 }
