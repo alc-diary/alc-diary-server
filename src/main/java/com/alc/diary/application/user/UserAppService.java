@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +45,9 @@ public class UserAppService {
 
     @Transactional
     public void createRandomNicknameToken(CreateRandomNicknameTokenAppRequest request) {
+        if (!StringUtils.hasText(request.nicknameToken())) {
+            throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
+        }
         NicknameToken nicknameToken = new NicknameToken(request.ordinal(), request.nicknameToken());
         try {
             nicknameTokenRepository.save(nicknameToken);
@@ -73,7 +77,7 @@ public class UserAppService {
     }
 
     @Transactional
-    public void deleteNicknameToken(NicknameTokenOrdinal ordinal, String keyword) {
-        nicknameTokenRepository.findByOrdinalAndToken(ordinal, keyword);
+    public void deleteNicknameToken(Long tokenId) {
+        nicknameTokenRepository.deleteById(tokenId);
     }
 }
