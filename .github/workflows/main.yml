@@ -2,8 +2,8 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - feature/deploy
+    tags:
+      - 'alc-main*'
 
 jobs:
   build-and-deploy:
