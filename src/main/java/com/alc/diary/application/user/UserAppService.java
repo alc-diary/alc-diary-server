@@ -4,6 +4,7 @@ import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRe
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
+import com.alc.diary.application.user.strategy.NicknameStrategy;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.NicknameToken;
 import com.alc.diary.domain.user.User;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,6 +31,7 @@ public class UserAppService {
 
     private final UserRepository userRepository;
     private final NicknameTokenRepository nicknameTokenRepository;
+    private final NicknameStrategy nicknameStrategy;
 
     public GetUserInfoAppResponse getUser(Long userId) {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
@@ -72,8 +75,14 @@ public class UserAppService {
             .orElseThrow(RuntimeException::new);
         NicknameToken secondToken = nicknameTokenRepository.findByOrdinalOrderByRandLimit1(NicknameTokenOrdinal.SECOND)
             .orElseThrow(RuntimeException::new);
-
-        return new GetRandomNicknameAppResponse(firstToken.getToken() + secondToken.getToken());
+        String randomNickname = firstToken + " " + secondToken;
+        for (int i = 0; i < 20; i++) {
+            int randomNumber = new Random().nextInt(10000);
+            if (!userRepository.findByNickname(randomNickname + randomNumber).isPresent()) {
+                return new GetRandomNicknameAppResponse(randomNickname + randomNickname);
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     @Transactional
