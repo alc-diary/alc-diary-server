@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     tags:
-      - 'alc-main*'
+      - 'v*'
 
 jobs:
   build-and-deploy:
