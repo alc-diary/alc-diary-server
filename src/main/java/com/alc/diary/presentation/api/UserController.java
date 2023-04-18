@@ -1,4 +1,4 @@
-package com.alc.diary.presentation;
+package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.user.UserAppService;
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;

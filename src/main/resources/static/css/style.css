@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+}
+
+div {
+    /*border: black 1px solid;*/
+}
+
+.container {
+    width: 100%;
+    min-height: 1000px;
+    margin: 0 auto;
+}
+
+.nav-bar {
+    width: 90%;
+    height: 70px;
+    margin: 0 auto;
+    display: flex;
+    text-align: center;
+    line-height: 70px;
+    justify-content: space-between;
+}
+
+.main-logo {
+    width: 200px;
+    font-size: 30px;
+}
+
+.main-logo:hover {
+    cursor: pointer;
+}
+
+.menu {
+    display: flex;
+}
+
+.menu-item {
+    width: 100px;
+    border: black 1px solid;
+    border-radius: 5px;
+    margin: 10px 5px;
+    line-height: 50px;
+}
+
+.menu-item:hover {
+    background: azure;
+    cursor: pointer;
+}
+
+.nickname-wrapper {
+    display: flex;
+}
+
+.nickname-tokens {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    border: black 1px solid;
+    margin: 0 5px;
+}
+
+.nickname-token-wrapper {
+    border: black 1px solid;
+    border-radius: 5px;
+    margin: 5px 5px;
+}
+
+.nickname-token {
+    text-align: center;
+    border: 0;
+    background-color: transparent;
+    padding: 5px 10px;
+}
+
+.nickname-header {
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+}
+
+.nickname-token-form {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 0 5px;
+}
+
+.nickname-token-form-button {
+    display: inline;
+}
+
+.nickname-token-form-input {
+    display: inline;
+}
+
+.nickname-token-wrapper:hover {
+    background: azure;
+    cursor: pointer;
+}
