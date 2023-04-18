@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <button onclick="kakaoLogin()">카카오 로그인</button>
+</body>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+    Kakao.init('f836705a66924b3b51cda0643f40573d');
+
+    function kakaoLogin() {
+        Kakao.Auth.login({
+            success: function(authObj) {
+                Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: function(res) {
+                        // 서버로 사용자 정보 전송
+                        sendUserInfoToServer(res);
+                    },
+                    fail: function(error) {
+                        console.log(error);
+                    }
+                });
+            },
+            fail: function(error) {
+                console.log(error);
+            }
+        });
+    }
+
+    function sendUserInfoToServer(userInfo) {
+        fetch("https://api.alc-diary.shop/api/v1/auth/kakao/success", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userInfo)
+        })
+            .then(res => res.json())
+            .then(data => {
+                window.location.href = `https://api.alc-diary.shop/kakao/redirect?accessToken=${data.data.accessToken}&refreshToken=${data.data.refreshToken}`;
+            });
+    }
+</script>
+</html>
