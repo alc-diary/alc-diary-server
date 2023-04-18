@@ -2,8 +2,8 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - feature/kakao-login
+    tags:
+      - 'alc-main*'
 
 jobs:
   build-and-deploy:
