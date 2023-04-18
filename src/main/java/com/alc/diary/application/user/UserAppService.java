@@ -15,6 +15,7 @@ import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -62,27 +63,33 @@ public class UserAppService {
 
     public GetRandomNicknameTokens getRandomNicknameTokens() {
         List<GetRandomNicknameTokens.NicknameTokenDto> firstNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.FIRST).stream()
-                .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
-                .collect(Collectors.toList());
+            .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
+            .toList();
         List<GetRandomNicknameTokens.NicknameTokenDto> secondNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.SECOND).stream()
-                .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
-                .collect(Collectors.toList());
+            .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
+            .toList();
         return new GetRandomNicknameTokens(firstNicknameTokenDtos, secondNicknameTokenDtos);
     }
 
     public GetRandomNicknameAppResponse getRandomNickname() {
-        NicknameToken firstToken = nicknameTokenRepository.findByOrdinalOrderByRandLimit1(NicknameTokenOrdinal.FIRST)
-            .orElseThrow(RuntimeException::new);
-        NicknameToken secondToken = nicknameTokenRepository.findByOrdinalOrderByRandLimit1(NicknameTokenOrdinal.SECOND)
-            .orElseThrow(RuntimeException::new);
-        String randomNickname = firstToken + " " + secondToken;
+        String firstToken = getRandomToken(NicknameTokenOrdinal.FIRST);
+        String secondToken = getRandomToken(NicknameTokenOrdinal.SECOND);
+        String randomNickname = firstToken + secondToken;
+        Random random = new Random();
         for (int i = 0; i < 20; i++) {
-            int randomNumber = new Random().nextInt(10000);
-            if (!userRepository.findByNickname(randomNickname + randomNumber).isPresent()) {
-                return new GetRandomNicknameAppResponse(randomNickname + randomNickname);
+            int randomNumber = random.nextInt(10000);
+            if (userRepository.findByNickname(randomNickname + randomNumber).isEmpty()) {
+                return new GetRandomNicknameAppResponse(randomNickname + randomNumber);
             }
         }
         throw new IllegalArgumentException();
+    }
+
+    private String getRandomToken(NicknameTokenOrdinal ordinal) {
+        return nicknameTokenRepository.findByOrdinalOrderByRandLimit1(ordinal, PageRequest.of(0, 1)).stream()
+            .findFirst()
+            .map(NicknameToken::getToken)
+            .orElseThrow(RuntimeException::new);
     }
 
     @Transactional
