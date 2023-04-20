@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="google-signin-client_id" content="475943899731-uja7l3blc11d0vmnt0318dnj22vakboe.apps.googleusercontent.com">
 </head>
 <body>
     <button onclick="kakaoLogin()">카카오 로그인</button>
+    <button class="g-signin2" data-onsuccess="googleLogin">구글 로그인</button>
 </body>
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 <script>
     Kakao.init('f836705a66924b3b51cda0643f40573d');
 
@@ -27,6 +30,14 @@
                 console.log(error);
             }
         });
+    }
+
+    function googleLogin(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
     }
 
     function sendUserInfoToServer(userInfo) {

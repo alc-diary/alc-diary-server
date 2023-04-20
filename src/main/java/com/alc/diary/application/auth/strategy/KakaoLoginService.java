@@ -20,7 +20,6 @@ import static com.alc.diary.domain.user.enums.AgeRangeType.*;
 @RequiredArgsConstructor
 @Service
 public class KakaoLoginService implements SocialLoginStrategy {
-
     private final KakaoFeignClient kakaoFeignClient;
 
     @Override
