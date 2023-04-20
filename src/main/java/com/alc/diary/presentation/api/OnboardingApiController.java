@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/onboarding")
-public class OnboardingController {
+public class OnboardingApiController {
 
     private final OnboardingAppService onboardingAppService;
     private final UserAppService userAppService;
