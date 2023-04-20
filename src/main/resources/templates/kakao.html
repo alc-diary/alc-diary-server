@@ -3,13 +3,13 @@
 <head>
 </head>
 <body>
-    <button onclick="kakaoLogin()">카카오 로그인</button>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <div id="g_id_onload"
-         data-client_id="475943899731-uja7l3blc11d0vmnt0318dnj22vakboe.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse">
-    </div>
-    <div class="g_id_signin" data-type="standard"></div>
+<button onclick="kakaoLogin()">카카오 로그인</button>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<div id="g_id_onload"
+     data-client_id="475943899731-uja7l3blc11d0vmnt0318dnj22vakboe.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse">
+</div>
+<div class="g_id_signin" data-type="standard"></div>
 </body>
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 <script>
@@ -17,19 +17,19 @@
 
     function kakaoLogin() {
         Kakao.Auth.login({
-            success: function(authObj) {
+            success: function (authObj) {
                 Kakao.API.request({
                     url: '/v2/user/me',
-                    success: function(res) {
+                    success: function (res) {
                         // 서버로 사용자 정보 전송
                         sendUserInfoToServer(res);
                     },
-                    fail: function(error) {
+                    fail: function (error) {
                         console.log(error);
                     }
                 });
             },
-            fail: function(error) {
+            fail: function (error) {
                 console.log(error);
             }
         });
@@ -39,19 +39,32 @@
         const id_token = response.credential;
         const payload = JSON.parse(atob(id_token.split('.')[1]));
 
-        console.log('User ID: ' + payload.sub);
-        console.log('Full Name: ' + payload.name);
-        console.log('Given Name: ' + payload.given_name);
-        console.log('Family Name: ' + payload.family_name);
-        console.log('Image URL: ' + payload.picture);
-        console.log('Email: ' + payload.email);
+        fetch('/https://api.alc-diary.shop/api/v1/auth/google/success', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: payload.sub,
+                email: payload.email,
+                name: payload.name,
+                given_name: payload.given_name,
+                family_name: payload.family_name,
+                picture: payload.picture,
+                locale: ''
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                window.location.href = `https://api.alc-diary.shop/kakao/redirect?accessToken=${data.data.accessToken}&refreshToken=${data.data.refreshToken}`;
+            });
     }
 
     function sendUserInfoToServer(userInfo) {
-        fetch("https://api.alc-diary.shop/api/v1/auth/kakao/success", {
-            method: "POST",
+        fetch('https://api.alc-diary.shop/api/v1/auth/kakao/success', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(userInfo)
         })
