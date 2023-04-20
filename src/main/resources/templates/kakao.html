@@ -35,8 +35,16 @@
         });
     }
 
-    function handleCredentialResponse(googleUser) {
-        console.log(googleUser);
+    function handleCredentialResponse(response) {
+        const id_token = response.credential;
+        const payload = JSON.parse(atob(id_token.split('.')[1]));
+
+        console.log('User ID: ' + payload.sub);
+        console.log('Full Name: ' + payload.name);
+        console.log('Given Name: ' + payload.given_name);
+        console.log('Family Name: ' + payload.family_name);
+        console.log('Image URL: ' + payload.picture);
+        console.log('Email: ' + payload.email);
     }
 
     function sendUserInfoToServer(userInfo) {
