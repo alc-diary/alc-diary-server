@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="google-signin-client_id" content="475943899731-uja7l3blc11d0vmnt0318dnj22vakboe.apps.googleusercontent.com">
 </head>
 <body>
     <button onclick="kakaoLogin()">카카오 로그인</button>
-    <button class="g-signin2" data-onsuccess="googleLogin">구글 로그인</button>
+    <script src="https://api.google.com/js/platform.js" async defer></script>
+    <div id="g_id_onload"
+         data_client_id="475943899731-uja7l3blc11d0vmnt0318dnj22vakboe.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
 </body>
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-<script src="https://apis.google.com/js/platform.js" async defer></script>
 <script>
     Kakao.init('f836705a66924b3b51cda0643f40573d');
 
@@ -32,7 +35,7 @@
         });
     }
 
-    function googleLogin(googleUser) {
+    function handleCredentialResponse(googleUser) {
         var profile = googleUser.getBasicProfile();
         console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
         console.log('Name: ' + profile.getName());
