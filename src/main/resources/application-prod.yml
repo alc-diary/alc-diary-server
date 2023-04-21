@@ -8,11 +8,9 @@ spring:
     name: alc-diary-server
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc?serverTimezone=Asia/Seoul
-    url: jdbc:mysql://test.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://alc-diary.ckupsgwzsqpk.ap-northeast-2.rds.amazonaws.com:3306/alc?serverTimezone=Asia/Seoul
     username: admin
-#    password: alcth123
-    password: admin1234
+    password: alcth123
     tomcat:
       max-active: 500
   jpa:
