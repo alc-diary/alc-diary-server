@@ -2,6 +2,7 @@ package com.alc.diary.application.auth.strategy;
 
 import com.alc.diary.application.auth.strategy.dto.SocialLoginStrategyRequest;
 import com.alc.diary.application.auth.strategy.dto.SocialLoginStrategyResponse;
+import com.alc.diary.domain.user.enums.SocialType;
 import com.alc.diary.infrastructure.external.client.feign.google.GoogleFeignClient;
 import com.alc.diary.infrastructure.external.client.feign.google.dto.response.GoogleUserInfoDto;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,14 @@ public class GoogleLoginService implements SocialLoginStrategy {
         if (userInfoResponse.getStatusCode().isError()) {
             throw new IllegalArgumentException("Google authentication error.");
         }
-        System.out.println(userInfoResponse.getBody());
-
-        return null;
+        GoogleUserInfoDto userInfo = userInfoResponse.getBody();
+        return new SocialLoginStrategyResponse(
+                SocialType.GOOGLE,
+                userInfo.id(),
+                userInfo.picture(),
+                userInfo.email(),
+                null,
+                null
+        );
     }
 }
