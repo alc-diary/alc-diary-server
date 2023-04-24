@@ -1,6 +1,8 @@
 package com.alc.diary.application.user;
 
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
+import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
+import com.alc.diary.application.user.dto.request.UpdateUserProfileImageAppRequest;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
@@ -41,7 +43,7 @@ public class UserAppService {
             findUser.getStatus(),
             findUser.getAlcoholType(),
             findUser.getNickname(),
-            findUser.getDrinkAmount(),
+            findUser.getPersonalAlcoholLimit(),
             findUser.getNonAlcoholGoal()
         );
     }
@@ -94,5 +96,24 @@ public class UserAppService {
     @Transactional
     public void deleteNicknameToken(Long tokenId) {
         nicknameTokenRepository.deleteById(tokenId);
+    }
+
+    @Transactional
+    public void updateUserProfileImage(Long userId, UpdateUserProfileImageAppRequest request) {
+        User foundUser = userRepository
+            .findById(userId)
+            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        foundUser.updateProfileImage(request.newProfileImage());
+    }
+
+    @Transactional
+    public void updateAlcoholLimitAndGoal(Long userId, UpdateAlcoholLimitAndGoalAppRequest request) {
+        User foundUser = userRepository
+            .findById(userId)
+            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        foundUser.updateAlcoholLimitAndGoal(
+            request.newPersonalAlcoholLimit(),
+            request.newNonAlcoholGoal()
+        );
     }
 }

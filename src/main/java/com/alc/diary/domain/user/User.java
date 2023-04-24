@@ -1,5 +1,6 @@
 package com.alc.diary.domain.user;
 
+import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.enums.*;
@@ -33,8 +34,8 @@ public class User extends BaseEntity {
     @Column(name = "social_id", length = 50, nullable = false, updatable = false)
     private String socialId;
 
-    @Column(name = "drink_amount")
-    private int drinkAmount;
+    @Column(name = "personal_alcohol_limit")
+    private float personalAlcoholLimit;
 
     @Column(name = "non_alcohol_goal")
     private int nonAlcoholGoal;
@@ -96,8 +97,17 @@ public class User extends BaseEntity {
         this.descriptionStyle = descriptionStyle;
         this.nickname = nickname;
         this.alcoholType = alcoholType;
-        this.drinkAmount = drinkAmount;
+        this.personalAlcoholLimit = drinkAmount;
         this.nonAlcoholGoal = nonAlcoholGoal;
         this.status = UserStatus.ACTIVE;
+    }
+
+    public void updateProfileImage(String newProfileImage) {
+        this.profileImage = newProfileImage;
+    }
+
+    public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal) {
+        this.personalAlcoholLimit = newPersonalAlcoholLimit;
+        this.nonAlcoholGoal = newNonAlcoholGoal;
     }
 }
