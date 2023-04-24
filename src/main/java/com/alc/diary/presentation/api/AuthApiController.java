@@ -23,7 +23,7 @@ import static com.alc.diary.domain.user.enums.AgeRangeType.*;
 import static com.alc.diary.domain.user.enums.AgeRangeType.OVER_NINETY;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/v1/auth")
 @RestController
 public class AuthApiController {
 
