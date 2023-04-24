@@ -4,6 +4,7 @@ import com.alc.diary.domain.auth.policy.DefaultExpiredPolicy;
 import com.alc.diary.domain.auth.policy.TokenExpiredPolicy;
 import com.alc.diary.domain.auth.policy.TokenGeneratePolicy;
 import com.alc.diary.domain.user.User;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -34,8 +35,9 @@ public class RefreshToken {
     @Column(name = "expired_at", nullable = false, updatable = false)
     private LocalDateTime expiredAt;
 
+    @Getter(AccessLevel.NONE)
     @Column(name = "is_expired", nullable = false)
-    private boolean isExpired;
+    private Boolean isExpired;
 
     public RefreshToken(
         User user,
@@ -50,6 +52,9 @@ public class RefreshToken {
         this.isExpired = false;
     }
 
+    public RefreshToken() {
+    }
+
     public static RefreshToken getDefault(User user) {
         return new RefreshToken(
             user,
@@ -59,10 +64,11 @@ public class RefreshToken {
         );
     }
 
-    public RefreshToken() {
+    public void expire() {
+        this.isExpired = true;
     }
 
-    public void expired() {
-        this.isExpired = true;
+    public boolean isExpired() {
+        return isExpired || expiredAt.isBefore(LocalDateTime.now());
     }
 }
