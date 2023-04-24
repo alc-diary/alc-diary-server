@@ -26,10 +26,7 @@ public class RefreshTokenAppService {
         if (oldRefreshToken.isExpired()) {
             throw new DomainException(AuthError.EXPIRED_REFRESH_TOKEN);
         }
-        if (oldRefreshToken.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new DomainException(AuthError.EXPIRED_ACCESS_TOKEN);
-        }
-        oldRefreshToken.expired();
+        oldRefreshToken.expire();
 
         String newAccessToken = jwtService.generateToken(oldRefreshToken.getUser().getId());
         RefreshToken newRefreshToken = RefreshToken.getDefault(oldRefreshToken.getUser());
