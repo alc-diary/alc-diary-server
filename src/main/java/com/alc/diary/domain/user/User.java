@@ -1,6 +1,5 @@
 package com.alc.diary.domain.user;
 
-import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.enums.*;
