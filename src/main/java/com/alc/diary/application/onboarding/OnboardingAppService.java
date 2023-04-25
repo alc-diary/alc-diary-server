@@ -37,7 +37,7 @@ public class OnboardingAppService {
             request.descriptionStyle(),
             request.nickname(),
             request.alcoholType(),
-            request.drinkAmount(),
+            request.personalAlcoholLimit(),
             request.nonAlcoholGoal()
         );
     }

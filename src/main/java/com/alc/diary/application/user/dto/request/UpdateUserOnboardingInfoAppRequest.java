@@ -7,7 +7,7 @@ public record UpdateUserOnboardingInfoAppRequest(
     DescriptionStyle descriptionStyle,
     String nickname,
     AlcoholType alcoholType,
-    int drinkAmount,
+    float personalAlcoholLimit,
     int nonAlcoholGoal
 ) {
 }

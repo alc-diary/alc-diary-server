@@ -81,7 +81,7 @@ public class User extends BaseEntity {
         DescriptionStyle descriptionStyle,
         String nickname,
         AlcoholType alcoholType,
-        int drinkAmount,
+        float personalAlcoholLimit,
         int nonAlcoholGoal
     ) {
         if (descriptionStyle == null) {
@@ -96,7 +96,7 @@ public class User extends BaseEntity {
         this.descriptionStyle = descriptionStyle;
         this.nickname = nickname;
         this.alcoholType = alcoholType;
-        this.personalAlcoholLimit = drinkAmount;
+        this.personalAlcoholLimit = personalAlcoholLimit;
         this.nonAlcoholGoal = nonAlcoholGoal;
         this.status = UserStatus.ACTIVE;
     }
