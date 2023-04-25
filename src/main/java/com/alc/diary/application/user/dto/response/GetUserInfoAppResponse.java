@@ -10,7 +10,7 @@ public record GetUserInfoAppResponse(
     UserStatus status,
     AlcoholType alcoholType,
     String nickname,
-    int drinkAmount,
+    float personalAlcoholLimit,
     int nonAlcoholGoal
 ) {
 }
