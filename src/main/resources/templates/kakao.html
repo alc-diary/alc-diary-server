@@ -39,7 +39,7 @@
         const id_token = response.credential;
         const payload = JSON.parse(atob(id_token.split('.')[1]));
 
-        fetch('https://api.alc-diary.shop/api/v1/auth/google/success', {
+        fetch('https://api.alc-diary.shop/v1/auth/google/success', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,7 +61,7 @@
     }
 
     function sendUserInfoToServer(userInfo) {
-        fetch('https://api.alc-diary.shop/api/v1/auth/kakao/success', {
+        fetch('https://api.alc-diary.shop/v1/auth/kakao/success', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
