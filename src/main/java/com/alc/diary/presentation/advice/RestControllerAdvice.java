@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class RestControllerAdvice {
 
     @ExceptionHandler(value = DomainException.class)
-    public ResponseEntity<ErrorResponse> domainExceptionHandler(DomainException e) {
+    public ResponseEntity<ErrorResponse<Void>> domainExceptionHandler(DomainException e) {
         log.error("Error - Code: {}, Message: {}", e.getErrorModel().getCode(), e.getErrorModel().getMessage(), e);
-        ErrorResponse errorResponse =
-            new ErrorResponse(
+        ErrorResponse<Void> errorResponse =
+            new ErrorResponse<>(
                 HttpStatus.BAD_REQUEST.value(),
                 e.getErrorModel().getCode(),
                 e.getErrorModel().getMessage(),
@@ -27,7 +27,7 @@ public class RestControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
+    public ResponseEntity<ErrorResponse<?>> exceptionHandler(Exception e) {
         log.error("Error - Message: {}",e.getMessage(), e);
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
