@@ -15,7 +15,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private static final long TOKEN_VALID_PERIOD_MILLI = 60 * 60 * 1000L;
+    private static final long TOKEN_VALID_PERIOD_MILLI = 30 * 24 * 60 * 60 * 1000L;
     private final String serverSecret;
     private final Clock systemClock;
 
