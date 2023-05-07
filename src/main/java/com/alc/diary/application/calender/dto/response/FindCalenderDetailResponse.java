@@ -13,14 +13,14 @@ public record FindCalenderDetailResponse(
         List<DrinkModel> drinkModels,
         List<String> images,
         String drinkCondition,
-        int totalDrinkCount
+        float totalDrinkCount
 ) {
 
     public static FindCalenderDetailResponse of(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime,
                                              List<DrinkModel> drinkModels, List<String> images, String drinkCondition) {
         return new FindCalenderDetailResponse(
-                title, contents, drinkStartDateTime, drinkEndDateTime, drinkModels, images, drinkCondition, drinkModels.stream()
-                .mapToInt(DrinkModel::getQuantity).sum()
+                title, contents, drinkStartDateTime, drinkEndDateTime, drinkModels, images, drinkCondition, (float) drinkModels.stream()
+                .mapToDouble(DrinkModel::getQuantity).sum()
         );
     }
 }
