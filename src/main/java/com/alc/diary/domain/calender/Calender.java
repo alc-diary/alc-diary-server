@@ -89,4 +89,8 @@ public class Calender extends BaseEntity {
         this.drinkCondition = drinkCondition;
         this.user = user;
     }
+
+    public List<DrinkModel> getDrinkModels() {
+        return drinkModels;
+    }
 }
