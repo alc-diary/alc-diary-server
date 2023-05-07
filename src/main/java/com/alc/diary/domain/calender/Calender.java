@@ -10,6 +10,7 @@ import com.alc.diary.domain.user.User;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.val;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.util.StringUtils;
 
@@ -67,13 +68,25 @@ public class Calender extends BaseEntity {
         this.user = user;
     }
 
-    public static Calender Of(String title, LocalDateTime drinkStartDateTime, List<DrinkModel> drinkModels, User user) {
+    public static Calender Of(LocalDateTime drinkStartDateTime, List<DrinkModel> drinkModels, User user) {
+        val defaultTitle = "오늘의 음주기록";
         return Calender.builder()
-                .title(title)
+                .title(defaultTitle)
                 .drinkStartDateTime(drinkStartDateTime)
                 .drinkEndDateTime(LocalDateTime.now())
                 .drinkModels(drinkModels)
                 .user(user)
                 .build();
+    }
+
+    public void update(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String drinkCondition, User user) {
+        this.title = title;
+        this.contents = contents;
+        this.drinkStartDateTime = drinkStartDateTime;
+        this.drinkEndDateTime = drinkEndDateTime;
+        this.drinkModels = drinkModels;
+        this.image = image;
+        this.drinkCondition = drinkCondition;
+        this.user = user;
     }
 }
