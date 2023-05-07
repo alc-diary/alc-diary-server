@@ -13,6 +13,5 @@ public record UpdateCalenderRequest(
         List<DrinkModel> drinkModels,
         List<String> images,
         String drinkCondition
-
 ) {
 }
