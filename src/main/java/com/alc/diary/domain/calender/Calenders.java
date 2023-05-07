@@ -4,9 +4,13 @@ import com.alc.diary.domain.calender.enums.DrinkType;
 import com.alc.diary.domain.calender.model.DrinkModel;
 import lombok.ToString;
 
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ToString
@@ -50,5 +54,22 @@ public class Calenders {
             }
         }
         return mostDrunkAlcoholType;
+    }
+
+    public List<DayOfWeek> getMostDrunkDayOfWeek() {
+        Map<DayOfWeek, Long> countByDayOfWeek = calenders.stream()
+                                                .map(calender -> calender.getDrinkStartDateTime().getDayOfWeek())
+                                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        int maxDrunkDayOfWeekCount = 0;
+        List<DayOfWeek> mostDrunkDayOfWeek = new ArrayList<>();
+        for (DayOfWeek dayOfWeek : countByDayOfWeek.keySet()) {
+            if (maxDrunkDayOfWeekCount < countByDayOfWeek.get(dayOfWeek)) {
+                mostDrunkDayOfWeek.clear();
+                mostDrunkDayOfWeek.add(dayOfWeek);
+            } else if (maxDrunkDayOfWeekCount == countByDayOfWeek.get(dayOfWeek)) {
+                mostDrunkDayOfWeek.add(dayOfWeek);
+            }
+        }
+        return mostDrunkDayOfWeek;
     }
 }
