@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Arrays;
 import java.util.List;
 
 @Embeddable
@@ -18,7 +19,11 @@ public class CalenderImage {
     @Column(name = "image_urls", length = 5000)
     private String urls;
 
-    public CalenderImage(List<String> images){
+    public CalenderImage(List<String> images) {
         this.urls = StringUtils.join(images, ",");
+    }
+
+    public List<String> getImages() {
+        return Arrays.asList(this.urls.split(","));
     }
 }

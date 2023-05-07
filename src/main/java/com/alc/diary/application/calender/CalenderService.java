@@ -2,7 +2,9 @@ package com.alc.diary.application.calender;
 
 import com.alc.diary.application.calender.dto.request.SaveCalenderRequest;
 import com.alc.diary.application.calender.dto.request.UpdateCalenderRequest;
+import com.alc.diary.application.calender.dto.response.FindCalenderDetailResponse;
 import com.alc.diary.domain.calender.Calender;
+import com.alc.diary.domain.calender.error.CalenderError;
 import com.alc.diary.domain.calender.model.CalenderImage;
 import com.alc.diary.domain.calender.repository.CalenderRepository;
 import com.alc.diary.domain.exception.CalenderException;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -20,6 +23,21 @@ public class CalenderService {
 
     private final UserRepository userRepository;
     private final CalenderRepository calenderRepository;
+
+    @Transactional(readOnly = true)
+    public FindCalenderDetailResponse find(Long calenderId) {
+        try {
+            Calender calender = calenderRepository.getCalenderById(calenderId).orElseThrow();
+            return FindCalenderDetailResponse.of(
+                    calender.getTitle(), calender.getContents(),
+                    calender.getDrinkStartDateTime(), calender.getDrinkEndDateTime(),
+                    calender.getDrinkModels(), (calender.getImage() == null) ? List.of() : calender.getImage().getImages(),
+                    calender.getDrinkCondition()
+            );
+        } catch (Throwable e) {
+            throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
+        }
+    }
 
     @Transactional
     public void save(SaveCalenderRequest request, Long userId) {
@@ -39,7 +57,7 @@ public class CalenderService {
                             .build()
             );
         } catch (Exception e) {
-            throw new CalenderException(e.getMessage());
+            throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
         }
     }
 
@@ -49,7 +67,7 @@ public class CalenderService {
         try {
             calenderRepository.deleteCalenderById(calenderId);
         } catch (Exception e) {
-            throw new CalenderException(e.getMessage());
+            throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
         }
     }
 
@@ -58,7 +76,7 @@ public class CalenderService {
         if (!isValidUser(calenderId, userId)) return;
         try {
             User user = userRepository.findById(userId).orElseThrow();
-            Calender calender = calenderRepository.getCalenderById(calenderId);
+            Calender calender = calenderRepository.getCalenderById(calenderId).orElseThrow();
             calender.update(
                     request.title(), request.contents(),
                     request.drinkStartDateTime(), request.drinkEndDateTime(),
@@ -66,12 +84,12 @@ public class CalenderService {
                     request.drinkCondition(), user
             );
         } catch (Exception e) {
-            throw new CalenderException(e.getMessage());
+            throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
         }
     }
 
     private Boolean isValidUser(Long calenderId, Long userId) {
-        Calender calender = calenderRepository.getCalenderById(calenderId);
+        Calender calender = calenderRepository.getCalenderById(calenderId).orElseThrow();
         return (Objects.equals(calender.user.getId(), userId));
     }
 }

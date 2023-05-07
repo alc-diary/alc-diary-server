@@ -1,5 +1,6 @@
 package com.alc.diary.presentation.advice;
 
+import com.alc.diary.domain.exception.CalenderException;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.presentation.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import java.util.Objects;
 @org.springframework.web.bind.annotation.RestControllerAdvice
 public class RestControllerAdvice {
 
-    @ExceptionHandler(value = DomainException.class)
+    @ExceptionHandler(value = {DomainException.class, CalenderException.class})
     public ResponseEntity<ErrorResponse<Void>> domainExceptionHandler(DomainException e) {
         log.error("Error - Code: {}, Message: {}", e.getErrorModel().getCode(), e.getErrorModel().getMessage(), e);
         ErrorResponse<Void> errorResponse =
