@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.alc.diary.domain.calender.enums.DrinkType.SOJU;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CalendersTest {
@@ -51,7 +50,7 @@ class CalendersTest {
 
     // 수정 예정
     @Test
-    void getNumberOfDrinks_경곗값() {
+    void getNumberOfDrinks_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
         assertThat(testCalenders.calculateNumberOfDrinks())
                 .isEqualTo(0.0f);
@@ -65,7 +64,7 @@ class CalendersTest {
 
     // 수정 예정
     @Test
-    void getDaysOfDrinking_경곗값() {
+    void getDaysOfDrinking_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
         assertThat(testCalenders.calculateDaysOfDrinking())
                 .isEqualTo(0);
@@ -78,7 +77,7 @@ class CalendersTest {
     }
 
     @Test
-    void 가장_많이_마신_주종_경곗값() {
+    void 가장_많이_마신_주종_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
         assertThat(testCalenders.getMostDrunkAlcoholType())
                 .isNull();

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.alc.diary.domain.calender.enums.DrinkType.SOJU;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ReportTest {
@@ -23,7 +24,7 @@ class ReportTest {
     void setUp() {
         List<DrinkModel> drinkModels = List.of(
                 new DrinkModel(DrinkType.BEER, 1.5f),
-                new DrinkModel(DrinkType.SOJU, 3.0f)
+                new DrinkModel(SOJU, 3.0f)
         );
         Calenders calenders = new Calenders(IntStream.rangeClosed(1, 11)
                                                      .mapToObj(i -> Calender.builder()
@@ -49,7 +50,7 @@ class ReportTest {
 
     // 수정 예정
     @Test
-    void getNumberOfDrinks_경곗값() {
+    void getNumberOfDrinks_empty_list() {
         Report testReport = new Report(Collections.emptyList());
         assertThat(testReport.getNumberOfDrinks())
                 .isEqualTo(0.0f);
@@ -63,9 +64,22 @@ class ReportTest {
 
     // 수정 예정
     @Test
-    void getDaysOfDrinking_경곗값() {
+    void getDaysOfDrinking_empty_list() {
         Report testReport = new Report(Collections.emptyList());
         assertThat(testReport.getDaysOfDrinking())
                 .isEqualTo(0);
+    }
+
+    @Test
+    void 가장_많이_마신_주종() {
+        assertThat(report.getMostDrunkAlcoholType())
+                .isEqualTo(SOJU);
+    }
+
+    @Test
+    void 가장_많이_마신_주종_empty_list() {
+        Report testReport = new Report(Collections.emptyList());
+        assertThat(testReport.getMostDrunkAlcoholType())
+                .isNull();
     }
 }
