@@ -1,5 +1,7 @@
 package com.alc.diary.domain.calender;
 
+import com.alc.diary.domain.calender.enums.DrinkType;
+
 import java.util.List;
 
 public class Report {
@@ -20,5 +22,9 @@ public class Report {
 
     public int getDaysOfDrinking() {
         return calenders.calculateDaysOfDrinking();
+    }
+
+    public DrinkType getMostDrunkAlcoholType() {
+        return calenders.getMostDrunkAlcoholType();
     }
 }
