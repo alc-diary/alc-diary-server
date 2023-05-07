@@ -50,8 +50,8 @@ class CalendersTest {
     // 수정 예정
     @Test
     void getNumberOfDrinks_경곗값() {
-        Calenders calendersTest = new Calenders(Collections.emptyList());
-        assertThat(calendersTest.getNumberOfDrinks())
+        Calenders testCalenders = new Calenders(Collections.emptyList());
+        assertThat(testCalenders.getNumberOfDrinks())
                 .isEqualTo(0.0f);
     }
 
@@ -64,8 +64,8 @@ class CalendersTest {
     // 수정 예정
     @Test
     void getDaysOfDrinking_경곗값() {
-        Calenders calendersTest = new Calenders(Collections.emptyList());
-        assertThat(calendersTest.getDaysOfDrinking())
+        Calenders testCalenders = new Calenders(Collections.emptyList());
+        assertThat(testCalenders.getDaysOfDrinking())
                 .isEqualTo(0);
     }
 }
