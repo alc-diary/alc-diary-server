@@ -18,8 +18,8 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        show_sql: false
-        format_sql: false
+        show_sql: true
+        format_sql: true
   mvc:
     path match:
       matching-strategy: ant_path_matcher
