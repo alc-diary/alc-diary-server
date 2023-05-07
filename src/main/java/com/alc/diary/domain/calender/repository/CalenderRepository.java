@@ -5,6 +5,9 @@ import org.springframework.data.repository.Repository;
 
 
 public interface CalenderRepository extends Repository<Calender, Long>, CustomCalenderRepository {
-
     void save(Calender calender);
+
+    void deleteCalenderById(Long calenderId);
+
+    Calender getCalenderById(Long calenderId);
 }
