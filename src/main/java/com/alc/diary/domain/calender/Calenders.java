@@ -17,14 +17,14 @@ public class Calenders {
         this.calenders = calenders;
     }
 
-    public float getNumberOfDrinks() {
+    public float calculateNumberOfDrinks() {
         return (float) calenders.stream()
                                 .flatMapToDouble(calender -> calender.getDrinkModels().stream()
                                                                      .mapToDouble(DrinkModel::getQuantity))
                                 .sum();
     }
 
-    public int getDaysOfDrinking() {
+    public int calculateDaysOfDrinking() {
         return (int) calenders.stream()
                               .map(calender -> dateFormat.format(calender.getDrinkStartDateTime()))
                               .distinct()

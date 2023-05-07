@@ -15,10 +15,10 @@ public class Report {
     }
 
     public float getNumberOfDrinks() {
-        return calenders.getNumberOfDrinks();
+        return calenders.calculateNumberOfDrinks();
     }
 
     public int getDaysOfDrinking() {
-        return calenders.getDaysOfDrinking();
+        return calenders.calculateDaysOfDrinking();
     }
 }
