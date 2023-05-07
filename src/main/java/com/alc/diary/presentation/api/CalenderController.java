@@ -4,17 +4,18 @@ import com.alc.diary.application.calender.CalenderService;
 import com.alc.diary.application.calender.dto.request.SaveCalenderRequest;
 import com.alc.diary.application.calender.dto.request.UpdateCalenderRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/calender")
+@RequestMapping("v1/calender")
 public class CalenderController {
 
     private final CalenderService calenderService;
 
-    @PostMapping(value = "/")
-    public void save(@RequestBody SaveCalenderRequest request,
+    @PostMapping(value = "")
+    public void save(@RequestBody @Validated SaveCalenderRequest request,
                      @RequestAttribute Long userId) {
         calenderService.save(request, userId);
     }
