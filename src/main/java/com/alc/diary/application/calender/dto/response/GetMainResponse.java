@@ -19,7 +19,7 @@ public record GetMainResponse(
     private String getDescription(DescriptionStyle descriptionStyle) {
         return switch (descriptionStyle) {
             case MILD -> "test";
-            case MARA -> "test....MARA";
+            case MALA -> "test....MARA";
         };
     }
 }
