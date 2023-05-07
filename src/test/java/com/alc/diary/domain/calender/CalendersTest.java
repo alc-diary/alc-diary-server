@@ -43,7 +43,7 @@ class CalendersTest {
 
     @Test
     void getNumberOfDrinks() {
-        assertThat(calenders.getNumberOfDrinks())
+        assertThat(calenders.calculateNumberOfDrinks())
                 .isEqualTo(49.5f);
     }
 
@@ -51,13 +51,13 @@ class CalendersTest {
     @Test
     void getNumberOfDrinks_경곗값() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.getNumberOfDrinks())
+        assertThat(testCalenders.calculateNumberOfDrinks())
                 .isEqualTo(0.0f);
     }
 
     @Test
     void getDaysOfDrinking() {
-        assertThat(calenders.getDaysOfDrinking())
+        assertThat(calenders.calculateDaysOfDrinking())
                 .isEqualTo(6);
     }
 
@@ -65,7 +65,7 @@ class CalendersTest {
     @Test
     void getDaysOfDrinking_경곗값() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.getDaysOfDrinking())
+        assertThat(testCalenders.calculateDaysOfDrinking())
                 .isEqualTo(0);
     }
 }
