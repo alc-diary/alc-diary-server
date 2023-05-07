@@ -30,7 +30,8 @@ public class ReportAppService {
         return new GetMonthlyReportAppResponse(
                 report.getNumberOfDrinks(),
                 report.getDaysOfDrinking(),
-                report.getMostDrunkAlcoholType()
+                report.getMostDrunkAlcoholType(),
+                report.getMostDrunkDayOfWeek()
         );
     }
 }
