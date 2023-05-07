@@ -2,6 +2,7 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
 import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
+import com.alc.diary.application.user.dto.request.UpdateNicknameAppRequest;
 import com.alc.diary.application.user.dto.request.UpdateUserProfileImageAppRequest;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
@@ -38,13 +39,13 @@ public class UserAppService {
     public GetUserInfoAppResponse getUser(Long userId) {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         return new GetUserInfoAppResponse(
-            findUser.getId(),
-            findUser.getDescriptionStyle(),
-            findUser.getStatus(),
-            findUser.getAlcoholType(),
-            findUser.getNickname(),
-            findUser.getPersonalAlcoholLimit(),
-            findUser.getNonAlcoholGoal()
+                findUser.getId(),
+                findUser.getDescriptionStyle(),
+                findUser.getStatus(),
+                findUser.getAlcoholType(),
+                findUser.getNickname(),
+                findUser.getPersonalAlcoholLimit(),
+                findUser.getNonAlcoholGoal()
         );
     }
 
@@ -64,11 +65,11 @@ public class UserAppService {
 
     public GetRandomNicknameTokens getRandomNicknameTokens() {
         List<GetRandomNicknameTokens.NicknameTokenDto> firstNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.FIRST).stream()
-            .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
-            .toList();
+                                                                                                       .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
+                                                                                                       .toList();
         List<GetRandomNicknameTokens.NicknameTokenDto> secondNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.SECOND).stream()
-            .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
-            .toList();
+                                                                                                        .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
+                                                                                                        .toList();
         return new GetRandomNicknameTokens(firstNicknameTokenDtos, secondNicknameTokenDtos);
     }
 
@@ -88,9 +89,9 @@ public class UserAppService {
 
     private String getRandomToken(NicknameTokenOrdinal ordinal) {
         return nicknameTokenRepository.findByOrdinalOrderByRandLimit1(ordinal, PageRequest.of(0, 1)).stream()
-            .findFirst()
-            .map(NicknameToken::getToken)
-            .orElseThrow(RuntimeException::new);
+                                      .findFirst()
+                                      .map(NicknameToken::getToken)
+                                      .orElseThrow(RuntimeException::new);
     }
 
     @Transactional
@@ -101,19 +102,29 @@ public class UserAppService {
     @Transactional
     public void updateUserProfileImage(Long userId, UpdateUserProfileImageAppRequest request) {
         User foundUser = userRepository
-            .findById(userId)
-            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+                .findById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         foundUser.updateProfileImage(request.newProfileImage());
     }
 
     @Transactional
     public void updateAlcoholLimitAndGoal(Long userId, UpdateAlcoholLimitAndGoalAppRequest request) {
         User foundUser = userRepository
-            .findById(userId)
-            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+                .findById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         foundUser.updateAlcoholLimitAndGoal(
-            request.newPersonalAlcoholLimit(),
-            request.newNonAlcoholGoal()
+                request.newPersonalAlcoholLimit(),
+                request.newNonAlcoholGoal()
         );
+    }
+
+    @Transactional
+    public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
+        User foundUser = userRepository.findById(userId)
+                                  .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        if (userRepository.existsByNickname(request.newNickname())) {
+            throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
+        }
+        foundUser.updateNickname(request.newNickname());
     }
 }

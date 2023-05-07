@@ -3,6 +3,7 @@ package com.alc.diary.presentation.api;
 import com.alc.diary.application.user.UserAppService;
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
 import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
+import com.alc.diary.application.user.dto.request.UpdateNicknameAppRequest;
 import com.alc.diary.application.user.dto.request.UpdateUserProfileImageAppRequest;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
@@ -19,14 +20,14 @@ public class UserApiController {
 
     @GetMapping("/info")
     public ApiResponse<GetUserInfoAppResponse> getUserInfo(
-        @RequestAttribute Long userId
+            @RequestAttribute Long userId
     ) {
         return ApiResponse.getSuccess(userAppService.getUser(userId));
     }
 
     @PostMapping("/nickname-token")
     public ApiResponse<Void> createNicknameToken(
-        @RequestBody CreateRandomNicknameTokenAppRequest request
+            @RequestBody CreateRandomNicknameTokenAppRequest request
     ) {
         userAppService.createRandomNicknameToken(request);
         return ApiResponse.getCreated();
@@ -39,8 +40,8 @@ public class UserApiController {
 
     @PutMapping("/profile-image")
     public ApiResponse<Void> updateUserProfileImage(
-        @RequestAttribute Long userId,
-        @RequestBody UpdateUserProfileImageAppRequest request
+            @RequestAttribute Long userId,
+            @RequestBody UpdateUserProfileImageAppRequest request
     ) {
         userAppService.updateUserProfileImage(userId, request);
         return ApiResponse.getSuccess();
@@ -48,10 +49,19 @@ public class UserApiController {
 
     @PutMapping("/alcohol-limit-and-goal")
     public ApiResponse<Void> updateAlcoholLimitAndGoal(
-        @RequestAttribute Long userId,
-        @RequestBody UpdateAlcoholLimitAndGoalAppRequest request
+            @RequestAttribute Long userId,
+            @RequestBody UpdateAlcoholLimitAndGoalAppRequest request
     ) {
         userAppService.updateAlcoholLimitAndGoal(userId, request);
+        return ApiResponse.getSuccess();
+    }
+
+    @PutMapping("/nickname")
+    public ApiResponse<Void> updateNickname(
+            @RequestAttribute Long userId,
+            @RequestBody UpdateNicknameAppRequest request
+    ) {
+        userAppService.updateNickname(userId, request);
         return ApiResponse.getSuccess();
     }
 }

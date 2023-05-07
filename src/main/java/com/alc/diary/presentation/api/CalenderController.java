@@ -1,25 +1,35 @@
 package com.alc.diary.presentation.api;
 
+import com.alc.diary.application.calender.CalenderService;
+import com.alc.diary.application.calender.dto.request.SaveCalenderRequest;
+import com.alc.diary.application.calender.dto.request.UpdateCalenderRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/calender")
+@RequestMapping("v1/calender")
 public class CalenderController {
-    @PostMapping(value = "/")
-    public void save() {
 
+    private final CalenderService calenderService;
+
+    @PostMapping(value = "")
+    public void save(@RequestBody @Validated SaveCalenderRequest request,
+                     @RequestAttribute Long userId) {
+        calenderService.save(request, userId);
     }
 
     @PutMapping(value = "/{calenderId}")
-    // 권한 체크
-    public void update(@PathVariable Long calenderId) {
-
+    public void update(@PathVariable Long calenderId,
+                       @RequestAttribute Long userId,
+                       @RequestBody UpdateCalenderRequest request) {
+        calenderService.update(calenderId, userId, request);
     }
 
     @DeleteMapping(value = "/{calenderId}")
-    public void delete(@PathVariable Long calenderId) {
-
+    public void delete(@PathVariable Long calenderId,
+                       @RequestAttribute Long userId) {
+        calenderService.delete(calenderId, userId);
     }
 }
