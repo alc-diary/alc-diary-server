@@ -9,7 +9,6 @@ import com.alc.diary.domain.exception.CalenderException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +33,7 @@ public class CalenderService {
                             .drinkStartDateTime(request.drinkStartDateTime())
                             .drinkEndDateTime(request.drinkEndDateTime())
                             .drinkModels(request.drinkModels())
-                            .image(CalenderImage.builder().urls(StringUtils.join(request.images(), ",")).build())
+                            .image(new CalenderImage(request.images()))
                             .drinkCondition(request.drinkCondition())
                             .user(user)
                             .build()
@@ -57,20 +56,15 @@ public class CalenderService {
     @Transactional
     public void update(Long calenderId, Long userId, UpdateCalenderRequest request) {
         if (!isValidUser(calenderId, userId)) return;
-        User user = userRepository.findById(userId).orElseThrow();
         try {
-            calenderRepository.save(
-                    Calender.builder()
-                            .title(request.title())
-                            .contents(request.contents())
-                            .drinkStartDateTime(request.drinkStartDateTime())
-                            .drinkEndDateTime(request.drinkEndDateTime())
-                            .drinkModels(request.drinkModels())
-                            // TODO: 저장되어있는 기존 string 데이터가 덮어씌워지는지 테스트 필요
-                            .image(CalenderImage.builder().urls(StringUtils.join(request.images(), ",")).build())
-                            .drinkCondition(request.drinkCondition())
-                            .user(user)
-                            .build());
+            User user = userRepository.findById(userId).orElseThrow();
+            Calender calender = calenderRepository.getCalenderById(calenderId);
+            calender.update(
+                    request.title(), request.contents(),
+                    request.drinkStartDateTime(), request.drinkEndDateTime(),
+                    request.drinkModels(), new CalenderImage(request.images()),
+                    request.drinkCondition(), user
+            );
         } catch (Exception e) {
             throw new CalenderException(e.getMessage());
         }

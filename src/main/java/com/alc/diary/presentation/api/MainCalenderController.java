@@ -1,14 +1,16 @@
-package com.alc.diary.presentation;
+package com.alc.diary.presentation.api;
 
 
 import com.alc.diary.application.calender.MainCalenderService;
 import com.alc.diary.application.calender.dto.request.SaveMainCalenderRequest;
+import com.alc.diary.application.calender.dto.response.GetMainResponse;
+import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/calender/main")
+@RequestMapping("v1/calender/main")
 public class MainCalenderController {
 
     private final MainCalenderService mainCalenderService;
@@ -28,7 +30,7 @@ public class MainCalenderController {
      * 메인 목표, 멘트 조회하기
      */
     @GetMapping(value = "")
-    public void getMain(@RequestAttribute Long userId) {
-        mainCalenderService.getMain(userId);
+    public ApiResponse<GetMainResponse> getMain(@RequestAttribute Long userId) {
+        return ApiResponse.getSuccess(mainCalenderService.getMain(userId));
     }
 }
