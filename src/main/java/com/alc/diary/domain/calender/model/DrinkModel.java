@@ -13,10 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DrinkModel {
     private DrinkType type;
-    private Integer quantity;
+    private float quantity;
 
-    public DrinkModel(DrinkType drinkType, int quantity) {
-        this.type = drinkType;
-        this.quantity = quantity;
+    public float getQuantity() {
+        return quantity;
     }
 }
