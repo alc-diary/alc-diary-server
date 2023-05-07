@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nickname", length = 14, unique = true)
+    @Column(name = "nickname", length = 16, unique = true)
     private String nickname;
 
     @Column(name = "social_type", length = 20, nullable = false, updatable = false)
