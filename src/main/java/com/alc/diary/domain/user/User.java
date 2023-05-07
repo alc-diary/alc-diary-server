@@ -4,14 +4,12 @@ import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
+@ToString
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
