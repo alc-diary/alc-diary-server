@@ -19,4 +19,8 @@ public class DrinkModel {
         this.type = drinkType;
         this.quantity = quantity;
     }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
 }

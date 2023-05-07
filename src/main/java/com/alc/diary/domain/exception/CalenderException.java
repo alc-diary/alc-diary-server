@@ -1,8 +1,7 @@
 package com.alc.diary.domain.exception;
 
-public class CalenderException extends RuntimeException {
-    public CalenderException(String message) {
-        super(message);
+public class CalenderException extends DomainException {
+    public CalenderException(ErrorModel errorModel) {
+        super(errorModel);
     }
-
 }
