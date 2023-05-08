@@ -50,14 +50,14 @@ public class CalenderService {
     public SearchCalenderResponse search(SearchCalenderRequest request) {
         try {
             List<Calender> searchCalenders = customCalenderRepository.search(request.userId(), request.query(), LocalDate.parse(request.date()));
-            if (searchCalenders.isEmpty()) return null;
+            if (searchCalenders.isEmpty()) throw new CalenderException(CalenderError.NOT_VALID_RESULT);
 
             return switch (request.query()) {
                 case MONTH -> SearchCalenderMonthResponse.of(searchCalenders);
                 case DAY -> SearchCalenderDayResponse.of(searchCalenders);
             };
         } catch (Throwable e) {
-            throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
+            throw new CalenderException(CalenderError.NOT_VALID_RESULT);
         }
     }
 
