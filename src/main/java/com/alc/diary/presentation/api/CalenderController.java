@@ -34,21 +34,24 @@ public class CalenderController {
     }
 
     @PostMapping(value = "")
-    public void save(@RequestBody @Validated SaveCalenderRequest request,
-                     @RequestAttribute Long userId) {
+    public ApiResponse<Void> save(@RequestBody @Validated SaveCalenderRequest request,
+                                  @RequestAttribute Long userId) {
         calenderService.save(request, userId);
+        return ApiResponse.getSuccess();
     }
 
     @PutMapping(value = "/{calenderId}")
-    public void update(@PathVariable Long calenderId,
-                       @RequestAttribute Long userId,
-                       @RequestBody UpdateCalenderRequest request) {
+    public ApiResponse<Void> update(@PathVariable Long calenderId,
+                                    @RequestAttribute Long userId,
+                                    @RequestBody UpdateCalenderRequest request) {
         calenderService.update(calenderId, userId, request);
+        return ApiResponse.getSuccess();
     }
 
     @DeleteMapping(value = "/{calenderId}")
-    public void delete(@PathVariable Long calenderId,
-                       @RequestAttribute Long userId) {
+    public ApiResponse<Void> delete(@PathVariable Long calenderId,
+                                    @RequestAttribute Long userId) {
         calenderService.delete(calenderId, userId);
+        return ApiResponse.getSuccess();
     }
 }
