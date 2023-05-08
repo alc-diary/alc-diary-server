@@ -19,11 +19,12 @@ public class MainCalenderController {
      * 메인 간편저장
      */
     @PostMapping(value = "")
-    public void save(
+    public ApiResponse<Void> save(
             @RequestBody SaveMainCalenderRequest request,
             @RequestAttribute Long userId
     ) {
         mainCalenderService.saveMain(request, userId);
+        return ApiResponse.getSuccess();
     }
 
     /**
