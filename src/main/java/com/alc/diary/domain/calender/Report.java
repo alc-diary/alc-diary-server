@@ -18,18 +18,18 @@ public class Report {
     }
 
     public float getNumberOfDrinks() {
-        return calenders.calculateNumberOfDrinks();
+        return calenders.calculateBottlesConsumed();
     }
 
     public int getDaysOfDrinking() {
-        return calenders.calculateDaysOfDrinking();
+        return calenders.calculateTotalDrinkingDays();
     }
 
     public DrinkType getMostDrunkAlcoholType() {
-        return calenders.getMostDrunkAlcoholType();
+        return calenders.calculateMostConsumedBeverage();
     }
 
     public List<DayOfWeek> getMostDrunkDayOfWeek() {
-        return calenders.getMostDrunkDayOfWeek();
+        return calenders.calculateMostFrequentDrinkingDay();
     }
 }
