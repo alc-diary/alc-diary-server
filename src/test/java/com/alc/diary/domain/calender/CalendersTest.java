@@ -44,7 +44,7 @@ class CalendersTest {
 
     @Test
     void getNumberOfDrinks() {
-        assertThat(calenders.calculateNumberOfDrinks())
+        assertThat(calenders.calculateBottlesConsumed())
                 .isEqualTo(49.5f);
     }
 
@@ -52,13 +52,13 @@ class CalendersTest {
     @Test
     void getNumberOfDrinks_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.calculateNumberOfDrinks())
+        assertThat(testCalenders.calculateBottlesConsumed())
                 .isEqualTo(0.0f);
     }
 
     @Test
     void getDaysOfDrinking() {
-        assertThat(calenders.calculateDaysOfDrinking())
+        assertThat(calenders.calculateTotalDrinkingDays())
                 .isEqualTo(6);
     }
 
@@ -66,20 +66,20 @@ class CalendersTest {
     @Test
     void getDaysOfDrinking_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.calculateDaysOfDrinking())
+        assertThat(testCalenders.calculateTotalDrinkingDays())
                 .isEqualTo(0);
     }
 
     @Test
     void 가장_많이_마신_주종() {
-        assertThat(calenders.getMostDrunkAlcoholType())
+        assertThat(calenders.calculateMostConsumedBeverage())
                 .isEqualTo(SOJU);
     }
 
     @Test
     void 가장_많이_마신_주종_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.getMostDrunkAlcoholType())
+        assertThat(testCalenders.calculateMostConsumedBeverage())
                 .isNull();
     }
 }

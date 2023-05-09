@@ -7,7 +7,6 @@ import lombok.ToString;
 import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -17,28 +16,27 @@ import java.util.stream.Collectors;
 public class Calenders {
 
     private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     private final List<Calender> calenders;
 
     public Calenders(List<Calender> calenders) {
         this.calenders = calenders;
     }
 
-    public float calculateNumberOfDrinks() {
+    public float calculateBottlesConsumed() {
         return (float) calenders.stream()
                                 .flatMapToDouble(calender -> calender.getDrinkModels().stream()
                                                                      .mapToDouble(DrinkModel::getQuantity))
                                 .sum();
     }
 
-    public int calculateDaysOfDrinking() {
+    public int calculateTotalDrinkingDays() {
         return (int) calenders.stream()
                               .map(calender -> dateFormat.format(calender.getDrinkStartDateTime()))
                               .distinct()
                               .count();
     }
 
-    public DrinkType getMostDrunkAlcoholType() {
+    public DrinkType calculateMostConsumedBeverage() {
         Map<DrinkType, List<DrinkModel>> drinkModelsByDrinkType = calenders.stream()
                                                                            .flatMap(calender -> calender.getDrinkModels().stream())
                                                                            .collect(Collectors.groupingBy(DrinkModel::getType));
@@ -56,7 +54,7 @@ public class Calenders {
         return mostDrunkAlcoholType;
     }
 
-    public List<DayOfWeek> getMostDrunkDayOfWeek() {
+    public List<DayOfWeek> calculateMostFrequentDrinkingDay() {
         Map<DayOfWeek, Long> countByDayOfWeek = calenders.stream()
                                                 .map(calender -> calender.getDrinkStartDateTime().getDayOfWeek())
                                                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));

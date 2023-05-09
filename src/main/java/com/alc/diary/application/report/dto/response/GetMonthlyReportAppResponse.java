@@ -1,15 +1,26 @@
 package com.alc.diary.application.report.dto.response;
 
-import com.alc.diary.domain.calender.enums.DrinkType;
+import com.alc.diary.domain.user.enums.AlcoholType;
 
 import java.time.DayOfWeek;
-import java.util.List;
 
 public record GetMonthlyReportAppResponse(
 
-        float numberOfDrinks,
-        int daysOfDrinking,
-        DrinkType mostDrunkAlcoholType,
-        List<DayOfWeek> mostDayOfWeek
+        float totalBottlesConsumed,
+        int totalDrinkingDays,
+        MostConsumedBeverage mostConsumedBeverage,
+        MostFrequentDrinkingDay mostFrequentDrinkingDay
 ) {
+
+    private record MostConsumedBeverage(
+            AlcoholType alcoholType,
+            int totalAmount
+    ) {
+    }
+
+    private record MostFrequentDrinkingDay(
+            DayOfWeek dayOfWeek,
+            int totalOccurrence
+    ) {
+    }
 }

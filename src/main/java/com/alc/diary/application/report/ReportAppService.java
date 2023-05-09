@@ -24,9 +24,10 @@ public class ReportAppService {
         LocalDateTime nowPlusOneMonth = now.plusMonths(1L);
         LocalDateTime start = LocalDateTime.of(now.getYear(), now.getMonth(), 1, 0, 0);
         LocalDateTime end = LocalDateTime.of(nowPlusOneMonth.getYear(), nowPlusOneMonth.getMonth(), 1, 0, 0);
+
         List<Calender> findCalenders = calenderRepository.findByDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(start, end);
         Report report = new Report(findCalenders);
-        report.getMostDrunkDayOfWeek();
+
         return new GetMonthlyReportAppResponse(
                 report.getNumberOfDrinks(),
                 report.getDaysOfDrinking(),
