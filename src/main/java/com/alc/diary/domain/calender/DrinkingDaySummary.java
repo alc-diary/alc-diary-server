@@ -1,9 +1,11 @@
 package com.alc.diary.domain.calender;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.DayOfWeek;
 
+@ToString
 @Getter
 public class DrinkingDaySummary {
 
