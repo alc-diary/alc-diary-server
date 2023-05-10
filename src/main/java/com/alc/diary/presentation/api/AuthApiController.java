@@ -35,7 +35,7 @@ public class AuthApiController {
         @RequestHeader("Authorization") String bearerToken,
         @RequestParam SocialType socialType
     ) {
-        if (bearerToken != null && !bearerToken.startsWith("Bearer ")) {
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid Authorization");
         }
         String socialAccessToken = bearerToken.substring("Bearer ".length());

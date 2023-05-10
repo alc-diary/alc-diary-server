@@ -4,17 +4,17 @@ import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @Getter
+@ToString
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "status = 'ACTIVE'")
 @Table(name = "users")
 @Entity
 public class User extends BaseEntity {
@@ -66,23 +66,23 @@ public class User extends BaseEntity {
     private String profileImage;
 
     public static UserBuilder builder(
-        SocialType socialType,
-        String socialId,
-        DescriptionStyle descriptionStyle
+            SocialType socialType,
+            String socialId,
+            DescriptionStyle descriptionStyle
     ) {
         return innerBuilder()
-            .socialType(socialType)
-            .socialId(socialId)
-            .descriptionStyle(descriptionStyle)
-            .status(UserStatus.ONBOARDING);
+                .socialType(socialType)
+                .socialId(socialId)
+                .descriptionStyle(descriptionStyle)
+                .status(UserStatus.ONBOARDING);
     }
 
     public void onboarding(
-        DescriptionStyle descriptionStyle,
-        String nickname,
-        AlcoholType alcoholType,
-        float personalAlcoholLimit,
-        int nonAlcoholGoal
+            DescriptionStyle descriptionStyle,
+            String nickname,
+            AlcoholType alcoholType,
+            float personalAlcoholLimit,
+            int nonAlcoholGoal
     ) {
         if (descriptionStyle == null) {
             throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
@@ -108,15 +108,19 @@ public class User extends BaseEntity {
         this.profileImage = newProfileImage;
     }
 
-    public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal) {
+    public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal, AlcoholType newAlcoholType) {
         if (newPersonalAlcoholLimit < 0.0f) {
             throw new IllegalArgumentException("주량은 0이상이어야 합니다.");
         }
         if (newNonAlcoholGoal < 0) {
             throw new IllegalArgumentException("금주 목표 일 수는 0이상이어야 합니다.");
         }
+        if (newAlcoholType == null) {
+            throw new IllegalArgumentException("AlcoholType은 null이 아니어야 합니다.");
+        }
         this.personalAlcoholLimit = newPersonalAlcoholLimit;
         this.nonAlcoholGoal = newNonAlcoholGoal;
+        this.alcoholType = newAlcoholType;
     }
 
     public void updateNickname(String newNickname) {

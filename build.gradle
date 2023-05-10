@@ -71,6 +71,9 @@ dependencies {
     // thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+    // Slack
+    implementation 'com.slack.api:slack-api-client:1.29.2'
+
     // test
     testImplementation 'org.projectlombok:lombok:1.18.22'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
