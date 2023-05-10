@@ -1,7 +1,10 @@
 package com.alc.diary.domain.calender;
 
+import lombok.Getter;
+
 import java.time.DayOfWeek;
 
+@Getter
 public class DrinkingDaySummary {
 
     private final DayOfWeek dayOfWeek;
