@@ -44,7 +44,7 @@ class CalendersTest {
 
     @Test
     void getNumberOfDrinks() {
-        assertThat(calenders.calculateBottlesConsumed())
+        assertThat(calenders.calculateTotalDrinkQuantity())
                 .isEqualTo(49.5f);
     }
 
@@ -52,7 +52,7 @@ class CalendersTest {
     @Test
     void getNumberOfDrinks_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.calculateBottlesConsumed())
+        assertThat(testCalenders.calculateTotalDrinkQuantity())
                 .isEqualTo(0.0f);
     }
 
@@ -72,14 +72,14 @@ class CalendersTest {
 
     @Test
     void 가장_많이_마신_주종() {
-        assertThat(calenders.calculateMostConsumedBeverage())
+        assertThat(calenders.calculateMostConsumedBeverageSummary())
                 .isEqualTo(SOJU);
     }
 
     @Test
     void 가장_많이_마신_주종_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.calculateMostConsumedBeverage())
+        assertThat(testCalenders.calculateMostConsumedBeverageSummary())
                 .isNull();
     }
 }

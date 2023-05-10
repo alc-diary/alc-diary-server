@@ -44,7 +44,7 @@ class ReportTest {
 
     @Test
     void getNumberOfDrinks() {
-        assertThat(report.getNumberOfDrinks())
+        assertThat(report.totalDrinkQuantity())
                 .isEqualTo(49.5f);
     }
 
@@ -52,13 +52,13 @@ class ReportTest {
     @Test
     void getNumberOfDrinks_empty_list() {
         Report testReport = new Report(Collections.emptyList());
-        assertThat(testReport.getNumberOfDrinks())
+        assertThat(testReport.totalDrinkQuantity())
                 .isEqualTo(0.0f);
     }
 
     @Test
     void getDaysOfDrinking() {
-        assertThat(report.getDaysOfDrinking())
+        assertThat(report.totalDrinkingDays())
                 .isEqualTo(6);
     }
 
@@ -66,20 +66,20 @@ class ReportTest {
     @Test
     void getDaysOfDrinking_empty_list() {
         Report testReport = new Report(Collections.emptyList());
-        assertThat(testReport.getDaysOfDrinking())
+        assertThat(testReport.totalDrinkingDays())
                 .isEqualTo(0);
     }
 
     @Test
     void 가장_많이_마신_주종() {
-        assertThat(report.getMostDrunkAlcoholType())
+        assertThat(report.mostConsumedBeverageSummary())
                 .isEqualTo(SOJU);
     }
 
     @Test
     void 가장_많이_마신_주종_empty_list() {
         Report testReport = new Report(Collections.emptyList());
-        assertThat(testReport.getMostDrunkAlcoholType())
+        assertThat(testReport.mostConsumedBeverageSummary())
                 .isNull();
     }
 }
