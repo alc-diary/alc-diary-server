@@ -114,7 +114,8 @@ public class UserAppService {
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         foundUser.updateAlcoholLimitAndGoal(
                 request.newPersonalAlcoholLimit(),
-                request.newNonAlcoholGoal()
+                request.newNonAlcoholGoal(),
+                request.newAlcoholType()
         );
     }
 

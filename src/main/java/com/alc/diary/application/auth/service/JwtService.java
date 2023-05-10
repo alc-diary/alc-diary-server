@@ -3,12 +3,12 @@ package com.alc.diary.application.auth.service;
 import com.alc.diary.domain.auth.error.AuthError;
 import com.alc.diary.domain.exception.DomainException;
 import io.jsonwebtoken.*;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
+import java.util.Base64;
 import java.util.Date;
 
 @Slf4j
@@ -16,11 +16,11 @@ import java.util.Date;
 public class JwtService {
 
     private static final long TOKEN_VALID_PERIOD_MILLI = 30 * 24 * 60 * 60 * 1000L;
-    private final String serverSecret;
+    private final String base64EncodedSecretKey;
     private final Clock systemClock;
 
     public JwtService(@Value("${server.secret}") String serverSecret, Clock systemClock) {
-        this.serverSecret = serverSecret;
+        this.base64EncodedSecretKey = Base64.getEncoder().encodeToString(serverSecret.getBytes());
         this.systemClock = systemClock;
     }
 
@@ -29,7 +29,7 @@ public class JwtService {
                 .setSubject(String.valueOf(userId))
                 .setIssuedAt(Date.from(systemClock.instant()))
                 .setExpiration(Date.from(systemClock.instant().plusMillis(TOKEN_VALID_PERIOD_MILLI)))
-                .signWith(SignatureAlgorithm.HS256, serverSecret)
+                .signWith(SignatureAlgorithm.HS256, base64EncodedSecretKey)
                 .compact();
     }
 
@@ -52,7 +52,7 @@ public class JwtService {
 
     private Claims getClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(serverSecret)
+                .setSigningKey(base64EncodedSecretKey)
                 .setClock(() -> Date.from(systemClock.instant()))
                 .parseClaimsJws(token)
                 .getBody();
