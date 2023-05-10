@@ -40,11 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (
-                StringUtils.startsWithAny(path, whiteList)
-                        || StringUtils.equalsAny(path, equalsList)
+        if (StringUtils.startsWithAny(path, whiteList)
+            || StringUtils.equalsAny(path, equalsList)
         ) {
-            log.info("Request - Method: {}, URL: {}", request.getMethod(), path);
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,19 +52,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtService.validateToken(accessToken);
             long userId = jwtService.getUserIdFromToken(accessToken);
             long findUserId = userRepository.findById(userId)
-                    .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
-                    .getId();
-            if (!userRepository.findById(userId).isPresent()) {
+                                            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
+                                            .getId();
+            if (userRepository.findById(userId).isEmpty()) {
                 throw new DomainException(UserError.USER_NOT_FOUND);
             }
             request.setAttribute("userId", findUserId);
-            log.info("Request - Method:{}, URL: {}, Access Token: {}, User Id: {}", request.getMethod(), path, request.getHeader("Authorization"), findUserId);
             filterChain.doFilter(request, response);
         } catch (DomainException e) {
-            log.info("Request - Method:{}, URL: {}, Access Token: {}", request.getMethod(), path, request.getHeader("Authorization"));
             handlerExceptionResolver.resolveException(request, response, null, e);
         } catch (Exception e) {
-            log.info("Request - Method:{}, URL: {}, Access Token: {}", request.getMethod(), path, request.getHeader("Authorization"));
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }
@@ -79,7 +74,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (!bearerToken.startsWith("Bearer ")) {
             throw new DomainException(AuthError.INVALID_BEARER_TOKEN_FORMAT);
         }
-        String accessToken = bearerToken.substring("Bearer ".length());
-        return accessToken;
+        return bearerToken.substring("Bearer ".length());
     }
 }

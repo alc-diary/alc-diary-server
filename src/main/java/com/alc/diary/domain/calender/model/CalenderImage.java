@@ -3,6 +3,7 @@ package com.alc.diary.domain.calender.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.Embeddable;
 import java.util.Arrays;
 import java.util.List;
 
+@ToString
 @Embeddable
 @Builder
 @AllArgsConstructor
