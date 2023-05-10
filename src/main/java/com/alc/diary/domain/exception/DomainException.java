@@ -7,4 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DomainException extends RuntimeException {
     private final ErrorModel errorModel;
+
+    @Override
+    public String getMessage() {
+        return errorModel.getMessage();
+    }
 }
