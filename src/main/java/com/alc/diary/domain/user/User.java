@@ -5,6 +5,7 @@ import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "status = 'ACTIVE'")
 @Table(name = "users")
 @Entity
 public class User extends BaseEntity {
