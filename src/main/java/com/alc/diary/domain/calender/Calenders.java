@@ -22,7 +22,7 @@ public class Calenders {
         this.calenders = calenders;
     }
 
-    public float calculateBottlesConsumed() {
+    public float calculateTotalDrinkQuantity() {
         return (float) calenders.stream()
                                 .flatMapToDouble(calender -> calender.getDrinkModels().stream()
                                                                      .mapToDouble(DrinkModel::getQuantity))
@@ -36,38 +36,39 @@ public class Calenders {
                               .count();
     }
 
-    public DrinkType calculateMostConsumedBeverage() {
+    public BeverageSummary calculateMostConsumedBeverageSummary() {
         Map<DrinkType, List<DrinkModel>> drinkModelsByDrinkType = calenders.stream()
                                                                            .flatMap(calender -> calender.getDrinkModels().stream())
                                                                            .collect(Collectors.groupingBy(DrinkModel::getType));
-        float maxNumberOfDrinks = 0;
-        DrinkType mostDrunkAlcoholType = null;
+        float maxBeverageConsumption = 0;
+        DrinkType mostConsumedDrinkType = null;
         for (DrinkType type : drinkModelsByDrinkType.keySet()) {
             float sumOfNumberOfDrinks = (float) drinkModelsByDrinkType.get(type).stream()
                                                .mapToDouble(DrinkModel::getQuantity)
                                                .sum();
-            if (maxNumberOfDrinks <= sumOfNumberOfDrinks) {
-                maxNumberOfDrinks = sumOfNumberOfDrinks;
-                mostDrunkAlcoholType = type;
+            if (maxBeverageConsumption <= sumOfNumberOfDrinks) {
+                maxBeverageConsumption = sumOfNumberOfDrinks;
+                mostConsumedDrinkType = type;
             }
         }
-        return mostDrunkAlcoholType;
+        return new BeverageSummary(mostConsumedDrinkType, maxBeverageConsumption);
     }
 
-    public List<DayOfWeek> calculateMostFrequentDrinkingDay() {
+    public DrinkingDaySummary calculateMostFrequentDrinkingDaySummary() {
         Map<DayOfWeek, Long> countByDayOfWeek = calenders.stream()
                                                 .map(calender -> calender.getDrinkStartDateTime().getDayOfWeek())
                                                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        int maxDrunkDayOfWeekCount = 0;
-        List<DayOfWeek> mostDrunkDayOfWeek = new ArrayList<>();
+        int maxDrinkingDayCount = 0;
+        List<DayOfWeek> mostFrequentDrinkingDays = new ArrayList<>();
         for (DayOfWeek dayOfWeek : countByDayOfWeek.keySet()) {
-            if (maxDrunkDayOfWeekCount < countByDayOfWeek.get(dayOfWeek)) {
-                mostDrunkDayOfWeek.clear();
-                mostDrunkDayOfWeek.add(dayOfWeek);
-            } else if (maxDrunkDayOfWeekCount == countByDayOfWeek.get(dayOfWeek)) {
-                mostDrunkDayOfWeek.add(dayOfWeek);
+            if (maxDrinkingDayCount < countByDayOfWeek.get(dayOfWeek)) {
+                mostFrequentDrinkingDays.clear();
+                maxDrinkingDayCount = countByDayOfWeek.get(dayOfWeek).intValue();
+                mostFrequentDrinkingDays.add(dayOfWeek);
+            } else if (maxDrinkingDayCount == countByDayOfWeek.get(dayOfWeek)) {
+                mostFrequentDrinkingDays.add(dayOfWeek);
             }
         }
-        return mostDrunkDayOfWeek;
+        return new DrinkingDaySummary(mostFrequentDrinkingDays.get(0), maxDrinkingDayCount);
     }
 }

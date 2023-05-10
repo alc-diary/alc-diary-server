@@ -1,8 +1,5 @@
 package com.alc.diary.domain.calender;
 
-import com.alc.diary.domain.calender.enums.DrinkType;
-
-import java.time.DayOfWeek;
 import java.util.List;
 
 public class Report {
@@ -17,19 +14,19 @@ public class Report {
         this.calenders = calenders;
     }
 
-    public float getNumberOfDrinks() {
-        return calenders.calculateBottlesConsumed();
+    public float totalDrinkQuantity() {
+        return calenders.calculateTotalDrinkQuantity();
     }
 
-    public int getDaysOfDrinking() {
+    public int totalDrinkingDays() {
         return calenders.calculateTotalDrinkingDays();
     }
 
-    public DrinkType getMostDrunkAlcoholType() {
-        return calenders.calculateMostConsumedBeverage();
+    public BeverageSummary mostConsumedBeverageSummary() {
+        return calenders.calculateMostConsumedBeverageSummary();
     }
 
-    public List<DayOfWeek> getMostDrunkDayOfWeek() {
-        return calenders.calculateMostFrequentDrinkingDay();
+    public DrinkingDaySummary mostFrequentDrinkingDaySummary() {
+        return calenders.calculateMostFrequentDrinkingDaySummary();
     }
 }

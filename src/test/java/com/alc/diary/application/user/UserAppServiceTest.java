@@ -1,11 +1,14 @@
 package com.alc.diary.application.user;
 
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.enums.AlcoholType;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 import com.alc.diary.domain.user.enums.SocialType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.alc.diary.domain.user.enums.AlcoholType.BEER;
+import static com.alc.diary.domain.user.enums.AlcoholType.SOJU;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +23,7 @@ class UserAppServiceTest {
                    .nickname("test")
                    .personalAlcoholLimit(1.5f)
                    .nonAlcoholGoal(5)
+                   .alcoholType(SOJU)
                    .build();
     }
 
@@ -46,8 +50,9 @@ class UserAppServiceTest {
     void 주량과_금주목표를_변경한다() {
         float newPersonalAlcoholLimit = 2.5f;
         int newNonAlcoholGoal = 10;
+        AlcoholType newAlcoholType = BEER;
 
-        user.updateAlcoholLimitAndGoal(newPersonalAlcoholLimit, newNonAlcoholGoal);
+        user.updateAlcoholLimitAndGoal(newPersonalAlcoholLimit, newNonAlcoholGoal, newAlcoholType);
 
         assertThat(user.getPersonalAlcoholLimit())
                 .isEqualTo(newPersonalAlcoholLimit);
@@ -59,7 +64,11 @@ class UserAppServiceTest {
     void 주량이_0보다_작으면_IllegalArgumentException이_발생한다() {
         float newPersonalAlcoholLimit = -0.5f;
 
-        assertThatThrownBy(() -> user.updateAlcoholLimitAndGoal(newPersonalAlcoholLimit, 10))
+        assertThatThrownBy(() -> user.updateAlcoholLimitAndGoal(
+                newPersonalAlcoholLimit,
+                10,
+                BEER
+        ))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주량은 0이상이어야 합니다.");
     }
@@ -68,7 +77,7 @@ class UserAppServiceTest {
     void 금주_목표_일_수가_0보다_작으면_IllegalArgumentException이_발생한다() {
         int newNonAlcoholGoal = -1;
 
-        assertThatThrownBy(() -> user.updateAlcoholLimitAndGoal(1.0f, newNonAlcoholGoal))
+        assertThatThrownBy(() -> user.updateAlcoholLimitAndGoal(1.0f, newNonAlcoholGoal, BEER))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("금주 목표 일 수는 0이상이어야 합니다.");
     }
