@@ -64,23 +64,23 @@ public class User extends BaseEntity {
     private String profileImage;
 
     public static UserBuilder builder(
-        SocialType socialType,
-        String socialId,
-        DescriptionStyle descriptionStyle
+            SocialType socialType,
+            String socialId,
+            DescriptionStyle descriptionStyle
     ) {
         return innerBuilder()
-            .socialType(socialType)
-            .socialId(socialId)
-            .descriptionStyle(descriptionStyle)
-            .status(UserStatus.ONBOARDING);
+                .socialType(socialType)
+                .socialId(socialId)
+                .descriptionStyle(descriptionStyle)
+                .status(UserStatus.ONBOARDING);
     }
 
     public void onboarding(
-        DescriptionStyle descriptionStyle,
-        String nickname,
-        AlcoholType alcoholType,
-        float personalAlcoholLimit,
-        int nonAlcoholGoal
+            DescriptionStyle descriptionStyle,
+            String nickname,
+            AlcoholType alcoholType,
+            float personalAlcoholLimit,
+            int nonAlcoholGoal
     ) {
         if (descriptionStyle == null) {
             throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
@@ -106,19 +106,19 @@ public class User extends BaseEntity {
         this.profileImage = newProfileImage;
     }
 
-    public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal, AlcoholType alcoholType) {
+    public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal, AlcoholType newAlcoholType) {
         if (newPersonalAlcoholLimit < 0.0f) {
             throw new IllegalArgumentException("주량은 0이상이어야 합니다.");
         }
         if (newNonAlcoholGoal < 0) {
             throw new IllegalArgumentException("금주 목표 일 수는 0이상이어야 합니다.");
         }
-        if (alcoholType == null) {
+        if (newAlcoholType == null) {
             throw new IllegalArgumentException("AlcoholType은 null이 아니어야 합니다.");
         }
         this.personalAlcoholLimit = newPersonalAlcoholLimit;
         this.nonAlcoholGoal = newNonAlcoholGoal;
-        this.alcoholType = alcoholType;
+        this.alcoholType = newAlcoholType;
     }
 
     public void updateNickname(String newNickname) {
