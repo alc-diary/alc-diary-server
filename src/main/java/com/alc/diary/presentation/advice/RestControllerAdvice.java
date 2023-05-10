@@ -18,6 +18,7 @@ import java.util.Objects;
 @org.springframework.web.bind.annotation.RestControllerAdvice
 public class RestControllerAdvice {
 
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Logger slackLogger = LoggerFactory.getLogger("SLACK");
 
