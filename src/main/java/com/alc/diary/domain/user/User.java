@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "status = 'ACTIVE'")
 @Table(name = "users")
 @Entity
 public class User extends BaseEntity {
