@@ -5,6 +5,6 @@ import com.alc.diary.domain.user.enums.AlcoholType;
 public record UpdateAlcoholLimitAndGoalAppRequest(
     float newPersonalAlcoholLimit,
     int newNonAlcoholGoal,
-    AlcoholType alcoholType
+    AlcoholType newAlcoholType
 ) {
 }

@@ -115,7 +115,7 @@ public class UserAppService {
         foundUser.updateAlcoholLimitAndGoal(
                 request.newPersonalAlcoholLimit(),
                 request.newNonAlcoholGoal(),
-                request.alcoholType()
+                request.newAlcoholType()
         );
     }
 
