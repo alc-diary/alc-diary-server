@@ -72,8 +72,9 @@ class CalendersTest {
 
     @Test
     void 가장_많이_마신_주종() {
+        BeverageSummary expect = new BeverageSummary(SOJU, 33.0f);
         assertThat(calenders.calculateMostConsumedBeverageSummary())
-                .isEqualTo(SOJU);
+                .isEqualTo(expect);
     }
 
     @Test
