@@ -72,8 +72,9 @@ class ReportTest {
 
     @Test
     void 가장_많이_마신_주종() {
+        BeverageSummary expect = new BeverageSummary(SOJU, 33.0f);
         assertThat(report.mostConsumedBeverageSummary())
-                .isEqualTo(SOJU);
+                .isEqualTo(expect);
     }
 
     @Test

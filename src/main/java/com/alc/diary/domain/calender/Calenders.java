@@ -51,6 +51,9 @@ public class Calenders {
                 mostConsumedDrinkType = type;
             }
         }
+        if (mostConsumedDrinkType == null) {
+            return null;
+        }
         return new BeverageSummary(mostConsumedDrinkType, maxBeverageConsumption);
     }
 
