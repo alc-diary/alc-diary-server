@@ -106,15 +106,19 @@ public class User extends BaseEntity {
         this.profileImage = newProfileImage;
     }
 
-    public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal) {
+    public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal, AlcoholType alcoholType) {
         if (newPersonalAlcoholLimit < 0.0f) {
             throw new IllegalArgumentException("주량은 0이상이어야 합니다.");
         }
         if (newNonAlcoholGoal < 0) {
             throw new IllegalArgumentException("금주 목표 일 수는 0이상이어야 합니다.");
         }
+        if (alcoholType == null) {
+            throw new IllegalArgumentException("AlcoholType은 null이 아니어야 합니다.");
+        }
         this.personalAlcoholLimit = newPersonalAlcoholLimit;
         this.nonAlcoholGoal = newNonAlcoholGoal;
+        this.alcoholType = alcoholType;
     }
 
     public void updateNickname(String newNickname) {
