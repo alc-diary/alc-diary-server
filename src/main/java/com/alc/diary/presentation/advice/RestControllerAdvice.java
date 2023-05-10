@@ -3,7 +3,10 @@ package com.alc.diary.presentation.advice;
 import com.alc.diary.domain.exception.CalenderException;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.presentation.dto.ErrorResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,9 +14,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Objects;
 
-@Slf4j
+@RequiredArgsConstructor
 @org.springframework.web.bind.annotation.RestControllerAdvice
 public class RestControllerAdvice {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger slackLogger = LoggerFactory.getLogger("SLACK");
 
     @ExceptionHandler(value = {DomainException.class, CalenderException.class})
     public ResponseEntity<ErrorResponse<Void>> domainExceptionHandler(DomainException e) {
@@ -32,7 +38,7 @@ public class RestControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse<?>> exceptionHandler(Exception e) {
-        log.error("Error - Message: {}", e.getMessage(), e);
+        slackLogger.error("Error - Message: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.getDefault(e.getMessage()));

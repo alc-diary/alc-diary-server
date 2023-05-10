@@ -73,6 +73,7 @@ dependencies {
 
     // Slack
     implementation 'com.slack.api:slack-api-client:1.29.2'
+    implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 
     // test
     testImplementation 'org.projectlombok:lombok:1.18.22'
