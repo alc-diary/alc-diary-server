@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -88,5 +89,9 @@ public class Calender extends BaseEntity {
         this.image = image;
         this.drinkCondition = drinkCondition;
         this.user = user;
+    }
+
+    public List<DrinkModel> getDrinkModels() {
+        return drinkModels;
     }
 }
