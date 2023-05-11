@@ -9,7 +9,7 @@ public record GetMonthlyReportAppResponse(
         int totalSpendMoney,
         int totalCalories,
         int totalRun,
-        BeverageSummaryDto mostConsumedBeverage,
+        DrinkSummaryDto mostConsumedDrink,
         DrinkingDaySummaryDto mostFrequentDrinkingDay
 ) {
 }

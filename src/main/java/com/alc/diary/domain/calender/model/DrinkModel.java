@@ -13,11 +13,11 @@ public class DrinkModel {
     private DrinkType type;
     private float quantity;
 
-    public int getTotalCalorie() {
-        return (int) quantity * type.getCalorie();
-    }
-
     public int getTotalPrice() {
         return (int) quantity * type.getPrice();
+    }
+
+    public int getTotalCalorie() {
+        return (int) quantity * type.getCalorie();
     }
 }

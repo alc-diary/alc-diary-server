@@ -72,15 +72,15 @@ class ReportTest {
 
     @Test
     void 가장_많이_마신_주종() {
-        BeverageSummary expect = new BeverageSummary(SOJU, 33.0f);
-        assertThat(report.mostConsumedBeverageSummary())
+        DrinkSummary expect = new DrinkSummary(SOJU, 33.0f);
+        assertThat(report.mostConsumedDrinkSummary())
                 .isEqualTo(expect);
     }
 
     @Test
     void 가장_많이_마신_주종_empty_list() {
         Report testReport = new Report(Collections.emptyList());
-        assertThat(testReport.mostConsumedBeverageSummary())
-                .isEqualTo(BeverageSummary.EMPTY);
+        assertThat(testReport.mostConsumedDrinkSummary())
+                .isEqualTo(DrinkSummary.EMPTY);
     }
 }

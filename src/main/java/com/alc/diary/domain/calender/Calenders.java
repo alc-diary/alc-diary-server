@@ -35,13 +35,6 @@ public class Calenders {
                               .count();
     }
 
-    public int calculateTotalCalories() {
-        return calenders.stream()
-                        .flatMapToInt(calender -> calender.getDrinkModels().stream()
-                                                          .mapToInt(DrinkModel::getTotalCalorie))
-                        .sum();
-    }
-
     public int calculateTotalSpendMoney() {
         return calenders.stream()
                         .flatMapToInt(calender -> calender.getDrinkModels().stream()
@@ -49,7 +42,14 @@ public class Calenders {
                         .sum();
     }
 
-    public List<BeverageSummary> calculateMostConsumedBeverageSummaries() {
+    public int calculateTotalCalories() {
+        return calenders.stream()
+                        .flatMapToInt(calender -> calender.getDrinkModels().stream()
+                                                          .mapToInt(DrinkModel::getTotalCalorie))
+                        .sum();
+    }
+
+    public List<DrinkSummary> calculateMostConsumedDrinkSummaries() {
         Map<DrinkType, Float> totalQuantityByDrinkType = calenders.stream()
                                                                   .flatMap(calender -> calender.getDrinkModels().stream())
                                                                   .collect(Collectors.groupingBy(DrinkModel::getType,
@@ -63,7 +63,7 @@ public class Calenders {
 
         return totalQuantityByDrinkType.entrySet().stream()
                                        .filter(entry -> entry.getValue() == maxBeverageConsumption)
-                                       .map(entry -> new BeverageSummary(entry.getKey(), entry.getValue()))
+                                       .map(entry -> new DrinkSummary(entry.getKey(), entry.getValue()))
                                        .collect(Collectors.toList());
     }
 
