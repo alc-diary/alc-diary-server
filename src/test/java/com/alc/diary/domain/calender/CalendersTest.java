@@ -72,15 +72,15 @@ class CalendersTest {
 
     @Test
     void 가장_많이_마신_주종() {
-        List<BeverageSummary> expect = List.of(new BeverageSummary(SOJU, 33.0f));
-        assertThat(calenders.calculateMostConsumedBeverageSummaries())
+        List<DrinkSummary> expect = List.of(new DrinkSummary(SOJU, 33.0f));
+        assertThat(calenders.calculateMostConsumedDrinkSummaries())
                 .isEqualTo(expect);
     }
 
     @Test
     void 가장_많이_마신_주종_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.calculateMostConsumedBeverageSummaries())
+        assertThat(testCalenders.calculateMostConsumedDrinkSummaries())
                 .isEmpty();
     }
 }

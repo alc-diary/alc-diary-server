@@ -1,6 +1,6 @@
 package com.alc.diary.application.report;
 
-import com.alc.diary.application.report.dto.response.BeverageSummaryDto;
+import com.alc.diary.application.report.dto.response.DrinkSummaryDto;
 import com.alc.diary.application.report.dto.response.DrinkingDaySummaryDto;
 import com.alc.diary.application.report.dto.response.GetMonthlyReportAppResponse;
 import com.alc.diary.domain.calender.Calender;
@@ -34,7 +34,7 @@ public class ReportAppService {
                 currentMonthReport.totalSpendMoney(),
                 currentMonthReport.totalCalories(),
                 0,
-                new BeverageSummaryDto(currentMonthReport.mostConsumedBeverageSummary()),
+                new DrinkSummaryDto(currentMonthReport.mostConsumedDrinkSummary()),
                 new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary())
         );
     }

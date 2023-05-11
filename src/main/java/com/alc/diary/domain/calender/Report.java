@@ -30,10 +30,10 @@ public class Report {
         return calenders.calculateTotalCalories();
     }
 
-    public BeverageSummary mostConsumedBeverageSummary() {
-        return calenders.calculateMostConsumedBeverageSummaries().stream()
-                .findFirst()
-                .orElse(BeverageSummary.EMPTY);
+    public DrinkSummary mostConsumedDrinkSummary() {
+        return calenders.calculateMostConsumedDrinkSummaries().stream()
+                        .findFirst()
+                        .orElse(DrinkSummary.EMPTY);
     }
 
     public DrinkingDaySummary mostFrequentDrinkingDaySummary() {
