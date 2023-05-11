@@ -18,7 +18,7 @@ public class ErrorResponse<T> {
     private String message;
     private T data;
 
-    public static <T> ErrorResponse<T> getDefault(T data) {
+    public static <T> ErrorResponse<T> internalServerError(T data) {
         return new ErrorResponse<>(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "E9999",
