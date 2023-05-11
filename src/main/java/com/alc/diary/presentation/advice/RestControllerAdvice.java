@@ -4,12 +4,12 @@ import com.alc.diary.domain.exception.CalenderException;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.presentation.dto.ErrorResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Objects;
@@ -37,18 +37,32 @@ public class RestControllerAdvice {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public ResponseEntity<ErrorResponse<?>> servletRequestBindingExceptionHandler(ServletRequestBindingException e) {
+        log.error("Error", e);
+        ErrorResponse<Void> errorResponse = new ErrorResponse<>(
+                HttpStatus.BAD_REQUEST.value(),
+                "E9998",
+                e.getMessage(),
+                null
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse<?>> exceptionHandler(Exception e) {
         slackLogger.error("Error - Message: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.getDefault(e.getMessage()));
+                .body(ErrorResponse.internalServerError(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse<?>> validExceptionHandler(MethodArgumentNotValidException e) {
         log.error("Error - Message: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.getDefault(Objects.requireNonNull(e.getFieldError()).getDefaultMessage()));
+                .body(ErrorResponse.internalServerError(Objects.requireNonNull(e.getFieldError()).getDefaultMessage()));
     }
 }
