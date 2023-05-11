@@ -81,6 +81,6 @@ class ReportTest {
     void 가장_많이_마신_주종_empty_list() {
         Report testReport = new Report(Collections.emptyList());
         assertThat(testReport.mostConsumedBeverageSummary())
-                .isNull();
+                .isEqualTo(BeverageSummary.EMPTY);
     }
 }

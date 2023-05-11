@@ -25,12 +25,12 @@ public class Report {
     public BeverageSummary mostConsumedBeverageSummary() {
         return calenders.calculateMostConsumedBeverageSummaries().stream()
                 .findFirst()
-                .orElseGet(() -> new BeverageSummary(null, 0.0f));
+                .orElse(BeverageSummary.EMPTY);
     }
 
     public DrinkingDaySummary mostFrequentDrinkingDaySummary() {
         return calenders.calculateMostFrequentDrinkingDaySummaries().stream()
                 .findFirst()
-                .orElseGet(() -> new DrinkingDaySummary(null, 0));
+                .orElse(DrinkingDaySummary.EMPTY);
     }
 }
