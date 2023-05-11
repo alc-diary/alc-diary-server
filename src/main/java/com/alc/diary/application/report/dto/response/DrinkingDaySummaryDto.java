@@ -11,6 +11,6 @@ public record DrinkingDaySummaryDto(
 ) {
 
     public DrinkingDaySummaryDto(DrinkingDaySummary drinkingDaySummary) {
-        this(drinkingDaySummary.getDayOfWeek(), drinkingDaySummary.getTotalOccurrence());
+        this(drinkingDaySummary.dayOfWeek(), drinkingDaySummary.totalOccurrence());
     }
 }

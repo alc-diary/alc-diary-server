@@ -21,23 +21,33 @@ public class ReportAppService {
     private final CalenderRepository calenderRepository;
 
     public GetMonthlyReportAppResponse getMonthlyReport(Long userId, int year, int month) {
-        LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime startPlusOneMonth = start.plusMonths(1L);
-        LocalDateTime end = LocalDateTime.of(startPlusOneMonth.getYear(), startPlusOneMonth.getMonth(), 1, 0, 0);
-
-        List<Calender> findCalenders =
+        LocalDateTime currentMonthStart = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime currentMonthEnd = currentMonthStart.plusMonths(1L);
+        List<Calender> currentMonthCalenders =
                 calenderRepository.findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(
                         userId,
-                        start,
-                        end
+                        currentMonthStart,
+                        currentMonthEnd
                 );
-        Report report = new Report(findCalenders);
+        Report currentMonthReport = new Report(currentMonthCalenders);
+
+        LocalDateTime lastMonthStart = currentMonthStart.minusMonths(1L);
+        LocalDateTime lastMonthEnd = currentMonthStart;
+        List<Calender> lastMonthCalenders = calenderRepository.findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(
+                userId,
+                lastMonthStart,
+                lastMonthEnd
+        );
+        Report lastMonthReport = new Report(lastMonthCalenders);
 
         return new GetMonthlyReportAppResponse(
-                report.totalDrinkQuantity(),
-                report.totalDrinkingDays(),
-                new BeverageSummaryDto(report.mostConsumedBeverageSummary()),
-                new DrinkingDaySummaryDto(report.mostFrequentDrinkingDaySummary())
+                currentMonthReport.totalDrinkQuantity(),
+                currentMonthReport.totalDrinkingDays(),
+                new BeverageSummaryDto(
+                        currentMonthReport.mostConsumedBeverageSummary(),
+                        lastMonthReport.mostConsumedBeverageSummary()
+                ),
+                new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary())
         );
     }
 }
