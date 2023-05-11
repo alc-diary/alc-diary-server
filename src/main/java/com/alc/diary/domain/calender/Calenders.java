@@ -6,7 +6,6 @@ import lombok.ToString;
 
 import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,42 +35,38 @@ public class Calenders {
                               .count();
     }
 
-    public BeverageSummary calculateMostConsumedBeverageSummary() {
-        Map<DrinkType, List<DrinkModel>> drinkModelsByDrinkType = calenders.stream()
-                                                                           .flatMap(calender -> calender.getDrinkModels().stream())
-                                                                           .collect(Collectors.groupingBy(DrinkModel::getType));
-        float maxBeverageConsumption = 0;
-        DrinkType mostConsumedDrinkType = null;
-        for (DrinkType type : drinkModelsByDrinkType.keySet()) {
-            float sumOfNumberOfDrinks = (float) drinkModelsByDrinkType.get(type).stream()
-                                               .mapToDouble(DrinkModel::getQuantity)
-                                               .sum();
-            if (maxBeverageConsumption <= sumOfNumberOfDrinks) {
-                maxBeverageConsumption = sumOfNumberOfDrinks;
-                mostConsumedDrinkType = type;
-            }
-        }
-        if (mostConsumedDrinkType == null) {
-            return null;
-        }
-        return new BeverageSummary(mostConsumedDrinkType, maxBeverageConsumption);
+    public List<BeverageSummary> calculateMostConsumedBeverageSummaries() {
+        Map<DrinkType, Float> totalQuantityByDrinkType = calenders.stream()
+                                                                  .flatMap(calender -> calender.getDrinkModels().stream())
+                                                                  .collect(Collectors.groupingBy(DrinkModel::getType,
+                                                                          Collectors.summingDouble(DrinkModel::getQuantity)))
+                                                                  .entrySet().stream()
+                                                                  .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().floatValue()));
+
+        final float maxBeverageConsumption = totalQuantityByDrinkType.values().stream()
+                                                                     .max(Float::compareTo)
+                                                                     .orElse(0.0f);
+
+        return totalQuantityByDrinkType.entrySet().stream()
+                                       .filter(entry -> entry.getValue() == maxBeverageConsumption)
+                                       .map(entry -> new BeverageSummary(entry.getKey(), entry.getValue()))
+                                       .collect(Collectors.toList());
     }
 
-    public DrinkingDaySummary calculateMostFrequentDrinkingDaySummary() {
-        Map<DayOfWeek, Long> countByDayOfWeek = calenders.stream()
-                                                .map(calender -> calender.getDrinkStartDateTime().getDayOfWeek())
-                                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        int maxDrinkingDayCount = 0;
-        List<DayOfWeek> mostFrequentDrinkingDays = new ArrayList<>();
-        for (DayOfWeek dayOfWeek : countByDayOfWeek.keySet()) {
-            if (maxDrinkingDayCount < countByDayOfWeek.get(dayOfWeek)) {
-                mostFrequentDrinkingDays.clear();
-                maxDrinkingDayCount = countByDayOfWeek.get(dayOfWeek).intValue();
-                mostFrequentDrinkingDays.add(dayOfWeek);
-            } else if (maxDrinkingDayCount == countByDayOfWeek.get(dayOfWeek)) {
-                mostFrequentDrinkingDays.add(dayOfWeek);
-            }
-        }
-        return new DrinkingDaySummary(mostFrequentDrinkingDays.get(0), maxDrinkingDayCount);
+    public List<DrinkingDaySummary> calculateMostFrequentDrinkingDaySummaries() {
+        Map<DayOfWeek, Integer> countByDayOfWeek = calenders.stream()
+                                                            .map(calender -> calender.getDrinkStartDateTime().getDayOfWeek())
+                                                            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                                                            .entrySet().stream()
+                                                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().intValue()));
+
+        final int maxDrinkingDayCount = countByDayOfWeek.values().stream()
+                                                        .max(Integer::compareTo)
+                                                        .orElse(0);
+
+        return countByDayOfWeek.entrySet().stream()
+                               .filter(entry -> entry.getValue() == maxDrinkingDayCount)
+                               .map(entry -> new DrinkingDaySummary(entry.getKey(), entry.getValue()))
+                               .collect(Collectors.toList());
     }
 }

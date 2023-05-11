@@ -23,10 +23,14 @@ public class Report {
     }
 
     public BeverageSummary mostConsumedBeverageSummary() {
-        return calenders.calculateMostConsumedBeverageSummary();
+        return calenders.calculateMostConsumedBeverageSummaries().stream()
+                .findFirst()
+                .orElse(null);
     }
 
     public DrinkingDaySummary mostFrequentDrinkingDaySummary() {
-        return calenders.calculateMostFrequentDrinkingDaySummary();
+        return calenders.calculateMostFrequentDrinkingDaySummaries().stream()
+                .findFirst()
+                .orElse(null);
     }
 }
