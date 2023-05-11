@@ -6,6 +6,8 @@ import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/reports")
@@ -16,9 +18,15 @@ public class ReportApiController {
     @GetMapping
     public ApiResponse<GetMonthlyReportAppResponse> getMonthlyReport(
             @RequestAttribute Long userId,
-            @RequestParam int year,
-            @RequestParam int month
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month
     ) {
+        if (year == null) {
+            year = LocalDate.now().getYear();
+        }
+        if (month == null) {
+            month = LocalDate.now().getMonthValue();
+        }
         return ApiResponse.getSuccess(reportAppService.getMonthlyReport(userId, year, month));
     }
 }

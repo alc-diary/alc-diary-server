@@ -6,6 +6,9 @@ public record GetMonthlyReportAppResponse(
         float totalBottlesConsumedDiffFromLastMonth,
         int totalDrinkingDaysCount,
         int totalDrinkingDaysCountDiffFromLastMonth,
+        int totalSpendMoney,
+        int totalCalories,
+        int totalRun,
         BeverageSummaryDto mostConsumedBeverage,
         DrinkingDaySummaryDto mostFrequentDrinkingDay
 ) {
