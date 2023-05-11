@@ -5,4 +5,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 public record BeverageSummary(DrinkType drinkType, float totalAmount) {
+
+    public static final BeverageSummary EMPTY = new BeverageSummary(null, 0.0f);
 }
