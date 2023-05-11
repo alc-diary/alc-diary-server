@@ -47,7 +47,10 @@ public class ReportAppService {
                         currentMonthReport.mostConsumedBeverageSummary(),
                         lastMonthReport.mostConsumedBeverageSummary()
                 ),
-                new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary())
+                new DrinkingDaySummaryDto(
+                        currentMonthReport.mostFrequentDrinkingDaySummary(),
+                        lastMonthReport.mostFrequentDrinkingDaySummary()
+                )
         );
     }
 }
