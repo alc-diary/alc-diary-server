@@ -6,15 +6,13 @@ import com.alc.diary.domain.calender.enums.DrinkType;
 public record BeverageSummaryDto(
 
         DrinkType drinkType,
-        float totalAmount,
-        float totalAmountDiffFromLastMonth
+        float amount
 ) {
 
-    public BeverageSummaryDto(BeverageSummary currentMonthBeverageSummary, BeverageSummary lastMonthBeverageSummary) {
+    public BeverageSummaryDto(BeverageSummary monthBeverageSummary) {
         this(
-                currentMonthBeverageSummary.drinkType(),
-                currentMonthBeverageSummary.totalAmount(),
-                currentMonthBeverageSummary.totalAmount() - lastMonthBeverageSummary.totalAmount()
+                monthBeverageSummary.drinkType(),
+                monthBeverageSummary.amount()
         );
     }
 }

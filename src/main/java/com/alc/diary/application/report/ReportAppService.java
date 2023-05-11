@@ -42,15 +42,11 @@ public class ReportAppService {
 
         return new GetMonthlyReportAppResponse(
                 currentMonthReport.totalDrinkQuantity(),
+                currentMonthReport.totalDrinkQuantity() - lastMonthReport.totalDrinkQuantity(),
                 currentMonthReport.totalDrinkingDays(),
-                new BeverageSummaryDto(
-                        currentMonthReport.mostConsumedBeverageSummary(),
-                        lastMonthReport.mostConsumedBeverageSummary()
-                ),
-                new DrinkingDaySummaryDto(
-                        currentMonthReport.mostFrequentDrinkingDaySummary(),
-                        lastMonthReport.mostFrequentDrinkingDaySummary()
-                )
+                currentMonthReport.totalDrinkingDays() - lastMonthReport.totalDrinkingDays(),
+                new BeverageSummaryDto(currentMonthReport.mostConsumedBeverageSummary()),
+                new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary())
         );
     }
 }
