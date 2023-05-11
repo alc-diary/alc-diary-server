@@ -1,10 +1,13 @@
 package com.alc.diary.domain.calender.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum DrinkType {
-    SOJU("소주", 70, 800),
-    BEER("맥주", 185, 1000),
-    WINE("와인", 85, 4000),
-    TRADITIONAL("막걸리", 92, 1000);
+    SOJU("소주", 408, 4000),
+    BEER("맥주", 256, 4000),
+    WINE("와인", 548, 30000),
+    TRADITIONAL("막걸리", 344, 4000);
 
 
     private String name;

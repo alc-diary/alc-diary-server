@@ -22,31 +22,41 @@ public class ReportAppService {
 
     public GetMonthlyReportAppResponse getMonthlyReport(Long userId, int year, int month) {
         LocalDateTime currentMonthStart = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime currentMonthEnd = currentMonthStart.plusMonths(1L);
-        List<Calender> currentMonthCalenders =
-                calenderRepository.findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(
-                        userId,
-                        currentMonthStart,
-                        currentMonthEnd
-                );
-        Report currentMonthReport = new Report(currentMonthCalenders);
 
-        LocalDateTime lastMonthStart = currentMonthStart.minusMonths(1L);
-        LocalDateTime lastMonthEnd = currentMonthStart;
-        List<Calender> lastMonthCalenders = calenderRepository.findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(
-                userId,
-                lastMonthStart,
-                lastMonthEnd
-        );
-        Report lastMonthReport = new Report(lastMonthCalenders);
+        Report currentMonthReport = getCurrentMonthReport(userId, currentMonthStart);
+        Report lastMonthReport = getLastMonthReport(userId, currentMonthStart);
 
         return new GetMonthlyReportAppResponse(
                 currentMonthReport.totalDrinkQuantity(),
                 currentMonthReport.totalDrinkQuantity() - lastMonthReport.totalDrinkQuantity(),
                 currentMonthReport.totalDrinkingDays(),
                 currentMonthReport.totalDrinkingDays() - lastMonthReport.totalDrinkingDays(),
+                currentMonthReport.totalSpendMoney(),
+                currentMonthReport.totalCalories(),
+                0,
                 new BeverageSummaryDto(currentMonthReport.mostConsumedBeverageSummary()),
                 new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary())
+        );
+    }
+
+    private Report getCurrentMonthReport(Long userId, LocalDateTime currentMonthStart) {
+        LocalDateTime currentMonthEnd = currentMonthStart.plusMonths(1L);
+        List<Calender> currentMonthCalenders = getMonthlyCalenders(userId, currentMonthStart, currentMonthEnd);
+        return new Report(currentMonthCalenders);
+    }
+
+    private Report getLastMonthReport(Long userId, LocalDateTime currentMonthStart) {
+        LocalDateTime lastMonthStart = currentMonthStart.minusMonths(1L);
+        LocalDateTime lastMonthEnd = currentMonthStart;
+        List<Calender> lastMonthCalenders = getMonthlyCalenders(userId, lastMonthStart, lastMonthEnd);
+        return new Report(lastMonthCalenders);
+    }
+
+    private List<Calender> getMonthlyCalenders(Long userId, LocalDateTime currentMonthStart, LocalDateTime currentMonthEnd) {
+        return calenderRepository.findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(
+                userId,
+                currentMonthStart,
+                currentMonthEnd
         );
     }
 }

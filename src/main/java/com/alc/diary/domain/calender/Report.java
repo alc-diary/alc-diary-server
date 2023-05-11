@@ -22,6 +22,14 @@ public class Report {
         return calenders.calculateTotalDrinkingDays();
     }
 
+    public int totalSpendMoney() {
+        return calenders.calculateTotalSpendMoney();
+    }
+
+    public int totalCalories() {
+        return calenders.calculateTotalCalories();
+    }
+
     public BeverageSummary mostConsumedBeverageSummary() {
         return calenders.calculateMostConsumedBeverageSummaries().stream()
                 .findFirst()

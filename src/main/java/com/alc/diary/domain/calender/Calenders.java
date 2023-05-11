@@ -35,6 +35,20 @@ public class Calenders {
                               .count();
     }
 
+    public int calculateTotalCalories() {
+        return calenders.stream()
+                        .flatMapToInt(calender -> calender.getDrinkModels().stream()
+                                                          .mapToInt(DrinkModel::getTotalCalorie))
+                        .sum();
+    }
+
+    public int calculateTotalSpendMoney() {
+        return calenders.stream()
+                        .flatMapToInt(calender -> calender.getDrinkModels().stream()
+                                                          .mapToInt(DrinkModel::getTotalPrice))
+                        .sum();
+    }
+
     public List<BeverageSummary> calculateMostConsumedBeverageSummaries() {
         Map<DrinkType, Float> totalQuantityByDrinkType = calenders.stream()
                                                                   .flatMap(calender -> calender.getDrinkModels().stream())
