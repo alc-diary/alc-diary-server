@@ -7,10 +7,18 @@ import java.time.DayOfWeek;
 public record DrinkingDaySummaryDto(
 
         DayOfWeek dayOfWeek,
-        int totalOccurrence
+        int totalDrinkingDaysCount,
+        int drinkingDaysCountDiffFromLastMonth
 ) {
 
-    public DrinkingDaySummaryDto(DrinkingDaySummary drinkingDaySummary) {
-        this(drinkingDaySummary.dayOfWeek(), drinkingDaySummary.totalOccurrence());
+    public DrinkingDaySummaryDto(
+            DrinkingDaySummary currentMonthDrinkingDaySummary,
+            DrinkingDaySummary lastMonthDrinkingDaySummary
+    ) {
+        this(
+                currentMonthDrinkingDaySummary.dayOfWeek(),
+                currentMonthDrinkingDaySummary.totalDrinkingDaysCount(),
+                currentMonthDrinkingDaySummary.totalDrinkingDaysCount() - lastMonthDrinkingDaySummary.totalDrinkingDaysCount()
+        );
     }
 }

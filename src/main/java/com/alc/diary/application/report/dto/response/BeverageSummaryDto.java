@@ -7,7 +7,7 @@ public record BeverageSummaryDto(
 
         DrinkType drinkType,
         float totalAmount,
-        float amountChangeFromLastMonth
+        float totalAmountDiffFromLastMonth
 ) {
 
     public BeverageSummaryDto(BeverageSummary currentMonthBeverageSummary, BeverageSummary lastMonthBeverageSummary) {
