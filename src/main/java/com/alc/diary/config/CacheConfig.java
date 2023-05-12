@@ -41,7 +41,7 @@ public class CacheConfig {
 
     private RedisCacheConfiguration monthlyReportCacheConfiguration() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                                      .entryTtl(Duration.ofMinutes(1))
+                                      .entryTtl(Duration.ofHours(1))
                                       .disableCachingNullValues()
                                       .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
