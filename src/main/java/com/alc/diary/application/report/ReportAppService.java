@@ -23,11 +23,6 @@ public class ReportAppService {
 
     @Cacheable(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public GetMonthlyReportAppResponse getMonthlyReport(Long userId, int year, int month) {
-        try {
-            Thread.sleep(5000);
-        } catch (Exception e) {
-
-        }
         LocalDateTime currentMonthStart = LocalDateTime.of(year, month, 1, 0, 0);
 
         Report currentMonthReport = getCurrentMonthReport(userId, currentMonthStart);
