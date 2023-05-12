@@ -33,6 +33,10 @@ spring:
     path match:
       matching-strategy: ant_path_matcher
 
+  redis:
+    host: alc-diary-ro.uyo4nn.ng.0001.apn2.cache.amazonaws.com
+    port: 6379
+
 
 feign:
   client:
