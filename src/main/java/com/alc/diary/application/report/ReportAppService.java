@@ -7,6 +7,7 @@ import com.alc.diary.domain.calender.Calender;
 import com.alc.diary.domain.calender.Report;
 import com.alc.diary.domain.calender.repository.CalenderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,13 @@ public class ReportAppService {
 
     private final CalenderRepository calenderRepository;
 
+    @Cacheable(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public GetMonthlyReportAppResponse getMonthlyReport(Long userId, int year, int month) {
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+
+        }
         LocalDateTime currentMonthStart = LocalDateTime.of(year, month, 1, 0, 0);
 
         Report currentMonthReport = getCurrentMonthReport(userId, currentMonthStart);
