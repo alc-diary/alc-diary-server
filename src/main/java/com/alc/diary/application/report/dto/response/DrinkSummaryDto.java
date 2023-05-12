@@ -6,13 +6,13 @@ import com.alc.diary.domain.calender.enums.DrinkType;
 public record DrinkSummaryDto(
 
         DrinkType drinkType,
-        float bottlesCount
+        float quantity
 ) {
 
     public DrinkSummaryDto(DrinkSummary drinkSummary) {
         this(
                 drinkSummary.drinkType(),
-                drinkSummary.bottlesCount()
+                drinkSummary.totalQuantity()
         );
     }
 }
