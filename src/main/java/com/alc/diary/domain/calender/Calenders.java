@@ -5,6 +5,7 @@ import com.alc.diary.domain.calender.model.DrinkModel;
 import lombok.ToString;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -82,5 +83,12 @@ public class Calenders {
                                .filter(entry -> entry.getValue() == maxDrinkingDayCount)
                                .map(entry -> new DrinkingDaySummary(entry.getKey(), entry.getValue()))
                                .collect(Collectors.toList());
+    }
+
+    public LocalDateTime lastDrinkingDateTime() {
+        return calenders.stream()
+                .map(Calender::getDrinkEndDateTime)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
     }
 }

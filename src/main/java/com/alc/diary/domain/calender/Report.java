@@ -1,5 +1,6 @@
 package com.alc.diary.domain.calender;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Report {
@@ -53,5 +54,9 @@ public class Report {
 
     public int calculateTotalDrinkingDaysDifference(Report otherReport) {
         return totalDrinkingDays() - otherReport.totalDrinkingDays();
+    }
+
+    public LocalDateTime lastDrinkingDateTime() {
+        return calenders.lastDrinkingDateTime();
     }
 }
