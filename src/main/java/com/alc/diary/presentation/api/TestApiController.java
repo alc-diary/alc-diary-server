@@ -1,7 +1,7 @@
 package com.alc.diary.presentation.api;
 
-import com.alc.diary.domain.calender.Calender;
-import com.alc.diary.domain.calender.repository.CalenderRepository;
+import com.alc.diary.application.calender.CalenderService;
+import com.alc.diary.application.calender.dto.response.FindCalenderDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @RestController
 public class TestApiController {
 
-    private final CalenderRepository calenderRepository;
+    private final CalenderService calenderService;
 
     @GetMapping
     public void test(@RequestParam String user) {
@@ -27,9 +27,9 @@ public class TestApiController {
     }
 
     @GetMapping("/calender/{calenderId}")
-    public Calender getCalender(
+    public FindCalenderDetailResponse getCalender(
             @PathVariable Long calenderId
     ) {
-        return calenderRepository.getCalenderById(calenderId).orElse(null);
+        return calenderService.find(calenderId);
     }
 }
