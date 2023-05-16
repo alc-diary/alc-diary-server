@@ -16,11 +16,11 @@ public class DrinkModel {
 
     @JsonIgnore
     public int getTotalPrice() {
-        return (int) quantity * type.getPrice();
+        return Math.round(quantity * type.getPrice());
     }
 
     @JsonIgnore
     public int getTotalCalorie() {
-        return (int) quantity * type.getCalorie();
+        return Math.round(quantity * type.getCalorie());
     }
 }
