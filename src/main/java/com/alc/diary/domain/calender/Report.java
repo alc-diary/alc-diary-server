@@ -2,6 +2,7 @@ package com.alc.diary.domain.calender;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class Report {
 
@@ -56,7 +57,7 @@ public class Report {
         return totalDrinkingDays() - otherReport.totalDrinkingDays();
     }
 
-    public LocalDateTime lastDrinkingDateTime() {
-        return calenders.lastDrinkingDateTime();
+    public Optional<LocalDateTime> lastDrinkingDateTimeOptional() {
+        return calenders.lastDrinkingDateTimeOptional();
     }
 }
