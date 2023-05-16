@@ -1,9 +1,6 @@
 package com.alc.diary.application.user;
 
-import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
-import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
-import com.alc.diary.application.user.dto.request.UpdateNicknameAppRequest;
-import com.alc.diary.application.user.dto.request.UpdateUserProfileImageAppRequest;
+import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
@@ -34,10 +31,9 @@ public class UserAppService {
 
     private final UserRepository userRepository;
     private final NicknameTokenRepository nicknameTokenRepository;
-    private final NicknameStrategy nicknameStrategy;
 
-    public GetUserInfoAppResponse getUser(Long userId) {
-        User findUser = userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+    public GetUserInfoAppResponse getUserInfo(Long userId) {
+        User findUser = getUserById(userId);
         return new GetUserInfoAppResponse(
                 findUser.getId(),
                 findUser.getDescriptionStyle(),
@@ -101,17 +97,13 @@ public class UserAppService {
 
     @Transactional
     public void updateUserProfileImage(Long userId, UpdateUserProfileImageAppRequest request) {
-        User foundUser = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        User foundUser = getUserById(userId);
         foundUser.updateProfileImage(request.newProfileImage());
     }
 
     @Transactional
     public void updateAlcoholLimitAndGoal(Long userId, UpdateAlcoholLimitAndGoalAppRequest request) {
-        User foundUser = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        User foundUser = getUserById(userId);
         foundUser.updateAlcoholLimitAndGoal(
                 request.newPersonalAlcoholLimit(),
                 request.newNonAlcoholGoal(),
@@ -121,11 +113,21 @@ public class UserAppService {
 
     @Transactional
     public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
-        User foundUser = userRepository.findById(userId)
-                                  .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        User foundUser = getUserById(userId);
         if (userRepository.existsByNickname(request.newNickname())) {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
         }
         foundUser.updateNickname(request.newNickname());
+    }
+
+    @Transactional
+    public void updateDescriptionStyle(Long userId, UpdateDescriptionStyleAppRequest request) {
+        User foundUser = getUserById(userId);
+        foundUser.updateDescriptionStyle(request.newDescriptionStyle());
+    }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                             .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
     }
 }

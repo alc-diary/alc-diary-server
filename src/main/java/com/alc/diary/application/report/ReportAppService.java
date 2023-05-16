@@ -21,7 +21,7 @@ public class ReportAppService {
 
     private final CalenderRepository calenderRepository;
 
-    // @Cacheable(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
+    @Cacheable(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public GetMonthlyReportAppResponse getMonthlyReport(Long userId, int year, int month) {
         LocalDateTime currentMonthStart = LocalDateTime.of(year, month, 1, 0, 0);
 
