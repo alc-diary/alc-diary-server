@@ -30,12 +30,12 @@ public class ReportAppService {
 
         return new GetMonthlyReportAppResponse(
                 currentMonthReport.totalDrinkQuantity(),
-                currentMonthReport.totalDrinkQuantity() - lastMonthReport.totalDrinkQuantity(),
+                currentMonthReport.calculateDrinkQuantityDifference(lastMonthReport),
                 currentMonthReport.totalDrinkingDays(),
-                currentMonthReport.totalDrinkingDays() - lastMonthReport.totalDrinkingDays(),
-                currentMonthReport.totalSpendMoney(),
-                currentMonthReport.totalCalories(),
-                0,
+                currentMonthReport.calculateTotalDrinkingDaysDifference(lastMonthReport),
+                currentMonthReport.totalSpentOnDrinks(),
+                currentMonthReport.totalCaloriesFromDrinks(),
+                currentMonthReport.totalRunningTimeToBurnCalories(),
                 new DrinkSummaryDto(currentMonthReport.mostConsumedDrinkSummary()),
                 new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary())
         );
@@ -43,22 +43,25 @@ public class ReportAppService {
 
     private Report getCurrentMonthReport(Long userId, LocalDateTime currentMonthStart) {
         LocalDateTime currentMonthEnd = currentMonthStart.plusMonths(1L);
-        List<Calender> currentMonthCalenders = getMonthlyCalenders(userId, currentMonthStart, currentMonthEnd);
-        return new Report(currentMonthCalenders);
+        return getReport(userId, currentMonthStart, currentMonthEnd);
     }
 
     private Report getLastMonthReport(Long userId, LocalDateTime currentMonthStart) {
         LocalDateTime lastMonthStart = currentMonthStart.minusMonths(1L);
         LocalDateTime lastMonthEnd = currentMonthStart;
-        List<Calender> lastMonthCalenders = getMonthlyCalenders(userId, lastMonthStart, lastMonthEnd);
-        return new Report(lastMonthCalenders);
+        return getReport(userId, lastMonthStart, lastMonthEnd);
     }
 
-    private List<Calender> getMonthlyCalenders(Long userId, LocalDateTime currentMonthStart, LocalDateTime currentMonthEnd) {
+    private Report getReport(Long userId, LocalDateTime start, LocalDateTime end) {
+        List<Calender> calenders = getMonthlyCalenders(userId, start, end);
+        return new Report(calenders);
+    }
+
+    private List<Calender> getMonthlyCalenders(Long userId, LocalDateTime start, LocalDateTime end) {
         return calenderRepository.findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(
                 userId,
-                currentMonthStart,
-                currentMonthEnd
+                start,
+                end
         );
     }
 }

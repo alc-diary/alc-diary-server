@@ -58,7 +58,7 @@ class CalendersTest {
 
     @Test
     void getDaysOfDrinking() {
-        assertThat(calenders.calculateTotalDrinkingDays())
+        assertThat(calenders.calculateTotalDaysDrinking())
                 .isEqualTo(6);
     }
 
@@ -66,7 +66,7 @@ class CalendersTest {
     @Test
     void getDaysOfDrinking_empty_list() {
         Calenders testCalenders = new Calenders(Collections.emptyList());
-        assertThat(testCalenders.calculateTotalDrinkingDays())
+        assertThat(testCalenders.calculateTotalDaysDrinking())
                 .isEqualTo(0);
     }
 
