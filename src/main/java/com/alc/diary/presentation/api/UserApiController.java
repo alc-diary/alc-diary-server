@@ -1,10 +1,7 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.user.UserAppService;
-import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
-import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
-import com.alc.diary.application.user.dto.request.UpdateNicknameAppRequest;
-import com.alc.diary.application.user.dto.request.UpdateUserProfileImageAppRequest;
+import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
@@ -24,7 +21,7 @@ public class UserApiController {
     public ApiResponse<GetUserInfoAppResponse> getUserInfo(
             @RequestAttribute Long userId
     ) {
-        return ApiResponse.getSuccess(userAppService.getUser(userId));
+        return ApiResponse.getSuccess(userAppService.getUserInfo(userId));
     }
 
     @PostMapping("/nickname-token")
@@ -64,6 +61,15 @@ public class UserApiController {
             @RequestBody UpdateNicknameAppRequest request
     ) {
         userAppService.updateNickname(userId, request);
+        return ApiResponse.getSuccess();
+    }
+
+    @PutMapping("/description-style")
+    public ApiResponse<Void> updateDescriptionStyle(
+            @RequestAttribute Long userId,
+            @RequestBody UpdateDescriptionStyleAppRequest request
+    ) {
+        userAppService.updateDescriptionStyle(userId, request);
         return ApiResponse.getSuccess();
     }
 }

@@ -128,4 +128,8 @@ public class User extends BaseEntity {
         }
         nickname = newNickname;
     }
+
+    public void updateDescriptionStyle(DescriptionStyle newDescriptionStyle) {
+        this.descriptionStyle = newDescriptionStyle;
+    }
 }
