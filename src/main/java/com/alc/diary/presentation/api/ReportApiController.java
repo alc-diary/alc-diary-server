@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/reports")
+@RequestMapping("/v1/report")
 public class ReportApiController {
 
     private final ReportAppService reportAppService;
