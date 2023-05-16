@@ -13,6 +13,6 @@ public record GetMonthlyReportAppResponse(
         int totalRunningTimeToBurnCalories,
         DrinkSummaryDto mostFrequentlyConsumedDrink,
         DrinkingDaySummaryDto mostFrequentlyDrinkingDay,
-        LocalDateTime lastDrinkingDateTime
+        String lastDrinkingDateTime
 ) {
 }
