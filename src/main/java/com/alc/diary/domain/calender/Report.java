@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Report {
 
+    private static final int CALORIES_BURN_PER_HOUR_RUNNING = 580;
     private final Calenders calenders;
 
     public Report(List<Calender> calenders) {
@@ -19,15 +20,19 @@ public class Report {
     }
 
     public int totalDrinkingDays() {
-        return calenders.calculateTotalDrinkingDays();
+        return calenders.calculateTotalDaysDrinking();
     }
 
-    public int totalSpendMoney() {
-        return calenders.calculateTotalSpendMoney();
+    public int totalSpentOnDrinks() {
+        return calenders.calculateTotalSpentOnDrinks();
     }
 
-    public int totalCalories() {
-        return calenders.calculateTotalCalories();
+    public int totalRunningTimeToBurnCalories() {
+        return calenders.calculateTotalCaloriesFromDrinks() / CALORIES_BURN_PER_HOUR_RUNNING;
+    }
+
+    public int totalCaloriesFromDrinks() {
+        return calenders.calculateTotalCaloriesFromDrinks();
     }
 
     public DrinkSummary mostConsumedDrinkSummary() {
@@ -40,5 +45,13 @@ public class Report {
         return calenders.calculateMostFrequentDrinkingDaySummaries().stream()
                 .findFirst()
                 .orElse(DrinkingDaySummary.EMPTY);
+    }
+
+    public float calculateDrinkQuantityDifference(Report otherReport) {
+        return totalDrinkQuantity() - otherReport.totalDrinkQuantity();
+    }
+
+    public int calculateTotalDrinkingDaysDifference(Report otherReport) {
+        return totalDrinkingDays() - otherReport.totalDrinkingDays();
     }
 }
