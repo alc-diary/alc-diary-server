@@ -38,7 +38,9 @@ public class ReportAppService {
                 currentMonthReport.totalRunningTimeToBurnCalories(),
                 new DrinkSummaryDto(currentMonthReport.mostConsumedDrinkSummary()),
                 new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary()),
-                currentMonthReport.lastDrinkingDateTime().toString()
+                currentMonthReport.lastDrinkingDateTimeOptional()
+                        .map(LocalDateTime::toString)
+                        .orElse(null)
         );
     }
 
