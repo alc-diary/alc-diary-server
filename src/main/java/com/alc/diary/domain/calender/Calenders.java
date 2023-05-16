@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @ToString
 public class Calenders {
 
-    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final List<Calender> calenders;
 
     public Calenders(List<Calender> calenders) {
@@ -28,21 +28,21 @@ public class Calenders {
                                 .sum();
     }
 
-    public int calculateTotalDrinkingDays() {
+    public int calculateTotalDaysDrinking() {
         return (int) calenders.stream()
-                              .map(calender -> dateFormat.format(calender.getDrinkStartDateTime()))
+                              .map(calender -> DATE_FORMAT.format(calender.getDrinkStartDateTime()))
                               .distinct()
                               .count();
     }
 
-    public int calculateTotalSpendMoney() {
+    public int calculateTotalSpentOnDrinks() {
         return calenders.stream()
                         .flatMapToInt(calender -> calender.getDrinkModels().stream()
                                                           .mapToInt(DrinkModel::getTotalPrice))
                         .sum();
     }
 
-    public int calculateTotalCalories() {
+    public int calculateTotalCaloriesFromDrinks() {
         return calenders.stream()
                         .flatMapToInt(calender -> calender.getDrinkModels().stream()
                                                           .mapToInt(DrinkModel::getTotalCalorie))
