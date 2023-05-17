@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -23,8 +24,17 @@ public class RestControllerAdvice {
     private final Logger slackLogger = LoggerFactory.getLogger("SLACK");
 
     @ExceptionHandler(value = {DomainException.class, CalenderException.class})
-    public ResponseEntity<ErrorResponse<Void>> domainExceptionHandler(DomainException e) {
-        log.error("Error - Code: {}, Message: {}", e.getErrorModel().getCode(), e.getErrorModel().getMessage(), e);
+    public ResponseEntity<ErrorResponse<Void>> domainExceptionHandler(HttpServletRequest request, DomainException e) {
+        log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, Class: {}, Method: {}, Line: {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                e.getErrorModel().getCode(),
+                e.getErrorModel().getMessage(),
+                e.getStackTrace()[0].getClassName(),
+                e.getStackTrace()[0].getMethodName(),
+                e.getStackTrace()[0].getLineNumber()
+        );
         ErrorResponse<Void> errorResponse =
                 new ErrorResponse<>(
                         HttpStatus.BAD_REQUEST.value(),
@@ -37,13 +47,29 @@ public class RestControllerAdvice {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse<?>> validExceptionHandler(MethodArgumentNotValidException e) {
+        log.error("Error - Message: {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.internalServerError(Objects.requireNonNull(e.getFieldError()).getDefaultMessage()));
+    }
+
     @ExceptionHandler(ServletRequestBindingException.class)
-    public ResponseEntity<ErrorResponse<?>> servletRequestBindingExceptionHandler(ServletRequestBindingException e) {
-        log.error("Error", e);
+    public ResponseEntity<ErrorResponse<?>> servletRequestBindingExceptionHandler(HttpServletRequest request, ServletRequestBindingException e) {
+        log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, Class: {}, Method: {}, Line: {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                "E9998",
+                e.getMessage(),
+                e.getStackTrace()[0].getClassName(),
+                e.getStackTrace()[0].getMethodName(),
+                e.getStackTrace()[0].getLineNumber()
+        );
         ErrorResponse<Void> errorResponse = new ErrorResponse<>(
                 HttpStatus.BAD_REQUEST.value(),
                 "E9998",
-                e.getMessage(),
+                "Invalid request parameters",
                 null
         );
         return ResponseEntity
@@ -52,17 +78,11 @@ public class RestControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse<?>> exceptionHandler(Exception e) {
-        slackLogger.error("Error - Message: {}", e.getMessage(), e);
+    public ResponseEntity<ErrorResponse<?>> exceptionHandler(HttpServletRequest request, Exception e) {
+        slackLogger.error("Unexpected error occurred at {} {} from {}: {}",
+                request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.internalServerError(e.getMessage()));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse<?>> validExceptionHandler(MethodArgumentNotValidException e) {
-        log.error("Error - Message: {}", e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.internalServerError(Objects.requireNonNull(e.getFieldError()).getDefaultMessage()));
+                .body(ErrorResponse.internalServerError("An unexpected error occurred. Please try again later."));
     }
 }
