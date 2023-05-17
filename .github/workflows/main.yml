@@ -47,4 +47,4 @@ jobs:
             docker rm -f $(docker ps -aq)
             docker rmi $(docker images -q)
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
-            docker run -d -p 80:8080 ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
+            docker run -d -p 80:8080 -v /var/log/alc:/logs --name alc ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
