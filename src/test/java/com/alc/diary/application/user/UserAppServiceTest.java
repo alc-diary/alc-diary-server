@@ -1,9 +1,11 @@
 package com.alc.diary.application.user;
 
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.enums.AlcoholType;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 import com.alc.diary.domain.user.enums.SocialType;
+import com.alc.diary.domain.user.error.UserError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +45,8 @@ class UserAppServiceTest {
             newProfileImage.append("aaaaaaaaaaa");
         }
         assertThatThrownBy(() -> user.updateProfileImage(newProfileImage.toString()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(DomainException.class)
+                .hasMessage("프로필 이미지 URL은 1000자를 초과할 수 없습니다.");
     }
 
     @Test
@@ -69,8 +72,8 @@ class UserAppServiceTest {
                 10,
                 BEER
         ))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주량은 0이상이어야 합니다.");
+                .isInstanceOf(DomainException.class)
+                .hasMessage("주량은 0 이상이어야 합니다.");
     }
 
     @Test
@@ -78,8 +81,8 @@ class UserAppServiceTest {
         int newNonAlcoholGoal = -1;
 
         assertThatThrownBy(() -> user.updateAlcoholLimitAndGoal(1.0f, newNonAlcoholGoal, BEER))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("금주 목표 일 수는 0이상이어야 합니다.");
+                .isInstanceOf(DomainException.class)
+                .hasMessage("금주 목표일 수는 0 이상이어야 합니다.");
     }
 
     @Test
@@ -94,7 +97,7 @@ class UserAppServiceTest {
     void 닉네임이_16자를_초과하면_IllegalArgumentException이_발생한다() {
         String newNickname = "abcdeabcdeabcdeabcde";
         assertThatThrownBy(() -> user.updateNickname(newNickname))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(DomainException.class)
                 .hasMessage("닉네임은 16자를 초과할 수 없습니다.");
     }
 }
