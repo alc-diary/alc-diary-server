@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,6 +55,29 @@ public class RestControllerAdvice {
                 .body(ErrorResponse.internalServerError(Objects.requireNonNull(e.getFieldError()).getDefaultMessage()));
     }
 
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse<?>> httpRequestMethodNotSupportedExceptionHandler(HttpServletRequest request, HttpRequestMethodNotSupportedException e) {
+        log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, At: {}.{}():{}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                "E9997",
+                e.getMessage(),
+                e.getStackTrace()[0].getClassName(),
+                e.getStackTrace()[0].getMethodName(),
+                e.getStackTrace()[0].getLineNumber()
+        );
+        ErrorResponse<Void> errorResponse = new ErrorResponse<>(
+                HttpStatus.BAD_REQUEST.value(),
+                "E9997",
+                e.getMessage(),
+                null
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(ServletRequestBindingException.class)
     public ResponseEntity<ErrorResponse<?>> servletRequestBindingExceptionHandler(HttpServletRequest request, ServletRequestBindingException e) {
         log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, At: {}.{}():{}",
@@ -69,7 +93,7 @@ public class RestControllerAdvice {
         ErrorResponse<Void> errorResponse = new ErrorResponse<>(
                 HttpStatus.BAD_REQUEST.value(),
                 "E9998",
-                "Invalid request parameters",
+                e.getMessage(),
                 null
         );
         return ResponseEntity
