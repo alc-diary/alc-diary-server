@@ -53,7 +53,7 @@ public class AppleLoginService implements SocialLoginStrategy {
         validJwt(claimSet);
 
         return new SocialLoginStrategyResponse(
-                SocialType.GOOGLE,
+                SocialType.APPLE,
                 claimSet.getSubject(),
                 null,
                 (String) claimSet.toJSONObject().get("email"),
