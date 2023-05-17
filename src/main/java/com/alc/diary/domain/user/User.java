@@ -102,20 +102,20 @@ public class User extends BaseEntity {
 
     public void updateProfileImage(String newProfileImage) {
         if (newProfileImage.length() > 1000) {
-            throw new IllegalArgumentException("프로필 이미지 URL은 1000자를 초과할 수 없습니다.");
+            throw new DomainException(UserError.IMAGE_URL_LENGTH_EXCEEDED);
         }
         this.profileImage = newProfileImage;
     }
 
     public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal, AlcoholType newAlcoholType) {
         if (newPersonalAlcoholLimit < 0.0f) {
-            throw new IllegalArgumentException("주량은 0이상이어야 합니다.");
+            throw new DomainException(UserError.INVALID_PERSONAL_ALCOHOL_LIMIT);
         }
         if (newNonAlcoholGoal < 0) {
-            throw new IllegalArgumentException("금주 목표 일 수는 0이상이어야 합니다.");
+            throw new DomainException(UserError.INVALID_NON_ALCOHOL_GOAL);
         }
         if (newAlcoholType == null) {
-            throw new IllegalArgumentException("AlcoholType은 null이 아니어야 합니다.");
+            throw new DomainException(UserError.INVALID_ALCOHOL_TYPE);
         }
         this.personalAlcoholLimit = newPersonalAlcoholLimit;
         this.nonAlcoholGoal = newNonAlcoholGoal;
@@ -124,12 +124,15 @@ public class User extends BaseEntity {
 
     public void updateNickname(String newNickname) {
         if (newNickname.length() > 16) {
-            throw new IllegalArgumentException("닉네임은 16자를 초과할 수 없습니다.");
+            throw new DomainException(UserError.NICKNAME_LENGTH_EXCEEDED);
         }
         nickname = newNickname;
     }
 
     public void updateDescriptionStyle(DescriptionStyle newDescriptionStyle) {
+        if (newDescriptionStyle == null) {
+            throw new DomainException(UserError.INVALID_DESCRIPTION_STYLE);
+        }
         this.descriptionStyle = newDescriptionStyle;
     }
 }
