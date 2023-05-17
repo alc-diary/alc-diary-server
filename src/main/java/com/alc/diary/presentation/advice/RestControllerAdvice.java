@@ -25,7 +25,7 @@ public class RestControllerAdvice {
 
     @ExceptionHandler(value = {DomainException.class, CalenderException.class})
     public ResponseEntity<ErrorResponse<Void>> domainExceptionHandler(HttpServletRequest request, DomainException e) {
-        log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, Class: {}, Method: {}, Line: {}",
+        log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, At: {}.{}():{}",
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getRemoteAddr(),
@@ -56,7 +56,7 @@ public class RestControllerAdvice {
 
     @ExceptionHandler(ServletRequestBindingException.class)
     public ResponseEntity<ErrorResponse<?>> servletRequestBindingExceptionHandler(HttpServletRequest request, ServletRequestBindingException e) {
-        log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, Class: {}, Method: {}, Line: {}",
+        log.error("Error occurred at {} {} from {} - Code: {}, Message: {}, At: {}.{}():{}",
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getRemoteAddr(),
