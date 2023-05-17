@@ -14,6 +14,7 @@ public enum AuthError implements ErrorModel {
     INVALID_REFRESH_TOKEN("AU_E0003", "Invalid refresh token."),
     EXPIRED_REFRESH_TOKEN("AU_E0004", "Expired refresh token."),
     INVALID_BEARER_TOKEN_FORMAT("AU_E0005", "Invalid bearer token format"),
+    EXPIRED_JWT("AU_E0006", "Expired JWT"),
     ;
 
     private final String code;

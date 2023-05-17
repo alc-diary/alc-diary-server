@@ -22,6 +22,7 @@ public class GoogleLoginService implements SocialLoginStrategy {
             throw new IllegalArgumentException("Google authentication error.");
         }
         GoogleUserInfoDto userInfo = userInfoResponse.getBody();
+        assert userInfo != null;
         return new SocialLoginStrategyResponse(
                 SocialType.GOOGLE,
                 userInfo.id(),
