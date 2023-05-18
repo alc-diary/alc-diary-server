@@ -32,8 +32,8 @@ public class CalenderRepositoryImpl implements CustomCalenderRepository {
         val day = date.getDayOfMonth();
 
         return switch (queryType) {
-            case MONTH -> calender.createdAt.month().between(month, month + 1);
-            case DAY -> calender.createdAt.dayOfMonth().eq(day);
+            case MONTH -> calender.drinkStartDateTime.month().between(month, month + 1);
+            case DAY -> calender.drinkStartDateTime.dayOfMonth().eq(day);
         };
     }
 }
