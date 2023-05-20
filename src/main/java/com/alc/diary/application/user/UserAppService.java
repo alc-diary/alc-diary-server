@@ -37,7 +37,6 @@ public class UserAppService {
         return new GetUserInfoAppResponse(
                 findUser.getId(),
                 findUser.getDescriptionStyle(),
-                findUser.getStatus(),
                 findUser.getAlcoholType(),
                 findUser.getNickname(),
                 findUser.getPersonalAlcoholLimit(),
