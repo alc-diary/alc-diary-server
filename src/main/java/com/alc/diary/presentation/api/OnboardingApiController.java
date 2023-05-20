@@ -1,6 +1,7 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.onboarding.OnboardingAppService;
+import com.alc.diary.application.onboarding.dto.response.GetIsOnboardingDoneAppResponse;
 import com.alc.diary.application.user.UserAppService;
 import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
 import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResponse;
@@ -16,6 +17,13 @@ public class OnboardingApiController {
 
     private final OnboardingAppService onboardingAppService;
     private final UserAppService userAppService;
+
+    @GetMapping("/is-onboarding-done")
+    public ApiResponse<GetIsOnboardingDoneAppResponse> getIsOnboardingDone(
+            @RequestAttribute Long userId
+    ) {
+        return ApiResponse.getSuccess(onboardingAppService.getIsOnboardingDone(userId));
+    }
 
     @GetMapping("/check-nickname-available")
     public ApiResponse<CheckNicknameAvailableAppResponse> checkNicknameAvailable(
