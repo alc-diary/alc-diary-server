@@ -7,7 +7,6 @@ import com.alc.diary.domain.user.enums.UserStatus;
 public record GetUserInfoAppResponse(
     Long userId,
     DescriptionStyle descriptionStyle,
-    UserStatus status,
     AlcoholType alcoholType,
     String nickname,
     float personalAlcoholLimit,
