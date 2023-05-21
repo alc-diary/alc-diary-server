@@ -34,8 +34,8 @@ public class CalenderRepositoryImpl implements CustomCalenderRepository {
         LocalDateTime today = LocalDateTime.now();
         val year = today.getYear();
 
-        val start = today.with(DayOfWeek.MONDAY).getDayOfMonth();
-        val end = today.with(DayOfWeek.SUNDAY).getDayOfMonth();
+        val start = today.with(DayOfWeek.SUNDAY).getDayOfMonth();
+        val end = today.with(DayOfWeek.SATURDAY).getDayOfMonth();
         return jpaQueryFactory.selectFrom(calender)
                 .where(calender.user.id.eq(userId)
                         .and(calender.drinkStartDateTime.dayOfMonth().goe(start))
@@ -52,7 +52,7 @@ public class CalenderRepositoryImpl implements CustomCalenderRepository {
 
         return switch (queryType) {
             case MONTH ->
-                    calender.drinkStartDateTime.month().between(month, month + 1).and(calender.drinkStartDateTime.year().eq(year));
+                    calender.drinkStartDateTime.month().eq(month).and(calender.drinkStartDateTime.year().eq(year));
             case DAY ->
                     calender.drinkStartDateTime.dayOfMonth().eq(day).and(calender.drinkStartDateTime.month().eq(month)).and(calender.drinkStartDateTime.year().eq(year));
         };
