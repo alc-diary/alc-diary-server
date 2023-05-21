@@ -13,12 +13,16 @@ public record SearchCalenderDayResponse(
         float totalDrinkCount,
         List<DayCalender> calenderResponse
 ) implements SearchCalenderResponse {
-    public record DayCalender(String title,
-                              LocalDateTime drinkStartDateTime,
-                              LocalDateTime drinkEndDateTime,
-                              DrinkModel drinkModel) {
+    public record DayCalender(
+            long calenderId,
+            String title,
+            LocalDateTime drinkStartDateTime,
+            LocalDateTime drinkEndDateTime,
+            DrinkModel drinkModel) {
         private static DayCalender dayCalenderOf(Calender calender) {
-            return new DayCalender(calender.getTitle(),
+            return new DayCalender(
+                    calender.getId(),
+                    calender.getTitle(),
                     calender.getDrinkStartDateTime(),
                     calender.getDrinkEndDateTime(), getMaxDrinkModel(calender.getDrinkModels()));
         }
