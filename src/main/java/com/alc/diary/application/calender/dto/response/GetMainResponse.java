@@ -5,21 +5,16 @@ import com.alc.diary.domain.user.enums.DescriptionStyle;
 public record GetMainResponse(
         String nickname,
         DescriptionStyle descriptionStyle,
-        float personalAlcoholLimit
+        Long overAlcoholLimit
 ) {
-    static String description;
-
-    public GetMainResponse(String nickname, DescriptionStyle descriptionStyle, float personalAlcoholLimit) {
-        this.nickname = nickname;
-        description = getDescription(descriptionStyle);
-        this.descriptionStyle = descriptionStyle;
-        this.personalAlcoholLimit = personalAlcoholLimit;
+    public static GetMainResponse create(String nickname, DescriptionStyle descriptionStyle, long overAlcoholLimit, long nonAlcoholGoal) {
+        return new GetMainResponse(
+                nickname, descriptionStyle, calculateOverAlcohol(overAlcoholLimit, nonAlcoholGoal)
+        );
     }
 
-    private String getDescription(DescriptionStyle descriptionStyle) {
-        return switch (descriptionStyle) {
-            case MILD -> "test";
-            case MALA -> "test....MARA";
-        };
+    private static Long calculateOverAlcohol(long overAlcoholLimit, long nonAlcoholGoal) {
+        if (overAlcoholLimit <= nonAlcoholGoal) return null;
+        return overAlcoholLimit - nonAlcoholGoal;
     }
 }
