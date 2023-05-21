@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Repository;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.alc.diary.domain.calender.QCalender.calender;
@@ -27,13 +29,32 @@ public class CalenderRepositoryImpl implements CustomCalenderRepository {
                 .fetch();
     }
 
+    @Override
+    public long countAlcoholLimit(long userId) {
+        LocalDateTime today = LocalDateTime.now();
+        val year = today.getYear();
+
+        val start = today.with(DayOfWeek.MONDAY).getDayOfMonth();
+        val end = today.with(DayOfWeek.SUNDAY).getDayOfMonth();
+        return jpaQueryFactory.selectFrom(calender)
+                .where(calender.user.id.eq(userId)
+                        .and(calender.drinkStartDateTime.dayOfMonth().goe(start))
+                        .and(calender.drinkStartDateTime.dayOfMonth().loe(end))
+                        .and(calender.drinkStartDateTime.month().eq(today.getMonth().getValue()))
+                        .and(calender.drinkStartDateTime.year().eq(year)))
+                .fetch().size();
+    }
+
     private BooleanExpression perQuery(QueryType queryType, LocalDate date) {
+        val year = date.getYear();
         val month = date.getMonth().getValue();
         val day = date.getDayOfMonth();
 
         return switch (queryType) {
-            case MONTH -> calender.drinkStartDateTime.month().between(month, month + 1);
-            case DAY -> calender.drinkStartDateTime.dayOfMonth().eq(day);
+            case MONTH ->
+                    calender.drinkStartDateTime.month().between(month, month + 1).and(calender.drinkStartDateTime.year().eq(year));
+            case DAY ->
+                    calender.drinkStartDateTime.dayOfMonth().eq(day).and(calender.drinkStartDateTime.month().eq(month)).and(calender.drinkStartDateTime.year().eq(year));
         };
     }
 }
