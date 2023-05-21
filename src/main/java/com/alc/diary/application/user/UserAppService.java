@@ -33,15 +33,16 @@ public class UserAppService {
     private final NicknameTokenRepository nicknameTokenRepository;
 
     public GetUserInfoAppResponse getUserInfo(Long userId) {
-        User findUser = getUserById(userId);
+        User foundUser = getUserById(userId);
         return new GetUserInfoAppResponse(
-                findUser.getId(),
-                findUser.getDescriptionStyle(),
-                findUser.getStatus(),
-                findUser.getAlcoholType(),
-                findUser.getNickname(),
-                findUser.getPersonalAlcoholLimit(),
-                findUser.getNonAlcoholGoal()
+                foundUser.getId(),
+                foundUser.getDescriptionStyle(),
+                foundUser.getStatus(),
+                foundUser.getAlcoholType(),
+                foundUser.getNickname(),
+                foundUser.getPersonalAlcoholLimit(),
+                foundUser.getNonAlcoholGoal(),
+                foundUser.getProfileImage()
         );
     }
 
