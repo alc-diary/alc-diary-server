@@ -4,6 +4,7 @@ package com.alc.diary.presentation.api;
 import com.alc.diary.application.calender.MainCalenderService;
 import com.alc.diary.application.calender.dto.request.SaveMainCalenderRequest;
 import com.alc.diary.application.calender.dto.response.GetMainResponse;
+import com.alc.diary.application.calender.dto.response.MainCalenderResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +20,11 @@ public class MainCalenderController {
      * 메인 간편저장
      */
     @PostMapping(value = "")
-    public ApiResponse<Void> save(
+    public ApiResponse<MainCalenderResponse> save(
             @RequestBody SaveMainCalenderRequest request,
             @RequestAttribute Long userId
     ) {
-        mainCalenderService.saveMain(request, userId);
-        return ApiResponse.getSuccess();
+        return ApiResponse.getSuccess(mainCalenderService.saveMain(request, userId));
     }
 
     /**
