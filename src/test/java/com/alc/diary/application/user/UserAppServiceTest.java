@@ -52,7 +52,7 @@ class UserAppServiceTest {
     @Test
     void 주량과_금주목표를_변경한다() {
         float newPersonalAlcoholLimit = 2.5f;
-        int newNonAlcoholGoal = 10;
+        int newNonAlcoholGoal = 6;
         AlcoholType newAlcoholType = BEER;
 
         user.updateAlcoholLimitAndGoal(newPersonalAlcoholLimit, newNonAlcoholGoal, newAlcoholType);
