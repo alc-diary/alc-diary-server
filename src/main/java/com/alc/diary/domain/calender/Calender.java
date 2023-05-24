@@ -32,8 +32,7 @@ public class Calender extends BaseEntity {
     @Column(name = "title", length = 20)
     private String title;
 
-    @Lob
-    @Column(name = "contents")
+    @Column(name = "contents", length = 1024)
     private String contents;
 
     @Column(name = "drink_start_date_time")
