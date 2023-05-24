@@ -61,7 +61,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AgeRangeType ageRange;
 
-    @Column(name = "profile_image", length = 1000)
+    @Column(name = "profile_image", length = 1024)
     private String profileImage;
 
     public static UserBuilder builder(
