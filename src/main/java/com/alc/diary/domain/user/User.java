@@ -92,6 +92,9 @@ public class User extends BaseEntity {
         if (alcoholType == null) {
             throw new DomainException(UserError.INVALID_PARAMETER_INCLUDE);
         }
+        if (nonAlcoholGoal > 7 || nonAlcoholGoal < 0) {
+            throw new DomainException(UserError.INVALID_NON_ALCOHOL_GOAL);
+        }
         this.descriptionStyle = descriptionStyle;
         this.nickname = nickname;
         this.alcoholType = alcoholType;
@@ -111,7 +114,7 @@ public class User extends BaseEntity {
         if (newPersonalAlcoholLimit < 0.0f) {
             throw new DomainException(UserError.INVALID_PERSONAL_ALCOHOL_LIMIT);
         }
-        if (newNonAlcoholGoal < 0) {
+        if (newNonAlcoholGoal > 7 || newNonAlcoholGoal < 0) {
             throw new DomainException(UserError.INVALID_NON_ALCOHOL_GOAL);
         }
         if (newAlcoholType == null) {
