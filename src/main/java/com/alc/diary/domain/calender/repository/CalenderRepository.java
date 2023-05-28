@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 public interface CalenderRepository extends Repository<Calender, Long> {
-    void save(Calender calender);
+    Calender save(Calender calender);
 
     void deleteCalenderById(Long calenderId);
 

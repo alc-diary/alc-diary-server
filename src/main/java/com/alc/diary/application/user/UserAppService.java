@@ -4,7 +4,6 @@ import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
-import com.alc.diary.application.user.strategy.NicknameStrategy;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.NicknameToken;
 import com.alc.diary.domain.user.User;
@@ -33,14 +32,15 @@ public class UserAppService {
     private final NicknameTokenRepository nicknameTokenRepository;
 
     public GetUserInfoAppResponse getUserInfo(Long userId) {
-        User findUser = getUserById(userId);
+        User foundUser = getUserById(userId);
         return new GetUserInfoAppResponse(
-                findUser.getId(),
-                findUser.getDescriptionStyle(),
-                findUser.getAlcoholType(),
-                findUser.getNickname(),
-                findUser.getPersonalAlcoholLimit(),
-                findUser.getNonAlcoholGoal()
+                foundUser.getId(),
+                foundUser.getDescriptionStyle(),
+                foundUser.getAlcoholType(),
+                foundUser.getNickname(),
+                foundUser.getPersonalAlcoholLimit(),
+                foundUser.getNonAlcoholGoal(),
+                foundUser.getProfileImage()
         );
     }
 

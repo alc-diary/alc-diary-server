@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CalenderImage {
 
-    @Column(name = "image_urls", length = 5000)
+    @Column(name = "image_urls", length = 1024)
     private String urls;
 
     public CalenderImage(List<String> images) {
