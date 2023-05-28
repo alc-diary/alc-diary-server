@@ -40,7 +40,8 @@ public class UserAppService {
                 foundUser.getNickname(),
                 foundUser.getPersonalAlcoholLimit(),
                 foundUser.getNonAlcoholGoal(),
-                foundUser.getProfileImage()
+                foundUser.getProfileImage(),
+                foundUser.getStatus()
         );
     }
 
