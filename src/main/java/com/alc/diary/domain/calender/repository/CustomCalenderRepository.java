@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface CustomCalenderRepository {
     List<Calender> search(long userId, QueryType queryType, LocalDate date);
+
+    long countAlcoholLimit(long userId);
 }

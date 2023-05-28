@@ -7,6 +7,7 @@ import java.util.Optional;
 public class Report {
 
     private static final int CALORIES_BURN_PER_HOUR_RUNNING = 580;
+    private static final int PRICE_OF_A_BOWL_OF_RICE_SOUP = 8000;
     private final Calenders calenders;
 
     public Report(List<Calender> calenders) {
@@ -30,11 +31,15 @@ public class Report {
     }
 
     public int totalRunningTimeToBurnCalories() {
-        return calenders.calculateTotalCaloriesFromDrinks() / CALORIES_BURN_PER_HOUR_RUNNING;
+        return Math.round((float) calenders.calculateTotalCaloriesFromDrinks() / CALORIES_BURN_PER_HOUR_RUNNING);
     }
 
     public int totalCaloriesFromDrinks() {
         return calenders.calculateTotalCaloriesFromDrinks();
+    }
+
+    public int riceSoupEquivalent() {
+        return Math.round((float) totalSpentOnDrinks() / PRICE_OF_A_BOWL_OF_RICE_SOUP);
     }
 
     public DrinkSummary mostConsumedDrinkSummary() {
