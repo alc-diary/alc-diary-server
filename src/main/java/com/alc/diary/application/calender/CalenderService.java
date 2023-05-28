@@ -3,10 +3,7 @@ package com.alc.diary.application.calender;
 import com.alc.diary.application.calender.dto.request.SaveCalenderRequest;
 import com.alc.diary.application.calender.dto.request.SearchCalenderRequest;
 import com.alc.diary.application.calender.dto.request.UpdateCalenderRequest;
-import com.alc.diary.application.calender.dto.response.FindCalenderDetailResponse;
-import com.alc.diary.application.calender.dto.response.SearchCalenderDayResponse;
-import com.alc.diary.application.calender.dto.response.SearchCalenderMonthResponse;
-import com.alc.diary.application.calender.dto.response.SearchCalenderResponse;
+import com.alc.diary.application.calender.dto.response.*;
 import com.alc.diary.domain.calender.Calender;
 import com.alc.diary.domain.calender.error.CalenderError;
 import com.alc.diary.domain.calender.model.CalenderImage;
@@ -42,7 +39,7 @@ public class CalenderService {
                     calender.getDrinkCondition()
             );
         } catch (Throwable e) {
-            throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
+            return null;
         }
     }
 
@@ -50,14 +47,14 @@ public class CalenderService {
     public SearchCalenderResponse search(SearchCalenderRequest request) {
         try {
             List<Calender> searchCalenders = customCalenderRepository.search(request.userId(), request.query(), LocalDate.parse(request.date()));
-            if (searchCalenders.isEmpty()) throw new CalenderException(CalenderError.NOT_VALID_RESULT);
+            if (searchCalenders.isEmpty()) return SearchCalenderDefaultResponse.of();
 
             return switch (request.query()) {
                 case MONTH -> SearchCalenderMonthResponse.of(searchCalenders);
                 case DAY -> SearchCalenderDayResponse.of(searchCalenders);
             };
         } catch (Throwable e) {
-            throw new CalenderException(CalenderError.NOT_VALID_RESULT);
+            throw new CalenderException(CalenderError.INVALID_PARAMETER_INCLUDE);
         }
     }
 

@@ -36,6 +36,7 @@ public class ReportAppService {
                 currentMonthReport.totalSpentOnDrinks(),
                 currentMonthReport.totalCaloriesFromDrinks(),
                 currentMonthReport.totalRunningTimeToBurnCalories(),
+                currentMonthReport.riceSoupEquivalent(),
                 new DrinkSummaryDto(currentMonthReport.mostConsumedDrinkSummary()),
                 new DrinkingDaySummaryDto(currentMonthReport.mostFrequentDrinkingDaySummary()),
                 currentMonthReport.lastDrinkingDateTimeOptional()

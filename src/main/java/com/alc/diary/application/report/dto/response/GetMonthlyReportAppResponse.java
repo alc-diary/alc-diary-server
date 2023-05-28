@@ -1,7 +1,5 @@
 package com.alc.diary.application.report.dto.response;
 
-import java.time.LocalDateTime;
-
 public record GetMonthlyReportAppResponse(
 
         float totalBottlesConsumed,
@@ -11,6 +9,7 @@ public record GetMonthlyReportAppResponse(
         int totalSpentOnDrinks,
         int totalCaloriesFromDrinks,
         int totalRunningTimeToBurnCalories,
+        int riceSoupEquivalent,
         DrinkSummaryDto mostFrequentlyConsumedDrink,
         DrinkingDaySummaryDto mostFrequentlyDrinkingDay,
         String lastDrinkingDateTime
