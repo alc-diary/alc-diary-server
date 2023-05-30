@@ -35,7 +35,7 @@ public class CalenderService {
             return FindCalenderDetailResponse.of(
                     calender.getTitle(), calender.getContents(),
                     calender.getDrinkStartDateTime(), calender.getDrinkEndDateTime(),
-                    calender.getDrinkModels(), (calender.getImage() == null) ? List.of() : calender.getImage().getImages(),
+                    calender.getDrinkModels(), (calender.getImage() == null) ? null : calender.getImage().getImages(),
                     calender.getDrinkCondition()
             );
         } catch (Throwable e) {
