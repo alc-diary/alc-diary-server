@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public record SearchCalenderMonthResponse(
-        List<MonthCalender> calenderResponses
+        List<MonthCalender> calenderResponse
 ) implements SearchCalenderResponse {
     public record MonthCalender(
 
