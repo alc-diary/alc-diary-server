@@ -24,12 +24,16 @@ public record SearchCalenderDayResponse(
                     calender.getId(),
                     calender.getTitle(),
                     calender.getDrinkStartDateTime(),
-                    calender.getDrinkEndDateTime(), getMaxDrinkModel(calender.getDrinkModels()));
+                    calender.getDrinkEndDateTime(),
+                    getMaxDrinkModel(calender.getDrinkModels()));
         }
 
         private static DrinkModel getMaxDrinkModel(List<DrinkModel> drinkModels) {
             if (drinkModels.isEmpty()) throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
-            return drinkModels.stream().max(Comparator.comparing(DrinkModel::getQuantity)).get();
+            return DrinkModel.builder()
+                    .type(drinkModels.stream().max(Comparator.comparing(DrinkModel::getQuantity)).get().getType())
+                    .quantity((float) drinkModels.stream().mapToDouble(DrinkModel::getQuantity).sum())
+                    .build();
         }
 
     }
