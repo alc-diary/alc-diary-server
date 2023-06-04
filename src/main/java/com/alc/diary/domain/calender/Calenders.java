@@ -52,12 +52,14 @@ public class Calenders {
     }
 
     public List<DrinkSummary> calculateMostConsumedDrinkSummaries() {
+        System.out.println(calenders);
         Map<DrinkType, Float> totalQuantityByDrinkType = calenders.stream()
                                                                   .flatMap(calender -> calender.getDrinkModels().stream())
                                                                   .collect(Collectors.groupingBy(DrinkModel::getType,
                                                                           Collectors.summingDouble(DrinkModel::getQuantity)))
                                                                   .entrySet().stream()
                                                                   .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().floatValue()));
+        System.out.println(totalQuantityByDrinkType);
 
         final float maxBeverageConsumption = totalQuantityByDrinkType.values().stream()
                                                                      .max(Float::compareTo)
