@@ -13,6 +13,7 @@ import com.alc.diary.domain.exception.CalenderException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class CalenderService {
     private final UserRepository userRepository;
     private final CalenderRepository calenderRepository;
     private final CustomCalenderRepository customCalenderRepository;
+    private final CacheManager cacheManager;
 
     @Transactional(readOnly = true)
     public FindCalenderDetailResponse find(Long calenderId) {
@@ -85,14 +87,15 @@ public class CalenderService {
     }
 
     @Transactional
-    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month.value", cacheManager = "cacheManager")
     public void delete(Long calenderId, Long userId) {
         if (!isValidUser(calenderId, userId)) return;
-        try {
-            calenderRepository.deleteCalenderById(calenderId);
-        } catch (Exception e) {
-            throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
+        Calender calender = calenderRepository.findById(calenderId).orElseThrow(() -> new CalenderException(CalenderError.NO_ENTITY_FOUND));
+        int year = calender.getDrinkStartDateTime().getYear();
+        int month = calender.getDrinkStartDateTime().getMonth().getValue();
+        if (cacheManager.getCache("monthlyReport") != null) {
+            cacheManager.getCache("monthlyReport").evict(userId + "_" + year + "-" + month);
         }
+        calenderRepository.deleteCalenderById(calender.getId());
     }
 
     @Transactional
