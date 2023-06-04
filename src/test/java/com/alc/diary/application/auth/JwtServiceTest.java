@@ -56,6 +56,5 @@ class JwtServiceTest {
     @Test
     void generateToken_test() {
         JwtService jwtService = new JwtService("ALC_DIARY_SECRET_KEY", Clock.fixed(Instant.now().minusSeconds(10000), ZoneId.of("Asia/Seoul")));
-        System.out.println(jwtService.generateToken(1));
     }
 }
