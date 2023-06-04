@@ -16,4 +16,6 @@ public interface CalenderRepository extends Repository<Calender, Long> {
     Optional<Calender> getCalenderById(Long calenderId);
 
     List<Calender> findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(Long userId, LocalDateTime start, LocalDateTime end);
+
+    Optional<Calender> findById(Long calendarId);
 }
