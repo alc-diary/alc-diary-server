@@ -54,4 +54,11 @@ public class TestApiController {
     public LocalDateTime timezone() {
         return LocalDateTime.now();
     }
+
+    @GetMapping("/local-date-time")
+    public void localDateTimeTest() {
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(now.getYear());
+        System.out.println(now.getMonth().getValue());
+    }
 }

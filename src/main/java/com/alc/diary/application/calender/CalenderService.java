@@ -61,9 +61,10 @@ public class CalenderService {
     }
 
     @Transactional
-    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month", cacheManager = "cacheManager")
+    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month.value", cacheManager = "cacheManager")
     public void save(SaveCalenderRequest request, Long userId) {
         try {
+            System.out.println(request.drinkStartDateTime().getYear());
             User user = userRepository.findById(userId).orElseThrow();
 
             calenderRepository.save(
@@ -84,7 +85,7 @@ public class CalenderService {
     }
 
     @Transactional
-    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month", cacheManager = "cacheManager")
+    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month.value", cacheManager = "cacheManager")
     public void delete(Long calenderId, Long userId) {
         if (!isValidUser(calenderId, userId)) return;
         try {
@@ -95,7 +96,7 @@ public class CalenderService {
     }
 
     @Transactional
-    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month", cacheManager = "cacheManager")
+    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month.value", cacheManager = "cacheManager")
     public void update(Long calenderId, Long userId, UpdateCalenderRequest request) {
         if (!isValidUser(calenderId, userId)) return;
         try {
