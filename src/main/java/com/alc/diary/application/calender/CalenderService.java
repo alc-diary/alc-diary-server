@@ -13,6 +13,7 @@ import com.alc.diary.domain.exception.CalenderException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,11 +55,13 @@ public class CalenderService {
                 case DAY -> SearchCalenderDayResponse.of(searchCalenders);
             };
         } catch (Throwable e) {
+            e.printStackTrace();
             throw new CalenderException(CalenderError.INVALID_PARAMETER_INCLUDE);
         }
     }
 
     @Transactional
+    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public void save(SaveCalenderRequest request, Long userId) {
         try {
             User user = userRepository.findById(userId).orElseThrow();
@@ -81,6 +84,7 @@ public class CalenderService {
     }
 
     @Transactional
+    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public void delete(Long calenderId, Long userId) {
         if (!isValidUser(calenderId, userId)) return;
         try {
@@ -91,6 +95,7 @@ public class CalenderService {
     }
 
     @Transactional
+    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public void update(Long calenderId, Long userId, UpdateCalenderRequest request) {
         if (!isValidUser(calenderId, userId)) return;
         try {
