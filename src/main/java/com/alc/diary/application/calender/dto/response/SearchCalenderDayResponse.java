@@ -32,7 +32,7 @@ public record SearchCalenderDayResponse(
             if (drinkModels.isEmpty()) return null;
             return DrinkModel.builder()
                     .type(drinkModels.stream().max(Comparator.comparing(DrinkModel::getQuantity)).get().getType())
-                    .quantity((float) drinkModels.stream().mapToDouble(DrinkModel::getQuantity).sum())
+                    .quantity((float) drinkModels.stream().mapToDouble(DrinkModel::getQuantity).max().orElse(0))
                     .build();
         }
 

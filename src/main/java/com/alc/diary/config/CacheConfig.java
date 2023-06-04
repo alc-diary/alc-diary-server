@@ -1,9 +1,12 @@
 package com.alc.diary.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.support.NoOpCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -20,8 +23,13 @@ public class CacheConfig {
 
     private final RedisConnectionFactory redisConnectionFactory;
 
+    private final Environment env;
+
     @Bean
     public CacheManager cacheManager() {
+        if ("none".equals(env.getProperty("spring.cache.type"))) {
+            return new NoOpCacheManager();
+        }
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         cacheConfigurations.put("monthlyReport", monthlyReportCacheConfiguration());
 
