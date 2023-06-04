@@ -66,7 +66,6 @@ public class CalenderService {
     @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month.value", cacheManager = "cacheManager")
     public void save(SaveCalenderRequest request, Long userId) {
         try {
-            System.out.println(request.drinkStartDateTime().getYear());
             User user = userRepository.findById(userId).orElseThrow();
 
             calenderRepository.save(

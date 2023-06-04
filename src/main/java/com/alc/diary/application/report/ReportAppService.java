@@ -62,13 +62,11 @@ public class ReportAppService {
     }
 
     private List<Calender> getMonthlyCalenders(Long userId, LocalDateTime start, LocalDateTime end) {
-        System.out.println("start: " + start + ", end: " + end);
         List<Calender> foundCalenders = calenderRepository.findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(
                 userId,
                 start,
                 end
         );
-        System.out.println("foundCalendars: " + foundCalenders);
         return foundCalenders;
     }
 }

@@ -58,7 +58,5 @@ public class TestApiController {
     @GetMapping("/local-date-time")
     public void localDateTimeTest() {
         LocalDateTime now = LocalDateTime.now();
-        System.out.println(now.getYear());
-        System.out.println(now.getMonth().getValue());
     }
 }
