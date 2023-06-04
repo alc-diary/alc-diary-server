@@ -12,11 +12,12 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+    defer-datasource-initialization: true
   mvc:
     path match:
       matching-strategy: ant_path_matcher
@@ -26,6 +27,9 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: true
+  sql:
+    init:
+      mode: always
 
 feign:
   client:

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,10 +23,19 @@ public class CalenderImage {
     private String urls;
 
     public CalenderImage(List<String> images) {
-        this.urls = StringUtils.join(images, ",");
+        if (!isEmpty(images)) {
+            urls = StringUtils.join(images, ",");
+        }
+    }
+
+    private static boolean isEmpty(List<String> images) {
+        return images == null || images.isEmpty();
     }
 
     public List<String> getImages() {
-        return Arrays.asList(this.urls.split(","));
+        if (!StringUtils.isEmpty(urls)) {
+            return Arrays.asList(this.urls.split(","));
+        }
+        return new ArrayList<>();
     }
 }
