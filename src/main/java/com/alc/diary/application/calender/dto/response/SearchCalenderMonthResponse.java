@@ -7,6 +7,7 @@ import com.alc.diary.domain.calender.model.DrinkModel;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public record SearchCalenderMonthResponse(
         List<MonthCalender> calenderResponse
@@ -24,7 +25,9 @@ public record SearchCalenderMonthResponse(
         }
 
         private static DrinkType getMaxDrinkType(List<DrinkModel> drinkModels) {
-            return drinkModels.stream().max(Comparator.comparing(DrinkModel::getQuantity)).orElseThrow().getType();
+            return drinkModels.stream().max(Comparator.comparing(DrinkModel::getQuantity))
+                              .map(DrinkModel::getType)
+                              .orElse(null);
         }
     }
 
