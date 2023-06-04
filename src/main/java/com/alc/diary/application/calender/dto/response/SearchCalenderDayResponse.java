@@ -29,7 +29,7 @@ public record SearchCalenderDayResponse(
         }
 
         private static DrinkModel getMaxDrinkModel(List<DrinkModel> drinkModels) {
-            if (drinkModels.isEmpty()) throw new CalenderException(CalenderError.NO_ENTITY_FOUND);
+            if (drinkModels.isEmpty()) return null;
             return DrinkModel.builder()
                     .type(drinkModels.stream().max(Comparator.comparing(DrinkModel::getQuantity)).get().getType())
                     .quantity((float) drinkModels.stream().mapToDouble(DrinkModel::getQuantity).sum())
