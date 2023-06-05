@@ -76,7 +76,7 @@ public class SocialLoginAppService {
         return userRepository.findBySocialTypeAndSocialId(socialLoginStrategyResponse.socialType(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User user = createUser(socialLoginStrategyResponse);
-                                 messageService.send("가입");
+                                 messageService.send("한 명의 회원이 " + socialLoginStrategyResponse.socialType() + "(으)로 가입했습니다!\n" + "이메일: " + socialLoginStrategyResponse.email());
                                  return userRepository.save(user);
                              });
     }
