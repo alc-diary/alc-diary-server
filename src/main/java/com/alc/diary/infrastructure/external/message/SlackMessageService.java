@@ -21,7 +21,7 @@ public class SlackMessageService implements MessageService {
     @Override
     public void send(String message) {
         ChatPostMessageRequest slackMessage = ChatPostMessageRequest.builder()
-                                                             .channel("#test")
+                                                             .channel("#알림")
                                                              .text(message)
                                                              .build();
         try {
