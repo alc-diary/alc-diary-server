@@ -10,4 +10,6 @@ public interface UserDetailRepository extends Repository<UserDetail, Long> {
     Optional<UserDetail> findByNickname(String nickname);
 
     Boolean existsByNickname(String nickname);
+
+    UserDetail save(UserDetail userDetail);
 }
