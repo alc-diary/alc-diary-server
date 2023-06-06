@@ -79,6 +79,10 @@ public class UserDetail extends BaseEntity {
         this.descriptionStyle = descriptionStyle;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public void updateAlcoholLimitAndGoal(float newPersonalAlcoholLimit, int newNonAlcoholGoal, AlcoholType newAlcoholType) {
         if (newPersonalAlcoholLimit < 0.0f) {
             throw new DomainException(UserError.INVALID_PERSONAL_ALCOHOL_LIMIT);

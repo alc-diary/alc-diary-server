@@ -6,7 +6,6 @@ import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -96,7 +95,7 @@ public class User extends BaseEntity {
     }
 
     public void updateProfileImage(String newProfileImage) {
-        if (newProfileImage.length() > 1000) {
+        if (StringUtils.length(newProfileImage) > 1000) {
             throw new DomainException(UserError.IMAGE_URL_LENGTH_EXCEEDED);
         }
         this.profileImage = newProfileImage;
@@ -110,14 +109,9 @@ public class User extends BaseEntity {
         detail.updateAlcoholLimitAndGoal(newPersonalAlcoholLimit, newNonAlcoholGoal, newAlcoholType);
     }
 
-    public void onboarding(
-            DescriptionStyle newDescriptionStyle,
-            String newNickname,
-            AlcoholType newAlcoholType,
-            float newPersonalAlcoholLimit,
-            int newNonAlcoholGoal
-    ) {
-        detail.update(newDescriptionStyle, newNickname, newAlcoholType, newPersonalAlcoholLimit, newNonAlcoholGoal);
+    public void onboarding(UserDetail detail) {
+        detail.setUser(this);
+        this.detail = detail;
     }
 
     public void updateNickname(String newNickname) {
