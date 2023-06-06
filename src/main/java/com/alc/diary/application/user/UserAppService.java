@@ -7,9 +7,12 @@ import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.NicknameToken;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.UserHistory;
 import com.alc.diary.domain.user.enums.NicknameTokenOrdinal;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.NicknameTokenRepository;
+import com.alc.diary.domain.user.repository.UserDetailRepository;
+import com.alc.diary.domain.user.repository.UserHistoryRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +32,19 @@ import java.util.Random;
 public class UserAppService {
 
     private final UserRepository userRepository;
+    private final UserDetailRepository userDetailRepository;
+    private final UserHistoryRepository userHistoryRepository;
     private final NicknameTokenRepository nicknameTokenRepository;
 
     public GetUserInfoAppResponse getUserInfo(Long userId) {
         User foundUser = getUserById(userId);
         return new GetUserInfoAppResponse(
                 foundUser.getId(),
-                foundUser.getDescriptionStyle(),
-                foundUser.getAlcoholType(),
-                foundUser.getNickname(),
-                foundUser.getPersonalAlcoholLimit(),
-                foundUser.getNonAlcoholGoal(),
+                foundUser.getDetail().getDescriptionStyle(),
+                foundUser.getDetail().getAlcoholType(),
+                foundUser.getDetail().getNickname(),
+                foundUser.getDetail().getPersonalAlcoholLimit(),
+                foundUser.getDetail().getNonAlcoholGoal(),
                 foundUser.getProfileImage(),
                 foundUser.getStatus()
         );
@@ -76,7 +81,7 @@ public class UserAppService {
         Random random = new Random();
         for (int i = 0; i < 20; i++) {
             int randomNumber = random.nextInt(10000);
-            if (userRepository.findByNickname(randomNickname + randomNumber).isEmpty()) {
+            if (userDetailRepository.findByNickname(randomNickname + randomNumber).isEmpty()) {
                 return new GetRandomNicknameAppResponse(randomNickname + randomNumber);
             }
         }
@@ -99,6 +104,7 @@ public class UserAppService {
     public void updateUserProfileImage(Long userId, UpdateUserProfileImageAppRequest request) {
         User foundUser = getUserById(userId);
         foundUser.updateProfileImage(request.newProfileImage());
+        createHistory(foundUser.getId(), foundUser);
     }
 
     @Transactional
@@ -109,25 +115,40 @@ public class UserAppService {
                 request.newNonAlcoholGoal(),
                 request.newAlcoholType()
         );
+        createHistory(foundUser.getId(), foundUser);
     }
 
     @Transactional
     public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
         User foundUser = getUserById(userId);
-        if (userRepository.existsByNickname(request.newNickname())) {
+        if (userDetailRepository.existsByNickname(request.newNickname())) {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
         }
-        foundUser.updateNickname(request.newNickname());
+        foundUser.getDetail().updateNickname(request.newNickname());
+        createHistory(foundUser.getId(), foundUser);
     }
 
     @Transactional
     public void updateDescriptionStyle(Long userId, UpdateDescriptionStyleAppRequest request) {
         User foundUser = getUserById(userId);
-        foundUser.updateDescriptionStyle(request.newDescriptionStyle());
+        foundUser.getDetail().updateDescriptionStyle(request.newDescriptionStyle());
+        createHistory(foundUser.getId(), foundUser);
+    }
+
+    @Transactional
+    public void deleteUser(Long requesterId, Long targetUserId) {
+        User targetUser = getUserById(targetUserId);
+        targetUser.delete();
+        createHistory(requesterId, targetUser);
     }
 
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
                              .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+    }
+
+    private void createHistory(Long requesterId, User targetUser) {
+        UserHistory history = UserHistory.from(requesterId, targetUser);
+        userHistoryRepository.save(history);
     }
 }
