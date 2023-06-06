@@ -78,14 +78,13 @@ public class SocialLoginAppService {
     private User getUser(SocialLoginStrategyResponse socialLoginStrategyResponse) {
         return userRepository.findBySocialTypeAndSocialId(socialLoginStrategyResponse.socialType(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
-                                 User user = createUser(socialLoginStrategyResponse);
-                                 createHistory(user.getId(), user);
-                                 User save = userRepository.save(user);
+                                 User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
+                                 createHistory(savedUser.getId(), savedUser);
                                  messageService.send(
                                          "#알림",
                                          "한 명의 회원이 " + socialLoginStrategyResponse.socialType() + "(으)로 가입했습니다!\n" + "이메일: " + socialLoginStrategyResponse.email()
                                  );
-                                 return save;
+                                 return savedUser;
                              });
     }
 
