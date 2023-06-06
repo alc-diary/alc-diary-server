@@ -2,6 +2,7 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.UserDetail;
 import com.alc.diary.domain.user.enums.AlcoholType;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 import com.alc.diary.domain.user.enums.SocialType;
@@ -21,12 +22,19 @@ class UserAppServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = User.builder(SocialType.KAKAO, "1", DescriptionStyle.MILD)
-                   .nickname("test")
-                   .personalAlcoholLimit(1.5f)
-                   .nonAlcoholGoal(5)
-                   .alcoholType(SOJU)
+        user = User.builder(SocialType.KAKAO, "1")
+                   .id(1L)
                    .build();
+        UserDetail userDetail = new UserDetail(
+                1L,
+                user,
+                "test",
+                SOJU,
+                1.5f,
+                5,
+                DescriptionStyle.MILD
+        );
+        user.setDetail(userDetail);
     }
 
     @Test
@@ -57,9 +65,9 @@ class UserAppServiceTest {
 
         user.updateAlcoholLimitAndGoal(newPersonalAlcoholLimit, newNonAlcoholGoal, newAlcoholType);
 
-        assertThat(user.getPersonalAlcoholLimit())
+        assertThat(user.getDetail().getPersonalAlcoholLimit())
                 .isEqualTo(newPersonalAlcoholLimit);
-        assertThat(user.getNonAlcoholGoal())
+        assertThat(user.getDetail().getNonAlcoholGoal())
                 .isEqualTo(newNonAlcoholGoal);
     }
 
@@ -82,7 +90,7 @@ class UserAppServiceTest {
 
         assertThatThrownBy(() -> user.updateAlcoholLimitAndGoal(1.0f, newNonAlcoholGoal, BEER))
                 .isInstanceOf(DomainException.class)
-                .hasMessage("금주 목표일 수는 0 이상이어야 합니다.");
+                .hasMessage("금주 목표일 수는 0 이상 7 이하여야 합니다.");
     }
 
     @Test
