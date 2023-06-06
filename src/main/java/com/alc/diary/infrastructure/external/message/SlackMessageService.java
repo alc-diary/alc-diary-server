@@ -8,6 +8,8 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.IIOException;
 
@@ -19,9 +21,9 @@ public class SlackMessageService implements MessageService {
     private static final MethodsClient methods = Slack.getInstance().methods("xoxb-3987321618736-5242072199362-jqAGxXmUVLB4gSlV7hGEoN5x");
 
     @Override
-    public void send(String message) {
+    public void send(String channel, String message) {
         ChatPostMessageRequest slackMessage = ChatPostMessageRequest.builder()
-                                                             .channel("#알림")
+                                                             .channel(channel)
                                                              .text(message)
                                                              .build();
         try {

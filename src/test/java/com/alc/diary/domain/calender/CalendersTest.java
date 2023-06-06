@@ -4,6 +4,7 @@ import com.alc.diary.domain.calender.enums.DrinkType;
 import com.alc.diary.domain.calender.model.CalenderImage;
 import com.alc.diary.domain.calender.model.DrinkModel;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.enums.SocialType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +37,7 @@ class CalendersTest {
                                                                   .drinkModels(drinkModels)
                                                                   .image(new CalenderImage("test image" + i))
                                                                   .drinkCondition("😀")
-                                                                  .user(new User())
+                                                                  .user(User.builder(SocialType.KAKAO, "123").build())
                                                                   .build())
                                            .collect(Collectors.toList())
         );
