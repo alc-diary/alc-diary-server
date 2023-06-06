@@ -7,8 +7,10 @@ import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResp
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserDetail;
+import com.alc.diary.domain.user.UserHistory;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserDetailRepository;
+import com.alc.diary.domain.user.repository.UserHistoryRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class OnboardingAppService {
 
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
+    private final UserHistoryRepository userHistoryRepository;
     private final MessageService messageService;
 
     public GetIsOnboardingDoneAppResponse getIsOnboardingDone(Long userId) {
@@ -63,10 +66,16 @@ public class OnboardingAppService {
         );
         userDetailRepository.save(userDetail);
         findUser.onboarding(userDetail);
+        createHistory(findUser.getId(), findUser);
         try {
             messageService.send("#알림", findUser.getDetail().getNickname() + "님 온보딩 완료!");
         } catch (Exception e) {
             log.error("메시지 전송에 실패했습니다.");
         }
+    }
+
+    private void createHistory(Long requesterId, User targetUser) {
+        UserHistory history = UserHistory.from(requesterId, targetUser);
+        userHistoryRepository.save(history);
     }
 }

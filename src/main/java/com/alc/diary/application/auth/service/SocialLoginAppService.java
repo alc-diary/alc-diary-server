@@ -11,10 +11,12 @@ import com.alc.diary.domain.auth.RefreshToken;
 import com.alc.diary.domain.auth.policy.DefaultExpiredPolicy;
 import com.alc.diary.domain.auth.repository.RefreshTokenRepository;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.UserHistory;
 import com.alc.diary.domain.user.enums.AgeRangeType;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 import com.alc.diary.domain.user.enums.GenderType;
 import com.alc.diary.domain.user.enums.SocialType;
+import com.alc.diary.domain.user.repository.UserHistoryRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import com.alc.diary.infrastructure.external.client.feign.google.dto.response.GoogleUserInfoDto;
 import com.alc.diary.infrastructure.external.client.feign.kakao.dto.response.KakaoLoginResponse;
@@ -40,6 +42,7 @@ public class SocialLoginAppService {
     private final SocialLoginStrategyFactory socialLoginStrategyFactory;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final UserHistoryRepository userHistoryRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MessageService messageService;
 
@@ -76,6 +79,7 @@ public class SocialLoginAppService {
         return userRepository.findBySocialTypeAndSocialId(socialLoginStrategyResponse.socialType(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User user = createUser(socialLoginStrategyResponse);
+                                 createHistory(user.getId(), user);
                                  User save = userRepository.save(user);
                                  messageService.send(
                                          "#알림",
@@ -95,5 +99,10 @@ public class SocialLoginAppService {
                    .gender(socialLoginStrategyResponse.gender())
                    .ageRange(socialLoginStrategyResponse.ageRange())
                    .build();
+    }
+
+    private void createHistory(Long requesterId, User targetUser) {
+        UserHistory history = UserHistory.from(requesterId, targetUser);
+        userHistoryRepository.save(history);
     }
 }
