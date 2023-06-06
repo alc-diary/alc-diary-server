@@ -46,6 +46,9 @@ public class OnboardingAppService {
     public void updateUserOnboardingInfo(Long userId, UpdateUserOnboardingInfoAppRequest request) {
         User findUser = userRepository.findById(userId)
                                       .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        if (!findUser.isOnboarding()) {
+            throw new DomainException(UserError.NOT_IN_ONBOARDING_PROCESS);
+        }
         if (userDetailRepository.findByNickname(request.nickname()).isPresent()) {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
         }
