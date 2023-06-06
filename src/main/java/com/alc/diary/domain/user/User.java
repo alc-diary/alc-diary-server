@@ -109,9 +109,14 @@ public class User extends BaseEntity {
         detail.updateAlcoholLimitAndGoal(newPersonalAlcoholLimit, newNonAlcoholGoal, newAlcoholType);
     }
 
+    public boolean isOnboarding() {
+        return status == UserStatus.ONBOARDING;
+    }
+
     public void onboarding(UserDetail detail) {
         detail.setUser(this);
         this.detail = detail;
+        this.status = UserStatus.ACTIVE;
     }
 
     public void updateNickname(String newNickname) {
