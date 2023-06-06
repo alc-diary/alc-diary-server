@@ -6,6 +6,7 @@ import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppReq
 import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.UserDetail;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserDetailRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
@@ -48,13 +49,17 @@ public class OnboardingAppService {
         if (userDetailRepository.findByNickname(request.nickname()).isPresent()) {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
         }
-        findUser.onboarding(
-                request.descriptionStyle(),
+        UserDetail userDetail = new UserDetail(
+                null,
+                findUser,
                 request.nickname(),
                 request.alcoholType(),
                 request.personalAlcoholLimit(),
-                request.nonAlcoholGoal()
+                request.nonAlcoholGoal(),
+                request.descriptionStyle()
         );
+        userDetailRepository.save(userDetail);
+        findUser.onboarding(userDetail);
         try {
             messageService.send("#알림", findUser.getDetail().getNickname() + "님 온보딩 완료!");
         } catch (Exception e) {
