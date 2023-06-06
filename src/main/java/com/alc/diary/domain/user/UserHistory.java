@@ -124,10 +124,10 @@ public class UserHistory {
                         : null,
                 target.getDetail() != null
                         ? target.getDetail().getPersonalAlcoholLimit()
-                        : null,
+                        : 0.0f,
                 target.getDetail() != null
                         ? target.getDetail().getNonAlcoholGoal()
-                        : null,
+                        : 0,
                 target.getDetail() != null
                         ? target.getDetail().getDescriptionStyle()
                         : null,
