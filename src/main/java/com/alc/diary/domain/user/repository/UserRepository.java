@@ -19,8 +19,4 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
     User save(User user);
 
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
-
-    Optional<User> findByNickname(String nickname);
-
-    Boolean existsByNickname(String nickname);
 }

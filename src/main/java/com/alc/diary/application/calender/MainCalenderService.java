@@ -39,7 +39,7 @@ public class MainCalenderService {
         try {
             User user = userRepository.findById(userId).orElseThrow();
             long overAlcoholLimit = customCalenderRepository.countAlcoholLimit(userId);
-            return GetMainResponse.create(user.getNickname(), user.getDescriptionStyle(), overAlcoholLimit, user.getNonAlcoholGoal());
+            return GetMainResponse.create(user.getDetail().getNickname(), user.getDetail().getDescriptionStyle(), overAlcoholLimit, user.getDetail().getNonAlcoholGoal());
         } catch (Throwable e) {
             throw new DomainException(CalenderError.NO_ENTITY_FOUND);
         }
