@@ -72,4 +72,13 @@ public class UserApiController {
         userAppService.updateDescriptionStyle(userId, request);
         return ApiResponse.getSuccess();
     }
+
+    @DeleteMapping("/{targetUserId}")
+    public ApiResponse<Void> deleteUser(
+            @RequestAttribute("userId") Long requesterId,
+            @PathVariable Long targetUserId
+    ) {
+        userAppService.deleteUser(requesterId, targetUserId);
+        return ApiResponse.getSuccess();
+    }
 }
