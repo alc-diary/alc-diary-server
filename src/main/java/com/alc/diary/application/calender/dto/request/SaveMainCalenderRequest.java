@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record SaveMainCalenderRequest(
-        @NotNull(message = "음주 기록은 필수입니다.")
-        @NotEmpty(message = "음주 기록은 필수입니다.")
+        @NotNull(message = "마신 음주 기록은 null을 허용하지 않습니다.")
         List<DrinkModel> drinkModels,
         LocalDateTime drinkStartDateTime
 ) {

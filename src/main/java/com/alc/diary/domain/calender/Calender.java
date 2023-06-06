@@ -56,7 +56,7 @@ public class Calender extends BaseEntity {
     public User user;
 
     public Calender(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String drinkCondition, User user) {
-        if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels.isEmpty() || user == null)
+        if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels == null || user == null)
             throw new DomainException(CalenderError.INVALID_PARAMETER_INCLUDE);
         this.title = title;
         this.contents = contents;
@@ -80,6 +80,8 @@ public class Calender extends BaseEntity {
     }
 
     public void update(String title, String contents, LocalDateTime drinkStartDateTime, LocalDateTime drinkEndDateTime, List<DrinkModel> drinkModels, CalenderImage image, String drinkCondition, User user) {
+        if (!StringUtils.hasText(title) || drinkStartDateTime == null || drinkEndDateTime == null || drinkModels == null || user == null)
+            throw new DomainException(CalenderError.INVALID_PARAMETER_INCLUDE);
         this.title = title;
         this.contents = contents;
         this.drinkStartDateTime = drinkStartDateTime;
