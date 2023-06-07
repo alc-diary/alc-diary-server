@@ -31,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final String[] whiteList = new String[]{"/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs", "/kakao", "/admin", "/css", "/assets", "/test"};
     private final String[] equalsList = new String[]{"/favicon.ico"};
+    private final String ONBOARDING_API_PATTERN = "/v\\d+/onboarding.*";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -53,8 +54,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new DomainException(AuthError.INVALID_ACCESS_TOKEN);
             }
             long userId = jwtService.getUserIdFromToken(accessToken);
-            if (!userRepository.existsById(userId)) {
-                throw new DomainException(UserError.USER_NOT_FOUND);
+
+            if (isOnboardingEndpoint(path)) {
+                if (!userRepository.existsByIdAndStatusEqualsOnboarding(userId)) {
+                    throw new DomainException(UserError.USER_NOT_FOUND);
+                }
+            } else {
+                if (!userRepository.existsById(userId)) {
+                    throw new DomainException(UserError.USER_NOT_FOUND);
+                }
             }
             request.setAttribute("userId", userId);
             filterChain.doFilter(request, response);
@@ -74,5 +82,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new DomainException(AuthError.INVALID_BEARER_TOKEN_FORMAT);
         }
         return bearerToken.substring("Bearer ".length());
+    }
+
+    private boolean isOnboardingEndpoint(String path) {
+        return path.matches(ONBOARDING_API_PATTERN);
     }
 }
