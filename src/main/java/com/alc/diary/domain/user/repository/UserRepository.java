@@ -11,6 +11,8 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     Optional<User> findById(Long id);
 
+    boolean existsById(Long id);
+
     @Query("select u " +
            "from User u " +
            "where u.id = :id")
@@ -19,4 +21,10 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
     User save(User user);
 
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
+
+    @Query("select u " +
+            "from User u " +
+            "join fetch u.detail ud " +
+            "where ud.nickname = :nickname")
+    Optional<User> findByDetail_Nickname(String nickname);
 }
