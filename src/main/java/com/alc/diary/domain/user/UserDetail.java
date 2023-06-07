@@ -15,7 +15,9 @@ import javax.persistence.*;
 @Getter
 @ToString
 @NoArgsConstructor
-@Table(name = "user_details")
+@Table(
+        name = "user_details",
+        uniqueConstraints = {@UniqueConstraint(name = "unique_user_detail_nickname", columnNames = {"nickname"})})
 @Entity
 public class UserDetail extends BaseEntity {
 

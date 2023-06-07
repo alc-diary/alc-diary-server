@@ -12,7 +12,10 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_histories")
+@Table(
+        name = "user_histories",
+        indexes = {@Index(name = "idx_user_histories_user_id_change_timestamp", columnList = "user_id,change_timestamp")}
+)
 @Entity
 public class UserHistory {
 

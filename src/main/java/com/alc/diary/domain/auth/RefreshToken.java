@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-@Table(name = "refresh_tokens")
+@Table(
+        name = "refresh_tokens",
+        indexes = {@Index(name = "idx_refresh_tokens_user_id_created_at", columnList = "user_id,created_at")}
+)
 @Entity
 public class RefreshToken {
 

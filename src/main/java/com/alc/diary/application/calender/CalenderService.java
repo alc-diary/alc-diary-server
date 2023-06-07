@@ -116,7 +116,7 @@ public class CalenderService {
     }
 
     private Boolean isValidUser(Long calenderId, Long userId) {
-        Calender calender = calenderRepository.getCalenderById(calenderId).orElseThrow();
+        Calender calender = calenderRepository.getCalenderById(calenderId).orElseThrow(() -> new CalenderException(CalenderError.NO_ENTITY_FOUND));
         return (Objects.equals(calender.user.getId(), userId));
     }
 }
