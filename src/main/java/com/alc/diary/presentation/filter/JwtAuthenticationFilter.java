@@ -56,8 +56,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             long userId = jwtService.getUserIdFromToken(accessToken);
 
             if (isOnboardingEndpoint(path)) {
-                if (!userRepository.existsByIdAndStatusEqualsOnboarding(userId)) {
-                    throw new DomainException(UserError.USER_NOT_FOUND);
+                if (path.equals("/v1/onboarding/is-onboarding-done")) {
+                    if (!userRepository.existsById(userId)) {
+                        throw new DomainException(UserError.USER_NOT_FOUND);
+                    }
+                } else {
+                    if (!userRepository.existsByIdAndStatusEqualsOnboarding(userId)) {
+                        throw new DomainException(UserError.USER_NOT_FOUND);
+                    }
                 }
             } else {
                 if (!userRepository.existsById(userId)) {
