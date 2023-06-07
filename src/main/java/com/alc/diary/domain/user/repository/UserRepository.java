@@ -13,7 +13,7 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     boolean existsById(long id);
 
-    @Query(value = "select case when count(u.id) = 1 then true else false end " +
+    @Query(value = "select count(u.id) = 1 " +
                    "from users u " +
                    "where u.id = :id " +
                    "and u.deleted_at is null " +
