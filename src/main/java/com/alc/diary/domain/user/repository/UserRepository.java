@@ -11,6 +11,17 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     Optional<User> findById(Long id);
 
+    boolean existsById(long id);
+
+    @Query(value = "select case when count(u.id) = 1 then true else false end " +
+                   "from users u " +
+                   "where u.id = :id " +
+                   "and u.deleted_at is null " +
+                   "and u.status = 'ONBOARDING'",
+            nativeQuery = true
+    )
+    boolean existsByIdAndStatusEqualsOnboarding(long id);
+
     @Query("select u " +
            "from User u " +
            "where u.id = :id")
@@ -19,4 +30,10 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
     User save(User user);
 
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
+
+    @Query("select u " +
+            "from User u " +
+            "join fetch u.detail ud " +
+            "where ud.nickname = :nickname")
+    Optional<User> findByDetail_Nickname(String nickname);
 }
