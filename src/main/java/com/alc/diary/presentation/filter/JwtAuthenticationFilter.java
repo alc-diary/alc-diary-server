@@ -54,9 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (!userRepository.existsById(userId)) {
                 throw new DomainException(UserError.USER_NOT_FOUND);
             }
-//            long findUserId = userRepository.findByIdEagerLoading(userId)
-//                                            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
-//                                            .getId();
             request.setAttribute("userId", userId);
             filterChain.doFilter(request, response);
         } catch (DomainException e) {
