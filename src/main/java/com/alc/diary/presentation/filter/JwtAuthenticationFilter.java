@@ -51,13 +51,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String accessToken = getAccessToken(request);
             jwtService.validateToken(accessToken);
             long userId = jwtService.getUserIdFromToken(accessToken);
-            long findUserId = userRepository.findById(userId)
-                                            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
-                                            .getId();
-            if (userRepository.findById(userId).isEmpty()) {
+            if (!userRepository.existsById(userId)) {
                 throw new DomainException(UserError.USER_NOT_FOUND);
             }
-            request.setAttribute("userId", findUserId);
+//            long findUserId = userRepository.findByIdEagerLoading(userId)
+//                                            .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
+//                                            .getId();
+            request.setAttribute("userId", userId);
             filterChain.doFilter(request, response);
         } catch (DomainException e) {
             handlerExceptionResolver.resolveException(request, response, null, e);
