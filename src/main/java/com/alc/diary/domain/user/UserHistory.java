@@ -19,6 +19,9 @@ public class UserHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private long userId;
+
     @Column(name = "social_type", length = 20, nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
@@ -72,6 +75,7 @@ public class UserHistory {
 
     public UserHistory(
             Long id,
+            long userId,
             SocialType socialType,
             String socialId,
             UserStatus status,
@@ -89,6 +93,7 @@ public class UserHistory {
             LocalDateTime changeTimestamp
     ) {
         this.id = id;
+        this.userId = userId;
         this.socialType = socialType;
         this.socialId = socialId;
         this.status = status;
@@ -109,6 +114,7 @@ public class UserHistory {
     public static UserHistory from(Long requesterId, User target) {
         return new UserHistory(
                 null,
+                target.getId(),
                 target.getSocialType(),
                 target.getSocialId(),
                 target.getStatus(),
