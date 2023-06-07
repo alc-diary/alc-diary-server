@@ -24,7 +24,7 @@ INSERT INTO users (id,created_at,updated_at,age_range,email,gender,profile_image
 INSERT INTO users (id,created_at,updated_at,age_range,email,gender,profile_image,social_id,social_type,status,deleted_at) VALUES
                                                                                                                                   (22,'2023-06-06 14:23:39.192837','2023-06-06 14:24:02.773124','THIRTIES','whddhr99@hanmail.net','FEMALE','http://k.kakaocdn.net/dn/ciQNml/btrnjIYUIg1/HNd6suQXcvXBzKvqUwshH0/img_640x640.jpg','2821926899','KAKAO','ACTIVE',NULL),
                                                                                                                                   (23,'2023-06-06 21:00:17.872518','2023-06-06 21:01:11.561485',NULL,NULL,NULL,NULL,'2822479331','KAKAO','ACTIVE',NULL),
-                                                                                                                                  (25,'2023-06-07 03:29:46.967645','2023-06-07 03:30:31.895777',NULL,'dev.taeyeong@gmail.com',NULL,'https://lh3.googleusercontent.com/a/AAcHTtfe7k1k4XVgvq7QfMK9WagOQEhLH-obVOY9jV0V=s96-c','105292003953444772006','GOOGLE','ACTIVE',NULL);
+                                                                                                                                  (25,'2023-06-07 03:29:46.967645','2023-06-07 03:30:31.895777',NULL,'dev.taeyeong@gmail.com',NULL,'https://lh3.googleusercontent.com/a/AAcHTtfe7k1k4XVgvq7QfMK9WagOQEhLH-obVOY9jV0V=s96-c','105292003953444772006','GOOGLE','ONBOARDING',NULL);
 
 -- user_details
 INSERT INTO user_details (id,user_id,alcohol_type,description_style,personal_alcohol_limit,nickname,non_alcohol_goal,created_at,updated_at) VALUES
@@ -46,8 +46,7 @@ INSERT INTO user_details (id,user_id,alcohol_type,description_style,personal_alc
                                                                                                                                                     (15,19,'SOJU','MALA',3.0,'술고래',3,'2023-06-04 12:08:00.026818','2023-06-04 12:08:49.753971'),
                                                                                                                                                     (16,20,'SOJU','MALA',1.5,'컴덕',3,'2023-06-05 03:45:00.895659','2023-06-05 03:45:31.536592'),
                                                                                                                                                     (17,22,'SOJU','MALA',2.0,'Joy',5,'2023-06-06 14:23:39.192837','2023-06-06 14:24:02.773124'),
-                                                                                                                                                    (18,23,'SOJU','MALA',2.0,'술덩이괴물',3,'2023-06-06 21:00:17.872518','2023-06-06 21:01:11.561485'),
-                                                                                                                                                    (34,25,'SOJU','MILD',1.0,'ㅋ123',3,'2023-06-07 03:30:31.621081','2023-06-07 03:30:31.621081');
+                                                                                                                                                    (18,23,'SOJU','MALA',2.0,'술덩이괴물',3,'2023-06-06 21:00:17.872518','2023-06-06 21:01:11.561485');
 
 -- user_histories
 INSERT INTO user_histories (id,user_id,age_range,alcohol_type,description_style,personal_alcohol_limit,email,gender,nickname,non_alcohol_goal,profile_image,social_id,social_type,status,deleted_at,changed_by,change_timestamp) VALUES
