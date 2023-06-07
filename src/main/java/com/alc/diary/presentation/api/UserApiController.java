@@ -73,12 +73,12 @@ public class UserApiController {
         return ApiResponse.getSuccess();
     }
 
-    @DeleteMapping("/{targetUserId}")
-    public ApiResponse<Void> deleteUser(
+    @PutMapping("/deactivate")
+    public ApiResponse<Void> deactivateUser(
             @RequestAttribute("userId") Long requesterId,
-            @PathVariable Long targetUserId
+            @RequestBody DeactivateUserAppRequest request
     ) {
-        userAppService.deleteUser(requesterId, targetUserId);
+        userAppService.deactivateUser(requesterId, request);
         return ApiResponse.getSuccess();
     }
 }
