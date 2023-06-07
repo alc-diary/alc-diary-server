@@ -6,6 +6,7 @@ import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,10 @@ import java.time.LocalDateTime;
 @ToString(exclude = "detail")
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Where(clause = "deleted_at is null and status = 'ACTIVE'")
+@Table(
+        name = "users",
+        indexes = {@Index(name = "idx_users_social_id", columnList = "social_id")})
 @Entity
 public class User extends BaseEntity {
 
@@ -22,7 +26,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user")
     private UserDetail detail;
 
     @Column(name = "social_type", length = 20, nullable = false, updatable = false)
