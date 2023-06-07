@@ -8,12 +8,10 @@ import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.NicknameToken;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserHistory;
+import com.alc.diary.domain.user.UserWithdrawal;
 import com.alc.diary.domain.user.enums.NicknameTokenOrdinal;
 import com.alc.diary.domain.user.error.UserError;
-import com.alc.diary.domain.user.repository.NicknameTokenRepository;
-import com.alc.diary.domain.user.repository.UserDetailRepository;
-import com.alc.diary.domain.user.repository.UserHistoryRepository;
-import com.alc.diary.domain.user.repository.UserRepository;
+import com.alc.diary.domain.user.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,6 +31,7 @@ public class UserAppService {
 
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
+    private final UserWithdrawalRepository userWithdrawalRepository;
     private final UserHistoryRepository userHistoryRepository;
     private final NicknameTokenRepository nicknameTokenRepository;
 
@@ -136,9 +135,10 @@ public class UserAppService {
     }
 
     @Transactional
-    public void deleteUser(Long requesterId, Long targetUserId) {
-        User targetUser = getUserById(targetUserId);
+    public void deactivateUser(Long requesterId, DeactivateUserAppRequest request) {
+        User targetUser = getUserById(request.targetUserId());
         targetUser.delete();
+        userWithdrawalRepository.save(UserWithdrawal.of(targetUser, request.deletionReason()));
         createHistory(requesterId, targetUser);
     }
 
