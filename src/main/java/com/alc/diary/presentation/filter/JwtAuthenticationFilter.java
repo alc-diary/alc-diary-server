@@ -49,7 +49,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String accessToken = getAccessToken(request);
-            jwtService.validateToken(accessToken);
+            if (!jwtService.validateToken(accessToken)) {
+                throw new DomainException(AuthError.INVALID_ACCESS_TOKEN);
+            }
             long userId = jwtService.getUserIdFromToken(accessToken);
             if (!userRepository.existsById(userId)) {
                 throw new DomainException(UserError.USER_NOT_FOUND);
