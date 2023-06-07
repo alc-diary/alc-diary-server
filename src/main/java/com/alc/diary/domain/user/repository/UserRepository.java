@@ -13,14 +13,14 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     boolean existsById(long id);
 
-    @Query(value = "select count(u.id) = 1 " +
+    @Query(value = "select count(u.id) " +
                    "from users u " +
                    "where u.id = :id " +
                    "and u.deleted_at is null " +
                    "and u.status = 'ONBOARDING'",
             nativeQuery = true
     )
-    boolean existsByIdAndStatusEqualsOnboarding(long id);
+    long existsByIdAndStatusEqualsOnboarding(long id);
 
     @Query("select u " +
            "from User u " +
