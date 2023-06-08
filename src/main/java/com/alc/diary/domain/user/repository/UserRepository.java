@@ -20,7 +20,7 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
                    "and u.status = 'ONBOARDING'",
             nativeQuery = true
     )
-    long existsByIdAndStatusEqualsOnboarding(long id);
+    Optional<User> findByIdAndStatusEqualsOnboarding(long id);
 
     @Query("select u " +
            "from User u " +
