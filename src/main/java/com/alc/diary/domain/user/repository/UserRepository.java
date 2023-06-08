@@ -13,7 +13,7 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     boolean existsById(long id);
 
-    @Query(value = "select count(u.id) " +
+    @Query(value = "select * " +
                    "from users u " +
                    "where u.id = :id " +
                    "and u.deleted_at is null " +
