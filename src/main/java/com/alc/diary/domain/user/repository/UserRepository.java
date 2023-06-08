@@ -16,6 +16,14 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
     @Query(value = "select * " +
                    "from users u " +
                    "where u.id = :id " +
+                   "and u.deleted_at is null ",
+            nativeQuery = true
+    )
+    Optional<User> findByIdAndDeletedAtIsNull(long id);
+
+    @Query(value = "select * " +
+                   "from users u " +
+                   "where u.id = :id " +
                    "and u.deleted_at is null " +
                    "and u.status = 'ONBOARDING'",
             nativeQuery = true
