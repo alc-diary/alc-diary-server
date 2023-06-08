@@ -47,7 +47,7 @@ public class OnboardingAppService {
 
     @Transactional
     public void updateUserOnboardingInfo(Long userId, UpdateUserOnboardingInfoAppRequest request) {
-        User findUser = userRepository.findById(userId)
+        User findUser = userRepository.findByIdAndStatusEqualsOnboarding(userId)
                                       .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         if (!findUser.isOnboarding()) {
             throw new DomainException(UserError.NOT_IN_ONBOARDING_PROCESS);
