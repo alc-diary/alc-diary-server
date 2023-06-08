@@ -138,7 +138,7 @@ public class UserAppService {
     public void deactivateUser(Long requesterId, DeactivateUserAppRequest request) {
         User targetUser = getUserById(request.targetUserId());
         targetUser.delete();
-        userWithdrawalRepository.save(UserWithdrawal.of(targetUser, request.deletionReason()));
+        userWithdrawalRepository.save(UserWithdrawal.of(targetUser, request.reason()));
         createHistory(requesterId, targetUser);
     }
 
