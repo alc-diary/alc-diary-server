@@ -3,6 +3,6 @@ package com.alc.diary.application.user.dto.request;
 public record DeactivateUserAppRequest(
 
         long targetUserId,
-        String deletionReason
+        String reason
 ) {
 }
