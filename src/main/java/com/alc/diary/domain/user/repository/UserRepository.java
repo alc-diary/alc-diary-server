@@ -29,6 +29,13 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     User save(User user);
 
+    @Query(
+            value = "select * " +
+                    "from users u " +
+                    "where u.social_id = :socialId " +
+                    "and u.social_type = :socialType ",
+            nativeQuery = true
+    )
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
     @Query("select u " +
