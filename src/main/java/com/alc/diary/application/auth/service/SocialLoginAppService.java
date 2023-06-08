@@ -76,7 +76,7 @@ public class SocialLoginAppService {
     }
 
     private User getUser(SocialLoginStrategyResponse socialLoginStrategyResponse) {
-        return userRepository.findBySocialTypeAndSocialId(socialLoginStrategyResponse.socialType(), socialLoginStrategyResponse.socialUserId())
+        return userRepository.findBySocialTypeAndSocialId(socialLoginStrategyResponse.socialType().name(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
                                  createHistory(savedUser.getId(), savedUser);
