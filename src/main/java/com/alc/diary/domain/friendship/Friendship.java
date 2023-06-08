@@ -20,7 +20,7 @@ import javax.persistence.*;
 public class Friendship extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
