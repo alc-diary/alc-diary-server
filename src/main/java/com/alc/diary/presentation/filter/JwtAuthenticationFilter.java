@@ -57,12 +57,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (isOnboardingEndpoint(path)) {
                 if (path.equals("/v1/onboarding/is-onboarding-done")) {
-                    if (!userRepository.existsById(userId)) {
+                    if (userRepository.findByIdAndDeletedAtIsNull(userId).isEmpty()) {
                         throw new DomainException(UserError.USER_NOT_FOUND);
                     }
                 } else {
-                    log.info("userId: {}", userId);
-                    log.info("isEmpty(): {}", userRepository.findByIdAndStatusEqualsOnboarding(userId).isEmpty());
                     if (userRepository.findByIdAndStatusEqualsOnboarding(userId).isEmpty()) {
                         throw new DomainException(UserError.USER_NOT_FOUND);
                     }
