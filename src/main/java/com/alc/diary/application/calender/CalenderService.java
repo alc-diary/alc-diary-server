@@ -46,6 +46,23 @@ public class CalenderService {
         }
     }
 
+    // TODO: 앱 출시되면 삭제 필요(v1)
+    @Transactional(readOnly = true)
+    public SearchCalenderResponse searchV1(SearchCalenderRequest request) {
+        try {
+            List<Calender> searchCalenders = customCalenderRepository.search(request.userId(), request.query(), LocalDate.parse(request.date()));
+            if (searchCalenders.isEmpty()) return SearchCalenderDefaultResponse.of();
+
+            return switch (request.query()) {
+                case MONTH -> SearchCalenderMonthResponse.of(searchCalenders);
+                case DAY -> SearchCalenderDayV1Response.of(searchCalenders);
+            };
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw new CalenderException(CalenderError.INVALID_PARAMETER_INCLUDE);
+        }
+    }
+
     @Transactional(readOnly = true)
     public SearchCalenderResponse search(SearchCalenderRequest request) {
         try {
