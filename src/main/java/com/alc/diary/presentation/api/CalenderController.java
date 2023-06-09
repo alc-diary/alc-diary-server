@@ -14,18 +14,26 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("v1/calender")
 public class CalenderController {
 
     private final CalenderService calenderService;
 
-    @GetMapping(value = "/{calenderId}")
+    @GetMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<FindCalenderDetailResponse> find(@PathVariable Long calenderId) {
         return ApiResponse.getSuccess(calenderService.find(calenderId));
     }
 
-    @GetMapping(value = "search")
+    @GetMapping(value = "v1/calender/search")
     public ApiResponse<SearchCalenderResponse> search(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "date", required = false) String date,
+            @RequestAttribute Long userId
+    ) {
+        return ApiResponse.getSuccess(calenderService.searchV1(new SearchCalenderRequest(userId, QueryType.valueOf(query), date)));
+    }
+
+    @GetMapping(value = "v2/calender/search")
+    public ApiResponse<SearchCalenderResponse> searchV2(
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "date", required = false) String date,
             @RequestAttribute Long userId
@@ -33,14 +41,14 @@ public class CalenderController {
         return ApiResponse.getSuccess(calenderService.search(new SearchCalenderRequest(userId, QueryType.valueOf(query), date)));
     }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "v1/calender")
     public ApiResponse<Void> save(@RequestBody @Validated SaveCalenderRequest request,
                                   @RequestAttribute Long userId) {
         calenderService.save(request, userId);
         return ApiResponse.getSuccess();
     }
 
-    @PutMapping(value = "/{calenderId}")
+    @PutMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<Void> update(@PathVariable Long calenderId,
                                     @RequestAttribute Long userId,
                                     @RequestBody UpdateCalenderRequest request) {
@@ -48,7 +56,7 @@ public class CalenderController {
         return ApiResponse.getSuccess();
     }
 
-    @DeleteMapping(value = "/{calenderId}")
+    @DeleteMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<Void> delete(@PathVariable Long calenderId,
                                     @RequestAttribute Long userId) {
         calenderService.delete(calenderId, userId);
