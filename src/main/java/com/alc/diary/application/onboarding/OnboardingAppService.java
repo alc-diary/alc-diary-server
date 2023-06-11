@@ -30,14 +30,6 @@ public class OnboardingAppService {
     private final UserHistoryRepository userHistoryRepository;
     private final MessageService messageService;
 
-    public GetIsOnboardingDoneAppResponse getIsOnboardingDone(Long userId) {
-        return new GetIsOnboardingDoneAppResponse(
-                userRepository.findByIdAndDeletedAtIsNull(userId)
-                              .map(user -> user.getStatus() == ACTIVE)
-                              .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
-        );
-    }
-
     public CheckNicknameAvailableAppResponse checkNicknameAvailable(String nickname) {
         if (userDetailRepository.findByNickname(nickname).isPresent()) {
             return new CheckNicknameAvailableAppResponse(false);
