@@ -15,10 +15,12 @@ import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,7 +82,10 @@ public class CalenderService {
     }
 
     @Transactional
-    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month.value", cacheManager = "cacheManager")
+    @Caching(evict = {
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().monthValue", cacheManager = "cacheManager"),
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().plusMonths(1).year + '-' + #request.drinkStartDateTime().plusMonths(1).monthValue", cacheManager = "cacheManager")
+    })
     public void save(SaveCalenderRequest request, Long userId) {
         try {
             User user = userRepository.findById(userId).orElseThrow();
@@ -106,16 +111,24 @@ public class CalenderService {
     public void delete(Long calenderId, Long userId) {
         if (!isValidUser(calenderId, userId)) return;
         Calender calender = calenderRepository.findById(calenderId).orElseThrow(() -> new CalenderException(CalenderError.NO_ENTITY_FOUND));
-        int year = calender.getDrinkStartDateTime().getYear();
-        int month = calender.getDrinkStartDateTime().getMonth().getValue();
-        if (cacheManager.getCache("monthlyReport") != null) {
-            cacheManager.getCache("monthlyReport").evict(userId + "_" + year + "-" + month);
-        }
+        evictMonthlyReportCacheForCurrentAndNextMonth(userId, calender);
         calenderRepository.deleteCalenderById(calender.getId());
     }
 
+    private void evictMonthlyReportCacheForCurrentAndNextMonth(Long userId, Calender calender) {
+        LocalDateTime drinkStartDateTime = calender.getDrinkStartDateTime();
+        LocalDateTime drinkStartDateTimePlusOneMonth = drinkStartDateTime.plusMonths(1);
+        if (cacheManager.getCache("monthlyReport") != null) {
+            cacheManager.getCache("monthlyReport").evict(userId + "_" + drinkStartDateTime.getYear() + "-" + drinkStartDateTime.getMonthValue());
+            cacheManager.getCache("monthlyReport").evict(userId + "_" + drinkStartDateTimePlusOneMonth.getYear() + "-" + drinkStartDateTimePlusOneMonth.getMonthValue());
+        }
+    }
+
     @Transactional
-    @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().month.value", cacheManager = "cacheManager")
+    @Caching(evict = {
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().year + '-' + #request.drinkStartDateTime().monthValue", cacheManager = "cacheManager"),
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartDateTime().plusMonths(1).year + '-' + #request.drinkStartDateTime().plusMonths(1).monthValue", cacheManager = "cacheManager")
+    })
     public void update(Long calenderId, Long userId, UpdateCalenderRequest request) {
         if (!isValidUser(calenderId, userId)) return;
         try {
