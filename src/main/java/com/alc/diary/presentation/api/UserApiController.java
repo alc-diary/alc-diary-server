@@ -1,5 +1,6 @@
 package com.alc.diary.presentation.api;
 
+import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.UserAppService;
 import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserApiController {
 
     private final UserAppService userAppService;
+    private final NicknameAppService nicknameAppService;
 
     @GetMapping("/info")
     public ApiResponse<GetUserInfoAppResponse> getUserInfo(
@@ -28,13 +30,13 @@ public class UserApiController {
     public ApiResponse<Void> createNicknameToken(
             @RequestBody CreateRandomNicknameTokenAppRequest request
     ) {
-        userAppService.createRandomNicknameToken(request);
+        nicknameAppService.createRandomNicknameToken(request);
         return ApiResponse.getCreated();
     }
 
     @GetMapping("/nickname-token")
     public ApiResponse<GetRandomNicknameAppResponse> getRandomNickname() {
-        return ApiResponse.getSuccess(userAppService.getRandomNickname());
+        return ApiResponse.getSuccess(nicknameAppService.getRandomNickname());
     }
 
     @PutMapping("/profile-image")

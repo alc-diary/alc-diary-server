@@ -18,6 +18,7 @@ spring:
         show_sql: true
         format_sql: true
     defer-datasource-initialization: true
+    open-in-view: false
   mvc:
     path match:
       matching-strategy: ant_path_matcher
