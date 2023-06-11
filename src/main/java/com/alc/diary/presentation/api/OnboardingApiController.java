@@ -1,8 +1,9 @@
 package com.alc.diary.presentation.api;
 
+import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.onboarding.OnboardingAppService;
 import com.alc.diary.application.onboarding.dto.response.GetIsOnboardingDoneAppResponse;
-import com.alc.diary.application.user.UserAppService;
+import com.alc.diary.application.user.UserStatusAppService;
 import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
 import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
@@ -16,13 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class OnboardingApiController {
 
     private final OnboardingAppService onboardingAppService;
-    private final UserAppService userAppService;
+    private final NicknameAppService nicknameAppService;
+    private final UserStatusAppService userStatusAppService;
 
     @GetMapping("/is-onboarding-done")
     public ApiResponse<GetIsOnboardingDoneAppResponse> getIsOnboardingDone(
             @RequestAttribute Long userId
     ) {
-        return ApiResponse.getSuccess(onboardingAppService.getIsOnboardingDone(userId));
+        return ApiResponse.getSuccess(userStatusAppService.getIsOnboardingDone(userId));
     }
 
     @GetMapping("/check-nickname-available")
@@ -34,7 +36,7 @@ public class OnboardingApiController {
 
     @GetMapping("/random-nickname")
     public ApiResponse<GetRandomNicknameAppResponse> getRandomNickname() {
-        return ApiResponse.getSuccess(userAppService.getRandomNickname());
+        return ApiResponse.getSuccess(nicknameAppService.getRandomNickname());
     }
 
     @PutMapping("/user-info")
