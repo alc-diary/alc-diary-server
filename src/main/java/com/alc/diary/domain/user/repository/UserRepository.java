@@ -41,10 +41,11 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
             value = "select * " +
                     "from users u " +
                     "where u.social_id = :socialId " +
-                    "and u.social_type = :socialType ",
+                    "and u.social_type = :socialType " +
+                    "and u.deleted_at is null ",
             nativeQuery = true
     )
-    Optional<User> findBySocialTypeAndSocialId(String socialType, String socialId);
+    Optional<User> findBySocialTypeAndSocialIdAndDeletedAtIsNull(String socialType, String socialId);
 
     @Query("select u " +
             "from User u " +

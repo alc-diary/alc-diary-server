@@ -8,31 +8,14 @@ import com.alc.diary.application.auth.factory.SocialLoginStrategyFactory;
 import com.alc.diary.application.auth.strategy.SocialLoginStrategy;
 import com.alc.diary.application.message.MessageService;
 import com.alc.diary.domain.auth.RefreshToken;
-import com.alc.diary.domain.auth.policy.DefaultExpiredPolicy;
 import com.alc.diary.domain.auth.repository.RefreshTokenRepository;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserHistory;
-import com.alc.diary.domain.user.enums.AgeRangeType;
-import com.alc.diary.domain.user.enums.DescriptionStyle;
-import com.alc.diary.domain.user.enums.GenderType;
-import com.alc.diary.domain.user.enums.SocialType;
 import com.alc.diary.domain.user.repository.UserHistoryRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
-import com.alc.diary.infrastructure.external.client.feign.google.dto.response.GoogleUserInfoDto;
-import com.alc.diary.infrastructure.external.client.feign.kakao.dto.response.KakaoLoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Optional;
-import java.util.UUID;
-
-import static com.alc.diary.domain.user.enums.AgeRangeType.*;
-import static com.alc.diary.domain.user.enums.AgeRangeType.OVER_NINETY;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -76,7 +59,7 @@ public class SocialLoginAppService {
     }
 
     private User getUser(SocialLoginStrategyResponse socialLoginStrategyResponse) {
-        return userRepository.findBySocialTypeAndSocialId(socialLoginStrategyResponse.socialType().name(), socialLoginStrategyResponse.socialUserId())
+        return userRepository.findBySocialTypeAndSocialIdAndDeletedAtIsNull(socialLoginStrategyResponse.socialType().name(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
                                  createHistory(savedUser.getId(), savedUser);
