@@ -29,6 +29,7 @@ spring:
       hibernate:
         show_sql: false
         format_sql: false
+    open-in-view: false
   mvc:
     path match:
       matching-strategy: ant_path_matcher

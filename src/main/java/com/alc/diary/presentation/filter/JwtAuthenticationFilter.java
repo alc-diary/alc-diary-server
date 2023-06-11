@@ -5,6 +5,7 @@ import com.alc.diary.domain.auth.error.AuthError;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
+import com.alc.diary.domain.user.repository.UserWithoutFilterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTH_HEADER_NAME = "Authorization";
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final UserWithoutFilterRepository userWithoutFilterRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     private final String[] whiteList = new String[]{"/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs", "/kakao", "/admin", "/css", "/assets", "/test"};
@@ -64,6 +66,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if (userRepository.findByIdAndStatusEqualsOnboarding(userId).isEmpty()) {
                         throw new DomainException(UserError.USER_NOT_FOUND);
                     }
+                }
+            } else if (path.startsWith("/v1/user-status")) {
+                System.out.println(userId);
+                if (userWithoutFilterRepository.findByIdAndDeletedAtIsNull(userId).isEmpty()) {
+                    throw new DomainException(UserError.USER_NOT_FOUND);
                 }
             } else {
                 if (!userRepository.existsById(userId)) {

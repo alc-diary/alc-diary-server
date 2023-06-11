@@ -1,6 +1,6 @@
 package com.alc.diary.presentation.controller;
 
-import com.alc.diary.application.user.UserAppService;
+import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
 import com.alc.diary.domain.user.enums.NicknameTokenOrdinal;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AdminController {
 
-    private final UserAppService userAppService;
+    private final NicknameAppService nicknameAppService;
 
     @GetMapping("/main")
     public String main() {
@@ -23,7 +23,7 @@ public class AdminController {
 
     @GetMapping("/nickname")
     public String getNicknameTokens(Model model) {
-        GetRandomNicknameTokens randomNicknameTokens = userAppService.getRandomNicknameTokens();
+        GetRandomNicknameTokens randomNicknameTokens = nicknameAppService.getRandomNicknameTokens();
         model.addAttribute("randomNicknameTokens", randomNicknameTokens);
         return "admin-nickname";
     }
@@ -33,7 +33,7 @@ public class AdminController {
             @RequestParam NicknameTokenOrdinal ordinal,
             @RequestParam String keyword
     ) {
-        userAppService.createRandomNicknameToken(new CreateRandomNicknameTokenAppRequest(ordinal, keyword));
+        nicknameAppService.createRandomNicknameToken(new CreateRandomNicknameTokenAppRequest(ordinal, keyword));
         return "redirect:/admin/nickname";
     }
 
@@ -41,7 +41,7 @@ public class AdminController {
     public String deleteNickname(
             @RequestParam Long tokenId
     ) {
-        userAppService.deleteNicknameToken(tokenId);
+        nicknameAppService.deleteNicknameToken(tokenId);
         return "redirect:/admin/nickname";
     }
 }
