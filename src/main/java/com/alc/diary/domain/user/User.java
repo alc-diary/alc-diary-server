@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString(exclude = "detail")
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted_at is null and status = 'ACTIVE'")
+@Where(clause = "status = 'ACTIVE'")
 @Table(
         name = "users",
         indexes = {@Index(name = "idx_users_social_id", columnList = "social_id")})
@@ -54,9 +54,6 @@ public class User extends BaseEntity {
     @Column(name = "profile_image", length = 1024)
     private String profileImage;
     
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
     public User(
             Long id,
             UserDetail detail,
@@ -66,8 +63,7 @@ public class User extends BaseEntity {
             String email,
             GenderType gender,
             AgeRangeType ageRange,
-            String profileImage,
-            LocalDateTime deletedAt
+            String profileImage
     ) {
         if (StringUtils.length(profileImage) > 1000) {
             throw new DomainException(UserError.IMAGE_URL_LENGTH_EXCEEDED);
@@ -81,7 +77,6 @@ public class User extends BaseEntity {
         this.gender = gender;
         this.ageRange = ageRange;
         this.profileImage = profileImage;
-        this.deletedAt = deletedAt;
     }
 
     public static UserBuilder builder(
@@ -128,7 +123,7 @@ public class User extends BaseEntity {
     }
 
     public void delete() {
-        deletedAt = LocalDateTime.now();
+        status = UserStatus.DEACTIVATED;
     }
 
     public String getNickname() {
