@@ -1,7 +1,6 @@
 package com.alc.diary.domain.user.repository;
 
 import com.alc.diary.domain.user.User;
-import com.alc.diary.domain.user.enums.SocialType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -13,27 +12,33 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     boolean existsById(long id);
 
-    @Query(value = "select * " +
-                   "from users u " +
-                   "where u.id = :id " +
-                   "and u.deleted_at is null ",
+    @Query(value = "select exists(" +
+                   "    select u.id " +
+                   "    from users u " +
+                   "    where u.id = :id " +
+                   "    and u.status <> 'DEACTIVATED'" +
+                   ") ",
             nativeQuery = true
     )
-    Optional<User> findByIdAndDeletedAtIsNull(long id);
+    boolean existsByIdAndStatusNotEqualDeactivated(long id);
+
+    @Query(
+            value = "" +
+                    "SELECT *                       \n" +
+                    "FROM users u                   \n" +
+                    "WHERE u.id = :id               \n" +
+                    "AND u.status <> 'DEACTIVATED'  \n",
+            nativeQuery = true
+    )
+    Optional<User> findByIdAndStatusNotEqualDeactivated(long id);
 
     @Query(value = "select * " +
                    "from users u " +
                    "where u.id = :id " +
-                   "and u.deleted_at is null " +
                    "and u.status = 'ONBOARDING'",
             nativeQuery = true
     )
     Optional<User> findByIdAndStatusEqualsOnboarding(long id);
-
-    @Query("select u " +
-           "from User u " +
-           "where u.id = :id")
-    Optional<User> findByIdIgnoringWhere(Long id);
 
     User save(User user);
 
@@ -42,10 +47,10 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
                     "from users u " +
                     "where u.social_id = :socialId " +
                     "and u.social_type = :socialType " +
-                    "and u.deleted_at is null ",
+                    "and u.status <> 'DEACTIVATED' ",
             nativeQuery = true
     )
-    Optional<User> findBySocialTypeAndSocialIdAndDeletedAtIsNull(String socialType, String socialId);
+    Optional<User> findBySocialTypeAndSocialIdAndStatusNotEqualDeactivated(String socialType, String socialId);
 
     @Query("select u " +
             "from User u " +
