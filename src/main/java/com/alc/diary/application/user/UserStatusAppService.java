@@ -17,7 +17,7 @@ public class UserStatusAppService {
 
     public GetIsOnboardingDoneAppResponse getIsOnboardingDone(long userId) {
         return new GetIsOnboardingDoneAppResponse(
-                userRepository.findByIdAndDeletedAtIsNull(userId)
+                userRepository.findByIdAndStatusNotEqualDeactivated(userId)
                               .map(user -> user.getStatus() == ACTIVE)
                               .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
         );
