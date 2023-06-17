@@ -59,7 +59,7 @@ public class SocialLoginAppService {
     }
 
     private User getUser(SocialLoginStrategyResponse socialLoginStrategyResponse) {
-        return userRepository.findBySocialTypeAndSocialIdAndDeletedAtIsNull(socialLoginStrategyResponse.socialType().name(), socialLoginStrategyResponse.socialUserId())
+        return userRepository.findBySocialTypeAndSocialIdAndStatusNotEqualDeactivated(socialLoginStrategyResponse.socialType().name(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
                                  createHistory(savedUser.getId(), savedUser);

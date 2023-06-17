@@ -22,14 +22,14 @@ public class UserHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, updatable = false)
+    @Column(name = "user_id", updatable = false)
     private long userId;
 
-    @Column(name = "social_type", length = 20, nullable = false, updatable = false)
+    @Column(name = "social_type", length = 20, updatable = false)
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    @Column(name = "social_id", length = 50, nullable = false, updatable = false)
+    @Column(name = "social_id", length = 50, updatable = false)
     private String socialId;
 
     @Enumerated(EnumType.STRING)
@@ -64,11 +64,8 @@ public class UserHistory {
     private int nonAlcoholGoal;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "description_style", length = 20, nullable = false)
+    @Column(name = "description_style", length = 20, updatable = false)
     private DescriptionStyle descriptionStyle;
-
-    @Column(name = "deleted_at", updatable = false)
-    private LocalDateTime deletedAt;
 
     @Column(name = "changed_by", updatable = false)
     private long changedBy;
@@ -91,7 +88,6 @@ public class UserHistory {
             float personalAlcoholLimit,
             int nonAlcoholGoal,
             DescriptionStyle descriptionStyle,
-            LocalDateTime deletedAt,
             long changedBy,
             LocalDateTime changeTimestamp
     ) {
@@ -109,7 +105,6 @@ public class UserHistory {
         this.personalAlcoholLimit = personalAlcoholLimit;
         this.nonAlcoholGoal = nonAlcoholGoal;
         this.descriptionStyle = descriptionStyle;
-        this.deletedAt = deletedAt;
         this.changedBy = changedBy;
         this.changeTimestamp = changeTimestamp;
     }
@@ -140,7 +135,6 @@ public class UserHistory {
                 target.getDetail() != null
                         ? target.getDetail().getDescriptionStyle()
                         : null,
-                target.getDeletedAt(),
                 requesterId,
                 LocalDateTime.now()
         );
