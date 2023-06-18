@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/v1/onboarding")
 public class OnboardingApiController {
 
-    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣]");
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣]+$");
 
     private final OnboardingAppService onboardingAppService;
     private final NicknameAppService nicknameAppService;
