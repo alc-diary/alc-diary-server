@@ -1,7 +1,5 @@
 package com.alc.diary.presentation.api;
 
-import com.alc.diary.domain.user.OnboardingUser;
-import com.alc.diary.domain.user.repository.OnboardingUserRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,6 @@ import java.time.LocalDateTime;
 @RestController
 public class TestApiController {
 
-    private final OnboardingUserRepository onboardingUserRepository;
     private final UserRepository userRepository;
 
     @GetMapping
@@ -31,12 +28,6 @@ public class TestApiController {
     @GetMapping("/local-date-time")
     public void localDateTimeTest() {
         LocalDateTime now = LocalDateTime.now();
-    }
-
-    @GetMapping("/users/{userId}")
-    public void userTest(@PathVariable long userId) {
-        OnboardingUser onboardingUser = onboardingUserRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
-        System.out.println(onboardingUser);
     }
 
     @GetMapping("/users/{userId}/exists")

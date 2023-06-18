@@ -8,7 +8,9 @@ import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,14 +23,14 @@ public class UserApiController {
 
     @GetMapping("/info")
     public ApiResponse<GetUserInfoAppResponse> getUserInfo(
-            @RequestAttribute Long userId
+            @ApiIgnore @RequestAttribute Long userId
     ) {
         return ApiResponse.getSuccess(userAppService.getUserInfo(userId));
     }
 
     @PostMapping("/nickname-token")
     public ApiResponse<Void> createNicknameToken(
-            @RequestBody CreateRandomNicknameTokenAppRequest request
+            @Validated @RequestBody CreateRandomNicknameTokenAppRequest request
     ) {
         nicknameAppService.createRandomNicknameToken(request);
         return ApiResponse.getCreated();
@@ -41,8 +43,8 @@ public class UserApiController {
 
     @PutMapping("/profile-image")
     public ApiResponse<Void> updateUserProfileImage(
-            @RequestAttribute Long userId,
-            @RequestBody UpdateUserProfileImageAppRequest request
+            @ApiIgnore @RequestAttribute Long userId,
+            @Validated @RequestBody UpdateUserProfileImageAppRequest request
     ) {
         userAppService.updateUserProfileImage(userId, request);
         return ApiResponse.getSuccess();
@@ -50,8 +52,8 @@ public class UserApiController {
 
     @PutMapping("/alcohol-limit-and-goal")
     public ApiResponse<Void> updateAlcoholLimitAndGoal(
-            @RequestAttribute Long userId,
-            @RequestBody UpdateAlcoholLimitAndGoalAppRequest request
+            @ApiIgnore @RequestAttribute Long userId,
+            @Validated @RequestBody UpdateAlcoholLimitAndGoalAppRequest request
     ) {
         userAppService.updateAlcoholLimitAndGoal(userId, request);
         return ApiResponse.getSuccess();
@@ -59,8 +61,8 @@ public class UserApiController {
 
     @PutMapping("/nickname")
     public ApiResponse<Void> updateNickname(
-            @RequestAttribute Long userId,
-            @RequestBody UpdateNicknameAppRequest request
+            @ApiIgnore @RequestAttribute Long userId,
+            @Validated @RequestBody UpdateNicknameAppRequest request
     ) {
         userAppService.updateNickname(userId, request);
         return ApiResponse.getSuccess();
@@ -68,8 +70,8 @@ public class UserApiController {
 
     @PutMapping("/description-style")
     public ApiResponse<Void> updateDescriptionStyle(
-            @RequestAttribute Long userId,
-            @RequestBody UpdateDescriptionStyleAppRequest request
+            @ApiIgnore @RequestAttribute Long userId,
+            @Validated @RequestBody UpdateDescriptionStyleAppRequest request
     ) {
         userAppService.updateDescriptionStyle(userId, request);
         return ApiResponse.getSuccess();
@@ -77,8 +79,8 @@ public class UserApiController {
 
     @PutMapping("/deactivate")
     public ApiResponse<Void> deactivateUser(
-            @RequestAttribute("userId") Long requesterId,
-            @RequestBody DeactivateUserAppRequest request
+            @ApiIgnore @RequestAttribute("userId") Long requesterId,
+            @Validated @RequestBody DeactivateUserAppRequest request
     ) {
         userAppService.deactivateUser(requesterId, request);
         return ApiResponse.getSuccess();

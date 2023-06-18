@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,10 +43,12 @@ public class FriendshipAppService {
         if (requester.equals(targetUser)) {
             throw new DomainException(FriendshipError.INVALID_REQUEST);
         }
-        if (friendshipRepository.existsByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId())) {
+        if (friendshipRepository.findByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId()).stream()
+                                .anyMatch(friendship -> friendship.getStatus() == FriendshipStatus.REQUESTED || friendship.getStatus() == FriendshipStatus.ACCEPTED)) {
             throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
         }
-        Friendship friendshipToSave = Friendship.request(requester, targetUser, request.message());
+        Friendship friendshipToSave =
+                Friendship.createRequest(requester, targetUser, request.alias(), request.message());
         friendshipRepository.save(friendshipToSave);
     }
 
@@ -81,8 +84,10 @@ public class FriendshipAppService {
      * @param request request
      */
     @Transactional
-    public void acceptFriendshipRequest(long userId, AcceptFriendshipRequestAppRequest request) {
-        getFriendshipsByIds(request.requestIds()).forEach(it -> it.accept(userId));
+    public void acceptFriendshipRequest(long userId, long friendshipId, AcceptFriendshipRequestAppRequest request) {
+        Friendship foundFriendShip = getFriendshipsById(friendshipId)
+                .orElseThrow(() -> new DomainException(FriendshipError.INVALID_REQUEST));
+        foundFriendShip.accept(userId, request.alias());
     }
 
     /**
@@ -94,6 +99,10 @@ public class FriendshipAppService {
     @Transactional
     public void declineFriendshipRequest(long userId, DeclineFriendshipRequestAppRequest request) {
         getFriendshipsByIds(request.requestIds()).forEach(it -> it.decline(userId));
+    }
+
+    private Optional<Friendship> getFriendshipsById(long id) {
+        return friendshipRepository.findById(id);
     }
 
     private List<Friendship> getFriendshipsByIds(List<Long> request) {

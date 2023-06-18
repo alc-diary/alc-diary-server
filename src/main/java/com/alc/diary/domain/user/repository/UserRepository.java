@@ -12,12 +12,11 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     boolean existsById(long id);
 
-    @Query(value = "select exists(" +
-                   "    select u.id " +
-                   "    from users u " +
-                   "    where u.id = :id " +
-                   "    and u.status <> 'DEACTIVATED'" +
-                   ") ",
+    @Query(value = "SELECT CASE " +
+                   "    WHEN EXISTS(SELECT u.id FROM users u WHERE u.id = :id AND u.status <> 'DEACTIVATED') " +
+                   "        THEN TRUE " +
+                   "        ELSE FALSE " +
+                   "    END ",
             nativeQuery = true
     )
     boolean existsByIdAndStatusNotEqualDeactivated(long id);
