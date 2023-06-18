@@ -7,6 +7,7 @@ import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequ
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class FriendshipApiController {
     @PostMapping
     public ApiResponse<Void> requestFriendship(
             @RequestAttribute(name = "userId") long userId,
-            @RequestBody RequestFriendshipAppRequest request
+            @Validated @RequestBody RequestFriendshipAppRequest request
     ) {
         friendshipAppService.requestFriendship(userId, request);
         return ApiResponse.getCreated();
