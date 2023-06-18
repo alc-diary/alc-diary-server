@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 
@@ -24,13 +25,19 @@ public class Friendship extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "from_user_id", updatable = false)
     private User fromUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "to_user_id", updatable = false)
     private User toUser;
+
+    @Column(name = "from_user_alias", length = 30)
+    private String fromUserAlias;
+
+    @Column(name = "to_user_alias", length = 30)
+    private String toUserAlias;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -39,38 +46,66 @@ public class Friendship extends BaseEntity {
     @Column(name = "message", length = 100, updatable = false)
     private String message;
 
-    private Friendship(Long id, User fromUser, User toUser, FriendshipStatus status, String message) {
+    private Friendship(
+            User fromUser,
+            User toUser,
+            String fromUserAlias,
+            String toUserAlias,
+            FriendshipStatus status,
+            String message
+    ) {
         if (fromUser == null) {
             throw new IllegalArgumentException();
         }
         if (toUser == null) {
             throw new IllegalArgumentException();
         }
-        if (status == null) {
+        if (StringUtils.length(message) > 100) {
             throw new IllegalArgumentException();
         }
-        if (message != null && message.length() > 100) {
-            throw new IllegalArgumentException();
+        if (StringUtils.length(fromUserAlias) > 30) {
+            throw new RuntimeException();
         }
-        this.id = id;
+        if (StringUtils.length(toUserAlias) > 30) {
+            throw new RuntimeException();
+        }
+
         this.fromUser = fromUser;
         this.toUser = toUser;
-        this.status = status;
+        this.fromUserAlias = fromUserAlias;
+        this.toUserAlias = toUserAlias;
+        this.status = status != null ? status : FriendshipStatus.REQUESTED;
         this.message = message;
     }
 
-    public static Friendship request(User fromUser, User toUser, String message) {
-        return new Friendship(null, fromUser, toUser, FriendshipStatus.REQUESTED, message);
+    public static Friendship createRequest(
+            User fromUser,
+            User toUser,
+            String fromUserAlias,
+            String message
+    ) {
+        return new Friendship(
+                fromUser,
+                toUser,
+                fromUserAlias,
+                null,
+                FriendshipStatus.REQUESTED,
+                message
+        );
     }
 
-    public void accept(long userId) {
+    public void accept(long userId, String toUserAlias) {
         if (userId != toUser.getId()) {
             throw new DomainException(FriendshipError.INVALID_REQUEST);
         }
         if (status != FriendshipStatus.REQUESTED) {
             throw new DomainException(FriendshipError.INVALID_REQUEST);
         }
+        if (StringUtils.length(toUserAlias) > 30) {
+            throw new RuntimeException();
+        }
         status = FriendshipStatus.ACCEPTED;
+        this.toUserAlias = toUserAlias;
     }
 
     public void decline(long userId) {

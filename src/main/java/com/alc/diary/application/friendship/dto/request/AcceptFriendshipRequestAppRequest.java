@@ -4,6 +4,7 @@ import java.util.List;
 
 public record AcceptFriendshipRequestAppRequest(
 
-        List<Long> requestIds
+        Long requestId,
+        String alias
 ) {
 }
