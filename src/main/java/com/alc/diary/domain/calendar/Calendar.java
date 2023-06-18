@@ -22,7 +22,7 @@ public class Calendar extends BaseEntity {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @Column(name = "title", length = 30)
+    @Column(name = "title", length = 30, nullable = false)
     private String title;
 
     @Column(name = "drink_start_time", nullable = false)

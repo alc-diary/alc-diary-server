@@ -36,12 +36,13 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.getReceivedFriendshipRequests(userId));
     }
 
-    @PutMapping("/accept-requests")
+    @PutMapping("/{friendshipId}/accept-request")
     public ApiResponse<Void> acceptFriendshipRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @PathVariable long friendshipId,
             @RequestBody AcceptFriendshipRequestAppRequest request
     ) {
-        friendshipAppService.acceptFriendshipRequest(userId, request);
+        friendshipAppService.acceptFriendshipRequest(userId, friendshipId, request);
         return ApiResponse.getSuccess();
     }
 
