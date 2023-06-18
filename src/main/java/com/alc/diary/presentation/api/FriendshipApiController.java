@@ -9,6 +9,7 @@ import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class FriendshipApiController {
 
     @PostMapping
     public ApiResponse<Void> requestFriendship(
-            @RequestAttribute(name = "userId") long userId,
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @Validated @RequestBody RequestFriendshipAppRequest request
     ) {
         friendshipAppService.requestFriendship(userId, request);
@@ -30,14 +31,14 @@ public class FriendshipApiController {
 
     @GetMapping("/received-requests")
     public ApiResponse<List<GetReceivedFriendshipRequestsAppResponse>> getReceivedFriendshipRequests(
-            @RequestAttribute(name = "userId") long userId
+            @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {
         return ApiResponse.getSuccess(friendshipAppService.getReceivedFriendshipRequests(userId));
     }
 
     @PutMapping("/accept-requests")
     public ApiResponse<Void> acceptFriendshipRequest(
-            @RequestAttribute(name = "userId") long userId,
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @RequestBody AcceptFriendshipRequestAppRequest request
     ) {
         friendshipAppService.acceptFriendshipRequest(userId, request);
@@ -46,7 +47,7 @@ public class FriendshipApiController {
 
     @PutMapping("/decline-requests")
     public ApiResponse<Void> declineFriendshipRequest(
-            @RequestAttribute(name = "userId") long userId,
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @RequestBody DeclineFriendshipRequestAppRequest request
     ) {
         friendshipAppService.declineFriendshipRequest(userId, request);
@@ -55,7 +56,7 @@ public class FriendshipApiController {
 
     @DeleteMapping("/{friendshipId}")
     public ApiResponse<Void> deleteFriendship(
-            @RequestAttribute(name = "userId") long requesterId,
+            @ApiIgnore @RequestAttribute(name = "userId") long requesterId,
             @PathVariable long friendshipId
     ) {
         friendshipAppService.deleteFriendship(requesterId, friendshipId);
