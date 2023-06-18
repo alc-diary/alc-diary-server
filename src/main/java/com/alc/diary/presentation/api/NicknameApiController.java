@@ -5,6 +5,7 @@ import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRe
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class NicknameApiController {
 
     @PostMapping("/tokens")
     public ApiResponse<Void> createNicknameToken(
-            @RequestBody CreateRandomNicknameTokenAppRequest request
+            @Validated @RequestBody CreateRandomNicknameTokenAppRequest request
     ) {
         nicknameAppService.createRandomNicknameToken(request);
         return ApiResponse.getCreated();

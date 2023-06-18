@@ -26,4 +26,6 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
     List<Friendship> findByToUser_IdAndStatusEquals(long toUserId, FriendshipStatus status);
 
     boolean existsByFromUser_IdAndToUser_Id(long fromUserId, long toUserId);
+
+    List<Friendship> findByFromUser_IdAndToUser_Id(long fromUserId, long toUserId);
 }

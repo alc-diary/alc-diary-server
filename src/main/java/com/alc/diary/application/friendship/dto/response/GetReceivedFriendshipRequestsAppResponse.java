@@ -4,20 +4,24 @@ import com.alc.diary.domain.friendship.Friendship;
 import com.alc.diary.domain.friendship.enums.FriendshipStatus;
 
 public record GetReceivedFriendshipRequestsAppResponse(
-        long requestId,
+        long friendshipId,
         long fromUserId,
+        String fromUserNickname,
         long toUserId,
-        FriendshipStatus status,
-        String message
+        String toUserNickname,
+        String message,
+        FriendshipStatus status
 ) {
 
     public static GetReceivedFriendshipRequestsAppResponse from(Friendship friendship) {
         return new GetReceivedFriendshipRequestsAppResponse(
                 friendship.getId(),
                 friendship.getFromUser().getId(),
+                friendship.getFromUser().getNickname(),
                 friendship.getToUser().getId(),
-                friendship.getStatus(),
-                friendship.getMessage()
+                friendship.getToUser().getNickname(),
+                friendship.getMessage(),
+                friendship.getStatus()
         );
     }
 }

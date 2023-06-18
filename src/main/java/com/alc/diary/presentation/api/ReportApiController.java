@@ -5,6 +5,7 @@ import com.alc.diary.application.report.dto.response.GetMonthlyReportAppResponse
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.time.LocalDate;
 
@@ -17,7 +18,7 @@ public class ReportApiController {
 
     @GetMapping
     public ApiResponse<GetMonthlyReportAppResponse> getMonthlyReport(
-            @RequestAttribute Long userId,
+            @ApiIgnore @RequestAttribute Long userId,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month
     ) {

@@ -39,12 +39,12 @@ public class UserHistory {
     @Column(name = "email", length = 100, updatable = false)
     private String email;
 
-    @Column(name = "gender", length = 20, updatable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "gender", length = 20, updatable = false)
     private GenderType gender;
 
-    @Column(name = "age_range", length = 20, updatable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "age_range", length = 20, updatable = false)
     private AgeRangeType ageRange;
 
     @Column(name = "profile_image", length = 1024, updatable = false)
