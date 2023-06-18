@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/user-status")
@@ -18,7 +19,7 @@ public class UserStatusApiController {
 
     @GetMapping("/is-onboarding-done")
     public ApiResponse<GetIsOnboardingDoneAppResponse> getIsOnboardingDone(
-            @RequestAttribute long userId
+            @ApiIgnore @RequestAttribute long userId
     ) {
         return ApiResponse.getSuccess(userStatusAppService.getIsOnboardingDone(userId));
     }

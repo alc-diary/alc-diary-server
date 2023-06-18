@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ public class OnboardingApiController {
 
     @GetMapping("/is-onboarding-done")
     public ApiResponse<GetIsOnboardingDoneAppResponse> getIsOnboardingDone(
-            @RequestAttribute Long userId
+            @ApiIgnore @RequestAttribute Long userId
     ) {
         return ApiResponse.getSuccess(userStatusAppService.getIsOnboardingDone(userId));
     }
@@ -52,7 +53,7 @@ public class OnboardingApiController {
 
     @PutMapping("/user-info")
     public ApiResponse<Void> updateUserOnboardingInfo(
-        @RequestAttribute long userId,
+        @ApiIgnore @RequestAttribute long userId,
         @Validated @RequestBody UpdateUserOnboardingInfoAppRequest request
         ) {
         onboardingAppService.updateUserOnboardingInfo(userId, request);
