@@ -52,7 +52,12 @@ public class RestControllerAdvice {
     public ResponseEntity<ErrorResponse<?>> validExceptionHandler(MethodArgumentNotValidException e) {
         log.error("Error - Message: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.internalServerError(Objects.requireNonNull(e.getFieldError()).getDefaultMessage()));
+                .body(new ErrorResponse<>(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "E9996",
+                        "[" + Objects.requireNonNull(e.getFieldError()).getField() + "]" + " " + e.getFieldError().getDefaultMessage(),
+                        null
+                ));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

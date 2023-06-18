@@ -12,7 +12,7 @@ public record UpdateUserOnboardingInfoAppRequest(
         @Pattern(regexp = "^[a-zA-Z0-9가-힣]*$", message = "닉네임은 한글, 영어 대소문자, 숫자만 가능합니다.")
         String nickname,
         @NotNull(message = "주종 필수입니다.") AlcoholType alcoholType,
-        @NotNull(message = "주량은 필수입니다.") float personalAlcoholLimit,
-        @NotNull(message = "금주 목표는 필수입니다.") int nonAlcoholGoal
+        @NotNull(message = "주량은 필수입니다.") Float personalAlcoholLimit,
+        @NotNull(message = "금주 목표는 필수입니다.") Integer nonAlcoholGoal
 ) {
 }
