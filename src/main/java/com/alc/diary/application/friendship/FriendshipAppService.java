@@ -43,7 +43,8 @@ public class FriendshipAppService {
         if (requester.equals(targetUser)) {
             throw new DomainException(FriendshipError.INVALID_REQUEST);
         }
-        if (friendshipRepository.existsByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId())) {
+        if (friendshipRepository.findByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId()).stream()
+                                .anyMatch(friendship -> friendship.getStatus() == FriendshipStatus.REQUESTED || friendship.getStatus() == FriendshipStatus.ACCEPTED)) {
             throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
         }
         Friendship friendshipToSave =
