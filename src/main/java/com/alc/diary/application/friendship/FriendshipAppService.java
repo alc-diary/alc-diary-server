@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,7 +46,8 @@ public class FriendshipAppService {
         if (friendshipRepository.existsByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId())) {
             throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
         }
-        Friendship friendshipToSave = Friendship.request(requester, targetUser, request.message());
+        Friendship friendshipToSave =
+                Friendship.createRequest(requester, targetUser, request.alias(), request.message());
         friendshipRepository.save(friendshipToSave);
     }
 
@@ -82,7 +84,9 @@ public class FriendshipAppService {
      */
     @Transactional
     public void acceptFriendshipRequest(long userId, AcceptFriendshipRequestAppRequest request) {
-        getFriendshipsByIds(request.requestIds()).forEach(it -> it.accept(userId));
+        Friendship foundFriendShip = getFriendshipsById(request.requestId())
+                .orElseThrow(() -> new DomainException(FriendshipError.INVALID_REQUEST));
+        foundFriendShip.accept(userId, request.alias());
     }
 
     /**
@@ -94,6 +98,10 @@ public class FriendshipAppService {
     @Transactional
     public void declineFriendshipRequest(long userId, DeclineFriendshipRequestAppRequest request) {
         getFriendshipsByIds(request.requestIds()).forEach(it -> it.decline(userId));
+    }
+
+    private Optional<Friendship> getFriendshipsById(long id) {
+        return friendshipRepository.findById(id);
     }
 
     private List<Friendship> getFriendshipsByIds(List<Long> request) {

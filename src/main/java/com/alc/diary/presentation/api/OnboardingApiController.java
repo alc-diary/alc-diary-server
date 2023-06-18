@@ -9,12 +9,20 @@ import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResp
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/onboarding")
 public class OnboardingApiController {
+
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣]");
 
     private final OnboardingAppService onboardingAppService;
     private final NicknameAppService nicknameAppService;
@@ -29,8 +37,11 @@ public class OnboardingApiController {
 
     @GetMapping("/check-nickname-available")
     public ApiResponse<CheckNicknameAvailableAppResponse> checkNicknameAvailable(
-        @RequestParam String nickname
+        @RequestParam @Validated String nickname
     ) {
+        if (nickname == null || !NICKNAME_PATTERN.matcher(nickname).matches()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임은 한글, 영어 대소문자, 숫자만 가능합니다.");
+        }
         return ApiResponse.getSuccess(onboardingAppService.checkNicknameAvailable(nickname));
     }
 
@@ -41,8 +52,8 @@ public class OnboardingApiController {
 
     @PutMapping("/user-info")
     public ApiResponse<Void> updateUserOnboardingInfo(
-        @RequestAttribute Long userId,
-        @RequestBody UpdateUserOnboardingInfoAppRequest request
+        @RequestAttribute long userId,
+        @Validated @RequestBody UpdateUserOnboardingInfoAppRequest request
         ) {
         onboardingAppService.updateUserOnboardingInfo(userId, request);
         return ApiResponse.getSuccess();
