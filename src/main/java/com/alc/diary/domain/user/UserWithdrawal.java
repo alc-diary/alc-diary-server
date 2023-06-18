@@ -20,7 +20,7 @@ public class UserWithdrawal {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "deletion_reason", length = 1000, updatable = false)
+    @Column(name = "deletion_reason", length = 500, updatable = false)
     private String deletionReason;
 
     private LocalDateTime deletedAt;
