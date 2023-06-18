@@ -8,6 +8,7 @@ import com.alc.diary.application.calender.dto.response.MainCalenderResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,7 +23,7 @@ public class MainCalenderController {
     @PostMapping(value = "")
     public ApiResponse<MainCalenderResponse> save(
             @RequestBody SaveMainCalenderRequest request,
-            @RequestAttribute Long userId
+            @ApiIgnore @RequestAttribute Long userId
     ) {
         return ApiResponse.getSuccess(mainCalenderService.saveMain(request, userId));
     }
@@ -31,7 +32,7 @@ public class MainCalenderController {
      * 메인 목표, 멘트 조회하기
      */
     @GetMapping(value = "")
-    public ApiResponse<GetMainResponse> getMain(@RequestAttribute Long userId) {
+    public ApiResponse<GetMainResponse> getMain(@ApiIgnore @RequestAttribute Long userId) {
         return ApiResponse.getSuccess(mainCalenderService.getMain(userId));
     }
 }

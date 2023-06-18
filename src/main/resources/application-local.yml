@@ -45,3 +45,9 @@ feign:
         connect-timeout: 1000
         read-timeout: 10000
         logger-level: HEADERS
+
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true
+      base-url: /
