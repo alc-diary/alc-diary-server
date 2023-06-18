@@ -84,8 +84,8 @@ public class FriendshipAppService {
      * @param request request
      */
     @Transactional
-    public void acceptFriendshipRequest(long userId, AcceptFriendshipRequestAppRequest request) {
-        Friendship foundFriendShip = getFriendshipsById(request.requestId())
+    public void acceptFriendshipRequest(long userId, long friendshipId, AcceptFriendshipRequestAppRequest request) {
+        Friendship foundFriendShip = getFriendshipsById(friendshipId)
                 .orElseThrow(() -> new DomainException(FriendshipError.INVALID_REQUEST));
         foundFriendShip.accept(userId, request.alias());
     }
