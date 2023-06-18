@@ -1,5 +1,6 @@
 package com.alc.diary.domain.usercalendar;
 
+import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.user.User;
 import lombok.AccessLevel;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_calendars")
 @Entity
-public class UserCalendar {
+public class UserCalendar extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,15 +39,15 @@ public class UserCalendar {
     private List<UserCalendarImage> images = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 20)
-    private UserCalendarStatus userCalendarStatus;
+    @Column(name = "status", length = 20, nullable = false)
+    private UserCalendarStatus status;
 
     public UserCalendar(
             User user,
             Calendar calendar,
             String content,
             String condition,
-            UserCalendarStatus userCalendarStatus
+            UserCalendarStatus status
     ) {
         if (user == null) {
             throw new RuntimeException();
@@ -54,14 +55,14 @@ public class UserCalendar {
         if (calendar == null) {
             throw new RuntimeException();
         }
-        if (userCalendarStatus == null) {
+        if (status == null) {
             throw new RuntimeException();
         }
         this.user = user;
         this.calendar = calendar;
         this.content = content;
         this.condition = condition;
-        this.userCalendarStatus = userCalendarStatus;
+        this.status = status;
     }
 
     public static UserCalendar createRequest(
