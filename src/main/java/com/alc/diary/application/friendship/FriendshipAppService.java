@@ -3,6 +3,7 @@ package com.alc.diary.application.friendship;
 import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.DeclineFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
+import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.friendship.Friendship;
@@ -58,6 +59,16 @@ public class FriendshipAppService {
 
     private User getUserByNickname(String nickname) {
         return userRepository.findByDetail_Nickname(nickname).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+    }
+
+    /**
+     * 친구 목록 조회
+     *
+     * @param userId 요청 유저 ID
+     * @return
+     */
+    public GetFriendshipsAppResponse getFriendships(long userId) {
+        return GetFriendshipsAppResponse.of(friendshipRepository.findAcceptedFriendshipsByUserId(userId), userId);
     }
 
     /**
