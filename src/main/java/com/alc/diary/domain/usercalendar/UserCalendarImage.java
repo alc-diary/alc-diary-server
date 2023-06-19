@@ -1,15 +1,18 @@
 package com.alc.diary.domain.usercalendar;
 
+import com.alc.diary.domain.BaseCreationEntity;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_calendar_images")
 @Entity
-public class UserCalendarImage {
+public class UserCalendarImage extends BaseCreationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
