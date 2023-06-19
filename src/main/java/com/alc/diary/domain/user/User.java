@@ -7,9 +7,9 @@ import com.alc.diary.domain.user.error.UserError;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @ToString(exclude = "detail")
@@ -29,28 +29,35 @@ public class User extends BaseEntity {
     @OneToOne(mappedBy = "user")
     private UserDetail detail;
 
+    @Audited
     @Column(name = "social_type", length = 20, nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Audited
     @Column(name = "social_id", length = 50, nullable = false, updatable = false)
     private String socialId;
 
+    @Audited
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private UserStatus status;
 
+    @Audited
     @Column(name = "email", length = 100, updatable = false)
     private String email;
 
+    @Audited
     @Column(name = "gender", length = 20, updatable = false)
     @Enumerated(EnumType.STRING)
     private GenderType gender;
 
+    @Audited
     @Column(name = "age_range", length = 20, updatable = false)
     @Enumerated(EnumType.STRING)
     private AgeRangeType ageRange;
 
+    @Audited
     @Column(name = "profile_image", length = 1024)
     private String profileImage;
     

@@ -121,4 +121,28 @@ public class Friendship extends BaseEntity {
     public boolean isUserInvolvedInFriendship(long userId) {
         return userId == fromUser.getId() || userId == toUser.getId();
     }
+
+    public String getOtherUserNicknameByUserId(long userId) {
+        if (fromUser.getId().equals(userId)) {
+            return toUser.getNickname();
+        }
+
+        if (toUser.getId().equals(userId)) {
+            return fromUser.getNickname();
+        }
+
+        throw new RuntimeException();
+    }
+
+    public String getAliasByUserId(long userId) {
+        if (fromUser.getId().equals(userId)) {
+            return fromUserAlias;
+        }
+
+        if (toUser.getId().equals(userId)) {
+            return toUserAlias;
+        }
+
+        throw new RuntimeException();
+    }
 }

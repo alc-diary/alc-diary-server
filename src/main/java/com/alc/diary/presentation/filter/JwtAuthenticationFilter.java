@@ -76,26 +76,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             request.setAttribute("userId", userId);
             filterChain.doFilter(request, response);
-
-            // if (isOnboardingEndpoint(path)) {
-            //     if (path.equals("/v1/onboarding/is-onboarding-done")) {
-            //         if (userRepository.findByIdAndDeletedAtIsNull(userId).isEmpty()) {
-            //             throw new DomainException(UserError.USER_NOT_FOUND);
-            //         }
-            //     } else {
-            //         if (userRepository.findByIdAndStatusEqualsOnboarding(userId).isEmpty()) {
-            //             throw new DomainException(UserError.USER_NOT_FOUND);
-            //         }
-            //     }
-            // } else if (path.startsWith("/v1/user-status")) {
-            //     if (userWithoutFilterRepository.findByIdAndDeletedAtIsNull(userId).isEmpty()) {
-            //         throw new DomainException(UserError.USER_NOT_FOUND);
-            //     }
-            // } else {
-            //     if (!userRepository.existsById(userId)) {
-            //         throw new DomainException(UserError.USER_NOT_FOUND);
-            //     }
-            // }
         } catch (DomainException e) {
             handlerExceptionResolver.resolveException(request, response, null, e);
         } catch (Exception e) {
