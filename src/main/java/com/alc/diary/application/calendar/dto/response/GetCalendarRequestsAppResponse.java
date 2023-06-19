@@ -2,6 +2,7 @@ package com.alc.diary.application.calendar.dto.response;
 
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.usercalendar.UserCalendar;
+import io.swagger.annotations.ApiModel;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public record GetCalendarRequestsAppResponse(
                 .toList());
     }
 
+    @ApiModel(value = "GetCalendarRequests_CalendarDto")
     private record CalendarDto(
 
             long calendarId,

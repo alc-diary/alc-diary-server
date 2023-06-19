@@ -1,6 +1,7 @@
 package com.alc.diary.application.calendar.dto.response;
 
 import com.alc.diary.domain.calendar.Calendar;
+import io.swagger.annotations.ApiModel;
 
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ public record SearchCalendarAppResponse(
 //                        .collect(Collectors.toList()));
     }
 
+    @ApiModel(value = "SearchCalendarAppResponse_CalendarDto")
     private record CalendarDto(
 
             long calendarId,
@@ -27,15 +29,16 @@ public record SearchCalendarAppResponse(
             String drinkEndTime,
             UserCalendarDto userCalendar
     ) {
+    }
 
-        private record UserCalendarDto(
+    @ApiModel(value = "SearchCalendarAppResponse_UserCalendarDto")
+    private record UserCalendarDto(
 
-                long userCalendarId,
-                long userId,
-                String content,
-                String condition,
-                Set<String> images
-        ) {
-        }
+            long userCalendarId,
+            long userId,
+            String content,
+            String condition,
+            Set<String> images
+    ) {
     }
 }
