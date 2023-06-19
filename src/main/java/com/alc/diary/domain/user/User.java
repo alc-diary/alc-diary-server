@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @ToString(exclude = "detail")
