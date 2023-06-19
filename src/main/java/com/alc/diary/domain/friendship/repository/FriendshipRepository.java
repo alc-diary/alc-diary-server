@@ -2,6 +2,7 @@ package com.alc.diary.domain.friendship.repository;
 
 import com.alc.diary.domain.friendship.Friendship;
 import com.alc.diary.domain.friendship.enums.FriendshipStatus;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;
@@ -19,13 +20,19 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
 
     void delete(Friendship friendship);
 
-    void deleteById(long id);
-
-    List<Friendship> findByToUser_Id(long toUserId);
-
     List<Friendship> findByToUser_IdAndStatusEquals(long toUserId, FriendshipStatus status);
 
-    boolean existsByFromUser_IdAndToUser_Id(long fromUserId, long toUserId);
-
     List<Friendship> findByFromUser_IdAndToUser_Id(long fromUserId, long toUserId);
+
+    @Query("SELECT f " +
+            "FROM Friendship f " +
+            "JOIN FETCH f.fromUser fu " +
+            "JOIN FETCH f.toUser tu " +
+            "WHERE (" +
+            "   f.fromUser.id = :userId " +
+            "       OR" +
+            "   f.toUser.id = :userId " +
+            ")" +
+            "AND f.status = 'ACCEPTED'")
+    List<Friendship> findAcceptedFriendshipsByUserId(long userId);
 }
