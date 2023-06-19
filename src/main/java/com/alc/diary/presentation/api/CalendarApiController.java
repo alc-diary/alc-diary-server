@@ -6,6 +6,7 @@ import com.alc.diary.application.calendar.dto.request.SaveCalendarAppRequest;
 import com.alc.diary.application.calendar.dto.request.SearchCalendarAppRequest;
 import com.alc.diary.application.calendar.dto.response.GetCalendarRequestsAppResponse;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsAppResponse;
+import com.alc.diary.application.calendar.dto.response.SearchCalendarAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +38,7 @@ public class CalendarApiController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<?> search(
+    public ApiResponse<SearchCalendarAppResponse> search(
             @ApiIgnore @RequestAttribute long userId,
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "year", required = false) Integer year,
