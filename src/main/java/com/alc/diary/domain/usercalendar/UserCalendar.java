@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -23,10 +24,12 @@ public class UserCalendar extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Audited
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Audited
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
     private Calendar calendar;
@@ -34,15 +37,18 @@ public class UserCalendar extends BaseEntity {
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
     private Set<UserCalendarDrink> drinks = new HashSet<>();
 
+    @Audited
     @Column(name = "content", length = 1000)
     private String content;
 
-    @Column(name = "condition", length = 20)
+    @Audited
+    @Column(name = "`condition`", length = 20)
     private String condition;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
     private Set<UserCalendarImage> images = new HashSet<>();
 
+    @Audited
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     private UserCalendarStatus status;

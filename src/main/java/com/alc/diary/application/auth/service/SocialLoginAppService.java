@@ -10,8 +10,6 @@ import com.alc.diary.application.message.MessageService;
 import com.alc.diary.domain.auth.RefreshToken;
 import com.alc.diary.domain.auth.repository.RefreshTokenRepository;
 import com.alc.diary.domain.user.User;
-import com.alc.diary.domain.user.UserHistory;
-import com.alc.diary.domain.user.repository.UserHistoryRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,6 @@ public class SocialLoginAppService {
     private final SocialLoginStrategyFactory socialLoginStrategyFactory;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final UserHistoryRepository userHistoryRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MessageService messageService;
 
@@ -62,7 +59,6 @@ public class SocialLoginAppService {
         return userRepository.findBySocialTypeAndSocialIdAndStatusNotEqualDeactivated(socialLoginStrategyResponse.socialType().name(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
-                                 createHistory(savedUser.getId(), savedUser);
                                  messageService.send(
                                          "#알림",
                                          "한 명의 회원이 " + socialLoginStrategyResponse.socialType() + "(으)로 가입했습니다!\n" + "이메일: " + socialLoginStrategyResponse.email()
@@ -81,10 +77,5 @@ public class SocialLoginAppService {
                    .gender(socialLoginStrategyResponse.gender())
                    .ageRange(socialLoginStrategyResponse.ageRange())
                    .build();
-    }
-
-    private void createHistory(Long requesterId, User targetUser) {
-        UserHistory history = UserHistory.from(requesterId, targetUser);
-        userHistoryRepository.save(history);
     }
 }
