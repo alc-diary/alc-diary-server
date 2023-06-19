@@ -4,11 +4,12 @@ import com.alc.diary.domain.BaseCreationEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
+@ToString(exclude = "userCalendar")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_calendar_images")
 @Entity
@@ -25,9 +26,7 @@ public class UserCalendarImage extends BaseCreationEntity {
     @Column(name = "image_url", length = 1000, nullable = false)
     private String imageUrl;
 
-    public UserCalendarImage(UserCalendar userCalendar, String imageUrl) {
-        this.userCalendar = userCalendar;
-        userCalendar.addImages(List.of(this));
+    public UserCalendarImage(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
