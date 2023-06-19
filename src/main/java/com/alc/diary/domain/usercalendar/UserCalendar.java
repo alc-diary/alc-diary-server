@@ -26,12 +26,12 @@ public class UserCalendar extends BaseEntity {
 
     @Audited
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_calendars_users"))
     private User user;
 
     @Audited
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "calendar_id")
+    @JoinColumn(name = "calendar_id", foreignKey = @ForeignKey(name = "fk_user_calendars_calendars"))
     private Calendar calendar;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)

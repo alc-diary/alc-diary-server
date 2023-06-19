@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.envers.Audited;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
@@ -21,7 +20,7 @@ public class UserCalendarDrink implements Comparable<UserCalendarDrink> {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_calendar_id")
+    @JoinColumn(name = "user_calendar_id", foreignKey = @ForeignKey(name = "fk_user_calendar_drinks_user_calendars"))
     private UserCalendar userCalendar;
 
     @Enumerated(EnumType.STRING)

@@ -27,7 +27,7 @@ public class UserDetail extends BaseEntity {
 
     @Audited
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_details_users"))
     private User user;
 
     @Audited

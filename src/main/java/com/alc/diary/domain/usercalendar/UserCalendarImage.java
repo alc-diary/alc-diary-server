@@ -21,7 +21,7 @@ public class UserCalendarImage extends BaseCreationEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_calendar_id")
+    @JoinColumn(name = "user_calendar_id", foreignKey = @ForeignKey(name = "fk_user_calendar_images_user_calendars"))
     private UserCalendar userCalendar;
 
     @Column(name = "image_url", length = 1000, nullable = false)
