@@ -5,5 +5,6 @@ public enum UserCalendarStatus {
     PENDING,
     ACCEPTED,
     REJECTED,
+    DELETED,
     ;
 }

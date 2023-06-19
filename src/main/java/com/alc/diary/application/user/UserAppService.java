@@ -4,7 +4,6 @@ import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
-import com.alc.diary.domain.user.UserHistory;
 import com.alc.diary.domain.user.UserWithdrawal;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.*;
@@ -22,7 +21,6 @@ public class UserAppService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final UserWithdrawalRepository userWithdrawalRepository;
-    private final UserHistoryRepository userHistoryRepository;
 
     public GetUserInfoAppResponse getUserInfo(Long userId) {
         User foundUser = getUserById(userId);
@@ -42,7 +40,6 @@ public class UserAppService {
     public void updateUserProfileImage(Long userId, UpdateUserProfileImageAppRequest request) {
         User foundUser = getUserById(userId);
         foundUser.updateProfileImage(request.newProfileImage());
-        createHistory(foundUser.getId(), foundUser);
     }
 
     @Transactional
@@ -53,7 +50,6 @@ public class UserAppService {
                 request.newNonAlcoholGoal(),
                 request.newAlcoholType()
         );
-        createHistory(foundUser.getId(), foundUser);
     }
 
     @Transactional
@@ -63,14 +59,12 @@ public class UserAppService {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
         }
         foundUser.getDetail().updateNickname(request.newNickname());
-        createHistory(foundUser.getId(), foundUser);
     }
 
     @Transactional
     public void updateDescriptionStyle(Long userId, UpdateDescriptionStyleAppRequest request) {
         User foundUser = getUserById(userId);
         foundUser.getDetail().updateDescriptionStyle(request.newDescriptionStyle());
-        createHistory(foundUser.getId(), foundUser);
     }
 
     @Transactional
@@ -78,16 +72,10 @@ public class UserAppService {
         User targetUser = getUserById(request.targetUserId());
         targetUser.delete();
         userWithdrawalRepository.save(UserWithdrawal.of(targetUser, request.reason()));
-        createHistory(requesterId, targetUser);
     }
 
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
                              .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
-    }
-
-    private void createHistory(Long requesterId, User targetUser) {
-        UserHistory history = UserHistory.from(requesterId, targetUser);
-        userHistoryRepository.save(history);
     }
 }

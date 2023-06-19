@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
@@ -24,23 +25,29 @@ public class UserDetail extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Audited
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Audited
     @Column(name = "nickname", length = 16, unique = true)
     private String nickname;
 
+    @Audited
     @Enumerated(EnumType.STRING)
     @Column(name = "alcohol_type", length = 20)
     private AlcoholType alcoholType;
 
+    @Audited
     @Column(name = "personal_alcohol_limit")
     private float personalAlcoholLimit;
 
+    @Audited
     @Column(name = "non_alcohol_goal")
     private int nonAlcoholGoal;
 
+    @Audited
     @Enumerated(EnumType.STRING)
     @Column(name = "description_style", length = 20, nullable = false)
     private DescriptionStyle descriptionStyle;

@@ -4,6 +4,7 @@ import com.alc.diary.application.friendship.FriendshipAppService;
 import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.DeclineFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
+import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,13 @@ public class FriendshipApiController {
     ) {
         friendshipAppService.requestFriendship(userId, request);
         return ApiResponse.getCreated();
+    }
+
+    @GetMapping
+    public ApiResponse<GetFriendshipsAppResponse> getFriendShips(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId
+    ) {
+        return ApiResponse.getSuccess(friendshipAppService.getFriendships(userId));
     }
 
     @GetMapping("/received-requests")
