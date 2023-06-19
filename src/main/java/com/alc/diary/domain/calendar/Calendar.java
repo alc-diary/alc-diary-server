@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -32,12 +33,15 @@ public class Calendar extends BaseEntity {
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private Set<UserCalendar> userCalendars = new HashSet<>();
 
+    @Audited
     @Column(name = "title", length = 30, nullable = false)
     private String title;
 
+    @Audited
     @Column(name = "drink_start_time", nullable = false)
     private LocalDateTime drinkStartTime;
 
+    @Audited
     @Column(name = "drink_end_time", nullable = false)
     private LocalDateTime drinkEndTime;
 

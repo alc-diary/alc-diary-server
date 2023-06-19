@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
@@ -14,12 +15,12 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_calendar_drinks")
 @Entity
-public class UserCalendarDrink implements Comparable {
+public class UserCalendarDrink implements Comparable<UserCalendarDrink> {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_calendar_id")
     private UserCalendar userCalendar;
 
@@ -47,14 +48,7 @@ public class UserCalendarDrink implements Comparable {
     }
 
     @Override
-    public int compareTo(@NotNull Object o) {
-        UserCalendarDrink other = (UserCalendarDrink) o;
-        if (quantity > other.quantity) {
-            return 1;
-        }
-        if (quantity < other.quantity) {
-            return -1;
-        }
-        return 0;
+    public int compareTo(@NotNull UserCalendarDrink other) {
+        return Float.compare(quantity, other.quantity);
     }
 }
