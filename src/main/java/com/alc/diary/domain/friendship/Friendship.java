@@ -26,11 +26,11 @@ public class Friendship extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "from_user_id", updatable = false)
+    @JoinColumn(name = "from_user_id", foreignKey = @ForeignKey(name = "fk_friendships_from_user_users"), updatable = false)
     private User fromUser;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "to_user_id", updatable = false)
+    @JoinColumn(name = "to_user_id", foreignKey = @ForeignKey(name = "fk_friendships_to_user_users"),updatable = false)
     private User toUser;
 
     @Column(name = "from_user_alias", length = 30)
