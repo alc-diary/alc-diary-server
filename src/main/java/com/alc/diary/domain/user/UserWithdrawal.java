@@ -17,7 +17,7 @@ public class UserWithdrawal {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_withdrawals_users"))
     private User user;
 
     @Column(name = "deletion_reason", length = 500, updatable = false)
