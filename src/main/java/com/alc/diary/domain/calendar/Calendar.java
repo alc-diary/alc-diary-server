@@ -1,6 +1,7 @@
 package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.usercalendar.UserCalendar;
 import lombok.AccessLevel;
@@ -30,12 +31,12 @@ public class Calendar extends BaseEntity {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
-    private Set<UserCalendar> userCalendars = new HashSet<>();
-
     @Audited
     @Column(name = "title", length = 30, nullable = false)
     private String title;
+
+    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
+    private Set<UserCalendar> userCalendars = new HashSet<>();
 
     @Audited
     @Column(name = "drink_start_time", nullable = false)
@@ -47,33 +48,48 @@ public class Calendar extends BaseEntity {
 
     public Calendar(User owner, String title, LocalDateTime drinkStartTime, LocalDateTime drinkEndTime) {
         if (owner == null) {
-            throw new RuntimeException();
+            throw new DomainException(CalendarError.OWNER_NULL);
         }
         if (title == null) {
-            throw new RuntimeException();
+            throw new DomainException(CalendarError.TITLE_NULL);
         }
+        if (drinkStartTime == null) {
+            throw new DomainException(CalendarError.DRINK_START_TIME_NULL);
+        }
+        if (drinkEndTime == null) {
+            throw new DomainException(CalendarError.DRINK_END_TIME_NULL);
+        }
+
         this.owner = owner;
         this.title = title;
         this.drinkStartTime = drinkStartTime;
         this.drinkEndTime = drinkEndTime;
     }
 
+    public void addUserCalendars(List<UserCalendar> userCalendars) {
+        if (userCalendars == null) {
+            throw new DomainException(CalendarError.USER_CALENDARS_NULL);
+        }
+        for (UserCalendar userCalendar : userCalendars) {
+            addUserCalendar(userCalendar);
+        }
+    }
+
     public void addUserCalendar(UserCalendar userCalendar) {
         if (userCalendar == null) {
-            throw new RuntimeException();
+            throw new DomainException(CalendarError.USER_CALENDAR_NULL);
         }
         userCalendars.add(userCalendar);
         userCalendar.setCalendar(this);
     }
 
-    public void addUserCalendars(List<UserCalendar> userCalendars) {
-        for (UserCalendar userCalendar : userCalendars) {
-            this.userCalendars.add(userCalendar);
-            userCalendar.setCalendar(this);
-        }
-    }
-
     public LocalDate getLocalDate() {
         return drinkStartTime.toLocalDate();
+    }
+
+    public boolean isInvolvedUser(long userId) {
+        return userCalendars.stream()
+                .filter(UserCalendar::isActive)
+                .anyMatch(userCalendar -> userCalendar.isOwner(userId));
     }
 }

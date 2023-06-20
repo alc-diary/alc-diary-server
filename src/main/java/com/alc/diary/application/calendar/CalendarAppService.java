@@ -1,15 +1,15 @@
 package com.alc.diary.application.calendar;
 
-import com.alc.diary.application.calendar.dto.request.FindCalendarAppResponse;
-import com.alc.diary.application.calendar.dto.request.SaveCalendarAppRequest;
+import com.alc.diary.application.calendar.dto.CalendarDto;
+import com.alc.diary.application.calendar.dto.request.CreateCalendarAppRequest;
 import com.alc.diary.application.calendar.dto.request.SearchCalendarAppRequest;
 import com.alc.diary.application.calendar.dto.response.GetCalendarRequestsAppResponse;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsAppResponse;
 import com.alc.diary.application.calendar.dto.response.SearchCalendarAppResponse;
 import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.calendar.CalendarError;
 import com.alc.diary.domain.calendar.CalendarRepository;
 import com.alc.diary.domain.calendar.Calendars;
-import com.alc.diary.domain.calender.error.CalenderError;
 import com.alc.diary.domain.drink.UserCalendarDrink;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
@@ -17,9 +17,9 @@ import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
 import com.alc.diary.domain.usercalendar.UserCalendar;
 import com.alc.diary.domain.usercalendar.UserCalendarImage;
-import com.alc.diary.domain.usercalendar.UserCalendarRepository;
-import com.alc.diary.domain.usercalendar.UserCalendarStatus;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,49 +43,80 @@ public class CalendarAppService {
      * @param request
      */
     @Transactional
-    public void save(long userId, SaveCalendarAppRequest request) {
-        User foundUser =
-                userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+    public void createCalendar(long userId, CreateCalendarAppRequest request) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
         List<UserCalendar> taggedUserCalendarsToSave = userRepository.findByIdIn(request.taggedUserId()).stream()
                 .map(UserCalendar::createUserCalendarRequest)
                 .toList();
 
-        Calendar calendarToSave =
-                new Calendar(foundUser, request.title(), request.drinkStartTime(), request.drinkEndTime());
-        UserCalendar userCalendarToSave =
-                new UserCalendar(foundUser, request.content(), request.condition(), UserCalendarStatus.ACCEPTED);
-        List<UserCalendarImage> userCalendarImagesToSave = request.imageUrls().stream()
-                .map(UserCalendarImage::new)
-                .toList();
-        userCalendarToSave.addImages(userCalendarImagesToSave);
+        Calendar calendarToSave = buildCalendarEntity(request, foundUser);
+        UserCalendar userCalendarToSave = buildUserCalendarEntity(request, foundUser);
 
-        List<UserCalendarDrink> userCalendarDrinksToSave = request.drinks().stream()
-                .map(drinkDto -> new UserCalendarDrink(drinkDto.drink(), drinkDto.quantity()))
-                .collect(Collectors.toList());
-        userCalendarToSave.addDrinks(userCalendarDrinksToSave);
+        addUserCalendarImages(userCalendarToSave, request.imageUrls());
+        addUserCalendarDrinks(userCalendarToSave, request.drinks());
 
-        calendarToSave.addUserCalendar(userCalendarToSave);
-        calendarToSave.addUserCalendars(taggedUserCalendarsToSave);
+        addCalendars(calendarToSave, userCalendarToSave, taggedUserCalendarsToSave);
 
         calendarRepository.save(calendarToSave);
     }
 
-    public FindCalendarAppResponse find(long userId, long calendarId) {
-        User foundUser =
-                userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
-        Calendar foundCalendar =
-                calendarRepository.findByIdAndUserCalendars_StatusEqualAccepted(calendarId)
-                        .orElseThrow(() -> new DomainException(CalenderError.NO_ENTITY_FOUND));
-        return FindCalendarAppResponse.of(foundUser, foundCalendar);
+    @NotNull
+    private static Calendar buildCalendarEntity(CreateCalendarAppRequest request, User foundUser) {
+        return new Calendar(foundUser, request.title(), request.drinkStartTime(), request.drinkEndTime());
     }
 
-    public SearchCalendarAppResponse search(long userId, SearchCalendarAppRequest request) {
-        return SearchCalendarAppResponse.from(
+    @NotNull
+    private static UserCalendar buildUserCalendarEntity(CreateCalendarAppRequest request, User foundUser) {
+        return UserCalendar.create(foundUser, request.content(), request.condition());
+    }
+
+    private static void addUserCalendarImages(UserCalendar userCalendar, List<String> imageUrls) {
+        List<UserCalendarImage> userCalendarImagesToSave = imageUrls.stream()
+                .map(UserCalendarImage::new)
+                .toList();
+        userCalendar.addImages(userCalendarImagesToSave);
+    }
+
+    private static void addUserCalendarDrinks(UserCalendar userCalendar, List<CreateCalendarAppRequest.DrinkDto> drinks) {
+        List<UserCalendarDrink> userCalendarDrinksToSave = drinks.stream()
+                .map(drinkDto -> new UserCalendarDrink(drinkDto.drink(), drinkDto.quantity()))
+                .collect(Collectors.toList());
+        userCalendar.addDrinks(userCalendarDrinksToSave);
+    }
+
+    private static void addCalendars(Calendar calendar, UserCalendar userCalendar, List<UserCalendar> taggedUserCalendars) {
+        calendar.addUserCalendar(userCalendar);
+        calendar.addUserCalendars(taggedUserCalendars);
+    }
+
+    /**
+     * 캘린더 조회
+     *
+     * @param userId
+     * @param calendarId
+     * @return
+     */
+    @Cacheable(value = "findCalendar", key = "#userId + '_' + #calendarId", cacheManager = "cacheManager")
+    public CalendarDto findCalendar(long userId, long calendarId) {
+        Calendar foundCalendar =
+                calendarRepository.findByIdAndUserCalendars_StatusEqualAccepted(calendarId)
+                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND, "Calendar ID: " + calendarId));
+        if (!foundCalendar.isInvolvedUser(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION, "User ID: " + userId + ", Calendar ID: " + calendarId);
+        }
+
+        return CalendarDto.from(foundCalendar);
+    }
+
+    public List<CalendarDto> search(long userId, SearchCalendarAppRequest request) {
+        SearchCalendarAppResponse.from(
                 calendarRepository.findByUserIdAndDrinkStartTimeGreaterThanEqualAndDrinkStartTimeLessThanAndUserCalendars_StatusEqualAccepted(
                         userId,
                         request.getStartTime(),
                         request.getEndTime()
                 ));
+        return null;
     }
 
     public GetMonthlyCalendarsAppResponse getMonthlyCalendars(long userId, Integer year, Integer month) {
