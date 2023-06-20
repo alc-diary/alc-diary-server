@@ -1,7 +1,6 @@
 package com.alc.diary.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.NoOpCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +21,6 @@ import java.util.Map;
 public class CacheConfig {
 
     private final RedisConnectionFactory redisConnectionFactory;
-
     private final Environment env;
 
     @Bean
@@ -32,24 +30,32 @@ public class CacheConfig {
         }
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         cacheConfigurations.put("monthlyReport", monthlyReportCacheConfiguration());
+        cacheConfigurations.put("findCalendar", findCalendarCacheConfiguration());
 
         return RedisCacheManager.builder(redisConnectionFactory)
-                                .cacheDefaults(defaultCacheConfiguration())
-                                .withInitialCacheConfigurations(cacheConfigurations)
-                                .build();
+                .cacheDefaults(defaultCacheConfiguration())
+                .withInitialCacheConfigurations(cacheConfigurations)
+                .build();
     }
 
     private RedisCacheConfiguration defaultCacheConfiguration() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                                      .entryTtl(Duration.ofMinutes(5))
-                                      .disableCachingNullValues()
-                                      .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                .entryTtl(Duration.ofMinutes(30))
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
 
     private RedisCacheConfiguration monthlyReportCacheConfiguration() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                                      .entryTtl(Duration.ofHours(1))
-                                      .disableCachingNullValues()
-                                      .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                .entryTtl(Duration.ofHours(6))
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    }
+
+    private RedisCacheConfiguration findCalendarCacheConfiguration() {
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(6))
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
 }
