@@ -35,7 +35,7 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId
     ) {
-        return ApiResponse.getSuccess(calendarAppService.find(userId, calendarId));
+        return ApiResponse.getSuccess(calendarAppService.findCalendar(userId, calendarId));
     }
 
     @GetMapping("/search")

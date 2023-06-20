@@ -97,4 +97,12 @@ public class UserCalendar extends BaseEntity {
             drink.setUserCalendar(this);
         }
     }
+
+    public boolean isOwner(long userId) {
+        return user.getId().equals(userId);
+    }
+
+    public boolean isActive() {
+        return status == UserCalendarStatus.ACCEPTED;
+    }
 }
