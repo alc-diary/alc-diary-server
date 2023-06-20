@@ -1,7 +1,5 @@
 package com.alc.diary.application.friendship;
 
-import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
-import com.alc.diary.application.friendship.dto.request.DeclineFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
@@ -91,44 +89,44 @@ public class FriendshipAppService {
      * 친구 요청 수락
      *
      * @param userId 요청 유저 ID
-     * @param request request
+     * @param friendshipId 친구 데이터 ID
      */
     @Transactional
-    public void acceptFriendshipRequest(long userId, long friendshipId, AcceptFriendshipRequestAppRequest request) {
+    public void acceptFriendshipRequest(long userId, long friendshipId) {
         Friendship foundFriendShip = getFriendshipsById(friendshipId);
-        foundFriendShip.accept(userId, request.alias());
+        foundFriendShip.accept(userId);
     }
 
     /**
-     * 친구 요청 거절
-     *
-     * @param userId 요청 유저 ID
-     * @param request request
-     */
-    @Transactional
-    public void declineFriendshipRequest(long userId, DeclineFriendshipRequestAppRequest request) {
-        Friendship foundFriendship = getFriendshipsById(request.friendshipId());
-        foundFriendship.decline(userId);
-    }
-
-    private Friendship getFriendshipsById(long id) {
-        return friendshipRepository.findById(id).orElseThrow(RuntimeException::new);
-    }
-
-    private List<Friendship> getFriendshipsByIds(List<Long> request) {
-        return friendshipRepository.findByIdIn(request);
-    }
-
-    /**
-     * 친구 삭제
+     * 친구 삭제 (soft delete)
      *
      * @param requesterId 요청 유저 ID
      * @param friendshipId 삭제할 친구 데이터 ID
      */
     @Transactional
     public void deleteFriendship(long requesterId, long friendshipId) {
-        friendshipRepository.findByIdAndStatusEquals(friendshipId, FriendshipStatus.ACCEPTED)
-                .filter(friendship -> friendship.isUserInvolvedInFriendship(requesterId))
-                .ifPresent(friendshipRepository::delete);
+        Friendship foundFriendship = getFriendshipsById(friendshipId);
+        foundFriendship.delete(requesterId);
+    }
+
+    /**
+     * 친구 요청 거절
+     *
+     * @param userId 요청 유저 ID
+     * @param friendshipId 친구 데이터 ID
+     */
+    @Transactional
+    public void declineFriendshipRequest(long userId, long friendshipId) {
+        Friendship foundFriendship = getFriendshipsById(friendshipId);
+        foundFriendship.decline(userId);
+    }
+
+    private Friendship getFriendshipsById(long id) {
+        return friendshipRepository
+                .findById(id).orElseThrow(() -> new DomainException(FriendshipError.FRIENDSHIP_NOT_FOUND));
+    }
+
+    private List<Friendship> getFriendshipsByIds(List<Long> request) {
+        return friendshipRepository.findByIdIn(request);
     }
 }
