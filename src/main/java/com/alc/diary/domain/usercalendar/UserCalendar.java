@@ -3,6 +3,7 @@ package com.alc.diary.domain.usercalendar;
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.drink.UserCalendarDrink;
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -53,22 +54,26 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "status", length = 20, nullable = false)
     private UserCalendarStatus status;
 
-    public UserCalendar(
+    private UserCalendar(
             User user,
             String content,
             String condition,
             UserCalendarStatus status
     ) {
         if (user == null) {
-            throw new RuntimeException();
+            throw new DomainException(UserCalendarError.USER_NULL);
         }
         if (status == null) {
-            throw new RuntimeException();
+            throw new DomainException(UserCalendarError.STATUS_NULL);
         }
         this.user = user;
         this.content = content;
         this.condition = condition;
         this.status = status;
+    }
+
+    public static UserCalendar create(User user, String content, String condition) {
+        return new UserCalendar(user, content, condition, UserCalendarStatus.ACCEPTED);
     }
 
     public static UserCalendar createUserCalendarRequest(User user) {
