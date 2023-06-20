@@ -1,5 +1,6 @@
 package com.alc.diary.domain.drink;
 
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.usercalendar.UserCalendar;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,10 +33,10 @@ public class UserCalendarDrink implements Comparable<UserCalendarDrink> {
 
     public UserCalendarDrink(Drink drink, float quantity) {
         if (drink == null) {
-            throw new RuntimeException();
+            throw new DomainException(UserCalendarDrinkError.DRINK_NULL);
         }
         if (quantity <= 0.0f) {
-            throw new RuntimeException();
+            throw new DomainException(UserCalendarDrinkError.INVALID_QUANTITY);
         }
 
         this.drink = drink;
