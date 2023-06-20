@@ -12,14 +12,14 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RequiredArgsConstructor
-@org.springframework.web.bind.annotation.RestControllerAdvice
-public class RestControllerAdvice {
-
+@RestControllerAdvice
+public class ExceptionRestControllerAdvice {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Logger slackLogger = LoggerFactory.getLogger("SLACK");

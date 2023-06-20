@@ -56,7 +56,7 @@ public class UserAppService {
     public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
         User foundUser = getUserById(userId);
         if (userDetailRepository.existsByNickname(request.newNickname())) {
-            throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
+            throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN, "Nickname: " + request.newNickname());
         }
         foundUser.getDetail().updateNickname(request.newNickname());
     }
@@ -76,6 +76,6 @@ public class UserAppService {
 
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
-                             .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+                             .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 }
