@@ -19,7 +19,7 @@ public class UserStatusAppService {
         return new GetIsOnboardingDoneAppResponse(
                 userRepository.findByIdAndStatusNotEqualDeactivated(userId)
                               .map(user -> user.getStatus() == ACTIVE)
-                              .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND))
+                              .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId))
         );
     }
 }

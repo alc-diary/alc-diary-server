@@ -7,9 +7,9 @@ import com.alc.diary.application.calendar.dto.response.GetCalendarRequestsAppRes
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsAppResponse;
 import com.alc.diary.application.calendar.dto.response.SearchCalendarAppResponse;
 import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.calendar.CalendarError;
 import com.alc.diary.domain.calendar.CalendarRepository;
 import com.alc.diary.domain.calendar.Calendars;
-import com.alc.diary.domain.calender.error.CalenderError;
 import com.alc.diary.domain.drink.UserCalendarDrink;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
@@ -19,6 +19,7 @@ import com.alc.diary.domain.usercalendar.UserCalendar;
 import com.alc.diary.domain.usercalendar.UserCalendarImage;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,10 +97,14 @@ public class CalendarAppService {
      * @param calendarId
      * @return
      */
-    public CalendarDto find(long userId, long calendarId) {
+    @Cacheable(value = "findCalendar", key = "#userId + '_' + #calendarId", cacheManager = "cacheManager")
+    public CalendarDto findCalendar(long userId, long calendarId) {
         Calendar foundCalendar =
                 calendarRepository.findByIdAndUserCalendars_StatusEqualAccepted(calendarId)
-                        .orElseThrow(() -> new DomainException(CalenderError.NO_ENTITY_FOUND));
+                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND, "Calendar ID: " + calendarId));
+        if (!foundCalendar.isInvolvedUser(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION, "User ID: " + userId + ", Calendar ID: " + calendarId);
+        }
 
         return CalendarDto.from(foundCalendar);
     }
