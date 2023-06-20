@@ -43,8 +43,8 @@ public class CalendarAppService {
      */
     @Transactional
     public void createCalendar(long userId, CreateCalendarAppRequest request) {
-        User foundUser =
-                userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
         List<UserCalendar> taggedUserCalendarsToSave = userRepository.findByIdIn(request.taggedUserId()).stream()
                 .map(UserCalendar::createUserCalendarRequest)
                 .toList();
@@ -84,7 +84,7 @@ public class CalendarAppService {
         userCalendar.addDrinks(userCalendarDrinksToSave);
     }
 
-    private static void addCalendars(Calendar calendar,  UserCalendar userCalendar, List<UserCalendar> taggedUserCalendars) {
+    private static void addCalendars(Calendar calendar, UserCalendar userCalendar, List<UserCalendar> taggedUserCalendars) {
         calendar.addUserCalendar(userCalendar);
         calendar.addUserCalendars(taggedUserCalendars);
     }
