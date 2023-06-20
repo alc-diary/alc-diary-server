@@ -1,5 +1,6 @@
 package com.alc.diary.application.calendar;
 
+import com.alc.diary.application.calendar.dto.CalendarDto;
 import com.alc.diary.application.calendar.dto.request.FindCalendarAppResponse;
 import com.alc.diary.application.calendar.dto.request.SaveCalendarAppRequest;
 import com.alc.diary.application.calendar.dto.request.SearchCalendarAppRequest;
@@ -17,7 +18,6 @@ import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
 import com.alc.diary.domain.usercalendar.UserCalendar;
 import com.alc.diary.domain.usercalendar.UserCalendarImage;
-import com.alc.diary.domain.usercalendar.UserCalendarRepository;
 import com.alc.diary.domain.usercalendar.UserCalendarStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,13 +70,19 @@ public class CalendarAppService {
         calendarRepository.save(calendarToSave);
     }
 
-    public FindCalendarAppResponse find(long userId, long calendarId) {
-        User foundUser =
-                userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+    /**
+     * 캘린더 조회
+     *
+     * @param userId
+     * @param calendarId
+     * @return
+     */
+    public CalendarDto find(long userId, long calendarId) {
         Calendar foundCalendar =
                 calendarRepository.findByIdAndUserCalendars_StatusEqualAccepted(calendarId)
                         .orElseThrow(() -> new DomainException(CalenderError.NO_ENTITY_FOUND));
-        return FindCalendarAppResponse.of(foundUser, foundCalendar);
+
+        return CalendarDto.from(foundCalendar);
     }
 
     public SearchCalendarAppResponse search(long userId, SearchCalendarAppRequest request) {
