@@ -52,8 +52,8 @@ public class CalendarAppService {
         Calendar calendarToSave = buildCalendarEntity(request, foundUser);
         UserCalendar userCalendarToSave = buildUserCalendarEntity(request, foundUser);
 
-        setUserCalendarImages(userCalendarToSave, request.imageUrls());
-        setUserCalendarDrinks(userCalendarToSave, request.drinks());
+        addUserCalendarImages(userCalendarToSave, request.imageUrls());
+        addUserCalendarDrinks(userCalendarToSave, request.drinks());
 
         addCalendars(calendarToSave, userCalendarToSave, taggedUserCalendarsToSave);
 
@@ -70,14 +70,14 @@ public class CalendarAppService {
         return UserCalendar.create(foundUser, request.content(), request.condition());
     }
 
-    private static void setUserCalendarImages(UserCalendar userCalendar, List<String> imageUrls) {
+    private static void addUserCalendarImages(UserCalendar userCalendar, List<String> imageUrls) {
         List<UserCalendarImage> userCalendarImagesToSave = imageUrls.stream()
                 .map(UserCalendarImage::new)
                 .toList();
         userCalendar.addImages(userCalendarImagesToSave);
     }
 
-    private static void setUserCalendarDrinks(UserCalendar userCalendar, List<CreateCalendarAppRequest.DrinkDto> drinks) {
+    private static void addUserCalendarDrinks(UserCalendar userCalendar, List<CreateCalendarAppRequest.DrinkDto> drinks) {
         List<UserCalendarDrink> userCalendarDrinksToSave = drinks.stream()
                 .map(drinkDto -> new UserCalendarDrink(drinkDto.drink(), drinkDto.quantity()))
                 .collect(Collectors.toList());
