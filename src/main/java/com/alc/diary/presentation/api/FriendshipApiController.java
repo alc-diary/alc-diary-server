@@ -1,8 +1,6 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.friendship.FriendshipAppService;
-import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
-import com.alc.diary.application.friendship.dto.request.DeclineFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
@@ -47,19 +45,18 @@ public class FriendshipApiController {
     @PutMapping("/{friendshipId}/accept-request")
     public ApiResponse<Void> acceptFriendshipRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId,
-            @RequestBody AcceptFriendshipRequestAppRequest request
+            @PathVariable long friendshipId
     ) {
-        friendshipAppService.acceptFriendshipRequest(userId, friendshipId, request);
+        friendshipAppService.acceptFriendshipRequest(userId, friendshipId);
         return ApiResponse.getSuccess();
     }
 
-    @PutMapping("/decline-request")
+    @PutMapping("/{friendshipId}/decline-request")
     public ApiResponse<Void> declineFriendshipRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @RequestBody DeclineFriendshipRequestAppRequest request
+            @PathVariable long friendshipId
     ) {
-        friendshipAppService.declineFriendshipRequest(userId, request);
+        friendshipAppService.declineFriendshipRequest(userId, friendshipId);
         return ApiResponse.getSuccess();
     }
 

@@ -55,19 +55,19 @@ public class Friendship extends BaseEntity {
             String message
     ) {
         if (fromUser == null) {
-            throw new IllegalArgumentException();
+            throw new DomainException(FriendshipError.FROM_USER_NULL);
         }
         if (toUser == null) {
-            throw new IllegalArgumentException();
+            throw new DomainException(FriendshipError.TO_USER_NULL);
         }
         if (StringUtils.length(message) > 100) {
-            throw new IllegalArgumentException();
+            throw new DomainException(FriendshipError.MESSAGE_LENGTH_EXCEEDED);
         }
         if (StringUtils.length(fromUserAlias) > 30) {
-            throw new RuntimeException();
+            throw new DomainException(FriendshipError.USER_ALIAS_LENGTH_EXCEEDED);
         }
         if (StringUtils.length(toUserAlias) > 30) {
-            throw new RuntimeException();
+            throw new DomainException(FriendshipError.USER_ALIAS_LENGTH_EXCEEDED);
         }
 
         this.fromUser = fromUser;
@@ -94,18 +94,14 @@ public class Friendship extends BaseEntity {
         );
     }
 
-    public void accept(long userId, String toUserAlias) {
+    public void accept(long userId) {
         if (userId != toUser.getId()) {
-            throw new DomainException(FriendshipError.INVALID_REQUEST);
+            throw new DomainException(FriendshipError.NO_PERMISSION_TO_ACCEPT);
         }
         if (status != FriendshipStatus.REQUESTED) {
             throw new DomainException(FriendshipError.INVALID_REQUEST);
         }
-        if (StringUtils.length(toUserAlias) > 30) {
-            throw new RuntimeException();
-        }
         status = FriendshipStatus.ACCEPTED;
-        this.toUserAlias = toUserAlias;
     }
 
     public void decline(long userId) {
@@ -116,6 +112,13 @@ public class Friendship extends BaseEntity {
             throw new DomainException(FriendshipError.INVALID_REQUEST);
         }
         status = FriendshipStatus.DECLINED;
+    }
+
+    public void delete(long requestUserId) {
+        if (requestUserId != fromUser.getId() && requestUserId != toUser.getId()) {
+            throw new DomainException(FriendshipError.NO_PERMISSION_TO_DELETE);
+        }
+        status = FriendshipStatus.DELETED;
     }
 
     public boolean isUserInvolvedInFriendship(long userId) {
