@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record SaveCalendarAppRequest(
+public record CreateCalendarAppRequest(
 
         @NotNull(message = "제목은 필수입니다.")
         String title,
