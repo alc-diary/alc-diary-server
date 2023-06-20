@@ -39,7 +39,10 @@ public class FriendshipAppService {
         User requester = getUserById(userId);
         User targetUser = getUserByNickname(request.targetNickname());
         if (requester.equals(targetUser)) {
-            throw new DomainException(FriendshipError.INVALID_REQUEST);
+            throw new DomainException(
+                    FriendshipError.INVALID_REQUEST,
+                    "Request User ID: " + requester.getId() + ", Target User ID: " + targetUser.getId()
+            );
         }
         if (friendshipRepository.findByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId()).stream()
                                 .anyMatch(friendship -> friendship.getStatus() == FriendshipStatus.REQUESTED || friendship.getStatus() == FriendshipStatus.ACCEPTED)) {
@@ -51,11 +54,13 @@ public class FriendshipAppService {
     }
 
     private User getUserById(long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 
     private User getUserByNickname(String nickname) {
-        return userRepository.findByDetail_Nickname(nickname).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        return userRepository.findByDetail_Nickname(nickname)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "Nickname: " + nickname));
     }
 
     /**
