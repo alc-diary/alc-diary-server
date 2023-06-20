@@ -1,8 +1,10 @@
 package com.alc.diary.domain.drink;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public enum Drink {
 
     BEER(408, 4_000),
@@ -11,6 +13,6 @@ public enum Drink {
     MAKGEOLLI(344, 4_000),
     ;
 
-    Drink(int calorie, int price) {
-    }
+    private final int calorie;
+    private final int price;
 }

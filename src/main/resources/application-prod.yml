@@ -1,6 +1,6 @@
 server:
   port: 8080
-  secret: ALC_DIARY_SECRET_KEY
+  secret: ${JWT_SECRET_KEY}
 
   tomcat:
     basedir: .
@@ -17,9 +17,9 @@ spring:
     name: alc-diary-server
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://alc-diary-rds.cfovd4e4tlsc.ap-northeast-2.rds.amazonaws.com:3306/alc?serverTimezone=Asia/Seoul
-    username: admin
-    password: alcth123
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     tomcat:
       max-active: 500
   jpa:
@@ -35,8 +35,8 @@ spring:
       matching-strategy: ant_path_matcher
 
   redis:
-    host: alc-diary-cache-redis-ro.cfmn6m.ng.0001.apn2.cache.amazonaws.com
-    port: 6379
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
   cache:
     redis:
       time-to-live: 60000
