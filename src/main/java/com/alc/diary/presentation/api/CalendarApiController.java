@@ -1,6 +1,7 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.calendar.CalendarAppService;
+import com.alc.diary.application.calendar.dto.CalendarDto;
 import com.alc.diary.application.calendar.dto.request.FindCalendarAppResponse;
 import com.alc.diary.application.calendar.dto.request.SaveCalendarAppRequest;
 import com.alc.diary.application.calendar.dto.request.SearchCalendarAppRequest;
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RequiredArgsConstructor
-@RequestMapping("/v1/calendar")
+@RequestMapping("/v1/calendars")
 @RestController
 public class CalendarApiController {
 
     private final CalendarAppService calendarAppService;
 
     @PostMapping
-    public ApiResponse<?> save(
+    public ApiResponse<Void> save(
             @ApiIgnore @RequestAttribute long userId,
             @Validated @RequestBody SaveCalendarAppRequest request
     ) {
@@ -30,7 +31,7 @@ public class CalendarApiController {
     }
 
     @GetMapping("/{calendarId}")
-    public ApiResponse<FindCalendarAppResponse> find(
+    public ApiResponse<CalendarDto> find(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId
     ) {
