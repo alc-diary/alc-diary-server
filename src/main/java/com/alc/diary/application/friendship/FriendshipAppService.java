@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -96,8 +95,7 @@ public class FriendshipAppService {
      */
     @Transactional
     public void acceptFriendshipRequest(long userId, long friendshipId, AcceptFriendshipRequestAppRequest request) {
-        Friendship foundFriendShip = getFriendshipsById(friendshipId)
-                .orElseThrow(() -> new DomainException(FriendshipError.INVALID_REQUEST));
+        Friendship foundFriendShip = getFriendshipsById(friendshipId);
         foundFriendShip.accept(userId, request.alias());
     }
 
@@ -109,11 +107,12 @@ public class FriendshipAppService {
      */
     @Transactional
     public void declineFriendshipRequest(long userId, DeclineFriendshipRequestAppRequest request) {
-        getFriendshipsByIds(request.requestIds()).forEach(it -> it.decline(userId));
+        Friendship foundFriendship = getFriendshipsById(request.friendshipId());
+        foundFriendship.decline(userId);
     }
 
-    private Optional<Friendship> getFriendshipsById(long id) {
-        return friendshipRepository.findById(id);
+    private Friendship getFriendshipsById(long id) {
+        return friendshipRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     private List<Friendship> getFriendshipsByIds(List<Long> request) {

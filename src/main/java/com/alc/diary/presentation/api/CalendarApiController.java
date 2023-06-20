@@ -72,7 +72,7 @@ public class CalendarApiController {
         );
     }
 
-    @PutMapping("/{calendarId}")
+//    @PutMapping("/{calendarId}")
     public ApiResponse<?> update(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,
@@ -81,7 +81,7 @@ public class CalendarApiController {
         return null;
     }
 
-    @DeleteMapping("/{calendarId}")
+//    @DeleteMapping("/{calendarId}")
     public ApiResponse<?> delete(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId

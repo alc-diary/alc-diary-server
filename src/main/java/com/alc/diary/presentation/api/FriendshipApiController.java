@@ -54,7 +54,7 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess();
     }
 
-    @PutMapping("/decline-requests")
+    @PutMapping("/decline-request")
     public ApiResponse<Void> declineFriendshipRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @RequestBody DeclineFriendshipRequestAppRequest request
