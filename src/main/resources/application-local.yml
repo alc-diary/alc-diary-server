@@ -1,6 +1,6 @@
 server:
   port: 8080
-  secret: SECRET
+  secret: LOCAL_SECRET
 
 spring:
   application:
