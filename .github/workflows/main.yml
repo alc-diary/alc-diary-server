@@ -17,6 +17,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+
+      - name: Build with gradle
+        run: ./gradlew clean build
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           DB_URL: ${{ secrets.DB_URL }}
@@ -25,9 +28,6 @@ jobs:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           TOMCAT_ACCESS_LOG_DIR: ${{ secrets.TOMCAT_ACCESS_LOG_DIR }}
-
-      - name: Build with gradle
-        run: ./gradlew clean build
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
