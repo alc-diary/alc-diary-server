@@ -20,14 +20,6 @@ jobs:
 
       - name: Build with gradle
         run: ./gradlew clean build
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
-          TOMCAT_ACCESS_LOG_DIR: ${{ secrets.TOMCAT_ACCESS_LOG_DIR }}
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -42,14 +34,6 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
-          TOMCAT_ACCESS_LOG_DIR: ${{ secrets.TOMCAT_ACCESS_LOG_DIR }}
 
       - name: Deploy to EC2
         id: deploy-ec2
@@ -62,4 +46,16 @@ jobs:
           script: |
             docker rm -f $(docker ps -aq)
             docker rmi $(docker images -q)
-            docker run -d -p 8080:8080 -v /var/log/alc:/logs --name alc ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
+            docker run \
+            --name alc \
+            -d \
+            -p 8080:8080 \
+            -v /var/log/alc:/logs \
+            -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            -e DB_URL=${{ secrets.DB_URL }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+            -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+            -e TOMCAT_ACCESS_LOG_DIR=${{ secrets.TOMCAT_ACCESS_LOG_DIR }} \
+            ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
