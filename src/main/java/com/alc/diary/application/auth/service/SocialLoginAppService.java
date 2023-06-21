@@ -56,7 +56,7 @@ public class SocialLoginAppService {
     }
 
     private User getUser(SocialLoginStrategyResponse socialLoginStrategyResponse) {
-        return userRepository.findBySocialTypeAndSocialIdAndStatusNotEqualDeactivated(socialLoginStrategyResponse.socialType().name(), socialLoginStrategyResponse.socialUserId())
+        return userRepository.findNotDeactivatedUserByIdAndSocialTypeAndSocialId(socialLoginStrategyResponse.socialType(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
                                  messageService.send(

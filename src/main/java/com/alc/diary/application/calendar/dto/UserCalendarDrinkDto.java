@@ -15,7 +15,7 @@ public record UserCalendarDrinkDto(
         float quantity
 ) {
 
-    public static List<UserCalendarDrinkDto> from(Set<UserCalendarDrink> userCalendarDrinks) {
+    public static List<UserCalendarDrinkDto> from(List<UserCalendarDrink> userCalendarDrinks) {
         return userCalendarDrinks.stream()
                 .map(userCalendarDrink -> new UserCalendarDrinkDto(
                         userCalendarDrink.getId(),

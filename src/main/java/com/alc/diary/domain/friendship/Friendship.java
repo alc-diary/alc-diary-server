@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
@@ -33,16 +34,20 @@ public class Friendship extends BaseEntity {
     @JoinColumn(name = "to_user_id", foreignKey = @ForeignKey(name = "fk_friendships_to_user_users"),updatable = false)
     private User toUser;
 
+    @Audited
     @Column(name = "from_user_alias", length = 30)
     private String fromUserAlias;
 
+    @Audited
     @Column(name = "to_user_alias", length = 30)
     private String toUserAlias;
 
+    @Audited
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private FriendshipStatus status;
 
+    @Audited
     @Column(name = "message", length = 100, updatable = false)
     private String message;
 
@@ -81,13 +86,12 @@ public class Friendship extends BaseEntity {
     public static Friendship createRequest(
             User fromUser,
             User toUser,
-            String fromUserAlias,
             String message
     ) {
         return new Friendship(
                 fromUser,
                 toUser,
-                fromUserAlias,
+                null,
                 null,
                 FriendshipStatus.REQUESTED,
                 message
@@ -147,5 +151,13 @@ public class Friendship extends BaseEntity {
         }
 
         throw new RuntimeException();
+    }
+
+    public boolean isRequestedOrAccepted() {
+        return status.isRequestedOrAccepted();
+    }
+
+    public boolean areBothUserActive() {
+        return fromUser.isActive() && toUser.isActive();
     }
 }

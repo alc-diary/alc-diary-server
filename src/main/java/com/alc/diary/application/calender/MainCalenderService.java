@@ -26,7 +26,7 @@ public class MainCalenderService {
     @Transactional
     public MainCalenderResponse saveMain(SaveMainCalenderRequest request, Long userId) {
         try {
-            User user = userRepository.findById(userId).orElseThrow();
+            User user = userRepository.findActiveUserById(userId).orElseThrow();
 
             Calender calender = calenderRepository.save(Calender.Of(request.drinkStartDateTime(), request.drinkModels(), user));
             return new MainCalenderResponse(calender.getId());
@@ -37,7 +37,7 @@ public class MainCalenderService {
 
     public GetMainResponse getMain(Long userId) {
         try {
-            User user = userRepository.findById(userId).orElseThrow();
+            User user = userRepository.findActiveUserById(userId).orElseThrow();
             long overAlcoholLimit = customCalenderRepository.countAlcoholLimit(userId);
             return GetMainResponse.create(user.getDetail().getNickname(), user.getDetail().getDescriptionStyle(), overAlcoholLimit, user.getDetail().getNonAlcoholGoal());
         } catch (Throwable e) {

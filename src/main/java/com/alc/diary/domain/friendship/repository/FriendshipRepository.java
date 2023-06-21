@@ -12,8 +12,6 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
 
     Optional<Friendship> findById(long id);
 
-    Optional<Friendship> findByIdAndStatusEquals(long id, FriendshipStatus status);
-
     List<Friendship> findByIdIn(List<Long> ids);
 
     Friendship save(Friendship friendship);
@@ -35,4 +33,10 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
             ")" +
             "AND f.status = 'ACCEPTED'")
     List<Friendship> findAcceptedFriendshipsByUserId(long userId);
+
+    @Query("SELECT f " +
+            "FROM Friendship f " +
+            "WHERE f.fromUser.id = :fromUserId " +
+            "AND f.status = 'REQUESTED'")
+    List<Friendship> findRequestedFriendshipByFromUserId(long fromUserId);
 }
