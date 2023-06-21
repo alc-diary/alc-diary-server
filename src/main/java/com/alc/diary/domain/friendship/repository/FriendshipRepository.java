@@ -12,8 +12,6 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
 
     Optional<Friendship> findById(long id);
 
-    Optional<Friendship> findByIdAndStatusEquals(long id, FriendshipStatus status);
-
     List<Friendship> findByIdIn(List<Long> ids);
 
     Friendship save(Friendship friendship);

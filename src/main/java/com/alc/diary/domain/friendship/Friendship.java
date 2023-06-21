@@ -151,4 +151,8 @@ public class Friendship extends BaseEntity {
     public boolean isRequestedOrAccepted() {
         return status.isRequestedOrAccepted();
     }
+
+    public boolean areBothUserActive() {
+        return fromUser.isActive() && toUser.isActive();
+    }
 }

@@ -118,6 +118,10 @@ public class User extends BaseEntity {
         return status == UserStatus.ONBOARDING;
     }
 
+    public boolean isActive() {
+        return status == UserStatus.ACTIVE;
+    }
+
     public void onboarding(UserDetail detail) {
         detail.setUser(this);
         this.detail = detail;
