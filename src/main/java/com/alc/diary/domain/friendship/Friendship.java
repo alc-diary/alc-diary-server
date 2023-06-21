@@ -81,13 +81,12 @@ public class Friendship extends BaseEntity {
     public static Friendship createRequest(
             User fromUser,
             User toUser,
-            String fromUserAlias,
             String message
     ) {
         return new Friendship(
                 fromUser,
                 toUser,
-                fromUserAlias,
+                null,
                 null,
                 FriendshipStatus.REQUESTED,
                 message
@@ -147,5 +146,9 @@ public class Friendship extends BaseEntity {
         }
 
         throw new RuntimeException();
+    }
+
+    public boolean isRequestedOrAccepted() {
+        return status.isRequestedOrAccepted();
     }
 }
