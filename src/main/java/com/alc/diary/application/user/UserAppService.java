@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -30,14 +32,8 @@ public class UserAppService {
      * @return SearchUserAppResponse
      */
     public SearchUserAppResponse searchUser(String nickname) {
-        User foundUser = getUserByNickname(nickname);
-
-        return SearchUserAppResponse.from(foundUser);
-    }
-
-    private User getUserByNickname(String nickname) {
-        return userRepository.findActiveUserByNickname(nickname)
-                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        Optional<User> optionalUser = userRepository.findActiveUserByNickname(nickname);
+        return optionalUser.map(SearchUserAppResponse::from).orElse(null);
     }
 
     /**
