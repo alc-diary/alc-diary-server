@@ -15,7 +15,6 @@ import javax.persistence.*;
 @ToString(exclude = "detail")
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "status = 'ACTIVE'")
 @Table(
         name = "users",
         indexes = {@Index(name = "idx_users_social_id", columnList = "social_id")})

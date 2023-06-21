@@ -54,12 +54,12 @@ public class FriendshipAppService {
     }
 
     private User getUserById(long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findActiveUserById(userId)
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 
     private User getUserByNickname(String nickname) {
-        return userRepository.findByDetail_Nickname(nickname)
+        return userRepository.findActiveUserByNickname(nickname)
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "Nickname: " + nickname));
     }
 

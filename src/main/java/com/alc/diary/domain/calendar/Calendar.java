@@ -13,6 +13,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class Calendar extends BaseEntity {
     private String title;
 
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
-    private Set<UserCalendar> userCalendars = new HashSet<>();
+    private List<UserCalendar> userCalendars = new ArrayList<>();
 
     @Audited
     @Column(name = "drink_start_time", nullable = false)

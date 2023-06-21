@@ -21,6 +21,14 @@ public class UserApiController {
     private final UserAppService userAppService;
     private final NicknameAppService nicknameAppService;
 
+    @GetMapping
+    public ApiResponse<?> searchUser(
+            @RequestParam String nickname
+    ) {
+        return null;
+    }
+
+
     @GetMapping("/info")
     public ApiResponse<GetUserInfoAppResponse> getUserInfo(
             @ApiIgnore @RequestAttribute Long userId

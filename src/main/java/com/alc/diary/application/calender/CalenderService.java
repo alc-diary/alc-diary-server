@@ -88,7 +88,7 @@ public class CalenderService {
     })
     public void save(SaveCalenderRequest request, Long userId) {
         try {
-            User user = userRepository.findById(userId).orElseThrow();
+            User user = userRepository.findActiveUserById(userId).orElseThrow();
 
             calenderRepository.save(
                     Calender.builder()
@@ -132,7 +132,7 @@ public class CalenderService {
     public void update(Long calenderId, Long userId, UpdateCalenderRequest request) {
         if (!isValidUser(calenderId, userId)) return;
         try {
-            User user = userRepository.findById(userId).orElseThrow();
+            User user = userRepository.findActiveUserById(userId).orElseThrow();
             Calender calender = calenderRepository.getCalenderById(calenderId).orElseThrow();
             calender.update(
                     request.title(), request.contents(),

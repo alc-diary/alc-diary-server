@@ -22,6 +22,10 @@ public class UserAppService {
     private final UserDetailRepository userDetailRepository;
     private final UserWithdrawalRepository userWithdrawalRepository;
 
+    public void searchUser(String nickname) {
+
+    }
+
     public GetUserInfoAppResponse getUserInfo(Long userId) {
         User foundUser = getUserById(userId);
         return new GetUserInfoAppResponse(
@@ -75,7 +79,7 @@ public class UserAppService {
     }
 
     private User getUserById(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findActiveUserById(userId)
                              .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 }

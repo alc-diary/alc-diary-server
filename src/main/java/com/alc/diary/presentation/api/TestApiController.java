@@ -29,9 +29,4 @@ public class TestApiController {
     public void localDateTimeTest() {
         LocalDateTime now = LocalDateTime.now();
     }
-
-    @GetMapping("/users/{userId}/exists")
-    public boolean userExistsTest(@PathVariable long userId) {
-        return userRepository.existsByIdAndStatusNotEqualDeactivated(userId);
-    }
 }

@@ -1,6 +1,7 @@
 package com.alc.diary.domain.user.repository;
 
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.enums.SocialType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -9,54 +10,63 @@ import java.util.Optional;
 
 public interface UserRepository extends Repository<User, Long>, CustomUserRepository {
 
-    Optional<User> findById(Long id);
-
-    boolean existsById(long id);
-
-    @Query(value = "SELECT CASE " +
-                   "    WHEN EXISTS(SELECT u.id FROM users u WHERE u.id = :id AND u.status <> 'DEACTIVATED') " +
-                   "        THEN TRUE " +
-                   "        ELSE FALSE " +
-                   "    END ",
-            nativeQuery = true
-    )
-    boolean existsByIdAndStatusNotEqualDeactivated(long id);
-
-    @Query(
-            value = "" +
-                    "SELECT *                       \n" +
-                    "FROM users u                   \n" +
-                    "WHERE u.id = :id               \n" +
-                    "AND u.status <> 'DEACTIVATED'  \n",
-            nativeQuery = true
-    )
-    Optional<User> findByIdAndStatusNotEqualDeactivated(long id);
-
-    @Query(value = "select * " +
-                   "from users u " +
-                   "where u.id = :id " +
-                   "and u.status = 'ONBOARDING'",
-            nativeQuery = true
-    )
-    Optional<User> findByIdAndStatusEqualsOnboarding(long id);
-
     User save(User user);
 
-    @Query(
-            value = "select * " +
-                    "from users u " +
-                    "where u.social_id = :socialId " +
-                    "and u.social_type = :socialType " +
-                    "and u.status <> 'DEACTIVATED' ",
-            nativeQuery = true
-    )
-    Optional<User> findBySocialTypeAndSocialIdAndStatusNotEqualDeactivated(String socialType, String socialId);
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.id = :id " +
+            "AND u.status = 'ACTIVE'")
+    Optional<User> findActiveUserById(long id);
 
-    @Query("select u " +
-            "from User u " +
-            "join fetch u.detail ud " +
-            "where ud.nickname = :nickname")
-    Optional<User> findByDetail_Nickname(String nickname);
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.id IN (:userIds) " +
+            "AND u.status = 'ACTIVE'")
+    List<User> findActiveUsersByIdIn(Iterable<Long> userIds);
 
-    List<User> findByIdIn(Iterable<Long> userIds);
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.id = :id " +
+            "AND u.status = 'ONBOARDING'")
+    Optional<User> findOnboardingUserById(long id);
+
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.id = :id " +
+            "AND u.status <> 'DEACTIVATED'")
+    Optional<User> findNotDeactivatedUserById(long id);
+
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.socialType = :socialType " +
+            "AND u.socialId = :socialId " +
+            "AND u.status <> 'DEACTIVATED'")
+    Optional<User> findNotDeactivatedUserByIdAndSocialTypeAndSocialId(SocialType socialType, String socialId);
+
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.detail.nickname = :nickname " +
+            "AND u.status = 'ACTIVE'")
+    Optional<User> findActiveUserByNickname(String nickname);
+
+    @Query("SELECT CASE " +
+            "   WHEN EXISTS(SELECT u.id FROM User u WHERE u.id = :id AND u.status = 'ACTIVE') " +
+            "       THEN TRUE " +
+            "       ELSE FALSE " +
+            "   END ")
+    boolean existsActiveUserById(long id);
+
+    @Query("SELECT CASE " +
+            "   WHEN EXISTS(SELECT u.id FROM User u WHERE u.id = :id AND u.status = 'ONBOARDING') " +
+            "       THEN TRUE " +
+            "       ELSE FALSE " +
+            "   END ")
+    boolean existsOnboardingUserById(long id);
+
+    @Query("SELECT CASE " +
+            "   WHEN EXISTS(SELECT u.id FROM User u WHERE u.id = :id AND u.status <> 'DEACTIVATED') " +
+            "       THEN TRUE " +
+            "       ELSE FALSE " +
+            "   END ")
+    boolean existsNotDeactivatedUserById(long id);
 }
