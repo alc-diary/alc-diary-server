@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.regex.Pattern;
 
 @Getter
 @ToString
@@ -21,6 +22,8 @@ import javax.persistence.*;
         uniqueConstraints = {@UniqueConstraint(name = "unique_user_detail_nickname", columnNames = {"nickname"})})
 @Entity
 public class UserDetail extends BaseEntity {
+
+    public static final Pattern NICKNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣]+$");
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

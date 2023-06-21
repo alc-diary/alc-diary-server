@@ -3,6 +3,7 @@ package com.alc.diary.presentation.api;
 import com.alc.diary.application.friendship.FriendshipAppService;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
+import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,13 @@ public class FriendshipApiController {
             @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {
         return ApiResponse.getSuccess(friendshipAppService.getFriendships(userId));
+    }
+
+    @GetMapping("/pending-requests")
+    public ApiResponse<List<GetPendingRequestsAppResponse>> getPendingRequests(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId
+    ) {
+        return ApiResponse.getSuccess(friendshipAppService.getPendingRequests(userId));
     }
 
     @GetMapping("/received-requests")

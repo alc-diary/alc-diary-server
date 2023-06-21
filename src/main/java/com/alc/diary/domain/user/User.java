@@ -6,7 +6,6 @@ import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -15,7 +14,6 @@ import javax.persistence.*;
 @ToString(exclude = "detail")
 @Builder(builderMethodName = "innerBuilder")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "status = 'ACTIVE'")
 @Table(
         name = "users",
         indexes = {@Index(name = "idx_users_social_id", columnList = "social_id")})
@@ -117,6 +115,10 @@ public class User extends BaseEntity {
 
     public boolean isOnboarding() {
         return status == UserStatus.ONBOARDING;
+    }
+
+    public boolean isActive() {
+        return status == UserStatus.ACTIVE;
     }
 
     public void onboarding(UserDetail detail) {

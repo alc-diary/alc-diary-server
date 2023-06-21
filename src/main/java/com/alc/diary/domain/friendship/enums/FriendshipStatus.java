@@ -7,4 +7,8 @@ public enum FriendshipStatus {
     DECLINED,
     DELETED,
     ;
+
+    public boolean isRequestedOrAccepted() {
+        return this == REQUESTED || this == ACCEPTED;
+    }
 }

@@ -18,7 +18,7 @@ public record UserCalendarDto(
         UserCalendarStatus status
 ) {
 
-    public static List<UserCalendarDto> from(Set<UserCalendar> userCalendars) {
+    public static List<UserCalendarDto> from(List<UserCalendar> userCalendars) {
         return userCalendars.stream()
                 .map(userCalendar -> new UserCalendarDto(
                         userCalendar.getId(),
