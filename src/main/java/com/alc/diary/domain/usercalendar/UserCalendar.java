@@ -12,7 +12,9 @@ import lombok.ToString;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -36,7 +38,7 @@ public class UserCalendar extends BaseEntity {
     private Calendar calendar;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
-    private Set<UserCalendarDrink> drinks = new HashSet<>();
+    private List<UserCalendarDrink> drinks = new ArrayList<>();
 
     @Audited
     @Column(name = "content", length = 1000)

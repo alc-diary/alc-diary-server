@@ -44,9 +44,9 @@ public class CalendarAppService {
      */
     @Transactional
     public void createCalendar(long userId, CreateCalendarAppRequest request) {
-        User foundUser = userRepository.findById(userId)
+        User foundUser = userRepository.findActiveUserById(userId)
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
-        List<UserCalendar> taggedUserCalendarsToSave = userRepository.findByIdIn(request.taggedUserId()).stream()
+        List<UserCalendar> taggedUserCalendarsToSave = userRepository.findActiveUsersByIdIn(request.taggedUserId()).stream()
                 .map(UserCalendar::createUserCalendarRequest)
                 .toList();
 

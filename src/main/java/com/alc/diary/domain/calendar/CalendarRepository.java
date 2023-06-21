@@ -22,8 +22,6 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
     @Query("SELECT DISTINCT c " +
             "FROM Calendar c " +
             "JOIN FETCH c.userCalendars uc " +
-            "LEFT JOIN FETCH uc.images i " +
-            "LEFT JOIN FETCH uc.drinks d " +
             "WHERE uc.user.id = :userId " +
             "AND c.drinkStartTime >= :startTime " +
             "AND c.drinkEndTime < :endTime " +

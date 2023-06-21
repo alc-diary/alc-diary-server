@@ -58,18 +58,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (isOnboardingEndpoint(path)) {
                 if (path.equals("/v1/onboarding/is-onboarding-done")) {
-                    if (userRepository.findByIdAndStatusNotEqualDeactivated(userId).isEmpty()) {
+                    if (!userRepository.existsNotDeactivatedUserById(userId)) {
                         throw new DomainException(UserError.USER_NOT_FOUND);
                     }
-                } else if (userRepository.findByIdAndStatusNotEqualDeactivated(userId).filter(User::isOnboarding).isEmpty()) {
+                } else if (!userRepository.existsOnboardingUserById(userId)) {
                     throw new DomainException(UserError.USER_NOT_FOUND);
                 }
             } else if (path.startsWith("/v1/user-status")) {
-                if (userRepository.findByIdAndStatusNotEqualDeactivated(userId).isEmpty()) {
+                if (!userRepository.existsNotDeactivatedUserById(userId)) {
                     throw new DomainException(UserError.USER_NOT_FOUND);
                 }
             } else {
-                if (!userRepository.existsById(userId)) {
+                if (!userRepository.existsActiveUserById(userId)) {
                     throw new DomainException(UserError.USER_NOT_FOUND);
                 }
             }
