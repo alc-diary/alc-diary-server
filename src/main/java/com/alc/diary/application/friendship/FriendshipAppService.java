@@ -37,7 +37,7 @@ public class FriendshipAppService {
     @Transactional
     public void requestFriendship(long userId, RequestFriendshipAppRequest request) {
         User requester = getUserById(userId);
-        User targetUser = getUserByNickname(request.targetNickname());
+        User targetUser = getUserById(request.targetUserId());
         if (requester.equals(targetUser)) {
             throw new DomainException(
                     FriendshipError.INVALID_REQUEST,
