@@ -4,6 +4,7 @@ import com.alc.diary.domain.friendship.Friendship;
 import com.alc.diary.domain.friendship.enums.FriendshipStatus;
 
 public record GetReceivedFriendshipRequestsAppResponse(
+
         long friendshipId,
         long fromUserId,
         String fromUserNickname,

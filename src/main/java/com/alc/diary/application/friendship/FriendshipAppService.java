@@ -2,6 +2,7 @@ package com.alc.diary.application.friendship;
 
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
+import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.friendship.Friendship;
@@ -76,6 +77,16 @@ public class FriendshipAppService {
      */
     public GetFriendshipsAppResponse getFriendships(long userId) {
         return GetFriendshipsAppResponse.of(friendshipRepository.findAcceptedFriendshipsByUserId(userId), userId);
+    }
+
+    /**
+     * 수락 대기중인 친구 요청 목록 조회
+     *
+     * @param userId
+     * @return
+     */
+    public List<GetPendingRequestsAppResponse> getPendingRequests(long userId) {
+        return GetPendingRequestsAppResponse.from(friendshipRepository.findRequestedFriendshipByFromUserId(userId));
     }
 
     /**

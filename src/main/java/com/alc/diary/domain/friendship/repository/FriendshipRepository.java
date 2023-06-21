@@ -35,4 +35,10 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
             ")" +
             "AND f.status = 'ACCEPTED'")
     List<Friendship> findAcceptedFriendshipsByUserId(long userId);
+
+    @Query("SELECT f " +
+            "FROM Friendship f " +
+            "WHERE f.fromUser.id = :fromUserId " +
+            "AND f.status = 'REQUESTED'")
+    List<Friendship> findRequestedFriendshipByFromUserId(long fromUserId);
 }
