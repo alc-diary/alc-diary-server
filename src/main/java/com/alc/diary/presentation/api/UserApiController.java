@@ -30,7 +30,7 @@ public class UserApiController {
             @RequestParam String nickname
     ) {
         if (nickname == null || !UserDetail.NICKNAME_PATTERN.matcher(nickname).matches()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임은 한글, 영어 대소문자, 숫자만 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임은 한글, 영어 대소문자, 숫자로만 검색할 수 있습니다.");
         }
         return ApiResponse.getSuccess(userAppService.searchUser(nickname));
     }
