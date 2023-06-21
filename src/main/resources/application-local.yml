@@ -10,6 +10,11 @@ spring:
     url: jdbc:h2:~/alc;MODE=mysql
     username: sa
     password:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/alc
+#    username: root
+#    password: abcd1234
   jpa:
     hibernate:
       ddl-auto: create-drop

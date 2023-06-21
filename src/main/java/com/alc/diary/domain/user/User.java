@@ -6,7 +6,6 @@ import com.alc.diary.domain.user.enums.*;
 import com.alc.diary.domain.user.error.UserError;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;

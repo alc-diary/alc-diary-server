@@ -82,7 +82,7 @@ public class FriendshipAppService {
     }
 
     /**
-     * 현재 사용자가 받은 받은 친구 요청 리스트를 조회
+     * 현재 사용자가 받은 친구 요청 리스트를 조회
      *
      * @param userId 요청 유저 ID
      * @return 받은 친구 요청 리스트

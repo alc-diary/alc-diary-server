@@ -48,25 +48,4 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
             "WHERE u.detail.nickname = :nickname " +
             "AND u.status = 'ACTIVE'")
     Optional<User> findActiveUserByNickname(String nickname);
-
-    @Query("SELECT CASE " +
-            "   WHEN EXISTS(SELECT u.id FROM User u WHERE u.id = :id AND u.status = 'ACTIVE') " +
-            "       THEN TRUE " +
-            "       ELSE FALSE " +
-            "   END ")
-    boolean existsActiveUserById(long id);
-
-    @Query("SELECT CASE " +
-            "   WHEN EXISTS(SELECT u.id FROM User u WHERE u.id = :id AND u.status = 'ONBOARDING') " +
-            "       THEN TRUE " +
-            "       ELSE FALSE " +
-            "   END ")
-    boolean existsOnboardingUserById(long id);
-
-    @Query("SELECT CASE " +
-            "   WHEN EXISTS(SELECT u.id FROM User u WHERE u.id = :id AND u.status <> 'DEACTIVATED') " +
-            "       THEN TRUE " +
-            "       ELSE FALSE " +
-            "   END ")
-    boolean existsNotDeactivatedUserById(long id);
 }
