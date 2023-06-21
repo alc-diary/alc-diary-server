@@ -5,6 +5,7 @@ import com.alc.diary.application.user.UserAppService;
 import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
+import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,12 +23,11 @@ public class UserApiController {
     private final NicknameAppService nicknameAppService;
 
     @GetMapping
-    public ApiResponse<?> searchUser(
+    public ApiResponse<SearchUserAppResponse> searchUser(
             @RequestParam String nickname
     ) {
-        return null;
+        return ApiResponse.getSuccess(userAppService.searchUser(nickname));
     }
-
 
     @GetMapping("/info")
     public ApiResponse<GetUserInfoAppResponse> getUserInfo(

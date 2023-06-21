@@ -2,6 +2,7 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
+import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserWithdrawal;
@@ -22,30 +23,52 @@ public class UserAppService {
     private final UserDetailRepository userDetailRepository;
     private final UserWithdrawalRepository userWithdrawalRepository;
 
-    public void searchUser(String nickname) {
+    /**
+     * 유저 검색 (현재는 nickname만)
+     *
+     * @param nickname
+     * @return SearchUserAppResponse
+     */
+    public SearchUserAppResponse searchUser(String nickname) {
+        User foundUser = getUserByNickname(nickname);
 
+        return SearchUserAppResponse.from(foundUser);
     }
 
+    private User getUserByNickname(String nickname) {
+        return userRepository.findActiveUserByNickname(nickname)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+    }
+
+    /**
+     * userId로 유저 정보 조회
+     *
+     * @param userId
+     * @return GetUserInfoAppResponse
+     */
     public GetUserInfoAppResponse getUserInfo(Long userId) {
         User foundUser = getUserById(userId);
-        return new GetUserInfoAppResponse(
-                foundUser.getId(),
-                foundUser.getDetail().getDescriptionStyle(),
-                foundUser.getDetail().getAlcoholType(),
-                foundUser.getDetail().getNickname(),
-                foundUser.getDetail().getPersonalAlcoholLimit(),
-                foundUser.getDetail().getNonAlcoholGoal(),
-                foundUser.getProfileImage(),
-                foundUser.getStatus()
-        );
+        return GetUserInfoAppResponse.from(foundUser);
     }
 
+    /**
+     * 프로필 이미지 변경
+     *
+     * @param userId
+     * @param request
+     */
     @Transactional
     public void updateUserProfileImage(Long userId, UpdateUserProfileImageAppRequest request) {
         User foundUser = getUserById(userId);
         foundUser.updateProfileImage(request.newProfileImage());
     }
 
+    /**
+     * 주량 변경
+     *
+     * @param userId
+     * @param request
+     */
     @Transactional
     public void updateAlcoholLimitAndGoal(Long userId, UpdateAlcoholLimitAndGoalAppRequest request) {
         User foundUser = getUserById(userId);
@@ -56,6 +79,12 @@ public class UserAppService {
         );
     }
 
+    /**
+     * 닉네임 변경
+     *
+     * @param userId
+     * @param request
+     */
     @Transactional
     public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
         User foundUser = getUserById(userId);
@@ -65,12 +94,24 @@ public class UserAppService {
         foundUser.getDetail().updateNickname(request.newNickname());
     }
 
+    /**
+     * 코알리 설명 타입 변경
+     *
+     * @param userId
+     * @param request
+     */
     @Transactional
     public void updateDescriptionStyle(Long userId, UpdateDescriptionStyleAppRequest request) {
         User foundUser = getUserById(userId);
         foundUser.getDetail().updateDescriptionStyle(request.newDescriptionStyle());
     }
 
+    /**
+     * 회원 탈퇴 (Soft delete)
+     *
+     * @param requesterId
+     * @param request
+     */
     @Transactional
     public void deactivateUser(Long requesterId, DeactivateUserAppRequest request) {
         User targetUser = getUserById(request.targetUserId());
