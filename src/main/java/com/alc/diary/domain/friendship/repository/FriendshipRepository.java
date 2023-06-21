@@ -23,6 +23,16 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
     List<Friendship> findByFromUser_IdAndToUser_Id(long fromUserId, long toUserId);
 
     @Query("SELECT f " +
+           "FROM Friendship f " +
+           "JOIN FETCH f.fromUser fu " +
+           "JOIN FETCH f.toUser tu " +
+           "WHERE " +
+           "    (fu.id = :user1Id AND tu.id = :user2Id) " +
+           "        OR " +
+           "    (fu.id = :user2Id AND tu.id = :user1Id)")
+    List<Friendship> findByUserIds(long user1Id, long user2Id);
+
+    @Query("SELECT f " +
             "FROM Friendship f " +
             "JOIN FETCH f.fromUser fu " +
             "JOIN FETCH f.toUser tu " +

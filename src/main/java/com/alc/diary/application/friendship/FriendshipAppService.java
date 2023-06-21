@@ -65,7 +65,7 @@ public class FriendshipAppService {
     }
 
     private boolean doesFriendshipExist(User requester, User targetUser) {
-        return friendshipRepository.findByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId()).stream()
+        return friendshipRepository.findByUserIds(requester.getId(), targetUser.getId()).stream()
                 .anyMatch(Friendship::isRequestedOrAccepted);
     }
 
