@@ -36,7 +36,7 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.getFriendships(userId));
     }
 
-    @GetMapping
+    @GetMapping("/pending-requests")
     public ApiResponse<List<GetPendingRequestsAppResponse>> getPendingRequests(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {

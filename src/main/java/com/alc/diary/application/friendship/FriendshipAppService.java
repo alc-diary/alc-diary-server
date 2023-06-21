@@ -70,13 +70,30 @@ public class FriendshipAppService {
     }
 
     /**
-     * 친구 목록 조회
+     * 현재 사용자의 친구 목록 조회
      *
      * @param userId 요청 유저 ID
      * @return
      */
     public GetFriendshipsAppResponse getFriendships(long userId) {
-        return GetFriendshipsAppResponse.of(friendshipRepository.findAcceptedFriendshipsByUserId(userId), userId);
+        return GetFriendshipsAppResponse.of(
+                filterFriendshipWithActiveUsers(friendshipRepository.findAcceptedFriendshipsByUserId(userId)), userId
+        );
+    }
+
+    /**
+     * 현재 사용자가 받은 받은 친구 요청 리스트를 조회
+     *
+     * @param userId 요청 유저 ID
+     * @return 받은 친구 요청 리스트
+     */
+    public List<GetReceivedFriendshipRequestsAppResponse> getReceivedFriendshipRequests(long userId) {
+        List<Friendship> foundFriendships = filterFriendshipWithActiveUsers(
+                friendshipRepository.findByToUser_IdAndStatusEquals(userId, FriendshipStatus.REQUESTED)
+        );
+        return foundFriendships.stream()
+                .map(GetReceivedFriendshipRequestsAppResponse::from)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -86,24 +103,15 @@ public class FriendshipAppService {
      * @return
      */
     public List<GetPendingRequestsAppResponse> getPendingRequests(long userId) {
-        return GetPendingRequestsAppResponse.from(friendshipRepository.findRequestedFriendshipByFromUserId(userId));
+        return GetPendingRequestsAppResponse.from(
+                filterFriendshipWithActiveUsers(friendshipRepository.findRequestedFriendshipByFromUserId(userId))
+        );
     }
 
-    /**
-     * 받은 친구 요청 리스트 조회
-     *
-     * @param userId 요청 유저 ID
-     * @return 받은 친구 요청 리스트
-     */
-    public List<GetReceivedFriendshipRequestsAppResponse> getReceivedFriendshipRequests(long userId) {
-        List<Friendship> foundFriendships = getFriendshipsByUserIdAndStatus(userId, FriendshipStatus.REQUESTED);
-        return foundFriendships.stream()
-                .map(GetReceivedFriendshipRequestsAppResponse::from)
+    private List<Friendship> filterFriendshipWithActiveUsers(List<Friendship> friendships) {
+        return friendships.stream()
+                .filter(Friendship::areBothUserActive)
                 .collect(Collectors.toList());
-    }
-
-    private List<Friendship> getFriendshipsByUserIdAndStatus(long userId, FriendshipStatus status) {
-        return friendshipRepository.findByToUser_IdAndStatusEquals(userId, status);
     }
 
     /**
