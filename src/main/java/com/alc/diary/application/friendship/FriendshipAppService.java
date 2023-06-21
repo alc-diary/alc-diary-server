@@ -31,25 +31,18 @@ public class FriendshipAppService {
     /**
      * 친구 요청 보내기
      *
-     * @param userId 요청 유저 ID
+     * @param userId  요청 유저 ID
      * @param request request
      */
     @Transactional
     public void requestFriendship(long userId, RequestFriendshipAppRequest request) {
         User requester = getUserById(userId);
         User targetUser = getUserById(request.targetUserId());
-        if (requester.equals(targetUser)) {
-            throw new DomainException(
-                    FriendshipError.INVALID_REQUEST,
-                    "Request User ID: " + requester.getId() + ", Target User ID: " + targetUser.getId()
-            );
-        }
-        if (friendshipRepository.findByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId()).stream()
-                                .anyMatch(friendship -> friendship.getStatus() == FriendshipStatus.REQUESTED || friendship.getStatus() == FriendshipStatus.ACCEPTED)) {
-            throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
-        }
+
+        validRequest(requester, targetUser);
+
         Friendship friendshipToSave =
-                Friendship.createRequest(requester, targetUser, request.alias(), request.message());
+                Friendship.createRequest(requester, targetUser, request.message());
         friendshipRepository.save(friendshipToSave);
     }
 
@@ -58,9 +51,21 @@ public class FriendshipAppService {
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 
-    private User getUserByNickname(String nickname) {
-        return userRepository.findActiveUserByNickname(nickname)
-                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "Nickname: " + nickname));
+    private void validRequest(User requester, User targetUser) {
+        if (requester.equals(targetUser)) {
+            throw new DomainException(
+                    FriendshipError.INVALID_REQUEST,
+                    String.format("Request UserID: %d, Target User Id: %d", requester.getId(), targetUser.getId())
+            );
+        }
+        if (doesFriendshipExist(requester, targetUser)) {
+            throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
+        }
+    }
+
+    private boolean doesFriendshipExist(User requester, User targetUser) {
+        return friendshipRepository.findByFromUser_IdAndToUser_Id(requester.getId(), targetUser.getId()).stream()
+                .anyMatch(Friendship::isRequestedOrAccepted);
     }
 
     /**
@@ -93,7 +98,7 @@ public class FriendshipAppService {
     /**
      * 친구 요청 수락
      *
-     * @param userId 요청 유저 ID
+     * @param userId       요청 유저 ID
      * @param friendshipId 친구 데이터 ID
      */
     @Transactional
@@ -105,7 +110,7 @@ public class FriendshipAppService {
     /**
      * 친구 삭제 (soft delete)
      *
-     * @param requesterId 요청 유저 ID
+     * @param requesterId  요청 유저 ID
      * @param friendshipId 삭제할 친구 데이터 ID
      */
     @Transactional
@@ -117,7 +122,7 @@ public class FriendshipAppService {
     /**
      * 친구 요청 거절
      *
-     * @param userId 요청 유저 ID
+     * @param userId       요청 유저 ID
      * @param friendshipId 친구 데이터 ID
      */
     @Transactional
