@@ -1,5 +1,6 @@
 package com.alc.diary.application.friendship;
 
+import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
@@ -59,26 +60,53 @@ public class FriendshipAppService {
                     String.format("Request UserID: %d, Target User Id: %d", requester.getId(), targetUser.getId())
             );
         }
-        if (doesFriendshipExist(requester, targetUser)) {
+        if (getCurrentFriendshipStatusByUserIds(requester.getId(), targetUser.getId()) != null
+                && getCurrentFriendshipStatusByUserIds(requester.getId(), targetUser.getId()).isRequestedOrAccepted()) {
             throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
         }
-    }
-
-    private boolean doesFriendshipExist(User requester, User targetUser) {
-        return friendshipRepository.findByUserIds(requester.getId(), targetUser.getId()).stream()
-                .anyMatch(Friendship::isRequestedOrAccepted);
     }
 
     /**
      * 현재 사용자의 친구 목록 조회
      *
-     * @param userId 요청 유저 ID
+     * @param requesterId 요청 유저 ID
      * @return
      */
-    public GetFriendshipsAppResponse getFriendships(long userId) {
+    public List<GetFriendshipsAppResponse> getFriendships(long requesterId) {
         return GetFriendshipsAppResponse.of(
-                filterFriendshipWithActiveUsers(friendshipRepository.findAcceptedFriendshipsByUserId(userId)), userId
+                filterFriendshipWithActiveUsers(friendshipRepository.findAcceptedFriendshipsByUserId(requesterId)), requesterId
         );
+    }
+
+    /**
+     * 닉네임으로 유저 정보와 친구 상태를 조회
+     *
+     * @param requesterId
+     * @param nickname
+     */
+    public SearchUserWithFriendshipStatusByNicknameAppResponse searchUserWithFriendshipStatusByNickname(
+            long requesterId,
+            String nickname
+    ) {
+        return userRepository.findActiveUserByNickname(nickname).map(foundUser ->
+                SearchUserWithFriendshipStatusByNicknameAppResponse.of(
+                        foundUser,
+                        getCurrentFriendshipStatusByUserIds(requesterId, foundUser.getId())
+                )).orElse(null);
+    }
+
+    private FriendshipStatus getCurrentFriendshipStatusByUserIds(long user1Id, long user2Id) {
+        List<Friendship> foundFriendships =
+                friendshipRepository.findNotDeletedFriendshipsByUserIds(user1Id, user2Id);
+
+        if (foundFriendships.stream().anyMatch(Friendship::isAccepted)) {
+            return FriendshipStatus.ACCEPTED;
+        }
+        if (foundFriendships.stream().anyMatch(Friendship::isRequested)) {
+            return FriendshipStatus.REQUESTED;
+        }
+
+        return null;
     }
 
     /**

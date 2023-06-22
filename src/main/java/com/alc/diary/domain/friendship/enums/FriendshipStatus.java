@@ -9,6 +9,14 @@ public enum FriendshipStatus {
     ;
 
     public boolean isRequestedOrAccepted() {
-        return this == REQUESTED || this == ACCEPTED;
+        return isRequested() || isAccepted();
+    }
+
+    public boolean isRequested() {
+        return this == REQUESTED;
+    }
+
+    public boolean isAccepted() {
+        return this == ACCEPTED;
     }
 }

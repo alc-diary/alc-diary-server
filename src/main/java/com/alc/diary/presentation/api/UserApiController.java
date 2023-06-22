@@ -6,7 +6,9 @@ import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.UserDetail;
+import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class UserApiController {
             @RequestParam String nickname
     ) {
         if (nickname == null || !UserDetail.NICKNAME_PATTERN.matcher(nickname).matches()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임은 한글, 영어 대소문자, 숫자로만 검색할 수 있습니다.");
+            throw new DomainException(UserError.INVALID_NICKNAME_FORMAT);
         }
         return ApiResponse.getSuccess(userAppService.searchUser(nickname));
     }
