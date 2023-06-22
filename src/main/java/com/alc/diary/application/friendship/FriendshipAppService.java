@@ -43,7 +43,7 @@ public class FriendshipAppService {
         User requester = getUserById(userId);
         User targetUser = getUserById(request.targetUserId());
 
-        validRequest(requester, targetUser);
+        validFriendshipRequest(requester, targetUser);
 
         Friendship friendshipToSave =
                 Friendship.createRequest(requester, targetUser, request.message());
@@ -55,7 +55,7 @@ public class FriendshipAppService {
                              .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 
-    private void validRequest(User requester, User targetUser) {
+    private void validFriendshipRequest(User requester, User targetUser) {
         if (requester.equals(targetUser)) {
             throw new DomainException(
                     FriendshipError.INVALID_REQUEST,

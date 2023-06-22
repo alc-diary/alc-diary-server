@@ -42,6 +42,15 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.getFriendships(userId));
     }
 
+    @DeleteMapping("/{friendshipId}")
+    public ApiResponse<Void> deleteFriendship(
+            @ApiIgnore @RequestAttribute(name = "userId") long requesterId,
+            @PathVariable long friendshipId
+    ) {
+        friendshipAppService.deleteFriendship(requesterId, friendshipId);
+        return ApiResponse.getSuccess();
+    }
+
     @GetMapping("/search-user-with-friendship-status")
     public ApiResponse<SearchUserWithFriendshipStatusByNicknameAppResponse> searchUserWithFriendshipStatusByNickname(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
@@ -104,15 +113,6 @@ public class FriendshipApiController {
             @RequestBody UpdateFriendshipAliasAppRequest request
     ) {
         friendshipAppService.updateFriendshipAlias(userId, friendshipId, request);
-        return ApiResponse.getSuccess();
-    }
-
-    @DeleteMapping("/{friendshipId}")
-    public ApiResponse<Void> deleteFriendship(
-            @ApiIgnore @RequestAttribute(name = "userId") long requesterId,
-            @PathVariable long friendshipId
-    ) {
-        friendshipAppService.deleteFriendship(requesterId, friendshipId);
         return ApiResponse.getSuccess();
     }
 }
