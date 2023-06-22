@@ -1,10 +1,14 @@
 package com.alc.diary.presentation.api;
 
+import com.alc.diary.application.calendar.dto.response.SearchUserInfoAndFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.FriendshipAppService;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
+import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.UserDetail;
+import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -30,10 +34,23 @@ public class FriendshipApiController {
     }
 
     @GetMapping
-    public ApiResponse<GetFriendshipsAppResponse> getFriendShips(
+    public ApiResponse<List<GetFriendshipsAppResponse>> getFriendShips(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {
         return ApiResponse.getSuccess(friendshipAppService.getFriendships(userId));
+    }
+
+    @GetMapping("/search-user-info-and-friendship-status")
+    public ApiResponse<SearchUserInfoAndFriendshipStatusByNicknameAppResponse> searchUserInfoAndFriendshipStatusByNickname(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @RequestParam String nickname
+    ) {
+        if (nickname == null || !UserDetail.NICKNAME_PATTERN.matcher(nickname).matches()) {
+            throw new DomainException(UserError.INVALID_NICKNAME_FORMAT);
+        }
+        return ApiResponse.getSuccess(
+                friendshipAppService.searchUserInfoAndFriendshipStatusByNickname(userId, nickname)
+        );
     }
 
     @GetMapping("/pending-requests")

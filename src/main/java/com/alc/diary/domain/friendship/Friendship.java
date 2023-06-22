@@ -133,7 +133,6 @@ public class Friendship extends BaseEntity {
         if (fromUser.getId().equals(userId)) {
             return toUser.getNickname();
         }
-
         if (toUser.getId().equals(userId)) {
             return fromUser.getNickname();
         }
@@ -141,11 +140,10 @@ public class Friendship extends BaseEntity {
         throw new RuntimeException();
     }
 
-    public String getAliasByUserId(long userId) {
+    public String getOtherUserAliasByUserId(long userId) {
         if (fromUser.getId().equals(userId)) {
             return fromUserAlias;
         }
-
         if (toUser.getId().equals(userId)) {
             return toUserAlias;
         }
@@ -153,8 +151,27 @@ public class Friendship extends BaseEntity {
         throw new RuntimeException();
     }
 
+    public String getOtherUserProfileImageUrlByUserId(long userId) {
+        if (fromUser.getId().equals(userId)) {
+            return toUser.getProfileImage();
+        }
+        if (toUser.getId().equals(userId)) {
+            return fromUser.getProfileImage();
+        }
+
+        throw new RuntimeException();
+    }
+
     public boolean isRequestedOrAccepted() {
-        return status.isRequestedOrAccepted();
+        return isRequested() || isAccepted();
+    }
+
+    public boolean isRequested() {
+        return status.isRequested();
+    }
+
+    public boolean isAccepted() {
+        return status.isAccepted();
     }
 
     public boolean areBothUserActive() {
