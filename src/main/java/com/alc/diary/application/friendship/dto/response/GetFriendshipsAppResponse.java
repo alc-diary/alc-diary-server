@@ -7,25 +7,22 @@ import java.util.stream.Collectors;
 
 public record GetFriendshipsAppResponse(
 
-        List<FriendshipDto> friendshipDtos
+        long friendshipId,
+        String nickname,
+        String alias,
+        String profileImageUrl
 ) {
 
-    public static GetFriendshipsAppResponse of(List<Friendship> friendships, long userId) {
-        return new GetFriendshipsAppResponse(friendships.stream()
-                .map(friendship -> new FriendshipDto(
-                        friendship.getId(),
-                        friendship.getOtherUserNicknameByUserId(userId),
-                        friendship.getAliasByUserId(userId)
-                ))
-                .collect(Collectors.toList())
-        );
-    }
-
-    private record FriendshipDto(
-
-            long friendshipId,
-            String nickname,
-            String alias
-    ) {
+    public static List<GetFriendshipsAppResponse> of(List<Friendship> friendships, long userId) {
+        return friendships.stream()
+                .map(friendship ->
+                        new GetFriendshipsAppResponse(
+                                friendship.getId(),
+                                friendship.getOtherUserNicknameByUserId(userId),
+                                friendship.getOtherUserAliasByUserId(userId),
+                                friendship.getOtherUserProfileImageUrlByUserId(userId)
+                        )
+                )
+                .collect(Collectors.toList());
     }
 }

@@ -29,8 +29,9 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
            "WHERE " +
            "    (fu.id = :user1Id AND tu.id = :user2Id) " +
            "        OR " +
-           "    (fu.id = :user2Id AND tu.id = :user1Id)")
-    List<Friendship> findByUserIds(long user1Id, long user2Id);
+           "    (fu.id = :user2Id AND tu.id = :user1Id) " +
+            "AND f.status <> 'DELETED'")
+    List<Friendship> findNotDeletedFriendshipsByUserIds(long user1Id, long user2Id);
 
     @Query("SELECT f " +
             "FROM Friendship f " +
