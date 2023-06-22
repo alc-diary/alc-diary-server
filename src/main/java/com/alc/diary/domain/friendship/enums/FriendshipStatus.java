@@ -6,6 +6,7 @@ public enum FriendshipStatus {
     ACCEPTED,
     DECLINED,
     DELETED,
+    CANCELED,
     ;
 
     public boolean isRequestedOrAccepted() {

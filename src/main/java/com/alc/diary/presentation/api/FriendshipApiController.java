@@ -2,6 +2,7 @@ package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.FriendshipAppService;
+import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.request.UpdateFriendshipAliasAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
@@ -71,9 +72,10 @@ public class FriendshipApiController {
     @PutMapping("/{friendshipId}/accept-request")
     public ApiResponse<Void> acceptFriendshipRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId
-    ) {
-        friendshipAppService.acceptFriendshipRequest(userId, friendshipId);
+            @PathVariable long friendshipId,
+            @RequestBody AcceptFriendshipRequestAppRequest request
+            ) {
+        friendshipAppService.acceptFriendshipRequest(userId, friendshipId, request);
         return ApiResponse.getSuccess();
     }
 
@@ -83,6 +85,15 @@ public class FriendshipApiController {
             @PathVariable long friendshipId
     ) {
         friendshipAppService.declineFriendshipRequest(userId, friendshipId);
+        return ApiResponse.getSuccess();
+    }
+
+    @PutMapping("/{friendshipId}/cancel-request")
+    public ApiResponse<Void> cancelFriendshipRequest(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @PathVariable long friendshipId
+    ) {
+        friendshipAppService.cancelFriendshipRequest(userId, friendshipId);
         return ApiResponse.getSuccess();
     }
 

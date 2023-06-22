@@ -1,6 +1,7 @@
 package com.alc.diary.application.friendship;
 
 import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
+import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.request.UpdateFriendshipAliasAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
@@ -150,9 +151,10 @@ public class FriendshipAppService {
      * @param friendshipId 친구 데이터 ID
      */
     @Transactional
-    public void acceptFriendshipRequest(long userId, long friendshipId) {
+    public void acceptFriendshipRequest(long userId, long friendshipId, AcceptFriendshipRequestAppRequest request) {
         Friendship foundFriendShip = getFriendshipsById(friendshipId);
         foundFriendShip.accept(userId);
+        foundFriendShip.updateFriendAlias(userId, request.alias());
     }
 
     /**
@@ -177,6 +179,18 @@ public class FriendshipAppService {
     public void declineFriendshipRequest(long userId, long friendshipId) {
         Friendship foundFriendship = getFriendshipsById(friendshipId);
         foundFriendship.decline(userId);
+    }
+
+    /**
+     * 보낸 친구 요청 취소하기
+     *
+     * @param userId
+     * @param friendshipId
+     */
+    @Transactional
+    public void cancelFriendshipRequest(long userId, long friendshipId) {
+        Friendship foundFriendship = getFriendshipsById(friendshipId);
+        foundFriendship.cancel(userId);
     }
 
     /**

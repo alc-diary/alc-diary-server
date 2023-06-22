@@ -118,6 +118,16 @@ public class Friendship extends BaseEntity {
         status = FriendshipStatus.DECLINED;
     }
 
+    public void cancel(long userId) {
+        if (userId != fromUser.getId()) {
+            throw new DomainException(FriendshipError.NO_PERMISSION_TO_CANCEL, "User ID: " + userId);
+        }
+        if (status != FriendshipStatus.REQUESTED) {
+            throw new DomainException(FriendshipError.INVALID_REQUEST);
+        }
+        status = FriendshipStatus.CANCELED;
+    }
+
     public void delete(long requestUserId) {
         if (requestUserId != fromUser.getId() && requestUserId != toUser.getId()) {
             throw new DomainException(FriendshipError.NO_PERMISSION_TO_DELETE, "Request User ID: " + requestUserId);
