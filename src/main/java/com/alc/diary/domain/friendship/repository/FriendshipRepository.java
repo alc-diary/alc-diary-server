@@ -30,8 +30,19 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
            "    (fu.id = :user1Id AND tu.id = :user2Id) " +
            "        OR " +
            "    (fu.id = :user2Id AND tu.id = :user1Id) " +
-            "AND f.status <> 'DELETED'")
-    List<Friendship> findNotDeletedFriendshipsByUserIds(long user1Id, long user2Id);
+           "AND f.status = com.alc.diary.domain.friendship.enums.FriendshipStatus.ACCEPTED ")
+    Optional<Friendship> findAcceptedFriendshipBetweenUsers(long user1Id, long user2Id);
+
+    @Query("SELECT f " +
+           "FROM Friendship f " +
+           "JOIN FETCH f.fromUser fu " +
+           "JOIN FETCH f.toUser tu " +
+           "WHERE " +
+           "    (fu.id = :user1Id AND tu.id = :user2Id) " +
+           "        OR " +
+           "    (fu.id = :user2Id AND tu.id = :user1Id) " +
+           "AND f.status = com.alc.diary.domain.friendship.enums.FriendshipStatus.ACCEPTED ")
+    Optional<Friendship> findRequestedFriendshipBetweenUsers(long user1Id, long user2Id);
 
     @Query("SELECT f " +
             "FROM Friendship f " +
