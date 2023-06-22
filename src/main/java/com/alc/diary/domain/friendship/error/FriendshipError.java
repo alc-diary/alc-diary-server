@@ -18,6 +18,7 @@ public enum FriendshipError implements ErrorModel {
     MESSAGE_LENGTH_EXCEEDED("FS_E0007", "Message length cannot exceed 100 characters."),
     USER_ALIAS_LENGTH_EXCEEDED("FS_E0008", "User alias length cannot exceed 30 characters."),
     NO_PERMISSION_TO_DECLINE("FS_E0009", "You do not have permission to decline this friendship."),
+    NO_PERMISSION("FS_E0010", "You do not have permission to this friendship."),
     ;
 
     private final String code;

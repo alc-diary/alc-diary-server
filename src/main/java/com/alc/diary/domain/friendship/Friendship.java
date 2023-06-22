@@ -129,7 +129,7 @@ public class Friendship extends BaseEntity {
         return userId == fromUser.getId() || userId == toUser.getId();
     }
 
-    public String getOtherUserNicknameByUserId(long userId) {
+    public String getFriendNicknameByUserId(long userId) {
         if (fromUser.getId().equals(userId)) {
             return toUser.getNickname();
         }
@@ -140,7 +140,7 @@ public class Friendship extends BaseEntity {
         throw new RuntimeException();
     }
 
-    public String getOtherUserAliasByUserId(long userId) {
+    public String getFriendAliasByUserId(long userId) {
         if (fromUser.getId().equals(userId)) {
             return fromUserAlias;
         }
@@ -151,7 +151,7 @@ public class Friendship extends BaseEntity {
         throw new RuntimeException();
     }
 
-    public String getOtherUserProfileImageUrlByUserId(long userId) {
+    public String getFriendProfileImageUrlByUserId(long userId) {
         if (fromUser.getId().equals(userId)) {
             return toUser.getProfileImage();
         }
@@ -160,6 +160,22 @@ public class Friendship extends BaseEntity {
         }
 
         throw new RuntimeException();
+    }
+
+    /**
+     * 상대방 유저에 대한 별칭 수정
+     *
+     * @param userId
+     * @param newAlias
+     */
+    public void updateFriendAlias(long userId, String newAlias) {
+        if (fromUser.getId().equals(userId)) {
+            fromUserAlias = newAlias;
+        } else if (toUser.getId().equals(userId)) {
+            toUserAlias = newAlias;
+        } else {
+            throw new DomainException(FriendshipError.NO_PERMISSION);
+        }
     }
 
     public boolean isRequestedOrAccepted() {

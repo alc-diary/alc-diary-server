@@ -2,6 +2,7 @@ package com.alc.diary.application.friendship;
 
 import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
+import com.alc.diary.application.friendship.dto.request.UpdateFriendshipAliasAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
@@ -176,6 +177,21 @@ public class FriendshipAppService {
     public void declineFriendshipRequest(long userId, long friendshipId) {
         Friendship foundFriendship = getFriendshipsById(friendshipId);
         foundFriendship.decline(userId);
+    }
+
+    /**
+     * 친구 별칭 수정하기
+     *
+     * @param userId
+     * @param friendshipId
+     */
+    @Transactional
+    public void updateFriendshipAlias(long userId, long friendshipId, UpdateFriendshipAliasAppRequest request) {
+        Friendship foundFriendship = getFriendshipsById(friendshipId);
+        if (!foundFriendship.isAccepted()) {
+            throw new DomainException(FriendshipError.INVALID_REQUEST);
+        }
+        foundFriendship.updateFriendAlias(userId, request.newUserAlias());
     }
 
     private Friendship getFriendshipsById(long id) {
