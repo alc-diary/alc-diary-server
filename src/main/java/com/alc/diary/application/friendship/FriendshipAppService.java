@@ -1,6 +1,6 @@
 package com.alc.diary.application.friendship;
 
-import com.alc.diary.application.calendar.dto.response.SearchUserInfoAndFriendshipStatusByNicknameAppResponse;
+import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
@@ -84,12 +84,12 @@ public class FriendshipAppService {
      * @param requesterId
      * @param nickname
      */
-    public SearchUserInfoAndFriendshipStatusByNicknameAppResponse searchUserInfoAndFriendshipStatusByNickname(
+    public SearchUserWithFriendshipStatusByNicknameAppResponse searchUserWithFriendshipStatusByNickname(
             long requesterId,
             String nickname
     ) {
         return userRepository.findActiveUserByNickname(nickname).map(foundUser ->
-                SearchUserInfoAndFriendshipStatusByNicknameAppResponse.of(
+                SearchUserWithFriendshipStatusByNicknameAppResponse.of(
                         foundUser,
                         getCurrentFriendshipStatusByUserIds(requesterId, foundUser.getId())
                 )).orElse(null);

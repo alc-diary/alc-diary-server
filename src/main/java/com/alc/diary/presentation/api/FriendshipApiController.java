@@ -1,6 +1,6 @@
 package com.alc.diary.presentation.api;
 
-import com.alc.diary.application.calendar.dto.response.SearchUserInfoAndFriendshipStatusByNicknameAppResponse;
+import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.FriendshipAppService;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
@@ -40,8 +40,8 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.getFriendships(userId));
     }
 
-    @GetMapping("/search-user-info-and-friendship-status")
-    public ApiResponse<SearchUserInfoAndFriendshipStatusByNicknameAppResponse> searchUserInfoAndFriendshipStatusByNickname(
+    @GetMapping("/search-user-with-friendship-status")
+    public ApiResponse<SearchUserWithFriendshipStatusByNicknameAppResponse> searchUserWithFriendshipStatusByNickname(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @RequestParam String nickname
     ) {
@@ -49,7 +49,7 @@ public class FriendshipApiController {
             throw new DomainException(UserError.INVALID_NICKNAME_FORMAT);
         }
         return ApiResponse.getSuccess(
-                friendshipAppService.searchUserInfoAndFriendshipStatusByNickname(userId, nickname)
+                friendshipAppService.searchUserWithFriendshipStatusByNickname(userId, nickname)
         );
     }
 
