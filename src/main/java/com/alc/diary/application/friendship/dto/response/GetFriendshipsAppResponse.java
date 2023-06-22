@@ -18,9 +18,9 @@ public record GetFriendshipsAppResponse(
                 .map(friendship ->
                         new GetFriendshipsAppResponse(
                                 friendship.getId(),
-                                friendship.getOtherUserNicknameByUserId(userId),
-                                friendship.getOtherUserAliasByUserId(userId),
-                                friendship.getOtherUserProfileImageUrlByUserId(userId)
+                                friendship.getFriendNicknameByUserId(userId),
+                                friendship.getFriendAliasByUserId(userId),
+                                friendship.getFriendProfileImageUrlByUserId(userId)
                         )
                 )
                 .collect(Collectors.toList());

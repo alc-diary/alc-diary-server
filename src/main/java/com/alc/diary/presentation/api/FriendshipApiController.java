@@ -3,6 +3,7 @@ package com.alc.diary.presentation.api;
 import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.FriendshipAppService;
 import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
+import com.alc.diary.application.friendship.dto.request.UpdateFriendshipAliasAppRequest;
 import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
 import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
@@ -82,6 +83,16 @@ public class FriendshipApiController {
             @PathVariable long friendshipId
     ) {
         friendshipAppService.declineFriendshipRequest(userId, friendshipId);
+        return ApiResponse.getSuccess();
+    }
+
+    @PutMapping("/{friendshipId}/alias")
+    public ApiResponse<Void> updateFriendshipAlias(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @PathVariable long friendshipId,
+            @RequestBody UpdateFriendshipAliasAppRequest request
+    ) {
+        friendshipAppService.updateFriendshipAlias(userId, friendshipId, request);
         return ApiResponse.getSuccess();
     }
 
