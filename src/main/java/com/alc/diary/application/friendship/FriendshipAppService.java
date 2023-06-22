@@ -52,7 +52,7 @@ public class FriendshipAppService {
 
     private User getUserById(long userId) {
         return userRepository.findActiveUserById(userId)
-                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
+                             .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 
     private void validRequest(User requester, User targetUser) {
@@ -62,9 +62,12 @@ public class FriendshipAppService {
                     String.format("Request UserID: %d, Target User Id: %d", requester.getId(), targetUser.getId())
             );
         }
-        if (getCurrentFriendshipStatusByUserIds(requester.getId(), targetUser.getId()) != null
-                && getCurrentFriendshipStatusByUserIds(requester.getId(), targetUser.getId()).isRequestedOrAccepted()) {
+
+        if (isRequestAlreadySent(requester.getId(), targetUser.getId())) {
             throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
+        }
+        if (areUsersFriends(requester.getId(), targetUser.getId())) {
+            throw new DomainException(FriendshipError.ALREADY_FRIENDS);
         }
     }
 
@@ -90,25 +93,26 @@ public class FriendshipAppService {
             long requesterId,
             String nickname
     ) {
-        return userRepository.findActiveUserByNickname(nickname).map(foundUser ->
-                SearchUserWithFriendshipStatusByNicknameAppResponse.of(
-                        foundUser,
-                        getCurrentFriendshipStatusByUserIds(requesterId, foundUser.getId())
-                )).orElse(null);
+        return userRepository.findActiveUserByNickname(nickname).map(foundUser -> {
+                FriendshipStatus status = null;
+
+                 if (isRequestAlreadySent(requesterId, foundUser.getId())) {
+                     status = FriendshipStatus.REQUESTED;
+                 } else if (areUsersFriends(requesterId, foundUser.getId())) {
+                     status = FriendshipStatus.ACCEPTED;
+                 }
+
+                 return SearchUserWithFriendshipStatusByNicknameAppResponse.of(foundUser, status);
+             })
+             .orElse(null);
     }
 
-    private FriendshipStatus getCurrentFriendshipStatusByUserIds(long user1Id, long user2Id) {
-        List<Friendship> foundFriendships =
-                friendshipRepository.findNotDeletedFriendshipsByUserIds(user1Id, user2Id);
+    private boolean isRequestAlreadySent(long user1Id, long user2Id) {
+        return friendshipRepository.findRequestedFriendshipBetweenUsers(user1Id, user2Id).isPresent();
+    }
 
-        if (foundFriendships.stream().anyMatch(Friendship::isAccepted)) {
-            return FriendshipStatus.ACCEPTED;
-        }
-        if (foundFriendships.stream().anyMatch(Friendship::isRequested)) {
-            return FriendshipStatus.REQUESTED;
-        }
-
-        return null;
+    private boolean areUsersFriends(long user1Id, long user2Id) {
+        return friendshipRepository.findAcceptedFriendshipBetweenUsers(user1Id, user2Id).isPresent();
     }
 
     /**
@@ -122,8 +126,8 @@ public class FriendshipAppService {
                 friendshipRepository.findByToUser_IdAndStatusEquals(userId, FriendshipStatus.REQUESTED)
         );
         return foundFriendships.stream()
-                .map(GetReceivedFriendshipRequestsAppResponse::from)
-                .collect(Collectors.toList());
+                               .map(GetReceivedFriendshipRequestsAppResponse::from)
+                               .collect(Collectors.toList());
     }
 
     /**
@@ -140,8 +144,8 @@ public class FriendshipAppService {
 
     private List<Friendship> filterFriendshipWithActiveUsers(List<Friendship> friendships) {
         return friendships.stream()
-                .filter(Friendship::areBothUserActive)
-                .collect(Collectors.toList());
+                          .filter(Friendship::areBothUserActive)
+                          .collect(Collectors.toList());
     }
 
     /**
