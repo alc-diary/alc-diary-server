@@ -3,7 +3,7 @@ package com.alc.diary.application.calendar.dto.response;
 import com.alc.diary.domain.friendship.enums.FriendshipStatus;
 import com.alc.diary.domain.user.User;
 
-public record SearchUserInfoAndFriendshipStatusByNicknameAppResponse(
+public record SearchUserWithFriendshipStatusByNicknameAppResponse(
 
         long userId,
         String profileImageUrl,
@@ -11,8 +11,8 @@ public record SearchUserInfoAndFriendshipStatusByNicknameAppResponse(
         FriendshipStatus friendshipStatus
 ) {
 
-    public static SearchUserInfoAndFriendshipStatusByNicknameAppResponse of(User user, FriendshipStatus friendshipStatus) {
-        return new SearchUserInfoAndFriendshipStatusByNicknameAppResponse(
+    public static SearchUserWithFriendshipStatusByNicknameAppResponse of(User user, FriendshipStatus friendshipStatus) {
+        return new SearchUserWithFriendshipStatusByNicknameAppResponse(
                 user.getId(),
                 user.getProfileImage(),
                 user.getNickname(),
