@@ -9,7 +9,8 @@ public record GetPendingRequestsAppResponse(
 
         long friendshipId,
         long requestReceiverId,
-        String requestReceiverNickname
+        String requestReceiverNickname,
+        String receiverProfileImageUrl
 ) {
 
     public static List<GetPendingRequestsAppResponse> from(List<Friendship> friendships) {
@@ -17,7 +18,8 @@ public record GetPendingRequestsAppResponse(
                 .map(friendship -> new GetPendingRequestsAppResponse(
                         friendship.getId(),
                         friendship.getToUser().getId(),
-                        friendship.getToUser().getNickname()
+                        friendship.getToUser().getNickname(),
+                        friendship.getToUser().getProfileImage()
                 ))
                 .collect(Collectors.toList());
     }
