@@ -6,4 +6,5 @@ public enum FriendRequestStatus {
     ACCEPTED,
     REJECTED,
     CANCELED,
+    FRIENDSHIP_ENDED,
 }

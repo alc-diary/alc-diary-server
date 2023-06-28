@@ -5,6 +5,14 @@ public record SearchUserWithFriendStatusByNicknameAppResponse(
         long userId,
         String profileImageUrl,
         String nickname,
-        String status
+        FriendStatus status
 ) {
+
+    public enum FriendStatus {
+
+        PENDING,
+        FRIENDS,
+        NOT_SENT,
+        ;
+    }
 }

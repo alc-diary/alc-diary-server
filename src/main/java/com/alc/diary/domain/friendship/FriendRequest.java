@@ -57,10 +57,40 @@ public class FriendRequest {
         return new FriendRequest(senderId, receiverId, message, FriendRequestStatus.PENDING);
     }
 
-    public void accept(long receiverId) {
+    public void markAccepted(long receiverId) {
         if (this.receiverId != receiverId) {
-            throw new DomainException();
+            throw new DomainException(FriendRequestError.NO_PERMISSION);
+        }
+        if (status != FriendRequestStatus.PENDING) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
         }
         status = FriendRequestStatus.ACCEPTED;
+    }
+
+    public void markRejected(long receiverId) {
+        if (this.receiverId != receiverId) {
+            throw new DomainException(FriendRequestError.NO_PERMISSION);
+        }
+        if (status != FriendRequestStatus.PENDING) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
+        }
+        status = FriendRequestStatus.REJECTED;
+    }
+
+    public void markCanceled(long receiverId) {
+        if (this.receiverId != receiverId) {
+            throw new DomainException(FriendRequestError.NO_PERMISSION);
+        }
+        if (status != FriendRequestStatus.PENDING) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
+        }
+        status = FriendRequestStatus.CANCELED;
+    }
+
+    public void markFriendshipEnded() {
+        if (status != FriendRequestStatus.ACCEPTED) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
+        }
+        status = FriendRequestStatus.FRIENDSHIP_ENDED;
     }
 }
