@@ -34,7 +34,8 @@ public class JwtService {
     }
 
     public long getUserIdFromToken(String token) {
-        Claims claims = getClaims(token);
+        // Claims claims = getClaims(token);
+        Claims claims = getClaimsTemp(token); // 임시, 클라이언트 기능 구현되면 삭제 예정
         return Long.parseLong(claims.getSubject());
     }
 
@@ -44,7 +45,8 @@ public class JwtService {
             Date expiration = claims.getExpiration();
             return !expiration.before(Date.from(systemClock.instant()));
         } catch (ExpiredJwtException e) {
-            throw new DomainException(AuthError.EXPIRED_ACCESS_TOKEN);
+            // throw new DomainException(AuthError.EXPIRED_ACCESS_TOKEN);
+            return true; // 임시, 클라이언트 기능 구현되면 삭제 예정
         } catch (Exception e) {
             throw new DomainException(AuthError.INVALID_ACCESS_TOKEN);
         }
@@ -54,6 +56,14 @@ public class JwtService {
         return Jwts.parser()
                 .setSigningKey(base64EncodedSecretKey)
                 .setClock(() -> Date.from(systemClock.instant()))
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private Claims getClaimsTemp(String token) {
+        return Jwts.parser()
+                .setSigningKey(base64EncodedSecretKey)
+                .setClock(() -> new Date(Long.MIN_VALUE))
                 .parseClaimsJws(token)
                 .getBody();
     }
