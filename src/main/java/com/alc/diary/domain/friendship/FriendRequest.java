@@ -56,4 +56,11 @@ public class FriendRequest {
     public static FriendRequest create(Long senderId, Long receiverId, String message) {
         return new FriendRequest(senderId, receiverId, message, FriendRequestStatus.PENDING);
     }
+
+    public void accept(long receiverId) {
+        if (this.receiverId != receiverId) {
+            throw new DomainException();
+        }
+        status = FriendRequestStatus.ACCEPTED;
+    }
 }

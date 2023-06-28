@@ -9,7 +9,7 @@ public record GetFriendshipsAppResponse(
 
         long friendshipId,
         String nickname,
-        String alias,
+        String label,
         String profileImageUrl
 ) {
 
