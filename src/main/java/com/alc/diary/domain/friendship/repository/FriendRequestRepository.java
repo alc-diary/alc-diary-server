@@ -42,8 +42,22 @@ public interface FriendRequestRepository extends Repository<FriendRequest, Long>
            "WHERE ( " +
            "    (fr.senderId = :userAId AND fr.receiverId = :userBId) " +
            "        OR " +
-           "    (fr.senderId = :userBId AND fr.receiverId =: uesrAId) " +
-           "AND fr.status = com.alc.diary.domain.friendship.enums.FriendRequestStatus.ACCEPTED " +
-           ")")
+           "    (fr.senderId = :userBId AND fr.receiverId =: userAId) " +
+           ") " +
+           "AND fr.status = com.alc.diary.domain.friendship.enums.FriendRequestStatus.ACCEPTED ")
     Optional<FriendRequest> findAcceptedRequestWithUsers(long userAId, long userBId);
+
+    @Query("SELECT fr " +
+           "FROM FriendRequest fr " +
+           "WHERE ( " +
+           "    (fr.senderId = :userAId AND fr.receiverId = :userBId) " +
+           "        OR " +
+           "    (fr.senderId = :userBId AND fr.receiverId =: userAId) " +
+           ")" +
+           "AND (" +
+           "    fr.status = com.alc.diary.domain.friendship.enums.FriendRequestStatus.ACCEPTED " +
+           "        OR " +
+           "    fr.status = com.alc.diary.domain.friendship.enums.FriendRequestStatus.PENDING " +
+           ")")
+    Optional<FriendRequest> findPendingOrAcceptedRequestWithUsers(long userAId, long userBId);
 }

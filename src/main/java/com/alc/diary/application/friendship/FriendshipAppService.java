@@ -4,12 +4,15 @@ import com.alc.diary.application.friendship.dto.request.AcceptFriendRequestAppRe
 import com.alc.diary.application.friendship.dto.request.SendFriendRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.UpdateFriendLabelAppRequest;
 import com.alc.diary.application.friendship.dto.response.*;
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.friendship.Friendship;
 import com.alc.diary.domain.friendship.FriendRequest;
+import com.alc.diary.domain.friendship.error.FriendRequestError;
 import com.alc.diary.domain.friendship.repository.FriendshipRepository;
 import com.alc.diary.domain.friendship.repository.FriendRequestRepository;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
+import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,10 +46,19 @@ public class FriendshipAppService {
         User sender = userRepository.findActiveUserById(userId).orElseThrow();
         User receiver = userRepository.findActiveUserById(request.receiverId()).orElseThrow();
 
-        // request validation
+        validFriendRequest(sender.getId(), receiver.getId());
 
         FriendRequest friendRequestToSave = FriendRequest.create(sender.getId(), receiver.getId(), request.message());
         friendRequestRepository.save(friendRequestToSave);
+    }
+
+    private void validFriendRequest(long userAId, long userBId) {
+        if (userAId == userBId) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
+        }
+        if (friendRequestRepository.findPendingOrAcceptedRequestWithUsers(userAId, userBId).isPresent()) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
+        }
     }
 
     /**
@@ -79,6 +91,9 @@ public class FriendshipAppService {
     }
 
     private List<User> getUserByIdIn(List<Long> userIds) {
+        if (Collections.isEmpty(userIds)) {
+            return List.of();
+        }
         return userRepository.findActiveUsersByIdIn(userIds);
     }
 
