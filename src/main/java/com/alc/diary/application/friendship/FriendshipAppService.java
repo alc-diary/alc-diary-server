@@ -7,6 +7,7 @@ import com.alc.diary.application.friendship.dto.response.*;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.friendship.Friendship;
 import com.alc.diary.domain.friendship.FriendRequest;
+import com.alc.diary.domain.friendship.error.FriendshipError;
 import com.alc.diary.domain.friendship.error.FriendRequestError;
 import com.alc.diary.domain.friendship.repository.FriendshipRepository;
 import com.alc.diary.domain.friendship.repository.FriendRequestRepository;
@@ -219,11 +220,12 @@ public class FriendshipAppService {
      */
     @Transactional
     public void deleteFriend(long userId, long friendshipId) {
-        Friendship foundFriendship = friendshipRepository.findById(friendshipId).orElseThrow();
+        Friendship foundFriendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new DomainException(FriendshipError.FRIENDSHIP_NOT_FOUND));
 
         FriendRequest foundFriendRequest =
                 friendRequestRepository.findAcceptedRequestWithUsers(foundFriendship.getUserAId(), foundFriendship.getUserBId())
-                        .orElseThrow();
+                        .orElseThrow(() -> new DomainException(FriendRequestError.FRIEND_REQUEST_NOT_FOUND));
         foundFriendRequest.markFriendshipEnded(userId);
         friendshipRepository.deleteById(foundFriendship.getId());
     }

@@ -27,6 +27,7 @@ public interface FriendRequestRepository extends Repository<FriendRequest, Long>
             "FROM FriendRequest fr " +
             "JOIN User u ON fr.senderId = u.id " +
             "WHERE fr.receiverId = :receiverId " +
+            "AND fr.status = com.alc.diary.domain.friendship.enums.FriendRequestStatus.PENDING " +
             "AND u.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE ")
     List<FriendRequest> findPendingRequestsByReceiverId(long receiverId);
 
@@ -34,6 +35,7 @@ public interface FriendRequestRepository extends Repository<FriendRequest, Long>
             "FROM FriendRequest fr " +
             "JOIN User u ON fr.receiverId = u.id " +
             "WHERE fr.senderId = :senderId " +
+            "AND fr.status = com.alc.diary.domain.friendship.enums.FriendRequestStatus.PENDING " +
             "AND u.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE ")
     List<FriendRequest> findPendingRequestsBySenderId(long senderId);
 

@@ -14,6 +14,7 @@ public enum FriendRequestError implements ErrorModel {
     MESSAGE_LENGTH_EXCEEDED("FR_E0003", "Message length cannot exceed 100 characters."),
     INVALID_REQUEST("FR_E0004", "The request is invalid. Please check your input and try again."),
     NO_PERMISSION("FR_E0005", "You do not have permission to this request."),
+    FRIEND_REQUEST_NOT_FOUND("FR_E0006", "The specified friend request entity could not be found."),
     ;
 
     private final String code;
