@@ -2,20 +2,16 @@ package com.alc.diary.domain.friendship;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
-import com.alc.diary.domain.friendship.enums.FriendshipStatus;
 import com.alc.diary.domain.friendship.error.FriendshipError;
-import com.alc.diary.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
 @Getter
-@ToString(exclude = {"fromUser", "toUser"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "friendships")
 @Entity
@@ -23,184 +19,89 @@ public class Friendship extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "from_user_id", foreignKey = @ForeignKey(name = "fk_friendships_from_user_users"), updatable = false)
-    private User fromUser;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "to_user_id", foreignKey = @ForeignKey(name = "fk_friendships_to_user_users"),updatable = false)
-    private User toUser;
+    @Audited
+    @Column(name = "user_a_id", nullable = false, updatable = false)
+    private long userAId;
 
     @Audited
-    @Column(name = "from_user_alias", length = 30)
-    private String fromUserAlias;
+    @Column(name = "user_b_label_by_user_a", length = 30)
+    private String userBLabelByUserA;
 
     @Audited
-    @Column(name = "to_user_alias", length = 30)
-    private String toUserAlias;
+    @Column(name = "user_b_id", nullable = false, updatable = false)
+    private long userBId;
 
     @Audited
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private FriendshipStatus status;
-
-    @Audited
-    @Column(name = "message", length = 100, updatable = false)
-    private String message;
+    @Column(name = "user_a_label_by_user_b", length = 30)
+    private String userALabelByUserB;
 
     private Friendship(
-            User fromUser,
-            User toUser,
-            String fromUserAlias,
-            String toUserAlias,
-            FriendshipStatus status,
-            String message
+            Long userAId,
+            String userBLabelByUserA,
+            Long userBId,
+            String userALabelByUserB
     ) {
-        if (fromUser == null) {
-            throw new DomainException(FriendshipError.FROM_USER_NULL);
+        if (userAId == null) {
+            throw new DomainException(FriendshipError.USER_ID_NULL);
         }
-        if (toUser == null) {
-            throw new DomainException(FriendshipError.TO_USER_NULL);
+        if (userBId == null) {
+            throw new DomainException(FriendshipError.USER_ID_NULL);
         }
-        if (StringUtils.length(message) > 100) {
-            throw new DomainException(FriendshipError.MESSAGE_LENGTH_EXCEEDED);
+        if (StringUtils.length(userBLabelByUserA) > 100) {
+            throw new DomainException(FriendshipError.FRIEND_LABEL_EXCEEDED);
         }
-        if (StringUtils.length(fromUserAlias) > 30) {
-            throw new DomainException(FriendshipError.USER_ALIAS_LENGTH_EXCEEDED);
+        if (StringUtils.length(userALabelByUserB) > 100) {
+            throw new DomainException(FriendshipError.FRIEND_LABEL_EXCEEDED);
         }
-        if (StringUtils.length(toUserAlias) > 30) {
-            throw new DomainException(FriendshipError.USER_ALIAS_LENGTH_EXCEEDED);
-        }
-
-        this.fromUser = fromUser;
-        this.toUser = toUser;
-        this.fromUserAlias = fromUserAlias;
-        this.toUserAlias = toUserAlias;
-        this.status = status != null ? status : FriendshipStatus.REQUESTED;
-        this.message = message;
+        this.userAId = userAId;
+        this.userBLabelByUserA = userBLabelByUserA;
+        this.userBId = userBId;
+        this.userALabelByUserB = userALabelByUserB;
     }
 
-    public static Friendship createRequest(
-            User fromUser,
-            User toUser,
-            String message
+    public static Friendship create(
+            Long userAId,
+            String userBLabelByUserA,
+            Long userBId,
+            String userALabelByUserB
     ) {
         return new Friendship(
-                fromUser,
-                toUser,
-                null,
-                null,
-                FriendshipStatus.REQUESTED,
-                message
+                userAId,
+                userBLabelByUserA,
+                userBId,
+                userALabelByUserB
         );
     }
 
-    public void accept(long userId) {
-        if (userId != toUser.getId()) {
-            throw new DomainException(FriendshipError.NO_PERMISSION_TO_ACCEPT, "User ID: " + userId);
+    public long getFriendUserId(long userId) {
+        if (userAId == userId) {
+            return userBId;
         }
-        if (status != FriendshipStatus.REQUESTED) {
-            throw new DomainException(FriendshipError.INVALID_REQUEST);
+        if (userBId == userId) {
+            return userAId;
         }
-        status = FriendshipStatus.ACCEPTED;
+        throw new DomainException(FriendshipError.NO_PERMISSION, "User ID: " + userId);
     }
 
-    public void decline(long userId) {
-        if (userId != toUser.getId()) {
-            throw new DomainException(FriendshipError.NO_PERMISSION_TO_DECLINE, "User ID: " + userId);
+    public String getFriendUserLabel(long userId) {
+        if (userAId == userId) {
+            return userBLabelByUserA;
         }
-        if (status != FriendshipStatus.REQUESTED) {
-            throw new DomainException(FriendshipError.INVALID_REQUEST);
+        if (userBId == userId) {
+            return userALabelByUserB;
         }
-        status = FriendshipStatus.DECLINED;
+        throw new DomainException(FriendshipError.NO_PERMISSION, "User ID: " + userId);
     }
 
-    public void cancel(long userId) {
-        if (userId != fromUser.getId()) {
-            throw new DomainException(FriendshipError.NO_PERMISSION_TO_CANCEL, "User ID: " + userId);
-        }
-        if (status != FriendshipStatus.REQUESTED) {
-            throw new DomainException(FriendshipError.INVALID_REQUEST);
-        }
-        status = FriendshipStatus.CANCELED;
-    }
-
-    public void delete(long requestUserId) {
-        if (requestUserId != fromUser.getId() && requestUserId != toUser.getId()) {
-            throw new DomainException(FriendshipError.NO_PERMISSION_TO_DELETE, "Request User ID: " + requestUserId);
-        }
-        status = FriendshipStatus.DELETED;
-    }
-
-    public boolean isUserInvolvedInFriendship(long userId) {
-        return userId == fromUser.getId() || userId == toUser.getId();
-    }
-
-    public String getFriendNicknameByUserId(long userId) {
-        if (fromUser.getId().equals(userId)) {
-            return toUser.getNickname();
-        }
-        if (toUser.getId().equals(userId)) {
-            return fromUser.getNickname();
-        }
-
-        throw new RuntimeException();
-    }
-
-    public String getFriendAliasByUserId(long userId) {
-        if (fromUser.getId().equals(userId)) {
-            return fromUserAlias;
-        }
-        if (toUser.getId().equals(userId)) {
-            return toUserAlias;
-        }
-
-        throw new RuntimeException();
-    }
-
-    public String getFriendProfileImageUrlByUserId(long userId) {
-        if (fromUser.getId().equals(userId)) {
-            return toUser.getProfileImage();
-        }
-        if (toUser.getId().equals(userId)) {
-            return fromUser.getProfileImage();
-        }
-
-        throw new RuntimeException();
-    }
-
-    /**
-     * 상대방 유저에 대한 별칭 수정
-     *
-     * @param userId
-     * @param newAlias
-     */
-    public void updateFriendAlias(long userId, String newAlias) {
-        if (fromUser.getId().equals(userId)) {
-            fromUserAlias = newAlias;
-        } else if (toUser.getId().equals(userId)) {
-            toUserAlias = newAlias;
+    public void updateFriendLabel(long userId, String newLabel) {
+        if (userAId == userId) {
+            userBLabelByUserA = newLabel;
+        } else if (userBId == userId) {
+            userALabelByUserB = newLabel;
         } else {
-            throw new DomainException(FriendshipError.NO_PERMISSION);
+            throw new DomainException(FriendshipError.NO_PERMISSION, "USER ID: " + userId);
         }
-    }
-
-    public boolean isRequestedOrAccepted() {
-        return isRequested() || isAccepted();
-    }
-
-    public boolean isRequested() {
-        return status.isRequested();
-    }
-
-    public boolean isAccepted() {
-        return status.isAccepted();
-    }
-
-    public boolean areBothUserActive() {
-        return fromUser.isActive() && toUser.isActive();
     }
 }
