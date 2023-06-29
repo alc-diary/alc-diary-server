@@ -22,17 +22,17 @@ public class Calendars {
         return new Calendars(calendars);
     }
 
-    public List<UserCalendar> getMonthlyCalendar() {
-        Map<LocalDate, List<Calendar>> calendarsByLocalDate = calendars.stream()
-                .collect(Collectors.groupingBy(Calendar::getLocalDate));
-        return calendarsByLocalDate.values().stream()
-                .map(it -> it.stream()
-                        .flatMap(calendar -> calendar.getUserCalendars().stream())
-                        .max(Comparator.comparing(o -> o.getDrinks().stream()
-                                .max(UserCalendarDrink::compareTo)
-                                .map(UserCalendarDrink::getQuantity)
-                                .orElse(0.0f)))
-                        .orElse(null))
-                .toList();
-    }
+//    public List<UserCalendar> getMonthlyCalendar() {
+//        Map<LocalDate, List<Calendar>> calendarsByLocalDate = calendars.stream()
+//                .collect(Collectors.groupingBy(Calendar::getLocalDate));
+//        return calendarsByLocalDate.values().stream()
+//                .map(it -> it.stream()
+//                        .flatMap(calendar -> calendar.getUserCalendars().stream())
+//                        .max(Comparator.comparing(o -> o.getDrinks().stream()
+//                                .max(UserCalendarDrink::compareTo)
+//                                .map(UserCalendarDrink::getQuantity)
+//                                .orElse(0.0f)))
+//                        .orElse(null))
+//                .toList();
+//    }
 }

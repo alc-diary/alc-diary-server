@@ -1,5 +1,6 @@
 package com.alc.diary.domain.drinkunit;
 
+import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,9 +11,12 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "drink_units")
+@Table(
+        name = "drink_units",
+        uniqueConstraints = {@UniqueConstraint(name = "uni_drink_units_name", columnNames = {"name"})}
+)
 @Entity
-public class DrinkUnit {
+public class DrinkUnit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

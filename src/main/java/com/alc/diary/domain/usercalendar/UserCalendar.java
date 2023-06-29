@@ -90,10 +90,10 @@ public class UserCalendar extends BaseEntity {
         }
     }
 
-    public void addDrinks(Iterable<UserCalendarDrink> drinks) {
-        for (UserCalendarDrink drink : drinks) {
-            this.drinks.add(drink);
-            drink.setUserCalendar(this);
-        }
-    }
+//    public void addDrinks(Iterable<UserCalendarDrink> drinks) {
+//        for (UserCalendarDrink drink : drinks) {
+//            this.drinks.add(drink);
+//            drink.setUserCalendar(this);
+//        }
+//    }
 }

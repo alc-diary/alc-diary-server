@@ -3,7 +3,6 @@ package com.alc.diary.domain.calendar;
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
-import com.alc.diary.domain.usercalendar.UserCalendar;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +12,6 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @ToString
@@ -35,9 +30,6 @@ public class Calendar extends BaseEntity {
     @Audited
     @Column(name = "title", length = 30, nullable = false)
     private String title;
-
-    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
-    private List<UserCalendar> userCalendars = new ArrayList<>();
 
     @Audited
     @Column(name = "drink_start_time", nullable = false)
@@ -67,30 +59,7 @@ public class Calendar extends BaseEntity {
         this.drinkEndTime = drinkEndTime;
     }
 
-    public void addUserCalendars(List<UserCalendar> userCalendars) {
-        if (userCalendars == null) {
-            throw new DomainException(CalendarError.USER_CALENDARS_NULL);
-        }
-        for (UserCalendar userCalendar : userCalendars) {
-            addUserCalendar(userCalendar);
-        }
-    }
-
-    public void addUserCalendar(UserCalendar userCalendar) {
-        if (userCalendar == null) {
-            throw new DomainException(CalendarError.USER_CALENDAR_NULL);
-        }
-        userCalendars.add(userCalendar);
-        userCalendar.setCalendar(this);
-    }
-
     public LocalDate getLocalDate() {
         return drinkStartTime.toLocalDate();
-    }
-
-    public boolean isInvolvedUser(long userId) {
-        return userCalendars.stream()
-                .filter(UserCalendar::isActive)
-                .anyMatch(userCalendar -> userCalendar.isOwner(userId));
     }
 }

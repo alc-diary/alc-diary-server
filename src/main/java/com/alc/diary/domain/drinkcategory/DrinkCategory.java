@@ -11,7 +11,10 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "drink_categories")
+@Table(
+        name = "drink_categories",
+        uniqueConstraints = {@UniqueConstraint(name = "uni_drink_categories_name", columnNames = {"name"})}
+)
 @Entity
 public class DrinkCategory extends BaseEntity {
 
@@ -29,5 +32,6 @@ public class DrinkCategory extends BaseEntity {
         if (StringUtils.length(name) > 30) {
             throw new DomainException(DrinkCategoryError.NAME_LENGTH_EXCEED, "Name: " + name);
         }
+        this.name = name;
     }
 }
