@@ -1,4 +1,4 @@
-package com.alc.diary.domain.usercalendar;
+package com.alc.diary.domain.usercalendar.error;
 
 import com.alc.diary.domain.exception.ErrorModel;
 import lombok.Getter;

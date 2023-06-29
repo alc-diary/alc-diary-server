@@ -1,21 +1,16 @@
 package com.alc.diary.domain.usercalendar;
 
 import com.alc.diary.domain.BaseEntity;
-import com.alc.diary.domain.calendar.Calendar;
-import com.alc.diary.domain.drink.UserCalendarDrink;
-import com.alc.diary.domain.exception.DomainException;
-import com.alc.diary.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @ToString(exclude = "calendar")
@@ -28,17 +23,12 @@ public class UserCalendar extends BaseEntity {
     private Long id;
 
     @Audited
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_calendars_users"))
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private long userId;
 
     @Audited
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "calendar_id", foreignKey = @ForeignKey(name = "fk_user_calendars_calendars"))
-    private Calendar calendar;
-
-    @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
-    private List<UserCalendarDrink> drinks = new ArrayList<>();
+    @Column(name = "calendar_id", nullable = false)
+    private long calendarId;
 
     @Audited
     @Column(name = "content", length = 1000)
@@ -49,41 +39,48 @@ public class UserCalendar extends BaseEntity {
     private String condition;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
-    private Set<UserCalendarImage> images = new HashSet<>();
+    private List<UserCalendarDrink> drinks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
+    private List<UserCalendarImage> images = new ArrayList<>();
 
     @Audited
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 20, nullable = false)
-    private UserCalendarStatus status;
+    @Column(name = "total_price", nullable = false)
+    private int totalPrice;
+
+    @Audited
+    @Column(name = "total_calories", nullable = false)
+    private int totalCalories;
+
+    @Audited
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
 
     private UserCalendar(
-            User user,
+            Long userId,
+            Long calendarId,
             String content,
             String condition,
-            UserCalendarStatus status
+            int totalPrice,
+            int totalCalories,
+            boolean isDeleted
     ) {
-        if (user == null) {
-            throw new DomainException(UserCalendarError.USER_NULL);
+        if (userId == null) {
+
         }
-        if (status == null) {
-            throw new DomainException(UserCalendarError.STATUS_NULL);
+        if (calendarId == null) {
+
         }
-        this.user = user;
+        if (StringUtils.length(content) > 1000) {
+
+        }
+        this.userId = userId;
+        this.calendarId = calendarId;
         this.content = content;
         this.condition = condition;
-        this.status = status;
-    }
-
-    public static UserCalendar create(User user, String content, String condition) {
-        return new UserCalendar(user, content, condition, UserCalendarStatus.ACCEPTED);
-    }
-
-    public static UserCalendar createUserCalendarRequest(User user) {
-        return new UserCalendar(user, null, null, UserCalendarStatus.PENDING);
-    }
-
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
+        this.totalPrice = totalPrice;
+        this.totalCalories = totalCalories;
+        this.isDeleted = isDeleted;
     }
 
     public void addImages(Iterable<UserCalendarImage> images) {
@@ -98,13 +95,5 @@ public class UserCalendar extends BaseEntity {
             this.drinks.add(drink);
             drink.setUserCalendar(this);
         }
-    }
-
-    public boolean isOwner(long userId) {
-        return user.getId().equals(userId);
-    }
-
-    public boolean isActive() {
-        return status == UserCalendarStatus.ACCEPTED;
     }
 }

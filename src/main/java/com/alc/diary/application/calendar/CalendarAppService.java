@@ -10,7 +10,6 @@ import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.CalendarError;
 import com.alc.diary.domain.calendar.CalendarRepository;
 import com.alc.diary.domain.calendar.Calendars;
-import com.alc.diary.domain.drink.UserCalendarDrink;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.error.UserError;
@@ -44,50 +43,23 @@ public class CalendarAppService {
      */
     @Transactional
     public void createCalendar(long userId, CreateCalendarAppRequest request) {
-        User foundUser = userRepository.findActiveUserById(userId)
-                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
-        List<UserCalendar> taggedUserCalendarsToSave = userRepository.findActiveUsersByIdIn(request.taggedUserId()).stream()
-                .map(UserCalendar::createUserCalendarRequest)
-                .toList();
-
-        Calendar calendarToSave = buildCalendarEntity(request, foundUser);
-        UserCalendar userCalendarToSave = buildUserCalendarEntity(request, foundUser);
-
-        addUserCalendarImages(userCalendarToSave, request.imageUrls());
-        addUserCalendarDrinks(userCalendarToSave, request.drinks());
-
-        addCalendars(calendarToSave, userCalendarToSave, taggedUserCalendarsToSave);
-
-        calendarRepository.save(calendarToSave);
     }
 
     @NotNull
     private static Calendar buildCalendarEntity(CreateCalendarAppRequest request, User foundUser) {
-        return new Calendar(foundUser, request.title(), request.drinkStartTime(), request.drinkEndTime());
     }
 
     @NotNull
     private static UserCalendar buildUserCalendarEntity(CreateCalendarAppRequest request, User foundUser) {
-        return UserCalendar.create(foundUser, request.content(), request.condition());
     }
 
     private static void addUserCalendarImages(UserCalendar userCalendar, List<String> imageUrls) {
-        List<UserCalendarImage> userCalendarImagesToSave = imageUrls.stream()
-                .map(UserCalendarImage::new)
-                .toList();
-        userCalendar.addImages(userCalendarImagesToSave);
     }
 
     private static void addUserCalendarDrinks(UserCalendar userCalendar, List<CreateCalendarAppRequest.DrinkDto> drinks) {
-        List<UserCalendarDrink> userCalendarDrinksToSave = drinks.stream()
-                .map(drinkDto -> new UserCalendarDrink(drinkDto.drink(), drinkDto.quantity()))
-                .collect(Collectors.toList());
-        userCalendar.addDrinks(userCalendarDrinksToSave);
     }
 
     private static void addCalendars(Calendar calendar, UserCalendar userCalendar, List<UserCalendar> taggedUserCalendars) {
-        calendar.addUserCalendar(userCalendar);
-        calendar.addUserCalendars(taggedUserCalendars);
     }
 
     /**
@@ -99,42 +71,14 @@ public class CalendarAppService {
      */
     @Cacheable(value = "findCalendar", key = "#userId + '_' + #calendarId", cacheManager = "cacheManager")
     public CalendarDto findCalendar(long userId, long calendarId) {
-        Calendar foundCalendar =
-                calendarRepository.findByIdAndUserCalendars_StatusEqualAccepted(calendarId)
-                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND, "Calendar ID: " + calendarId));
-        if (!foundCalendar.isInvolvedUser(userId)) {
-            throw new DomainException(CalendarError.NO_PERMISSION, "User ID: " + userId + ", Calendar ID: " + calendarId);
-        }
-
-        return CalendarDto.from(foundCalendar);
     }
 
     public List<CalendarDto> search(long userId, SearchCalendarAppRequest request) {
-        SearchCalendarAppResponse.from(
-                calendarRepository.findByUserIdAndDrinkStartTimeGreaterThanEqualAndDrinkStartTimeLessThanAndUserCalendars_StatusEqualAccepted(
-                        userId,
-                        request.getStartTime(),
-                        request.getEndTime()
-                ));
-        return null;
     }
 
     public GetMonthlyCalendarsAppResponse getMonthlyCalendars(long userId, Integer year, Integer month) {
-        LocalDate date = LocalDate.of(year, month, 1);
-        LocalDateTime startOfMonth = date.atStartOfDay();
-        LocalDate nextMonth = date.plusMonths(1);
-        LocalDateTime startOfNextMonth = nextMonth.atStartOfDay();
-        Calendars calendars = Calendars.from(calendarRepository.findByUserIdAndDrinkStartTimeGreaterThanEqualAndDrinkStartTimeLessThanAndUserCalendars_StatusEqualAccepted(
-                userId,
-                startOfMonth,
-                startOfNextMonth
-        ));
-        return GetMonthlyCalendarsAppResponse.from(calendars.getMonthlyCalendar());
     }
 
     public GetCalendarRequestsAppResponse getCalendarRequests(long userId) {
-        return GetCalendarRequestsAppResponse.from(
-                calendarRepository.findByUserCalendar_UserIdAndUserCalendar_StatusEqualPending(userId)
-        );
     }
 }
