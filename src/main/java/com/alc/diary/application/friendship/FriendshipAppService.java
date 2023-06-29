@@ -224,7 +224,7 @@ public class FriendshipAppService {
         FriendRequest foundFriendRequest =
                 friendRequestRepository.findAcceptedRequestWithUsers(foundFriendship.getUserAId(), foundFriendship.getUserBId())
                         .orElseThrow();
-        foundFriendRequest.markFriendshipEnded();
+        foundFriendRequest.markFriendshipEnded(userId);
         friendshipRepository.deleteById(foundFriendship.getId());
     }
 
