@@ -3,7 +3,9 @@ package com.alc.diary.application.drinkcategory;
 import com.alc.diary.application.drinkcategory.dto.request.CreateDrinkCategoryRequest;
 import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategoriesResponse;
 import com.alc.diary.domain.drinkcategory.DrinkCategory;
+import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryRepository;
+import com.alc.diary.domain.exception.DomainException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,9 @@ public class DrinkCategoryService {
      */
     @Transactional
     public long createDrinkCategory(CreateDrinkCategoryRequest request) {
+        if (drinkCategoryRepository.findByName(request.drinkCategoryName()).isPresent()) {
+            throw new DomainException(DrinkCategoryError.DUPLICATE_NAME);
+        }
         DrinkCategory drinkCategoryToSave = new DrinkCategory(request.drinkCategoryName());
         DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
         return drinkCategory.getId();

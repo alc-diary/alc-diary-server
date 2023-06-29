@@ -15,7 +15,13 @@ import java.util.List;
 @Getter
 @ToString(exclude = "calendar")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_calendars")
+@Table(
+        name = "user_calendars",
+        indexes = {
+                @Index(name = "idx_user_calendars_user_id", columnList = "user_id"),
+                @Index(name = "idx_user_calendars_calendar_id", columnList = "calendar_id")
+        }
+)
 @Entity
 public class UserCalendar extends BaseEntity {
 

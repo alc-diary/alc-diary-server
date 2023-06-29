@@ -10,6 +10,7 @@ public enum DrinkCategoryError implements ErrorModel {
 
     INVALID_INPUT("DC_E0000", "Invalid input parameter."),
     NAME_LENGTH_EXCEED("DC_E0001", "Drink category name length cannot exceed 30 characters."),
+    DUPLICATE_NAME("DC_E0002", "Duplicate drink category name."),
     ;
 
     private final String code;

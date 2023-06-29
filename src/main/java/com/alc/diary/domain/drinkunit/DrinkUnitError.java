@@ -10,6 +10,7 @@ public enum DrinkUnitError implements ErrorModel {
 
     INVALID_INPUT("DU_E0000", "Invalid input parameter."),
     NAME_LENGTH_EXCEED("DU_E0001", "Drink unit name length cannot exceed 30 characters."),
+    DUPLICATE_NAME("DU_E0002", "Duplicate drink unit name."),
     ;
 
     private final String code;
