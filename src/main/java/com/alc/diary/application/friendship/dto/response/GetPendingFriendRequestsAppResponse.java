@@ -3,8 +3,8 @@ package com.alc.diary.application.friendship.dto.response;
 public record GetPendingFriendRequestsAppResponse(
 
         long friendshipId,
-        long requestReceiverId,
-        String requestReceiverNickname,
+        long receiverId,
+        String receiverNickname,
         String receiverProfileImageUrl
 ) {
 }

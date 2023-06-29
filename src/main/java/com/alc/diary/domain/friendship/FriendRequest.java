@@ -1,5 +1,6 @@
 package com.alc.diary.domain.friendship;
 
+import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.friendship.enums.FriendRequestStatus;
 import com.alc.diary.domain.friendship.error.FriendRequestError;
@@ -15,23 +16,27 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "friend_requests")
 @Entity
-public class FriendRequest {
+public class FriendRequest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Audited
     @Column(name = "sender_id", nullable = false, updatable = false)
     private long senderId;
 
+    @Audited
     @Column(name = "receiver_id", nullable = false, updatable = false)
     private long receiverId;
 
+    @Audited
     @Column(name = "message", length = 100, updatable = false)
     private String message;
 
     @Audited
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 30, nullable = false)
     private FriendRequestStatus status;
 
     private FriendRequest(Long senderId, Long receiverId, String message, FriendRequestStatus status) {

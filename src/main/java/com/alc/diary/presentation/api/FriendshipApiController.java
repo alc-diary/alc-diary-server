@@ -23,20 +23,21 @@ public class FriendshipApiController {
 
     private final FriendshipAppService friendshipAppService;
 
-    @PostMapping
-    public ApiResponse<Void> sendFriendRequest(
-            @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @Validated @RequestBody SendFriendRequestAppRequest request
-    ) {
-        friendshipAppService.sendFriendRequest(userId, request);
-        return ApiResponse.getCreated();
-    }
-
     @GetMapping
     public ApiResponse<List<GetFriendListAppResponse>> getFriendList(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {
         return ApiResponse.getSuccess(friendshipAppService.getFriendList(userId));
+    }
+
+    @PutMapping("/{friendshipId}/friend-label")
+    public ApiResponse<Void> updateFriendLabel(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @PathVariable long friendshipId,
+            @RequestBody UpdateFriendLabelAppRequest request
+    ) {
+        friendshipAppService.updateFriendLabel(userId, friendshipId, request);
+        return ApiResponse.getSuccess();
     }
 
     @DeleteMapping("/{friendshipId}")
@@ -61,55 +62,54 @@ public class FriendshipApiController {
         );
     }
 
-    @GetMapping("/pending-requests")
+    @PostMapping("/request")
+    public ApiResponse<Void> sendFriendRequest(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @Validated @RequestBody SendFriendRequestAppRequest request
+    ) {
+        friendshipAppService.sendFriendRequest(userId, request);
+        return ApiResponse.getCreated();
+    }
+
+    @GetMapping("/request/pending")
     public ApiResponse<List<GetPendingFriendRequestsAppResponse>> getPendingFriendRequests(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {
         return ApiResponse.getSuccess(friendshipAppService.getPendingFriendRequests(userId));
     }
 
-    @GetMapping("/received-requests")
+    @GetMapping("/request/received")
     public ApiResponse<List<GetReceivedFriendRequestsAppResponse>> getReceivedFriendRequests(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {
         return ApiResponse.getSuccess(friendshipAppService.getReceivedFriendRequests(userId));
     }
 
-    @PutMapping("/{friendshipId}/accept-request")
+    @PutMapping("/request/{friendRequestId}/accept")
     public ApiResponse<Void> acceptFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId,
+            @PathVariable long friendRequestId,
             @RequestBody AcceptFriendRequestAppRequest request
             ) {
-        friendshipAppService.acceptFriendRequest(userId, friendshipId, request);
+        friendshipAppService.acceptFriendRequest(userId, friendRequestId, request);
         return ApiResponse.getSuccess();
     }
 
-    @PutMapping("/{friendshipId}/reject-request")
+    @PutMapping("/request/{friendRequestId}/reject")
     public ApiResponse<Void> rejectFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId
+            @PathVariable long friendRequestId
     ) {
-        friendshipAppService.rejectFriendRequest(userId, friendshipId);
+        friendshipAppService.rejectFriendRequest(userId, friendRequestId);
         return ApiResponse.getSuccess();
     }
 
-    @PutMapping("/{friendshipId}/cancel-request")
+    @PutMapping("/request/{friendRequestId}/cancel")
     public ApiResponse<Void> cancelFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId
+            @PathVariable long friendRequestId
     ) {
-        friendshipAppService.cancelFriendRequest(userId, friendshipId);
-        return ApiResponse.getSuccess();
-    }
-
-    @PutMapping("/{friendshipId}/friend-label")
-    public ApiResponse<Void> updateFriendLabel(
-            @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId,
-            @RequestBody UpdateFriendLabelAppRequest request
-    ) {
-        friendshipAppService.updateFriendLabel(userId, friendshipId, request);
+        friendshipAppService.cancelFriendRequest(userId, friendRequestId);
         return ApiResponse.getSuccess();
     }
 }
