@@ -99,7 +99,7 @@ public class FriendshipAppService {
     }
 
     /**
-     * 닉네임으로 유저 정보와 친구 상태 조회 v2
+     * 닉네임으로 유저 정보와 친구 상태 조회
      *
      * @param userId
      * @param nickname
