@@ -1,27 +1,30 @@
 package com.alc.diary.application.friendship;
 
-import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
-import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
-import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
-import com.alc.diary.application.friendship.dto.request.UpdateFriendshipAliasAppRequest;
-import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
-import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
-import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
+import com.alc.diary.application.friendship.dto.request.AcceptFriendRequestAppRequest;
+import com.alc.diary.application.friendship.dto.request.SendFriendRequestAppRequest;
+import com.alc.diary.application.friendship.dto.request.UpdateFriendLabelAppRequest;
+import com.alc.diary.application.friendship.dto.response.*;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.friendship.Friendship;
-import com.alc.diary.domain.friendship.enums.FriendshipStatus;
+import com.alc.diary.domain.friendship.FriendRequest;
 import com.alc.diary.domain.friendship.error.FriendshipError;
+import com.alc.diary.domain.friendship.error.FriendRequestError;
 import com.alc.diary.domain.friendship.repository.FriendshipRepository;
+import com.alc.diary.domain.friendship.repository.FriendRequestRepository;
 import com.alc.diary.domain.user.User;
-import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
+import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.alc.diary.application.friendship.dto.response.SearchUserWithFriendStatusByNicknameAppResponse.FriendStatus.*;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -30,104 +33,135 @@ import java.util.stream.Collectors;
 public class FriendshipAppService {
 
     private final UserRepository userRepository;
+    private final FriendRequestRepository friendRequestRepository;
     private final FriendshipRepository friendshipRepository;
 
     /**
      * 친구 요청 보내기
      *
-     * @param userId  요청 유저 ID
-     * @param request request
+     * @param userId
+     * @param request
      */
     @Transactional
-    public void requestFriendship(long userId, RequestFriendshipAppRequest request) {
-        User requester = getUserById(userId);
-        User targetUser = getUserById(request.targetUserId());
+    public void sendFriendRequest(long userId, SendFriendRequestAppRequest request) {
+        User sender = userRepository.findActiveUserById(userId).orElseThrow();
+        User receiver = userRepository.findActiveUserById(request.receiverId()).orElseThrow();
 
-        validFriendshipRequest(requester, targetUser);
+        validFriendRequest(sender.getId(), receiver.getId());
 
-        Friendship friendshipToSave =
-                Friendship.createRequest(requester, targetUser, request.message());
-        friendshipRepository.save(friendshipToSave);
+        FriendRequest friendRequestToSave = FriendRequest.create(sender.getId(), receiver.getId(), request.message());
+        friendRequestRepository.save(friendRequestToSave);
     }
 
-    private User getUserById(long userId) {
-        return userRepository.findActiveUserById(userId)
-                             .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
-    }
-
-    private void validFriendshipRequest(User requester, User targetUser) {
-        if (requester.equals(targetUser)) {
-            throw new DomainException(
-                    FriendshipError.INVALID_REQUEST,
-                    String.format("Request UserID: %d, Target User Id: %d", requester.getId(), targetUser.getId())
-            );
+    private void validFriendRequest(long userAId, long userBId) {
+        if (userAId == userBId) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
         }
-
-        if (isRequestAlreadySent(requester.getId(), targetUser.getId())) {
-            throw new DomainException(FriendshipError.ALREADY_SENT_REQUEST);
-        }
-        if (areUsersFriends(requester.getId(), targetUser.getId())) {
-            throw new DomainException(FriendshipError.ALREADY_FRIENDS);
+        if (friendRequestRepository.findPendingOrAcceptedRequestWithUsers(userAId, userBId).isPresent()) {
+            throw new DomainException(FriendRequestError.INVALID_REQUEST);
         }
     }
 
     /**
      * 현재 사용자의 친구 목록 조회
      *
-     * @param requesterId 요청 유저 ID
+     * @param userId
      * @return
      */
-    public List<GetFriendshipsAppResponse> getFriendships(long requesterId) {
-        return GetFriendshipsAppResponse.of(
-                filterFriendshipWithActiveUsers(friendshipRepository.findAcceptedFriendshipsByUserId(requesterId)), requesterId
-        );
+    public List<GetFriendListAppResponse> getFriendList(long userId) {
+        List<Friendship> friendships = friendshipRepository.findByUserId(userId);
+        List<Long> friendUserIds = friendships.stream()
+                .map(friendship -> friendship.getFriendUserId(userId))
+                .toList();
+
+        Map<Long, User> userByUserId = getUserByIdIn(friendUserIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
+        return friendships.stream()
+                .map(friendship -> {
+                    long friendUserId = friendship.getFriendUserId(userId);
+                    User friendUser = userByUserId.get(friendUserId);
+                    return new GetFriendListAppResponse(
+                            friendship.getId(),
+                            friendUser.getNickname(),
+                            friendship.getFriendUserLabel(userId),
+                            friendUser.getProfileImage()
+                    );
+                })
+                .toList();
+    }
+
+    private List<User> getUserByIdIn(List<Long> userIds) {
+        if (Collections.isEmpty(userIds)) {
+            return List.of();
+        }
+        return userRepository.findActiveUsersByIdIn(userIds);
     }
 
     /**
-     * 닉네임으로 유저 정보와 친구 상태를 조회
+     * 닉네임으로 유저 정보와 친구 상태 조회 v2
      *
-     * @param requesterId
+     * @param userId
      * @param nickname
+     * @return
      */
-    public SearchUserWithFriendshipStatusByNicknameAppResponse searchUserWithFriendshipStatusByNickname(
-            long requesterId,
+    public SearchUserWithFriendStatusByNicknameAppResponse searchUserWithFriendStatusByNickname(
+            long userId,
             String nickname
     ) {
-        return userRepository.findActiveUserByNickname(nickname).map(foundUser -> {
-                FriendshipStatus status = null;
-
-                 if (isRequestAlreadySent(requesterId, foundUser.getId())) {
-                     status = FriendshipStatus.REQUESTED;
-                 } else if (areUsersFriends(requesterId, foundUser.getId())) {
-                     status = FriendshipStatus.ACCEPTED;
-                 }
-
-                 return SearchUserWithFriendshipStatusByNicknameAppResponse.of(foundUser, status);
-             })
-             .orElse(null);
-    }
-
-    private boolean isRequestAlreadySent(long user1Id, long user2Id) {
-        return friendshipRepository.findRequestedFriendshipBetweenUsers(user1Id, user2Id).isPresent();
-    }
-
-    private boolean areUsersFriends(long user1Id, long user2Id) {
-        return friendshipRepository.findAcceptedFriendshipBetweenUsers(user1Id, user2Id).isPresent();
+        return userRepository.findActiveUserByNickname(nickname).map(friend -> {
+            if (friendRequestRepository.findPendingRequestWithUsers(userId, friend.getId()).isPresent()) {
+                return new SearchUserWithFriendStatusByNicknameAppResponse(
+                        friend.getId(),
+                        friend.getProfileImage(),
+                        friend.getDetail().getNickname(),
+                        PENDING
+                );
+            }
+            if (friendshipRepository.findWithUsers(userId, friend.getId()).isPresent()) {
+                return new SearchUserWithFriendStatusByNicknameAppResponse(
+                        friend.getId(),
+                        friend.getProfileImage(),
+                        friend.getDetail().getNickname(),
+                        FRIENDS
+                );
+            }
+            return new SearchUserWithFriendStatusByNicknameAppResponse(
+                    friend.getId(),
+                    friend.getProfileImage(),
+                    friend.getDetail().getNickname(),
+                    NOT_SENT
+            );
+        }).orElse(null);
     }
 
     /**
      * 현재 사용자가 받은 친구 요청 리스트를 조회
      *
-     * @param userId 요청 유저 ID
-     * @return 받은 친구 요청 리스트
+     * @param userId
+     * @return
      */
-    public List<GetReceivedFriendshipRequestsAppResponse> getReceivedFriendshipRequests(long userId) {
-        List<Friendship> foundFriendships = filterFriendshipWithActiveUsers(
-                friendshipRepository.findByToUser_IdAndStatusEquals(userId, FriendshipStatus.REQUESTED)
-        );
-        return foundFriendships.stream()
-                               .map(GetReceivedFriendshipRequestsAppResponse::from)
-                               .collect(Collectors.toList());
+    public List<GetReceivedFriendRequestsAppResponse> getReceivedFriendRequests(long userId) {
+        List<FriendRequest> receivedRequests = friendRequestRepository.findPendingRequestsByReceiverId(userId);
+        List<Long> senderIds = receivedRequests.stream()
+                .map(FriendRequest::getSenderId)
+                .toList();
+        Map<Long, User> friendByUserId = getUserByIdIn(senderIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
+        return receivedRequests.stream()
+                .filter(friendRequest -> friendByUserId.containsKey(friendRequest.getSenderId()))
+                .map(friendRequest -> {
+                    User friend = friendByUserId.get(friendRequest.getSenderId());
+                    return new GetReceivedFriendRequestsAppResponse(
+                            friendRequest.getId(),
+                            friend.getId(),
+                            friend.getNickname(),
+                            friend.getProfileImage(),
+                            friendRequest.getMessage()
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -136,65 +170,88 @@ public class FriendshipAppService {
      * @param userId
      * @return
      */
-    public List<GetPendingRequestsAppResponse> getPendingRequests(long userId) {
-        return GetPendingRequestsAppResponse.from(
-                filterFriendshipWithActiveUsers(friendshipRepository.findRequestedFriendshipByFromUserId(userId))
-        );
-    }
+    public List<GetPendingFriendRequestsAppResponse> getPendingFriendRequests(long userId) {
+        List<FriendRequest> sendRequests = friendRequestRepository.findPendingRequestsBySenderId(userId);
+        List<Long> receiverIds = sendRequests.stream()
+                .map(FriendRequest::getReceiverId)
+                .toList();
+        Map<Long, User> receiverByUserId = getUserByIdIn(receiverIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
 
-    private List<Friendship> filterFriendshipWithActiveUsers(List<Friendship> friendships) {
-        return friendships.stream()
-                          .filter(Friendship::areBothUserActive)
-                          .collect(Collectors.toList());
+        return sendRequests.stream()
+                .filter(friendRequest -> receiverByUserId.containsKey(friendRequest.getReceiverId()))
+                .map(friendRequest -> {
+                    User receiver = receiverByUserId.get(friendRequest.getReceiverId());
+                    return new GetPendingFriendRequestsAppResponse(
+                            friendRequest.getId(),
+                            receiver.getId(),
+                            receiver.getNickname(),
+                            receiver.getProfileImage()
+                    );
+                })
+                .toList();
     }
 
     /**
      * 친구 요청 수락
      *
      * @param userId       요청 유저 ID
-     * @param friendshipId 친구 데이터 ID
+     * @param friendRequestId 친구 데이터 ID
      */
     @Transactional
-    public void acceptFriendshipRequest(long userId, long friendshipId, AcceptFriendshipRequestAppRequest request) {
-        Friendship foundFriendShip = getFriendshipsById(friendshipId);
-        foundFriendShip.accept(userId);
-        foundFriendShip.updateFriendAlias(userId, request.alias());
+    public void acceptFriendRequest(long userId, long friendRequestId, AcceptFriendRequestAppRequest request) {
+        FriendRequest friendRequest = friendRequestRepository.findById(friendRequestId).orElseThrow();
+        friendRequest.markAccepted(userId);
+
+        Friendship friendshipToSave = Friendship.create(
+                friendRequest.getSenderId(),
+                null,
+                friendRequest.getReceiverId(),
+                request.friendLabel()
+        );
+        friendshipRepository.save(friendshipToSave);
     }
 
     /**
      * 친구 삭제 (soft delete)
      *
-     * @param requesterId  요청 유저 ID
+     * @param userId  요청 유저 ID
      * @param friendshipId 삭제할 친구 데이터 ID
      */
     @Transactional
-    public void deleteFriendship(long requesterId, long friendshipId) {
-        Friendship foundFriendship = getFriendshipsById(friendshipId);
-        foundFriendship.delete(requesterId);
+    public void deleteFriend(long userId, long friendshipId) {
+        Friendship foundFriendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new DomainException(FriendshipError.FRIENDSHIP_NOT_FOUND));
+
+        FriendRequest foundFriendRequest =
+                friendRequestRepository.findAcceptedRequestWithUsers(foundFriendship.getUserAId(), foundFriendship.getUserBId())
+                        .orElseThrow(() -> new DomainException(FriendRequestError.FRIEND_REQUEST_NOT_FOUND));
+        foundFriendRequest.markFriendshipEnded(userId);
+        friendshipRepository.deleteById(foundFriendship.getId());
     }
 
     /**
      * 친구 요청 거절
      *
      * @param userId       요청 유저 ID
-     * @param friendshipId 친구 데이터 ID
+     * @param friendRequestId 친구 데이터 ID
      */
     @Transactional
-    public void declineFriendshipRequest(long userId, long friendshipId) {
-        Friendship foundFriendship = getFriendshipsById(friendshipId);
-        foundFriendship.decline(userId);
+    public void rejectFriendRequest(long userId, long friendRequestId) {
+        FriendRequest foundRequest = friendRequestRepository.findById(friendRequestId).orElseThrow();
+        foundRequest.markRejected(userId);
     }
 
     /**
      * 보낸 친구 요청 취소하기
      *
      * @param userId
-     * @param friendshipId
+     * @param friendRequestId
      */
     @Transactional
-    public void cancelFriendshipRequest(long userId, long friendshipId) {
-        Friendship foundFriendship = getFriendshipsById(friendshipId);
-        foundFriendship.cancel(userId);
+    public void cancelFriendRequest(long userId, long friendRequestId) {
+        FriendRequest foundRequest = friendRequestRepository.findById(friendRequestId).orElseThrow();
+        foundRequest.markCanceled(userId);
     }
 
     /**
@@ -204,20 +261,8 @@ public class FriendshipAppService {
      * @param friendshipId
      */
     @Transactional
-    public void updateFriendshipAlias(long userId, long friendshipId, UpdateFriendshipAliasAppRequest request) {
-        Friendship foundFriendship = getFriendshipsById(friendshipId);
-        if (!foundFriendship.isAccepted()) {
-            throw new DomainException(FriendshipError.INVALID_REQUEST);
-        }
-        foundFriendship.updateFriendAlias(userId, request.newUserAlias());
-    }
-
-    private Friendship getFriendshipsById(long id) {
-        return friendshipRepository
-                .findById(id).orElseThrow(() -> new DomainException(FriendshipError.FRIENDSHIP_NOT_FOUND));
-    }
-
-    private List<Friendship> getFriendshipsByIds(List<Long> request) {
-        return friendshipRepository.findByIdIn(request);
+    public void updateFriendLabel(long userId, long friendshipId, UpdateFriendLabelAppRequest request) {
+        Friendship foundFriendship = friendshipRepository.findById(friendshipId).orElseThrow();
+        foundFriendship.updateFriendLabel(userId, request.newFriendLabel());
     }
 }

@@ -1,13 +1,10 @@
 package com.alc.diary.presentation.api;
 
-import com.alc.diary.application.calendar.dto.response.SearchUserWithFriendshipStatusByNicknameAppResponse;
 import com.alc.diary.application.friendship.FriendshipAppService;
-import com.alc.diary.application.friendship.dto.request.AcceptFriendshipRequestAppRequest;
-import com.alc.diary.application.friendship.dto.request.RequestFriendshipAppRequest;
-import com.alc.diary.application.friendship.dto.request.UpdateFriendshipAliasAppRequest;
-import com.alc.diary.application.friendship.dto.response.GetFriendshipsAppResponse;
-import com.alc.diary.application.friendship.dto.response.GetPendingRequestsAppResponse;
-import com.alc.diary.application.friendship.dto.response.GetReceivedFriendshipRequestsAppResponse;
+import com.alc.diary.application.friendship.dto.request.AcceptFriendRequestAppRequest;
+import com.alc.diary.application.friendship.dto.request.SendFriendRequestAppRequest;
+import com.alc.diary.application.friendship.dto.request.UpdateFriendLabelAppRequest;
+import com.alc.diary.application.friendship.dto.response.*;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.UserDetail;
 import com.alc.diary.domain.user.error.UserError;
@@ -26,33 +23,34 @@ public class FriendshipApiController {
 
     private final FriendshipAppService friendshipAppService;
 
-    @PostMapping
-    public ApiResponse<Void> requestFriendship(
-            @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @Validated @RequestBody RequestFriendshipAppRequest request
-    ) {
-        friendshipAppService.requestFriendship(userId, request);
-        return ApiResponse.getCreated();
-    }
-
     @GetMapping
-    public ApiResponse<List<GetFriendshipsAppResponse>> getFriendShips(
+    public ApiResponse<List<GetFriendListAppResponse>> getFriendList(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
     ) {
-        return ApiResponse.getSuccess(friendshipAppService.getFriendships(userId));
+        return ApiResponse.getSuccess(friendshipAppService.getFriendList(userId));
+    }
+
+    @PutMapping("/{friendshipId}/friend-label")
+    public ApiResponse<Void> updateFriendLabel(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @PathVariable long friendshipId,
+            @RequestBody UpdateFriendLabelAppRequest request
+    ) {
+        friendshipAppService.updateFriendLabel(userId, friendshipId, request);
+        return ApiResponse.getSuccess();
     }
 
     @DeleteMapping("/{friendshipId}")
-    public ApiResponse<Void> deleteFriendship(
+    public ApiResponse<Void> deleteFriend(
             @ApiIgnore @RequestAttribute(name = "userId") long requesterId,
             @PathVariable long friendshipId
     ) {
-        friendshipAppService.deleteFriendship(requesterId, friendshipId);
+        friendshipAppService.deleteFriend(requesterId, friendshipId);
         return ApiResponse.getSuccess();
     }
 
     @GetMapping("/search-user-with-friendship-status")
-    public ApiResponse<SearchUserWithFriendshipStatusByNicknameAppResponse> searchUserWithFriendshipStatusByNickname(
+    public ApiResponse<SearchUserWithFriendStatusByNicknameAppResponse> searchUserWithFriendStatusByNickname(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @RequestParam String nickname
     ) {
@@ -60,59 +58,58 @@ public class FriendshipApiController {
             throw new DomainException(UserError.INVALID_NICKNAME_FORMAT);
         }
         return ApiResponse.getSuccess(
-                friendshipAppService.searchUserWithFriendshipStatusByNickname(userId, nickname)
+                friendshipAppService.searchUserWithFriendStatusByNickname(userId, nickname)
         );
     }
 
-    @GetMapping("/pending-requests")
-    public ApiResponse<List<GetPendingRequestsAppResponse>> getPendingRequests(
-            @ApiIgnore @RequestAttribute(name = "userId") long userId
-    ) {
-        return ApiResponse.getSuccess(friendshipAppService.getPendingRequests(userId));
-    }
-
-    @GetMapping("/received-requests")
-    public ApiResponse<List<GetReceivedFriendshipRequestsAppResponse>> getReceivedFriendshipRequests(
-            @ApiIgnore @RequestAttribute(name = "userId") long userId
-    ) {
-        return ApiResponse.getSuccess(friendshipAppService.getReceivedFriendshipRequests(userId));
-    }
-
-    @PutMapping("/{friendshipId}/accept-request")
-    public ApiResponse<Void> acceptFriendshipRequest(
+    @PostMapping("/request")
+    public ApiResponse<Void> sendFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId,
-            @RequestBody AcceptFriendshipRequestAppRequest request
+            @Validated @RequestBody SendFriendRequestAppRequest request
+    ) {
+        friendshipAppService.sendFriendRequest(userId, request);
+        return ApiResponse.getCreated();
+    }
+
+    @GetMapping("/request/pending")
+    public ApiResponse<List<GetPendingFriendRequestsAppResponse>> getPendingFriendRequests(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId
+    ) {
+        return ApiResponse.getSuccess(friendshipAppService.getPendingFriendRequests(userId));
+    }
+
+    @GetMapping("/request/received")
+    public ApiResponse<List<GetReceivedFriendRequestsAppResponse>> getReceivedFriendRequests(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId
+    ) {
+        return ApiResponse.getSuccess(friendshipAppService.getReceivedFriendRequests(userId));
+    }
+
+    @PutMapping("/request/{friendRequestId}/accept")
+    public ApiResponse<Void> acceptFriendRequest(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId,
+            @PathVariable long friendRequestId,
+            @RequestBody AcceptFriendRequestAppRequest request
             ) {
-        friendshipAppService.acceptFriendshipRequest(userId, friendshipId, request);
+        friendshipAppService.acceptFriendRequest(userId, friendRequestId, request);
         return ApiResponse.getSuccess();
     }
 
-    @PutMapping("/{friendshipId}/decline-request")
-    public ApiResponse<Void> declineFriendshipRequest(
+    @PutMapping("/request/{friendRequestId}/reject")
+    public ApiResponse<Void> rejectFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId
+            @PathVariable long friendRequestId
     ) {
-        friendshipAppService.declineFriendshipRequest(userId, friendshipId);
+        friendshipAppService.rejectFriendRequest(userId, friendRequestId);
         return ApiResponse.getSuccess();
     }
 
-    @PutMapping("/{friendshipId}/cancel-request")
-    public ApiResponse<Void> cancelFriendshipRequest(
+    @PutMapping("/request/{friendRequestId}/cancel")
+    public ApiResponse<Void> cancelFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId
+            @PathVariable long friendRequestId
     ) {
-        friendshipAppService.cancelFriendshipRequest(userId, friendshipId);
-        return ApiResponse.getSuccess();
-    }
-
-    @PutMapping("/{friendshipId}/alias")
-    public ApiResponse<Void> updateFriendshipAlias(
-            @ApiIgnore @RequestAttribute(name = "userId") long userId,
-            @PathVariable long friendshipId,
-            @RequestBody UpdateFriendshipAliasAppRequest request
-    ) {
-        friendshipAppService.updateFriendshipAlias(userId, friendshipId, request);
+        friendshipAppService.cancelFriendRequest(userId, friendRequestId);
         return ApiResponse.getSuccess();
     }
 }
