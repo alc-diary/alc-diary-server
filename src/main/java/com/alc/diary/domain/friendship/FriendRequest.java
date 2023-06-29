@@ -77,8 +77,8 @@ public class FriendRequest {
         status = FriendRequestStatus.REJECTED;
     }
 
-    public void markCanceled(long receiverId) {
-        if (this.receiverId != receiverId) {
+    public void markCanceled(long senderId) {
+        if (this.senderId != senderId) {
             throw new DomainException(FriendRequestError.NO_PERMISSION);
         }
         if (status != FriendRequestStatus.PENDING) {
