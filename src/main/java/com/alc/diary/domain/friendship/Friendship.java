@@ -21,6 +21,7 @@ public class Friendship extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Audited
     @Column(name = "user_a_id", nullable = false, updatable = false)
     private long userAId;
 
@@ -28,6 +29,7 @@ public class Friendship extends BaseEntity {
     @Column(name = "user_b_label_by_user_a", length = 30)
     private String userBLabelByUserA;
 
+    @Audited
     @Column(name = "user_b_id", nullable = false, updatable = false)
     private long userBId;
 

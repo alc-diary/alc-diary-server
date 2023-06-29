@@ -196,11 +196,11 @@ public class FriendshipAppService {
      * 친구 요청 수락
      *
      * @param userId       요청 유저 ID
-     * @param friendshipId 친구 데이터 ID
+     * @param friendRequestId 친구 데이터 ID
      */
     @Transactional
-    public void acceptFriendRequest(long userId, long friendshipId, AcceptFriendRequestAppRequest request) {
-        FriendRequest friendRequest = friendRequestRepository.findById(friendshipId).orElseThrow();
+    public void acceptFriendRequest(long userId, long friendRequestId, AcceptFriendRequestAppRequest request) {
+        FriendRequest friendRequest = friendRequestRepository.findById(friendRequestId).orElseThrow();
         friendRequest.markAccepted(userId);
 
         Friendship friendshipToSave = Friendship.create(
@@ -234,11 +234,11 @@ public class FriendshipAppService {
      * 친구 요청 거절
      *
      * @param userId       요청 유저 ID
-     * @param friendshipId 친구 데이터 ID
+     * @param friendRequestId 친구 데이터 ID
      */
     @Transactional
-    public void rejectFriendRequest(long userId, long friendshipId) {
-        FriendRequest foundRequest = friendRequestRepository.findById(friendshipId).orElseThrow();
+    public void rejectFriendRequest(long userId, long friendRequestId) {
+        FriendRequest foundRequest = friendRequestRepository.findById(friendRequestId).orElseThrow();
         foundRequest.markRejected(userId);
     }
 
@@ -246,11 +246,11 @@ public class FriendshipAppService {
      * 보낸 친구 요청 취소하기
      *
      * @param userId
-     * @param friendshipId
+     * @param friendRequestId
      */
     @Transactional
-    public void cancelFriendRequest(long userId, long friendshipId) {
-        FriendRequest foundRequest = friendRequestRepository.findById(friendshipId).orElseThrow();
+    public void cancelFriendRequest(long userId, long friendRequestId) {
+        FriendRequest foundRequest = friendRequestRepository.findById(friendRequestId).orElseThrow();
         foundRequest.markCanceled(userId);
     }
 
