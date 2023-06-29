@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class LocalCacheServiceImpl implements CacheService {
 
     @Override
-    public void markFriendRequestAsUnread(long userId) {
+    public void setUnreadFriendRequestBadge(long userId) {
         System.out.println("local");
     }
 
@@ -21,7 +21,7 @@ public class LocalCacheServiceImpl implements CacheService {
     }
 
     @Override
-    public void markFriendRequestAsRead(long userId) {
+    public void clearUnreadFriendRequestBadge(long userId) {
 
     }
 }

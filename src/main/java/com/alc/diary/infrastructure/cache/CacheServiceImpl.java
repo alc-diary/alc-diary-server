@@ -15,8 +15,7 @@ public class CacheServiceImpl implements CacheService {
     private final StringRedisTemplate redisTemplate;
 
     @Override
-    public void markFriendRequestAsUnread(long userId) {
-        System.out.println("prod");
+    public void setUnreadFriendRequestBadge(long userId) {
         redisTemplate.opsForValue().setBit(UNREAD_FRIEND_REQUESTS_KEY, userId, true);
     }
 
@@ -26,7 +25,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public void markFriendRequestAsRead(long userId) {
+    public void clearUnreadFriendRequestBadge(long userId) {
         redisTemplate.opsForValue().setBit(UNREAD_FRIEND_REQUESTS_KEY, userId, false);
     }
 }

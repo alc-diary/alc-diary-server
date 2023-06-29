@@ -17,7 +17,6 @@ import com.alc.diary.domain.user.repository.UserRepository;
 import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,12 +33,9 @@ import static com.alc.diary.application.friendship.dto.response.SearchUserWithFr
 @Service
 public class FriendshipAppService {
 
-    private static final String UNREAD_FRIEND_REQUESTS_KEY = "unread_friend_requests";
-
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
     private final FriendshipRepository friendshipRepository;
-    private final StringRedisTemplate redisTemplate;
     private final CacheService cacheService;
 
     /**
@@ -57,7 +53,7 @@ public class FriendshipAppService {
 
         FriendRequest friendRequestToSave = FriendRequest.create(sender.getId(), receiver.getId(), request.message());
         friendRequestRepository.save(friendRequestToSave);
-        cacheService.markFriendRequestAsUnread(receiver.getId());
+        cacheService.setUnreadFriendRequestBadge(receiver.getId());
     }
 
     private void validFriendRequest(long userAId, long userBId) {
@@ -274,10 +270,10 @@ public class FriendshipAppService {
     }
 
     public boolean hasUnreadFriendRequest(long userId) {
-        return Boolean.TRUE.equals(redisTemplate.opsForValue().getBit(UNREAD_FRIEND_REQUESTS_KEY, userId));
+        return cacheService.hasUnreadFriendRequest(userId);
     }
 
-    public void markFriendRequestAsRead(long userId) {
-        redisTemplate.opsForValue().setBit(UNREAD_FRIEND_REQUESTS_KEY, userId, false);
+    public void clearUnreadFriendRequestBadge(long userId) {
+        cacheService.clearUnreadFriendRequestBadge(userId);
     }
 }
