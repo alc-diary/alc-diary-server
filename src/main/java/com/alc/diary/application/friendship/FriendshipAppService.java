@@ -1,5 +1,6 @@
 package com.alc.diary.application.friendship;
 
+import com.alc.diary.application.cache.CacheService;
 import com.alc.diary.application.friendship.dto.request.AcceptFriendRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.SendFriendRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.UpdateFriendLabelAppRequest;
@@ -39,6 +40,7 @@ public class FriendshipAppService {
     private final FriendRequestRepository friendRequestRepository;
     private final FriendshipRepository friendshipRepository;
     private final StringRedisTemplate redisTemplate;
+    private final CacheService cacheService;
 
     /**
      * 친구 요청 보내기
@@ -55,7 +57,7 @@ public class FriendshipAppService {
 
         FriendRequest friendRequestToSave = FriendRequest.create(sender.getId(), receiver.getId(), request.message());
         friendRequestRepository.save(friendRequestToSave);
-        redisTemplate.opsForValue().setBit(UNREAD_FRIEND_REQUESTS_KEY, request.receiverId(), true);
+        cacheService.markFriendRequestAsUnread(receiver.getId());
     }
 
     private void validFriendRequest(long userAId, long userBId) {
