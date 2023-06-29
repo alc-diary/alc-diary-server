@@ -16,7 +16,10 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "calendars")
+@Table(
+        name = "calendars",
+        indexes = {@Index(name = "idx_calendars_drink_start_time", columnList = "drink_start_time")}
+)
 @Entity
 public class Calendar extends BaseEntity {
 

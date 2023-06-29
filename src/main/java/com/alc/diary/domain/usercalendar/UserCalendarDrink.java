@@ -8,7 +8,10 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_calendar_drinks")
+@Table(
+        name = "user_calendar_drinks",
+        indexes = {@Index(name = "idx_user_calendar_drinks_user_calendar_id", columnList = "user_calendar_id")}
+)
 @Entity
 public class UserCalendarDrink {
 

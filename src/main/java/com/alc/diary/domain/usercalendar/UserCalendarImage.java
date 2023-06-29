@@ -12,7 +12,10 @@ import javax.persistence.*;
 @Getter
 @ToString(exclude = "userCalendar")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_calendar_images")
+@Table(
+        name = "user_calendar_images",
+        indexes = {@Index(name = "idx_user_calendar_images_user_calendar_id", columnList = "user_calendar_id")}
+)
 @Entity
 public class UserCalendarImage extends BaseCreationEntity {
 
