@@ -87,7 +87,10 @@ public class FriendRequest {
         status = FriendRequestStatus.CANCELED;
     }
 
-    public void markFriendshipEnded() {
+    public void markFriendshipEnded(long userId) {
+        if (senderId != userId && receiverId != userId) {
+            throw new DomainException(FriendRequestError.NO_PERMISSION);
+        }
         if (status != FriendRequestStatus.ACCEPTED) {
             throw new DomainException(FriendRequestError.INVALID_REQUEST);
         }
