@@ -55,10 +55,10 @@ public class Friendship extends BaseEntity {
         if (userBId == null) {
             throw new DomainException(FriendshipError.USER_ID_NULL);
         }
-        if (StringUtils.length(userBLabelByUserA) > 100) {
+        if (StringUtils.length(userBLabelByUserA) > 30) {
             throw new DomainException(FriendshipError.FRIEND_LABEL_EXCEEDED);
         }
-        if (StringUtils.length(userALabelByUserB) > 100) {
+        if (StringUtils.length(userALabelByUserB) > 30) {
             throw new DomainException(FriendshipError.FRIEND_LABEL_EXCEEDED);
         }
         this.userAId = userAId;
