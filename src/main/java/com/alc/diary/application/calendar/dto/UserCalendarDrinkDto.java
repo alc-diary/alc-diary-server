@@ -1,10 +1,6 @@
 package com.alc.diary.application.calendar.dto;
 
-import com.alc.diary.domain.drink.Drink;
-import com.alc.diary.domain.drink.UserCalendarDrink;
-
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public record UserCalendarDrinkDto(

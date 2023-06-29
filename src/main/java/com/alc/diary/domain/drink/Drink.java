@@ -1,18 +1,30 @@
 package com.alc.diary.domain.drink;
 
+import com.alc.diary.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
-public enum Drink {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "drinks")
+@Entity
+public class Drink extends BaseEntity {
 
-    BEER(408, 4_000),
-    SOJU(256, 4_000),
-    WINE(548, 30_000),
-    MAKGEOLLI(344, 4_000),
-    ;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final int calorie;
-    private final int price;
+    @Column(name = "drink_category_id", nullable = false)
+    private long categoryId;
+
+    @Column(name = "name", length = 30, nullable = false)
+    private String name;
+
+    @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
+    private List<DrinkInfo> drinkInfos = new ArrayList<>();
 }

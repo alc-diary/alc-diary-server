@@ -1,6 +1,5 @@
 package com.alc.diary.domain.calendar;
 
-import com.alc.diary.domain.drink.UserCalendarDrink;
 import com.alc.diary.domain.usercalendar.UserCalendar;
 import lombok.ToString;
 

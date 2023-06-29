@@ -1,7 +1,5 @@
 package com.alc.diary.application.calendar.dto.request;
 
-import com.alc.diary.domain.drink.Drink;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;

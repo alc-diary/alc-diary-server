@@ -1,7 +1,5 @@
 package com.alc.diary.application.calendar.dto.response;
 
-import com.alc.diary.domain.drink.Drink;
-import com.alc.diary.domain.drink.UserCalendarDrink;
 import com.alc.diary.domain.usercalendar.UserCalendar;
 
 import java.util.List;
