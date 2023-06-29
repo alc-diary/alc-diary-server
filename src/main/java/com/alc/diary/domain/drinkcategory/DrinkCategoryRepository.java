@@ -10,5 +10,5 @@ public interface DrinkCategoryRepository extends Repository<DrinkCategory, Long>
 
     List<DrinkCategory> findAll();
 
-    void deletedById(long id);
+    void deleteById(long id);
 }

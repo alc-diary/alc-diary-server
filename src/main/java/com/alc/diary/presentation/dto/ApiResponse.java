@@ -41,4 +41,13 @@ public class ApiResponse<T> {
         apiResponse.message = "created";
         return apiResponse;
     }
+
+    public static <T> ApiResponse<T> getCreated(T data) {
+        ApiResponse<T> apiResponse = new ApiResponse<>();
+        apiResponse.status = HttpStatus.CREATED.value();
+        apiResponse.code = "S0001";
+        apiResponse.message = "created";
+        apiResponse.data = data;
+        return apiResponse;
+    }
 }

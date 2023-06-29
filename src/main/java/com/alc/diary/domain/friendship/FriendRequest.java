@@ -14,7 +14,13 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "friend_requests")
+@Table(
+        name = "friend_requests",
+        indexes = {
+                @Index(name = "idx_friend_requests_sender_id_receiver_id", columnList = "sender_id,receiver_id"),
+                @Index(name = "idx_friend_requests_receiver_id_sender_id", columnList = "receiver_id,sender_id")
+        }
+)
 @Entity
 public class FriendRequest extends BaseEntity {
 

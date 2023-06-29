@@ -13,7 +13,13 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "friendships")
+@Table(
+        name = "friendships",
+        indexes = {
+                @Index(name = "idx_friendships_user_a_id_user_b_id", columnList = "user_a_id,user_b_id"),
+                @Index(name = "idx_friendships_user_b_id_user_a_id", columnList = "user_b_id,user_a_id")
+        }
+)
 @Entity
 public class Friendship extends BaseEntity {
 
