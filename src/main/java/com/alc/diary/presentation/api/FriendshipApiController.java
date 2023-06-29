@@ -112,4 +112,19 @@ public class FriendshipApiController {
         friendshipAppService.cancelFriendRequest(userId, friendRequestId);
         return ApiResponse.getSuccess();
     }
+
+    @GetMapping("/request/has-unread")
+    public ApiResponse<Boolean> existsUnreadFriendRequest(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId
+    ) {
+        return ApiResponse.getSuccess(friendshipAppService.hasUnreadFriendRequest(userId));
+    }
+
+    @PostMapping("/request/mark-as-read")
+    public ApiResponse<Void> markAsRead(
+            @ApiIgnore @RequestAttribute(name = "userId") long userId
+    ) {
+        friendshipAppService.markFriendRequestAsRead(userId);
+        return ApiResponse.getSuccess();
+    }
 }
