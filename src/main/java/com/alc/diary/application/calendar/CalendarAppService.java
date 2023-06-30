@@ -86,8 +86,9 @@ public class CalendarAppService {
      * @param calendarId
      * @return
      */
-    public GetCalendarByIdResponse getCalendarByIdResponse(long calendarId) {
+    public GetCalendarByIdResponse getCalendarByIdResponse(long userId, long calendarId) {
         return calendarRepository.findById(calendarId)
+                .filter(calendar -> calendar.isUserInvolved(userId))
                 .map(GetCalendarByIdResponse::from)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
     }

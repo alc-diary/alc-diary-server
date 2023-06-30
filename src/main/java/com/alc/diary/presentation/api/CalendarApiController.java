@@ -29,9 +29,10 @@ public class CalendarApiController {
 
     @GetMapping("/{calendarId}")
     public ApiResponse<GetCalendarByIdResponse> getCalendarById(
+            @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId
     ) {
-        return ApiResponse.getSuccess(calendarAppService.getCalendarByIdResponse(calendarId));
+        return ApiResponse.getSuccess(calendarAppService.getCalendarByIdResponse(userId, calendarId));
     }
 
 //    @PostMapping
