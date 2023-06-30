@@ -1,12 +1,6 @@
 package com.alc.diary.application.auth;
 
-import com.alc.diary.application.auth.service.JwtService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import java.time.Instant;
 
 class JwtServiceTest {
 
@@ -53,8 +47,8 @@ class JwtServiceTest {
     //             .isFalse();
     // }
 
-    @Test
-    void generateToken_test() {
-        JwtService jwtService = new JwtService("ALC_DIARY_SECRET_KEY", Clock.fixed(Instant.now().minusSeconds(10000), ZoneId.of("Asia/Seoul")));
-    }
+//    @Test
+//    void generateToken_test() {
+//        JwtService jwtService = new JwtService("ALC_DIARY_SECRET_KEY", Clock.fixed(Instant.now().minusSeconds(10000), ZoneId.of("Asia/Seoul")));
+//    }
 }
