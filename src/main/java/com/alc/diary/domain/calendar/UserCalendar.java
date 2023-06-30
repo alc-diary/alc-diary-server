@@ -1,7 +1,6 @@
-package com.alc.diary.domain.usercalendar;
+package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
-import com.alc.diary.domain.calendar.Calendar;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

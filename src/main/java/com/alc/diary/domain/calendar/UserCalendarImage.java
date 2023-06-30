@@ -1,11 +1,10 @@
-package com.alc.diary.domain.usercalendar;
+package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseCreationEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 

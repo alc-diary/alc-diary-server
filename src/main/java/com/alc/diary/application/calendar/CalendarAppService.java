@@ -4,17 +4,16 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.domain.calendar.Calendar;
-import com.alc.diary.domain.calendar.CalendarError;
-import com.alc.diary.domain.calendar.CalendarRepository;
+import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.drink.DrinkUnitInfo;
 import com.alc.diary.domain.drink.repository.DrinkUnitInfoRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
-import com.alc.diary.domain.usercalendar.UserCalendar;
-import com.alc.diary.domain.usercalendar.UserCalendarDrink;
-import com.alc.diary.domain.usercalendar.UserCalendarImage;
-import com.alc.diary.domain.usercalendar.repository.UserCalendarRepository;
+import com.alc.diary.domain.calendar.UserCalendar;
+import com.alc.diary.domain.calendar.UserCalendarDrink;
+import com.alc.diary.domain.calendar.UserCalendarImage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -89,7 +87,7 @@ public class CalendarAppService {
     public GetCalendarByIdResponse getCalendarByIdResponse(long userId, long calendarId) {
         return calendarRepository.findById(calendarId)
                 .filter(calendar -> calendar.isUserInvolved(userId))
-                .map(GetCalendarByIdResponse::from)
+                .map(calendar -> GetCalendarByIdResponse.of(calendar, userId))
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
     }
 }
