@@ -64,16 +64,13 @@ public class UserCalendar extends BaseEntity {
     private boolean isDeleted;
 
     private UserCalendar(
-            Long userId,
+            long userId,
             String content,
             String condition,
             int totalPrice,
             int totalCalories,
             boolean isDeleted
     ) {
-        if (userId == null) {
-
-        }
         if (StringUtils.length(content) > 1000) {
 
         }
@@ -86,11 +83,15 @@ public class UserCalendar extends BaseEntity {
     }
 
     public static UserCalendar create(
-            Long userId,
+            long userId,
             String content,
             String condition
     ) {
         return new UserCalendar(userId, content, condition, 0, 0, false);
+    }
+
+    public static UserCalendar createForTaggedUser(long userId) {
+        return new UserCalendar(userId, null, null, 0, 0, false);
     }
 
     public void setCalendar(Calendar calendar) {
