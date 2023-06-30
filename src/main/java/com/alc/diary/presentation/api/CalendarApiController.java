@@ -33,6 +33,14 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getCalendarByIdResponse(userId, calendarId));
     }
 
+    @DeleteMapping("/user-calendars/{userCalendarId}")
+    public ApiResponse<Void> deleteUserCalendar(
+            @ApiIgnore @RequestAttribute long userId,
+            @PathVariable long userCalendarId
+    ) {
+        calendarService.deleteUserCalendar(userId, userCalendarId);
+        return ApiResponse.getSuccess();
+    }
 //    @PostMapping
 //    public ApiResponse<Void> createCalendar(
 //            @ApiIgnore @RequestAttribute long userId,

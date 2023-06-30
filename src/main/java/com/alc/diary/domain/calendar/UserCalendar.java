@@ -1,6 +1,8 @@
 package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
+import com.alc.diary.domain.calendar.error.UserCalendarError;
+import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -121,6 +123,13 @@ public class UserCalendar extends BaseEntity {
 
         totalPrice += userCalendarDrink.totalPrice();
         totalCalories += userCalendarDrink.totalCalories();
+    }
+
+    public void delete(long userId) {
+        if (!isOwner(userId)) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
+        }
+        this.isDeleted = true;
     }
 
     public boolean isOwner(long userId) {

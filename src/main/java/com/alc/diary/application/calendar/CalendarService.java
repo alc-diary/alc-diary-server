@@ -5,7 +5,9 @@ import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.error.UserCalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
+import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
 import com.alc.diary.domain.drink.DrinkUnitInfo;
 import com.alc.diary.domain.drink.repository.DrinkUnitInfoRepository;
 import com.alc.diary.domain.exception.DomainException;
@@ -32,6 +34,7 @@ public class CalendarService {
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
     private final DrinkUnitInfoRepository drinkUnitInfoRepository;
+    private final UserCalendarRepository userCalendarRepository;
 
     /**
      * 캘린더 생성
@@ -132,5 +135,18 @@ public class CalendarService {
                 .filter(calendar -> calendar.isInvolvedUser(userId))
                 .map(calendar -> GetCalendarByIdResponse.of(calendar, userId))
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+    }
+
+    /**
+     * 요청한 유저의 캘린더 데이터 삭제 (캘린더 삭제 x, 캘린더의 자신의 데이터만 삭제)
+     *
+     * @param userId
+     * @param userCalendarId
+     */
+    @Transactional
+    public void deleteUserCalendar(long userId, long userCalendarId) {
+        UserCalendar userCalendar = userCalendarRepository.findByIdAndIsDeletedEqFalse(userCalendarId)
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        userCalendar.delete(userId);
     }
 }
