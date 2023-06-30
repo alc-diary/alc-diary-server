@@ -4,10 +4,12 @@ import com.alc.diary.domain.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "drink_unit_infos",
@@ -35,4 +37,18 @@ public class DrinkUnitInfo extends BaseEntity {
 
     @Column(name = "calories", nullable = false)
     private int calories;
+
+    public DrinkUnitInfo(
+            Long drinkUnitId,
+            Integer price,
+            Integer calories
+    ) {
+        this.drinkUnitId = drinkUnitId;
+        this.price = price;
+        this.calories = calories;
+    }
+
+    public void setDrink(Drink drink) {
+        this.drink = drink;
+    }
 }

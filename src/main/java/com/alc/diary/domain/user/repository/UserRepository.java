@@ -14,12 +14,14 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     @Query("SELECT u " +
             "FROM User u " +
+            "JOIN FETCH u.detail ud " +
             "WHERE u.id = :id " +
             "AND u.status = 'ACTIVE'")
     Optional<User> findActiveUserById(long id);
 
     @Query("SELECT u " +
             "FROM User u " +
+            "JOIN FETCH u.detail ud " +
             "WHERE u.id IN (:userIds) " +
             "AND u.status = 'ACTIVE'")
     List<User> findActiveUsersByIdIn(Iterable<Long> userIds);

@@ -9,6 +9,8 @@ public interface DrinkCategoryRepository extends Repository<DrinkCategory, Long>
 
     DrinkCategory save(DrinkCategory drinkCategory);
 
+    List<DrinkCategory> findByIdIn(Iterable<Long> drinkCategoryIds);
+
     Optional<DrinkCategory> findByName(String name);
 
     List<DrinkCategory> findAll();
