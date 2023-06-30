@@ -1,5 +1,6 @@
-package com.alc.diary.domain.calendar;
+package com.alc.diary.domain.calendar.repository;
 
+import com.alc.diary.domain.calendar.Calendar;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 

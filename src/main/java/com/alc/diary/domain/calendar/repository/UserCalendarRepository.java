@@ -1,6 +1,6 @@
-package com.alc.diary.domain.usercalendar.repository;
+package com.alc.diary.domain.calendar.repository;
 
-import com.alc.diary.domain.usercalendar.UserCalendar;
+import com.alc.diary.domain.calendar.UserCalendar;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;

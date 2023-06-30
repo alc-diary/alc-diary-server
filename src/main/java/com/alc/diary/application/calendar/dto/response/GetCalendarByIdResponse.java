@@ -14,7 +14,7 @@ public record GetCalendarByIdResponse(
         List<UserCalendarDto> userCalendars
 ) {
 
-    public static GetCalendarByIdResponse from(Calendar calendar) {
+    public static GetCalendarByIdResponse of(Calendar calendar, long userId) {
         return new GetCalendarByIdResponse(
                 calendar.getId(),
                 calendar.getOwnerId(),
@@ -25,6 +25,7 @@ public record GetCalendarByIdResponse(
                         .map(userCalendar -> new UserCalendarDto(
                                 userCalendar.getId(),
                                 userCalendar.getUserId(),
+                                userCalendar.isOwner(userId),
                                 userCalendar.getContent(),
                                 userCalendar.getCondition(),
                                 userCalendar.getTotalPrice(),
@@ -33,7 +34,7 @@ public record GetCalendarByIdResponse(
                                         .map(userCalendarDrink -> new UserCalendarDrinkDto(
                                                 userCalendarDrink.getId(),
                                                 userCalendarDrink.getDrinkUnitInfoId(),
-                                                userCalendarDrink.getCalories()
+                                                userCalendarDrink.getQuantity()
                                         ))
                                         .toList(),
                                 userCalendar.getImages().stream()
@@ -51,6 +52,7 @@ public record GetCalendarByIdResponse(
 
             long id,
             long userId,
+            boolean isOwner,
             String content,
             String condition,
             int totalPrice,

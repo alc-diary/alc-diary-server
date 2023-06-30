@@ -1,4 +1,4 @@
-package com.alc.diary.domain.usercalendar;
+package com.alc.diary.domain.calendar;
 
 import lombok.AccessLevel;
 import lombok.Getter;
