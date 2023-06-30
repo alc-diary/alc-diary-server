@@ -21,8 +21,7 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
             "JOIN User ub ON f.userBId = ub.id " +
             "WHERE (f.userAId = :userId OR f.userBId = :userId) " +
             "AND ua.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE " +
-            "AND ub.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE" +
-            "")
+            "AND ub.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE ")
     List<Friendship> findByUserId(long userId);
 
     @Query("SELECT f " +
@@ -37,4 +36,13 @@ public interface FriendshipRepository extends Repository<Friendship, Long> {
             "AND ua.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE " +
             "AND ub.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE ")
     Optional<Friendship> findWithUsers(long user1Id, long user2Id);
+
+    @Query("SELECT COUNT(f.id) " +
+            "FROM Friendship f " +
+            "JOIN User ua ON f.userAId = ua.id " +
+            "JOIN User ub ON f.userBId = ub.id " +
+            "WHERE (f.userAId = :userId OR f.userBId = :userId) " +
+            "AND ua.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE " +
+            "AND ub.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE ")
+    long countByUserId(long userId);
 }

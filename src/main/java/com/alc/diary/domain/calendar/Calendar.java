@@ -23,12 +23,13 @@ import java.time.LocalDateTime;
 @Entity
 public class Calendar extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @Audited
+    @Column(name = "owner_id", nullable = false)
+    private long ownerId;
 
     @Audited
     @Column(name = "title", length = 30, nullable = false)
@@ -42,8 +43,8 @@ public class Calendar extends BaseEntity {
     @Column(name = "drink_end_time", nullable = false)
     private LocalDateTime drinkEndTime;
 
-    public Calendar(User owner, String title, LocalDateTime drinkStartTime, LocalDateTime drinkEndTime) {
-        if (owner == null) {
+    private Calendar(Long ownerId, String title, LocalDateTime drinkStartTime, LocalDateTime drinkEndTime) {
+        if (ownerId == null) {
             throw new DomainException(CalendarError.OWNER_NULL);
         }
         if (title == null) {
@@ -56,10 +57,24 @@ public class Calendar extends BaseEntity {
             throw new DomainException(CalendarError.DRINK_END_TIME_NULL);
         }
 
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.title = title;
         this.drinkStartTime = drinkStartTime;
         this.drinkEndTime = drinkEndTime;
+    }
+
+    public static Calendar create(
+            Long ownerId,
+            String title,
+            LocalDateTime drinkStartTime,
+            LocalDateTime drinkEndTime
+    ) {
+        return new Calendar(
+                ownerId,
+                title,
+                drinkStartTime,
+                drinkEndTime
+        );
     }
 
     public LocalDate getLocalDate() {

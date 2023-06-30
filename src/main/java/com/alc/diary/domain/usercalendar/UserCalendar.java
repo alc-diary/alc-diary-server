@@ -89,17 +89,37 @@ public class UserCalendar extends BaseEntity {
         this.isDeleted = isDeleted;
     }
 
+    public static UserCalendar create(
+            Long userId,
+            Long calendarId,
+            String content,
+            String condition
+    ) {
+        return new UserCalendar(userId, calendarId, content, condition, 0, 0, false);
+    }
+
     public void addImages(Iterable<UserCalendarImage> images) {
         for (UserCalendarImage image : images) {
-            this.images.add(image);
-            image.setUserCalendar(this);
+            addImage(image);
         }
     }
 
-//    public void addDrinks(Iterable<UserCalendarDrink> drinks) {
-//        for (UserCalendarDrink drink : drinks) {
-//            this.drinks.add(drink);
-//            drink.setUserCalendar(this);
-//        }
-//    }
+    public void addImage(UserCalendarImage userCalendarImage) {
+        this.images.add(userCalendarImage);
+        userCalendarImage.setUserCalendar(this);
+    }
+
+    public void addDrinks(Iterable<UserCalendarDrink> drinks) {
+        for (UserCalendarDrink drink : drinks) {
+            addDrink(drink);
+        }
+    }
+
+    public void addDrink(UserCalendarDrink userCalendarDrink) {
+        this.drinks.add(userCalendarDrink);
+        userCalendarDrink.setUserCalendar(this);
+
+        totalPrice += userCalendarDrink.totalPrice();
+        totalCalories += userCalendarDrink.totalCalories();
+    }
 }

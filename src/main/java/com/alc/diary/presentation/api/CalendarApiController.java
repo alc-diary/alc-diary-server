@@ -1,6 +1,8 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.calendar.CalendarAppService;
+import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
+import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +17,14 @@ import java.util.List;
 public class CalendarApiController {
 
     private final CalendarAppService calendarAppService;
+
+    @PostMapping
+    public ApiResponse<CreateCalendarResponse> createCalendar(
+            @ApiIgnore @RequestAttribute long userId,
+            @Validated @RequestBody CreateCalendarRequest request
+    ) {
+        return ApiResponse.getCreated(calendarAppService.createCalendar(userId, request));
+    }
 
 //    @PostMapping
 //    public ApiResponse<Void> createCalendar(

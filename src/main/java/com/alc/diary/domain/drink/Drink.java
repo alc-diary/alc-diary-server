@@ -30,4 +30,23 @@ public class Drink extends BaseEntity {
 
     @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
     private List<DrinkUnitInfo> drinkUnitInfos = new ArrayList<>();
+
+    public Drink(
+            Long categoryId,
+            String name
+    ) {
+        this.categoryId = categoryId;
+        this.name = name;
+    }
+
+    public void addDrinkUnitInfos(List<DrinkUnitInfo> drinkUnitInfos) {
+        for (DrinkUnitInfo drinkUnitInfo : drinkUnitInfos) {
+            addDrinkUnitInfo(drinkUnitInfo);
+        }
+    }
+
+    public void addDrinkUnitInfo(DrinkUnitInfo drinkUnitInfo) {
+        drinkUnitInfos.add(drinkUnitInfo);
+        drinkUnitInfo.setDrink(this);
+    }
 }

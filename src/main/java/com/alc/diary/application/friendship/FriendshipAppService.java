@@ -13,6 +13,7 @@ import com.alc.diary.domain.friendship.error.FriendRequestError;
 import com.alc.diary.domain.friendship.repository.FriendshipRepository;
 import com.alc.diary.domain.friendship.repository.FriendRequestRepository;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
 import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +47,10 @@ public class FriendshipAppService {
      */
     @Transactional
     public void sendFriendRequest(long userId, SendFriendRequestAppRequest request) {
-        User sender = userRepository.findActiveUserById(userId).orElseThrow();
-        User receiver = userRepository.findActiveUserById(request.receiverId()).orElseThrow();
+        User sender = userRepository.findActiveUserById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        User receiver = userRepository.findActiveUserById(request.receiverId())
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
 
         validFriendRequest(sender.getId(), receiver.getId());
 
@@ -63,6 +66,7 @@ public class FriendshipAppService {
         if (friendRequestRepository.findPendingOrAcceptedRequestWithUsers(userAId, userBId).isPresent()) {
             throw new DomainException(FriendRequestError.INVALID_REQUEST);
         }
+        validFriendshipCountLimit(userAId, userBId);
     }
 
     /**
@@ -86,6 +90,8 @@ public class FriendshipAppService {
                     User friendUser = userByUserId.get(friendUserId);
                     return new GetFriendListAppResponse(
                             friendship.getId(),
+                            friendship.getId(),
+                            friendUser.getId(),
                             friendUser.getNickname(),
                             friendship.getFriendUserLabel(userId),
                             friendUser.getProfileImage()
@@ -204,6 +210,9 @@ public class FriendshipAppService {
     @Transactional
     public void acceptFriendRequest(long userId, long friendRequestId, AcceptFriendRequestAppRequest request) {
         FriendRequest friendRequest = friendRequestRepository.findById(friendRequestId).orElseThrow();
+
+        validFriendshipCountLimit(friendRequest.getSenderId(), friendRequest.getReceiverId());
+
         friendRequest.markAccepted(userId);
 
         Friendship friendshipToSave = Friendship.create(
@@ -213,6 +222,15 @@ public class FriendshipAppService {
                 request.friendLabel()
         );
         friendshipRepository.save(friendshipToSave);
+    }
+
+    private void validFriendshipCountLimit(long userAId, long userBId) {
+        if (friendshipRepository.countByUserId(userAId) >= 100) {
+            throw new DomainException(FriendRequestError.FRIENDSHIP_LIMIT_EXCEEDED);
+        }
+        if (friendshipRepository.countByUserId(userBId) >= 100) {
+            throw new DomainException(FriendRequestError.FRIENDSHIP_LIMIT_EXCEEDED);
+        }
     }
 
     /**
