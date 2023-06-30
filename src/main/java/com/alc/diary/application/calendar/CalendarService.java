@@ -138,7 +138,7 @@ public class CalendarService {
     }
 
     /**
-     * 요청한 유저의 캘린더 데이터 삭제 (캘린더 삭제 x, 캘린더의 자신의 데이터만 삭제)
+     * 요청한 유저의 캘린더 데이터 삭제 (캘린더 삭제 x, 캘린더 데이터 중 자신의 데이터만 삭제)
      *
      * @param userId
      * @param userCalendarId

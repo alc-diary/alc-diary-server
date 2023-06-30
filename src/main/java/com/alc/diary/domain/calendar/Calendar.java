@@ -29,7 +29,7 @@ public class Calendar extends BaseEntity {
     private Long id;
 
     @Audited
-    @Column(name = "owner_id", nullable = false)
+    @Column(name = "owner_id", nullable = false) // Foreign key referencing 'users' table by 'id' column
     private long ownerId;
 
     @Audited
