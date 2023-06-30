@@ -92,7 +92,7 @@ public class Calendar extends BaseEntity {
         userCalendar.setCalendar(this);
     }
 
-    public boolean isUserInvolved(long userId) {
+    public boolean isInvolvedUser(long userId) {
         return userCalendars.stream()
                 .anyMatch(userCalendar -> userCalendar.isOwner(userId));
     }

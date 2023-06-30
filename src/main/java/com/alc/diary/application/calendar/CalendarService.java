@@ -129,7 +129,7 @@ public class CalendarService {
      */
     public GetCalendarByIdResponse getCalendarByIdResponse(long userId, long calendarId) {
         return calendarRepository.findById(calendarId)
-                .filter(calendar -> calendar.isUserInvolved(userId))
+                .filter(calendar -> calendar.isInvolvedUser(userId))
                 .map(calendar -> GetCalendarByIdResponse.of(calendar, userId))
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
     }
