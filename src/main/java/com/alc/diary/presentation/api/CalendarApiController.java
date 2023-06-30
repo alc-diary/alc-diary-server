@@ -1,6 +1,6 @@
 package com.alc.diary.presentation.api;
 
-import com.alc.diary.application.calendar.CalendarAppService;
+import com.alc.diary.application.calendar.CalendarService;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
@@ -15,14 +15,14 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 public class CalendarApiController {
 
-    private final CalendarAppService calendarAppService;
+    private final CalendarService calendarService;
 
     @PostMapping
     public ApiResponse<CreateCalendarResponse> createCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @Validated @RequestBody CreateCalendarRequest request
     ) {
-        return ApiResponse.getCreated(calendarAppService.createCalendar(userId, request));
+        return ApiResponse.getCreated(calendarService.createCalendar(userId, request));
     }
 
     @GetMapping("/{calendarId}")
@@ -30,7 +30,7 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId
     ) {
-        return ApiResponse.getSuccess(calendarAppService.getCalendarByIdResponse(userId, calendarId));
+        return ApiResponse.getSuccess(calendarService.getCalendarByIdResponse(userId, calendarId));
     }
 
 //    @PostMapping

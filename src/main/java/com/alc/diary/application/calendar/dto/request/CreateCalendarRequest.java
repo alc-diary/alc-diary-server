@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public record CreateCalendarRequest(
 
@@ -14,7 +15,7 @@ public record CreateCalendarRequest(
         String drinkCondition,
         @NotNull List<UserCalendarDrinkDto> userCalendarDrinks,
         @NotNull List<UserCalendarImageDto> userCalendarImages,
-        @NotNull List<Long> taggedUserIds
+        @NotNull Set<Long> taggedUserIds
 ) {
 
     public record UserCalendarDrinkDto(
