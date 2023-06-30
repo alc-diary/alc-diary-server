@@ -9,16 +9,22 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "drink_infos")
+@Table(
+        name = "drink_unit_infos",
+        indexes = {
+                @Index(name = "idx_drink_unit_infos_drink_id", columnList = "drink_id"),
+                @Index(name = "idx_drink_unit_infos_drink_unit_id", columnList = "drink_unit_id")
+        }
+)
 @Entity
-public class DrinkInfo extends BaseEntity {
+public class DrinkUnitInfo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "drink_id")
+    @JoinColumn(name = "drink_id", foreignKey = @ForeignKey(name = "fk_drink_unit_infos_drinks"))
     private Drink drink;
 
     @Column(name = "drink_unit_id", nullable = false)

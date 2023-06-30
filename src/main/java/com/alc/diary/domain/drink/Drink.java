@@ -11,7 +11,10 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "drinks")
+@Table(
+        name = "drinks",
+        indexes = {@Index(name = "idx_drinks_drink_category_id", columnList = "drink_category_id")}
+)
 @Entity
 public class Drink extends BaseEntity {
 
@@ -26,5 +29,5 @@ public class Drink extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
-    private List<DrinkInfo> drinkInfos = new ArrayList<>();
+    private List<DrinkUnitInfo> drinkUnitInfos = new ArrayList<>();
 }
