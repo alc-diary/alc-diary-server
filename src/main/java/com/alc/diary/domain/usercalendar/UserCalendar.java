@@ -1,6 +1,7 @@
 package com.alc.diary.domain.usercalendar;
 
 import com.alc.diary.domain.BaseEntity;
+import com.alc.diary.domain.calendar.Calendar;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,8 +34,9 @@ public class UserCalendar extends BaseEntity {
     private long userId;
 
     @Audited
-    @Column(name = "calendar_id", nullable = false)
-    private long calendarId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "calendar_id", foreignKey = @ForeignKey(name = "fk_user_calendars_calendars"))
+    private Calendar calendar;
 
     @Audited
     @Column(name = "content", length = 1000)
@@ -64,7 +66,6 @@ public class UserCalendar extends BaseEntity {
 
     private UserCalendar(
             Long userId,
-            Long calendarId,
             String content,
             String condition,
             int totalPrice,
@@ -74,14 +75,10 @@ public class UserCalendar extends BaseEntity {
         if (userId == null) {
 
         }
-        if (calendarId == null) {
-
-        }
         if (StringUtils.length(content) > 1000) {
 
         }
         this.userId = userId;
-        this.calendarId = calendarId;
         this.content = content;
         this.condition = condition;
         this.totalPrice = totalPrice;
@@ -91,11 +88,14 @@ public class UserCalendar extends BaseEntity {
 
     public static UserCalendar create(
             Long userId,
-            Long calendarId,
             String content,
             String condition
     ) {
-        return new UserCalendar(userId, calendarId, content, condition, 0, 0, false);
+        return new UserCalendar(userId, content, condition, 0, 0, false);
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
     }
 
     public void addImages(Iterable<UserCalendarImage> images) {

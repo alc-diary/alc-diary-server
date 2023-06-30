@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface CalendarRepository extends Repository<Calendar, Long> {
 
     Calendar save(Calendar calendar);
+
+    Optional<Calendar> findById(long calendarId);
 }
