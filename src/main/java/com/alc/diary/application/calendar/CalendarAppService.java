@@ -2,10 +2,13 @@ package com.alc.diary.application.calendar;
 
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
+import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.calendar.CalendarError;
 import com.alc.diary.domain.calendar.CalendarRepository;
 import com.alc.diary.domain.drink.DrinkUnitInfo;
 import com.alc.diary.domain.drink.repository.DrinkUnitInfoRepository;
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import com.alc.diary.domain.usercalendar.UserCalendar;
@@ -29,21 +32,21 @@ public class CalendarAppService {
 
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
-    private final UserCalendarRepository userCalendarRepository;
     private final DrinkUnitInfoRepository drinkUnitInfoRepository;
 
+    /**
+     * 캘린더 생성
+     *
+     * @param userId
+     * @param request
+     * @return
+     */
     @Transactional
     public CreateCalendarResponse createCalendar(long userId, CreateCalendarRequest request) {
         User user = userRepository.findActiveUserById(userId).orElseThrow();
         Calendar calendarToSave = Calendar.create(user.getId(), request.title(), request.drinkStartTime(), request.drinkEndTime());
-        Calendar calendar = calendarRepository.save(calendarToSave);
 
-        UserCalendar userCalendarToSave = UserCalendar.create(user.getId(), calendar.getId(), request.content(), request.drinkCondition());
-
-        List<UserCalendar> taggedUsersCalendarToSave = request.taggedUserIds().stream()
-                .map(taggedUserId -> UserCalendar.create(taggedUserId, calendar.getId(), null, null))
-                .toList();
-
+        UserCalendar userCalendarToSave = UserCalendar.create(user.getId(), request.content(), request.drinkCondition());
         List<UserCalendarImage> userCalendarImagesToSave = request.userCalendarImages().stream()
                 .map(dto -> new UserCalendarImage(dto.imageUrl()))
                 .toList();
@@ -60,15 +63,32 @@ public class CalendarAppService {
         userCalendarToSave.addImages(userCalendarImagesToSave);
         userCalendarToSave.addDrinks(userCalendarDrinksToSave);
 
-        UserCalendar userCalendar = userCalendarRepository.save(userCalendarToSave);
-        List<UserCalendar> taggedUserCalendars = userCalendarRepository.saveAll(taggedUsersCalendarToSave);
+        List<UserCalendar> taggedUsersCalendarToSave = request.taggedUserIds().stream()
+                .map(taggedUserId -> UserCalendar.create(taggedUserId, null, null))
+                .toList();
+
+        calendarToSave.addUserCalendar(userCalendarToSave);
+        calendarToSave.addUserCalendars(taggedUsersCalendarToSave);
+
+        Calendar calendar = calendarRepository.save(calendarToSave);
 
         return new CreateCalendarResponse(
                 calendar.getId(),
-                Stream.concat(
-                        Stream.of(userCalendar.getId()),
-                        taggedUserCalendars.stream().map(UserCalendar::getId)
-                ).toList()
+                calendar.getUserCalendars().stream()
+                        .map(UserCalendar::getId)
+                        .toList()
         );
+    }
+
+    /**
+     * 캘린더 상세 조회
+     *
+     * @param calendarId
+     * @return
+     */
+    public GetCalendarByIdResponse getCalendarByIdResponse(long calendarId) {
+        return calendarRepository.findById(calendarId)
+                .map(GetCalendarByIdResponse::from)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
     }
 }
