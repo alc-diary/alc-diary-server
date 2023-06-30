@@ -122,4 +122,8 @@ public class UserCalendar extends BaseEntity {
         totalPrice += userCalendarDrink.totalPrice();
         totalCalories += userCalendarDrink.totalCalories();
     }
+
+    public boolean isOwner(long userId) {
+        return this.userId == userId;
+    }
 }
