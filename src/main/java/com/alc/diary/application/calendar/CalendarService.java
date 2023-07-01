@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -157,17 +156,24 @@ public class CalendarService {
         userCalendar.delete(userId);
     }
 
+    /**
+     * 해당 유저의 캘린더 조회(일별)
+     *
+     * @param userId
+     * @param date
+     * @return
+     */
     public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date) {
         LocalDateTime rangeStart = date.atStartOfDay();
         LocalDateTime rangeEnd = date.plusDays(1).atStartOfDay();
-        List<Calendar> calendars = calendarRepository.findCalendarsWithInRange(rangeStart, rangeEnd);
+        List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
         Set<Long> userIds = calendars.stream()
                 .flatMap(calendar -> calendar.getUserCalendarsExcludingUser(userId).stream())
                 .map(UserCalendar::getUserId)
                 .collect(Collectors.toSet());
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
-        return calendarRepository.findCalendarsWithInRange(rangeStart, rangeEnd).stream()
+        return calendars.stream()
                 .map(calendar ->
                         calendar.getUserCalendarOfUser(userId).map(userCalendar ->
                                 new GetDailyCalendarsResponse(
@@ -192,7 +198,25 @@ public class CalendarService {
                 .toList();
     }
 
+    /**
+     * 해당 유저의 캘린더 조회(월별)
+     *
+     * @param userId
+     * @param month
+     * @return
+     */
     public List<GetMonthlyCalendarsResponse> getMonthlyCalendars(long userId, YearMonth month) {
-        return null;
+        LocalDateTime rangeStart = month.atDay(1).atStartOfDay();
+        LocalDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay();
+        List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
+        return calendars.stream()
+                .map(calendar -> new GetMonthlyCalendarsResponse(
+                        calendar.getDate().toString(),
+                        calendar.getUserCalendarOfUser(userId).map(userCalendar -> userCalendar.getDrinks().get(0).getDrinkUnitInfoId())
+                                .orElse(0L)
+                ))
+                .distinct()
+                .sorted()
+                .toList();
     }
 }

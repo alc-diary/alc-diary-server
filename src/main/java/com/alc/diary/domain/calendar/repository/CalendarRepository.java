@@ -22,8 +22,9 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
     @Query("SELECT DISTINCT c " +
            "FROM Calendar c " +
            "JOIN FETCH c.userCalendars uc " +
-           "WHERE c.drinkStartTime >= :rangeStart " +
+           "WHERE uc.userId = :userId " +
+           "AND c.drinkStartTime >= :rangeStart " +
            "AND c.drinkStartTime < :rangeEnd " +
            "AND uc.isDeleted IS FALSE ")
-    List<Calendar> findCalendarsWithInRange(LocalDateTime rangeStart, LocalDateTime rangeEnd);
+    List<Calendar> findCalendarsWithInRangeAndUserId(long userId, LocalDateTime rangeStart, LocalDateTime rangeEnd);
 }
