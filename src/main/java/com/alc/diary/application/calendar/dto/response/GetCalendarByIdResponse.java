@@ -2,6 +2,7 @@ package com.alc.diary.application.calendar.dto.response;
 
 import com.alc.diary.domain.calendar.Calendar;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public record GetCalendarByIdResponse(
@@ -19,8 +20,8 @@ public record GetCalendarByIdResponse(
                 calendar.getId(),
                 calendar.getOwnerId(),
                 calendar.getTitle(),
-                calendar.getDrinkStartTime().toString(),
-                calendar.getDrinkEndTime().toString(),
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkStartTime()),
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkEndTime()),
                 calendar.getUserCalendars().stream()
                         .map(userCalendar -> new UserCalendarDto(
                                 userCalendar.getId(),

@@ -10,8 +10,10 @@ import lombok.ToString;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,16 +42,16 @@ public class Calendar extends BaseEntity {
 
     @Audited
     @Column(name = "drink_start_time", nullable = false)
-    private LocalDateTime drinkStartTime;
+    private ZonedDateTime drinkStartTime;
 
     @Audited
     @Column(name = "drink_end_time", nullable = false)
-    private LocalDateTime drinkEndTime;
+    private ZonedDateTime drinkEndTime;
 
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<UserCalendar> userCalendars = new ArrayList<>();
 
-    private Calendar(Long ownerId, String title, LocalDateTime drinkStartTime, LocalDateTime drinkEndTime) {
+    private Calendar(Long ownerId, String title, ZonedDateTime drinkStartTime, ZonedDateTime drinkEndTime) {
         if (ownerId == null) {
             throw new DomainException(CalendarError.OWNER_NULL);
         }
@@ -72,8 +74,8 @@ public class Calendar extends BaseEntity {
     public static Calendar create(
             Long ownerId,
             String title,
-            LocalDateTime drinkStartTime,
-            LocalDateTime drinkEndTime
+            ZonedDateTime drinkStartTime,
+            ZonedDateTime drinkEndTime
     ) {
         return new Calendar(
                 ownerId,
@@ -113,5 +115,9 @@ public class Calendar extends BaseEntity {
 
     public LocalDate getDate() {
         return drinkStartTime.toLocalDate();
+    }
+
+    public DayOfWeek getDayOfWeek() {
+        return drinkStartTime.getDayOfWeek();
     }
 }

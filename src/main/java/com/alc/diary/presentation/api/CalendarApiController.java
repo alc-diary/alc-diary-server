@@ -17,6 +17,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -56,7 +57,8 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date));
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
     }
 
     @GetMapping("/monthly")
@@ -64,7 +66,8 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @ApiParam(value = "yyyy-MM") @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
     ) {
-        return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month));
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
     }
 
 //    @PostMapping

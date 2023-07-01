@@ -2,6 +2,7 @@ package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
+import com.alc.diary.domain.calendar.error.UserCalendarImageError;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -107,6 +108,9 @@ public class UserCalendar extends BaseEntity {
     }
 
     public void addImage(UserCalendarImage userCalendarImage) {
+        if (images.size() >= 5) {
+            throw new DomainException(UserCalendarImageError.IMAGE_LIMIT_EXCEEDED);
+        }
         this.images.add(userCalendarImage);
         userCalendarImage.setUserCalendar(this);
     }
