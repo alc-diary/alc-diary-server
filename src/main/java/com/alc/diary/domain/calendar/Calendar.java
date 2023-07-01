@@ -13,6 +13,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @ToString
@@ -95,5 +96,17 @@ public class Calendar extends BaseEntity {
     public boolean isInvolvedUser(long userId) {
         return userCalendars.stream()
                 .anyMatch(userCalendar -> userCalendar.isOwner(userId));
+    }
+
+    public Optional<UserCalendar> getUserCalendarOfUser(long userId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> userCalendar.isOwner(userId))
+                .findFirst();
+    }
+
+    public List<UserCalendar> getUserCalendarsExcludingUser(long userId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> !userCalendar.isOwner(userId))
+                .toList();
     }
 }
