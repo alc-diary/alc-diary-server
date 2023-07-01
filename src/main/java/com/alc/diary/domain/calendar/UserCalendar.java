@@ -135,4 +135,16 @@ public class UserCalendar extends BaseEntity {
     public boolean isOwner(long userId) {
         return this.userId == userId;
     }
+
+    public List<Long> getAllDrinkUnitInfoIds() {
+        return drinks.stream()
+                .map(UserCalendarDrink::getDrinkUnitInfoId)
+                .toList();
+    }
+
+    public float getTotalQuantity() {
+        return (float) drinks.stream()
+                .mapToDouble(UserCalendarDrink::getQuantity)
+                .sum();
+    }
 }

@@ -4,11 +4,17 @@ import com.alc.diary.application.calendar.CalendarService;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
+import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/calendars")
@@ -41,6 +47,23 @@ public class CalendarApiController {
         calendarService.deleteUserCalendar(userId, userCalendarId);
         return ApiResponse.getSuccess();
     }
+
+    @GetMapping("/daily")
+    public ApiResponse<List<GetDailyCalendarsResponse>> getDailyCalendars(
+            @ApiIgnore @RequestAttribute long userId,
+            @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date));
+    }
+
+    @GetMapping("/monthly")
+    public ApiResponse<Void> getMonthlyCalendars(
+            @ApiIgnore @RequestAttribute long userId,
+            @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
+    ) {
+        return null;
+    }
+
 //    @PostMapping
 //    public ApiResponse<Void> createCalendar(
 //            @ApiIgnore @RequestAttribute long userId,

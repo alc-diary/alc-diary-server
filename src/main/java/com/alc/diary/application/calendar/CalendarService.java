@@ -3,6 +3,8 @@ package com.alc.diary.application.calendar;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
+import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
+import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
@@ -11,6 +13,7 @@ import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
 import com.alc.diary.domain.drink.DrinkUnitInfo;
 import com.alc.diary.domain.drink.repository.DrinkUnitInfoRepository;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import com.alc.diary.domain.calendar.UserCalendar;
 import com.alc.diary.domain.calendar.UserCalendarDrink;
@@ -20,6 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -148,5 +155,44 @@ public class CalendarService {
         UserCalendar userCalendar = userCalendarRepository.findByIdAndIsDeletedEqFalse(userCalendarId)
                 .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
         userCalendar.delete(userId);
+    }
+
+    public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date) {
+        LocalDateTime rangeStart = date.atStartOfDay();
+        LocalDateTime rangeEnd = date.plusDays(1).atStartOfDay();
+        List<Calendar> calendars = calendarRepository.findCalendarsWithInRange(rangeStart, rangeEnd);
+        Set<Long> userIds = calendars.stream()
+                .flatMap(calendar -> calendar.getUserCalendarsExcludingUser(userId).stream())
+                .map(UserCalendar::getUserId)
+                .collect(Collectors.toSet());
+        Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+        return calendarRepository.findCalendarsWithInRange(rangeStart, rangeEnd).stream()
+                .map(calendar ->
+                        calendar.getUserCalendarOfUser(userId).map(userCalendar ->
+                                new GetDailyCalendarsResponse(
+                                        calendar.getId(),
+                                        calendar.getTitle(),
+                                        calendar.getDrinkStartTime().toString(),
+                                        calendar.getDrinkEndTime().toString(),
+                                        userCalendar.getAllDrinkUnitInfoIds(),
+                                        userCalendar.getTotalQuantity(),
+                                        calendar.getUserCalendarsExcludingUser(userId).stream()
+                                                .map(taggedUserCalendar -> {
+                                                    User taggedUser = userById.get(taggedUserCalendar.getUserId());
+                                                    return new GetDailyCalendarsResponse.UserDto(
+                                                            taggedUser.getId(),
+                                                            taggedUser.getProfileImage()
+                                                    );
+                                                })
+                                                .toList()
+                                )
+                        ).orElse(null)
+                )
+                .toList();
+    }
+
+    public List<GetMonthlyCalendarsResponse> getMonthlyCalendars(long userId, YearMonth month) {
+        return null;
     }
 }
