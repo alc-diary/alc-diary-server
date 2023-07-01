@@ -7,6 +7,8 @@ import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
+import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -52,7 +54,7 @@ public class CalendarApiController {
     @GetMapping("/daily")
     public ApiResponse<List<GetDailyCalendarsResponse>> getDailyCalendars(
             @ApiIgnore @RequestAttribute long userId,
-            @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+            @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date));
     }
@@ -60,7 +62,7 @@ public class CalendarApiController {
     @GetMapping("/monthly")
     public ApiResponse<List<GetMonthlyCalendarsResponse>> getMonthlyCalendars(
             @ApiIgnore @RequestAttribute long userId,
-            @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
+            @ApiParam(value = "yyyy-MM") @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
     ) {
         return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month));
     }
