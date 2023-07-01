@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,5 +109,9 @@ public class Calendar extends BaseEntity {
         return userCalendars.stream()
                 .filter(userCalendar -> !userCalendar.isOwner(userId))
                 .toList();
+    }
+
+    public LocalDate getDate() {
+        return drinkStartTime.toLocalDate();
     }
 }

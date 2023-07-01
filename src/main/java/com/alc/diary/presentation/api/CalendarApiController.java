@@ -5,6 +5,7 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
+import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -57,11 +58,11 @@ public class CalendarApiController {
     }
 
     @GetMapping("/monthly")
-    public ApiResponse<Void> getMonthlyCalendars(
+    public ApiResponse<List<GetMonthlyCalendarsResponse>> getMonthlyCalendars(
             @ApiIgnore @RequestAttribute long userId,
             @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
     ) {
-        return null;
+        return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month));
     }
 
 //    @PostMapping
