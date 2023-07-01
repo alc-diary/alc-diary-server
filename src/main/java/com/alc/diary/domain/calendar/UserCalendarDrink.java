@@ -3,10 +3,12 @@ package com.alc.diary.domain.calendar;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Getter
+@ToString(exclude = "userCalendar")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "user_calendar_drinks",

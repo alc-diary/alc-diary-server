@@ -7,7 +7,7 @@ import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
-import com.alc.diary.domain.calendar.error.UserCalendarError;
+import com.alc.diary.domain.calendar.error.UserCalendarImageError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
 import com.alc.diary.domain.drink.DrinkUnitInfo;
@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,7 +150,7 @@ public class CalendarService {
     @Transactional
     public void deleteUserCalendar(long userId, long userCalendarId) {
         UserCalendar userCalendar = userCalendarRepository.findByIdAndIsDeletedEqFalse(userCalendarId)
-                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+                .orElseThrow(() -> new DomainException(UserCalendarImageError.IMAGE_LIMIT_EXCEEDED));
         userCalendar.delete(userId);
     }
 
@@ -163,9 +161,9 @@ public class CalendarService {
      * @param date
      * @return
      */
-    public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date) {
-        LocalDateTime rangeStart = date.atStartOfDay();
-        LocalDateTime rangeEnd = date.plusDays(1).atStartOfDay();
+    public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date, ZoneId zoneId) {
+        ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
+        ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
         List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
         Set<Long> userIds = calendars.stream()
                 .flatMap(calendar -> calendar.getUserCalendarsExcludingUser(userId).stream())
@@ -174,27 +172,7 @@ public class CalendarService {
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
         return calendars.stream()
-                .map(calendar ->
-                        calendar.getUserCalendarOfUser(userId).map(userCalendar ->
-                                new GetDailyCalendarsResponse(
-                                        calendar.getId(),
-                                        calendar.getTitle(),
-                                        calendar.getDrinkStartTime().toString(),
-                                        calendar.getDrinkEndTime().toString(),
-                                        userCalendar.getAllDrinkUnitInfoIds(),
-                                        userCalendar.getTotalQuantity(),
-                                        calendar.getUserCalendarsExcludingUser(userId).stream()
-                                                .map(taggedUserCalendar -> {
-                                                    User taggedUser = userById.get(taggedUserCalendar.getUserId());
-                                                    return new GetDailyCalendarsResponse.UserDto(
-                                                            taggedUser.getId(),
-                                                            taggedUser.getProfileImage()
-                                                    );
-                                                })
-                                                .toList()
-                                )
-                        ).orElse(null)
-                )
+                .map(calendar -> GetDailyCalendarsResponse.of(calendar, userId, userById))
                 .toList();
     }
 
@@ -205,9 +183,9 @@ public class CalendarService {
      * @param month
      * @return
      */
-    public List<GetMonthlyCalendarsResponse> getMonthlyCalendars(long userId, YearMonth month) {
-        LocalDateTime rangeStart = month.atDay(1).atStartOfDay();
-        LocalDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay();
+    public List<GetMonthlyCalendarsResponse> getMonthlyCalendars(long userId, YearMonth month, ZoneId zoneId) {
+        ZonedDateTime rangeStart = month.atDay(1).atStartOfDay(zoneId);
+        ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);
         List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
         return calendars.stream()
                 .map(calendar -> new GetMonthlyCalendarsResponse(
