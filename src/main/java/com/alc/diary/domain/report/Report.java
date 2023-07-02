@@ -5,6 +5,7 @@ import com.alc.diary.domain.calendar.Calendars;
 import com.alc.diary.domain.calendar.UserCalendarDrink;
 
 import java.time.DayOfWeek;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,10 @@ public class Report {
 
     public Report(Calendars calendars) {
         this.calendars = calendars;
+    }
+
+    public int totalDaysDrinking() {
+        return calendars.totalDaysDrinking();
     }
 
     public int totalSpentOnDrinks() {
@@ -49,5 +54,9 @@ public class Report {
 
     public Optional<DayOfWeek> mostFrequentDrinkingDay() {
         return calendars.mostFrequentDrinkingDay();
+    }
+
+    public Optional<ZonedDateTime> getLastDrinkingDateTime() {
+        return calendars.getLastDrinkingDateTime();
     }
 }

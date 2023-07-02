@@ -5,7 +5,7 @@ import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
-import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.error.UserCalendarImageError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
@@ -15,9 +15,6 @@ import com.alc.diary.domain.drink.repository.DrinkUnitInfoRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
-import com.alc.diary.domain.calendar.UserCalendar;
-import com.alc.diary.domain.calendar.UserCalendarDrink;
-import com.alc.diary.domain.calendar.UserCalendarImage;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -186,15 +184,18 @@ public class CalendarService {
     public List<GetMonthlyCalendarsResponse> getMonthlyCalendars(long userId, YearMonth month, ZoneId zoneId) {
         ZonedDateTime rangeStart = month.atDay(1).atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);
-        List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
-        return calendars.stream()
-                .map(calendar -> new GetMonthlyCalendarsResponse(
-                        calendar.getDate().toString(),
-                        calendar.getUserCalendarOfUser(userId).map(userCalendar -> userCalendar.getDrinks().get(0).getDrinkUnitInfoId())
-                                .orElse(0L)
-                ))
-                .distinct()
-                .sorted()
+        Calendars calendars = Calendars.from(calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd));
+
+        return calendars.getMostAlcoholConsumedPerDay(userId).stream()
+                .map(calendar -> createResponseFromCalendar(calendar, userId))
+                .flatMap(Optional::stream)
                 .toList();
+    }
+
+    public Optional<GetMonthlyCalendarsResponse> createResponseFromCalendar(Calendar calendar, long userId) {
+        return calendar.getUserCalendarOfUser(userId)
+                .flatMap(UserCalendar::getMostConsumedDrink)
+                .map(UserCalendarDrink::getDrinkUnitInfoId)
+                .map(drinkUnitInfoId -> new GetMonthlyCalendarsResponse(calendar.getDate().toString(), drinkUnitInfoId));
     }
 }

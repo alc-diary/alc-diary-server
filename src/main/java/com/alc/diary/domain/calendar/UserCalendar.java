@@ -13,7 +13,9 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @ToString(exclude = "calendar")
@@ -150,5 +152,10 @@ public class UserCalendar extends BaseEntity {
         return (float) drinks.stream()
                 .mapToDouble(UserCalendarDrink::getQuantity)
                 .sum();
+    }
+
+    public Optional<UserCalendarDrink> getMostConsumedDrink() {
+        return drinks.stream()
+                .max(Comparator.comparing(UserCalendarDrink::getQuantity));
     }
 }
