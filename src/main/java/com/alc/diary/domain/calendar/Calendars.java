@@ -3,10 +3,8 @@ package com.alc.diary.domain.calendar;
 import lombok.ToString;
 
 import java.time.DayOfWeek;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ToString
@@ -20,6 +18,13 @@ public class Calendars {
 
     public static Calendars from(List<Calendar> calendars) {
         return new Calendars(calendars);
+    }
+
+    public int totalDaysDrinking() {
+        return (int) calendars.stream()
+                .map(Calendar::getDate)
+                .distinct()
+                .count();
     }
 
     public int calculateTotalSpent() {
@@ -59,5 +64,29 @@ public class Calendars {
         return dayCounts.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey);
+    }
+
+    public List<Calendar> getMostAlcoholConsumedPerDay(long userId) {
+        return calendars.stream()
+                .collect(Collectors.groupingBy(Calendar::getDate,
+                        Collectors.maxBy(comparingByAlcoholConsumed(userId)
+                        )))
+                .values().stream()
+                .flatMap(Optional::stream)
+                .toList();
+    }
+
+    private static Comparator<Calendar> comparingByAlcoholConsumed(long userId) {
+        return Comparator.comparing(calendar ->
+                calendar.getUserCalendarOfUser(userId)
+                        .map(UserCalendar::getMostConsumedDrink)
+                        .map(userCalendarDrink -> userCalendarDrink.map(UserCalendarDrink::getQuantity).orElse(0.0f))
+                        .orElse(0.0f));
+    }
+
+    public Optional<ZonedDateTime> getLastDrinkingDateTime() {
+        return calendars.stream()
+                .map(Calendar::getDrinkStartTime)
+                .max(ZonedDateTime::compareTo);
     }
 }

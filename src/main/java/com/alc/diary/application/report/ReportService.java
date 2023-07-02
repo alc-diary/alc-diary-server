@@ -24,7 +24,13 @@ public class ReportService {
         ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);
         Calendars calendars =
                 Calendars.from(calendarRepository.findCalendarsWithInRangeForSpecificUser(userId, rangeStart, rangeEnd));
+
+        ZonedDateTime lastMonthRangeStart = month.minusMonths(1).atDay(1).atStartOfDay(zoneId);
+        ZonedDateTime lastMonthRangeEnd = lastMonthRangeStart.plusMonths(1);
+        Calendars lastMonthCalendars = Calendars.from(calendarRepository.findCalendarsWithInRangeForSpecificUser(userId, lastMonthRangeStart, lastMonthRangeEnd));
+
         Report report = new Report(calendars);
-        return GetMonthlyReportResponse.from(report);
+        Report lastMonthReport = new Report(lastMonthCalendars);
+        return GetMonthlyReportResponse.from(report, lastMonthReport);
     }
 }
