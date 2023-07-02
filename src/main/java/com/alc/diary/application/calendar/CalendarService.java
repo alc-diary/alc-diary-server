@@ -47,6 +47,8 @@ public class CalendarService {
      */
     @Transactional
     public CreateCalendarResponse createCalendar(long userId, CreateCalendarRequest request) {
+        validateRequest(request);
+
         Calendar calendarToSave = createNewCalendar(userId, request);
 
         Calendar calendar = calendarRepository.save(calendarToSave);
@@ -57,6 +59,15 @@ public class CalendarService {
                         .map(UserCalendar::getId)
                         .toList()
         );
+    }
+
+    private static void validateRequest(CreateCalendarRequest request) {
+        if (request.drinkStartTime().isAfter(request.drinkEndTime())) {
+            throw new DomainException(CalendarError.START_TIME_AFTER_END_TIME);
+        }
+        if (request.drinkEndTime().isAfter(ZonedDateTime.now())) {
+            throw new DomainException(CalendarError.END_TIME_IN_FUTURE);
+        }
     }
 
     @NotNull
