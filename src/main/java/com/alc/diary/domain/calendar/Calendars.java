@@ -78,7 +78,7 @@ public class Calendars {
 
     private static Comparator<Calendar> comparingByAlcoholConsumed(long userId) {
         return Comparator.comparing(calendar ->
-                calendar.getUserCalendarOfUser(userId)
+                calendar.getUserCalendarByUserId(userId)
                         .map(UserCalendar::getMostConsumedDrink)
                         .map(userCalendarDrink -> userCalendarDrink.map(UserCalendarDrink::getQuantity).orElse(0.0f))
                         .orElse(0.0f));

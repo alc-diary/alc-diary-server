@@ -1,6 +1,7 @@
 package com.alc.diary.application.calendar;
 
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
+import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
@@ -164,7 +165,7 @@ public class CalendarService {
         ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
         List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
         Set<Long> userIds = calendars.stream()
-                .flatMap(calendar -> calendar.getUserCalendarsExcludingUser(userId).stream())
+                .flatMap(calendar -> calendar.getUserCalendarsExceptByUserId(userId).stream())
                 .map(UserCalendar::getUserId)
                 .collect(Collectors.toSet());
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
@@ -193,9 +194,48 @@ public class CalendarService {
     }
 
     public Optional<GetMonthlyCalendarsResponse> createResponseFromCalendar(Calendar calendar, long userId) {
-        return calendar.getUserCalendarOfUser(userId)
+        return calendar.getUserCalendarByUserId(userId)
                 .flatMap(UserCalendar::getMostConsumedDrink)
                 .map(UserCalendarDrink::getDrinkUnitInfoId)
                 .map(drinkUnitInfoId -> new GetMonthlyCalendarsResponse(calendar.getDate().toString(), drinkUnitInfoId));
+    }
+
+    /**
+     * 캘린더 데이터 수정
+     *
+     * @param userId
+     * @param calendarId
+     * @param userCalendarId
+     * @param request
+     */
+    @Transactional
+    public void updateCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
+        Calendar calendar = calendarRepository.findByIdAndUserCalendarId(calendarId, userCalendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+
+        if (calendar.getUserCalendarByUserId(userId).isEmpty()) {
+            throw new DomainException();
+        }
+
+        if (request.title() != null) {
+            calendar.updateTitle(userId, request.title());
+        }
+
+        if (request.contentShouldBeUpdated()) {
+            calendar.updateContent(userId, request.content());
+        }
+
+        if (request.conditionShouldBeUpdated()) {
+            calendar.updateCondition(userId, request.condition());
+        }
+
+        if (request.drinkStartTime() != null) {
+            calendar.updateDrinkStartTime(userId, request.drinkStartTime());
+        }
+        if (request.drinkEndTime() != null) {
+            calendar.updateDrinkEndTime(userId, request.drinkEndTime());
+        }
+
+        calendar.removeDrinkByIds(userId, request.drinks().deleted());
     }
 }

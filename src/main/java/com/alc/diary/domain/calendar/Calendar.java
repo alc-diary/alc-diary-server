@@ -12,7 +12,6 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class Calendar extends BaseEntity {
     @Column(name = "drink_end_time", nullable = false)
     private ZonedDateTime drinkEndTime;
 
-    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "calendar", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<UserCalendar> userCalendars = new ArrayList<>();
 
     private Calendar(Long ownerId, String title, ZonedDateTime drinkStartTime, ZonedDateTime drinkEndTime) {
@@ -101,13 +100,13 @@ public class Calendar extends BaseEntity {
                 .anyMatch(userCalendar -> userCalendar.isOwner(userId));
     }
 
-    public Optional<UserCalendar> getUserCalendarOfUser(long userId) {
+    public Optional<UserCalendar> getUserCalendarByUserId(long userId) {
         return userCalendars.stream()
                 .filter(userCalendar -> userCalendar.isOwner(userId))
                 .findFirst();
     }
 
-    public List<UserCalendar> getUserCalendarsExcludingUser(long userId) {
+    public List<UserCalendar> getUserCalendarsExceptByUserId(long userId) {
         return userCalendars.stream()
                 .filter(userCalendar -> !userCalendar.isOwner(userId))
                 .toList();
@@ -119,5 +118,45 @@ public class Calendar extends BaseEntity {
 
     public DayOfWeek getDayOfWeek() {
         return drinkStartTime.getDayOfWeek();
+    }
+
+    public void updateTitle(long userId, String newTitle) {
+        if (!isOwner(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+        this.title = newTitle;
+    }
+
+    public void updateDrinkStartTime(long userId, ZonedDateTime newDrinkStartTime) {
+        if (!isOwner(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+        drinkStartTime = newDrinkStartTime;
+    }
+
+    public void updateDrinkEndTime(long userId, ZonedDateTime newDrinkEndTime) {
+        if (!isOwner(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+        drinkEndTime = newDrinkEndTime;
+    }
+
+    public void updateContent(long userId, String newContent) {
+        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow();
+        userCalendar.updateContent(userId, newContent);
+    }
+
+    public void updateCondition(long userId, String newCondition) {
+        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow();
+        userCalendar.updateCondition(userId, newCondition);
+    }
+
+    public boolean isOwner(long userId) {
+        return ownerId == userId;
+    }
+
+    public void removeDrinkByIds(long userId, List<Long> userCalendarDrinkIds) {
+        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow();
+        userCalendar.deleteDrinksByIds(userCalendarDrinkIds);
     }
 }
