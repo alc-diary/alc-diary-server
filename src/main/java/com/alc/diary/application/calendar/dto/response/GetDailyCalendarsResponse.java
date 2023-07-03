@@ -19,7 +19,7 @@ public record GetDailyCalendarsResponse(
 ) {
 
     public static GetDailyCalendarsResponse of(Calendar calendar, long userId, Map<Long, User> userById) {
-        return calendar.getUserCalendarOfUser(userId).map(userCalendar ->
+        return calendar.getUserCalendarByUserId(userId).map(userCalendar ->
                 new GetDailyCalendarsResponse(
                         calendar.getId(),
                         calendar.getTitle(),
@@ -27,7 +27,7 @@ public record GetDailyCalendarsResponse(
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkEndTime()),
                         userCalendar.getAllDrinkUnitInfoIds(),
                         userCalendar.getTotalQuantity(),
-                        calendar.getUserCalendarsExcludingUser(userId).stream()
+                        calendar.getUserCalendarsExceptByUserId(userId).stream()
                                 .map(taggedUserCalendar -> {
                                     User taggedUser = userById.get(taggedUserCalendar.getUserId());
                                     return new GetDailyCalendarsResponse.UserDto(

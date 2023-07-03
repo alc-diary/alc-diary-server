@@ -30,7 +30,8 @@ import java.util.Optional;
 @Entity
 public class UserCalendar extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Audited
@@ -50,10 +51,10 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "`condition`", length = 20)
     private String condition;
 
-    @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "userCalendar", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<UserCalendarDrink> drinks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "userCalendar", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<UserCalendarImage> images = new ArrayList<>();
 
     @Audited
@@ -157,5 +158,26 @@ public class UserCalendar extends BaseEntity {
     public Optional<UserCalendarDrink> getMostConsumedDrink() {
         return drinks.stream()
                 .max(Comparator.comparing(UserCalendarDrink::getQuantity));
+    }
+
+    public void updateContent(long userId, String newContent) {
+        if (!isOwner(userId)) {
+            throw new DomainException();
+        }
+        content = newContent;
+    }
+
+    public void updateCondition(long userId, String newCondition) {
+        if (!isOwner(userId)) {
+            throw new DomainException();
+        }
+        condition = newCondition;
+    }
+
+    public void deleteDrinksByIds(List<Long> userCalendarDrinkIds) {
+        drinks.removeAll(drinks.stream()
+                .filter(userCalendarDrink -> userCalendarDrinkIds.contains(userCalendarDrink.getId()))
+                .toList()
+        );
     }
 }

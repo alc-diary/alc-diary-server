@@ -37,4 +37,12 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
            "AND c.drinkStartTime < :rangeEnd " +
            "AND uc.isDeleted IS FALSE ")
     List<Calendar> findCalendarsWithInRangeForSpecificUser(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
+
+    @Query("SELECT DISTINCT c " +
+           "FROM Calendar c " +
+           "JOIN FETCH c.userCalendars uc " +
+           "WHERE c.id = :calendarId " +
+           "AND uc.id = :userCalendarId " +
+           "AND uc.isDeleted IS FALSE ")
+    Optional<Calendar> findByIdAndUserCalendarId(long calendarId, long userCalendarId);
 }
