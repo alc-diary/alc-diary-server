@@ -155,8 +155,21 @@ public class Calendar extends BaseEntity {
         return ownerId == userId;
     }
 
+    public void updateUserCalendarDrink(long userCalendarId, long userCalendarDrinkId, float newQuantity) {
+        UserCalendar foundUserCalendar = userCalendars.stream()
+                .filter(userCalendar -> userCalendar.getId() == userCalendarId)
+                .findFirst()
+                .orElseThrow(EntityNotFoundException::new);
+        foundUserCalendar.updateDrinkById(userCalendarDrinkId, newQuantity);
+    }
+
     public void removeDrinkByIds(long userId, List<Long> userCalendarDrinkIds) {
         UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow();
-        userCalendar.deleteDrinksByIds(userCalendarDrinkIds);
+        userCalendar.removeDrinksByIds(userCalendarDrinkIds);
+    }
+
+    public void removeImagesByIds(long userId, List<Long> userCalendarImageIds) {
+        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow(RuntimeException::new);
+        userCalendar.removeImagesByIds(userCalendarImageIds);
     }
 }

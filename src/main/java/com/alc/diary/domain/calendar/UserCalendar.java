@@ -162,22 +162,36 @@ public class UserCalendar extends BaseEntity {
 
     public void updateContent(long userId, String newContent) {
         if (!isOwner(userId)) {
-            throw new DomainException();
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
         }
         content = newContent;
     }
 
     public void updateCondition(long userId, String newCondition) {
         if (!isOwner(userId)) {
-            throw new DomainException();
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
         }
         condition = newCondition;
     }
 
-    public void deleteDrinksByIds(List<Long> userCalendarDrinkIds) {
+    public void updateDrinkById(long userCalendarDrinkId, float newQuantity) {
+        UserCalendarDrink foundDrink = drinks.stream()
+                .filter(userCalendarDrink -> userCalendarDrink.getId() == userCalendarDrinkId)
+                .findFirst()
+                .orElseThrow(EntityNotFoundException::new);
+        foundDrink.updateQuantity(newQuantity);
+    }
+
+    public void removeDrinksByIds(List<Long> userCalendarDrinkIds) {
         drinks.removeAll(drinks.stream()
                 .filter(userCalendarDrink -> userCalendarDrinkIds.contains(userCalendarDrink.getId()))
                 .toList()
         );
+    }
+
+    public void removeImagesByIds(List<Long> userCalendarImageIds) {
+        images.removeAll(images.stream()
+                .filter(userCalendarImage -> userCalendarImageIds.contains(userCalendarImage.getId()))
+                .toList());
     }
 }

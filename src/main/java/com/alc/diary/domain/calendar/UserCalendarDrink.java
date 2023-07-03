@@ -60,4 +60,8 @@ public class UserCalendarDrink {
     public int totalCalories() {
         return Math.round(calories * quantity);
     }
+
+    public void updateQuantity(float newQuantity) {
+        quantity = newQuantity;
+    }
 }

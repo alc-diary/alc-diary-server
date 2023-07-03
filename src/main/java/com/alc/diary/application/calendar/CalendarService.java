@@ -8,6 +8,7 @@ import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.error.UserCalendarError;
 import com.alc.diary.domain.calendar.error.UserCalendarImageError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
@@ -214,10 +215,13 @@ public class CalendarService {
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
 
         if (calendar.getUserCalendarByUserId(userId).isEmpty()) {
-            throw new DomainException();
+            throw new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND);
         }
 
         if (request.title() != null) {
+            if (!calendar.isOwner(userId)) {
+                throw new DomainException(CalendarError.NO_PERMISSION);
+            }
             calendar.updateTitle(userId, request.title());
         }
 
@@ -230,12 +234,23 @@ public class CalendarService {
         }
 
         if (request.drinkStartTime() != null) {
+            if (!calendar.isOwner(userId)) {
+                throw new DomainException(CalendarError.NO_PERMISSION);
+            }
             calendar.updateDrinkStartTime(userId, request.drinkStartTime());
         }
         if (request.drinkEndTime() != null) {
+            if (!calendar.isOwner(userId)) {
+                throw new DomainException(CalendarError.NO_PERMISSION);
+            }
             calendar.updateDrinkEndTime(userId, request.drinkEndTime());
         }
 
+        request.drinks().updated().forEach(drinkUpdateData ->
+                calendar.updateUserCalendarDrink(userCalendarId, drinkUpdateData.id(), drinkUpdateData.quantity()));
+
         calendar.removeDrinkByIds(userId, request.drinks().deleted());
+        calendar.removeImagesByIds(userId, request.images().deleted());
+
     }
 }
