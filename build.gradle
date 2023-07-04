@@ -98,3 +98,25 @@ tasks.register('cleanGeneatedDir') {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    enabled = false
+}
+
+bootJar {
+    archiveFileName = 'alc-diary-0.0.1-SNAPSHOT.jar'
+}
+
+task buildZip(type: Zip) {
+    dependsOn bootJar
+
+    from file('/build/libs/alc-diary-0.0.1-SNAPSHOT.jar')
+    into file('/alc-diary-0.0.1-SNAPSHOT.jar')
+
+    from ('.') {
+        include 'alc-diary-0.0.1-SNAPSHOT.jar'
+        include '.ebextensions/**'
+        include '.platform/**'
+    }
+    archiveFileName = 'alc-diary.zip'
+}
