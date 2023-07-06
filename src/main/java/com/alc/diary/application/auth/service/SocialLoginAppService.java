@@ -27,9 +27,9 @@ public class SocialLoginAppService {
     private final MessageService messageService;
 
     @Transactional
-    public SocialLoginAppResponse login(SocialLoginAppRequest request) {
+    public SocialLoginAppResponse login(SocialLoginAppRequest request, String userAgent) {
         SocialLoginStrategyResponse socialLoginStrategyResponse = socialLogin(request);
-        User foundUser = getUser(socialLoginStrategyResponse);
+        User foundUser = getUser(socialLoginStrategyResponse, userAgent);
 
         String accessToken = jwtService.generateToken(foundUser.getId());
         RefreshToken refreshToken = RefreshToken.getDefault(foundUser);
@@ -46,7 +46,7 @@ public class SocialLoginAppService {
 
     @Transactional
     public SocialLoginAppResponse webSocialLogin(SocialLoginStrategyResponse socialLoginStrategyResponse) {
-        User findUser = getUser(socialLoginStrategyResponse);
+        User findUser = getUser(socialLoginStrategyResponse, "Web");
 
         String accessToken = jwtService.generateToken(findUser.getId());
         RefreshToken refreshToken = RefreshToken.getDefault(findUser);
@@ -55,13 +55,15 @@ public class SocialLoginAppService {
         return new SocialLoginAppResponse(accessToken, savedRefreshToken.getToken());
     }
 
-    private User getUser(SocialLoginStrategyResponse socialLoginStrategyResponse) {
+    private User getUser(SocialLoginStrategyResponse socialLoginStrategyResponse, String userAgent) {
         return userRepository.findNotDeactivatedUserByIdAndSocialTypeAndSocialId(socialLoginStrategyResponse.socialType(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
                                  messageService.send(
                                          "#알림",
-                                         "한 명의 회원이 " + socialLoginStrategyResponse.socialType() + "(으)로 가입했습니다!\n" + "이메일: " + socialLoginStrategyResponse.email()
+                                         "User-Agent: " + userAgent + "\n" +
+                                         "한 명의 회원이 " + socialLoginStrategyResponse.socialType() + "(으)로 가입했습니다!\n" +
+                                         "이메일: " + socialLoginStrategyResponse.email()
                                  );
                                  return savedUser;
                              });

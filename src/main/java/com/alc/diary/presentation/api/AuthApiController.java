@@ -33,6 +33,7 @@ public class AuthApiController {
     @PostMapping("/social-login")
     public ApiResponse<SocialLoginAppResponse> socialLogin(
         @RequestHeader("Authorization") String bearerToken,
+        @RequestHeader("User-Agent") String userAgent,
         @RequestParam SocialType socialType
     ) {
         if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
@@ -40,7 +41,7 @@ public class AuthApiController {
         }
         String socialAccessToken = bearerToken.substring("Bearer ".length());
         SocialLoginAppRequest request = new SocialLoginAppRequest(socialType, socialAccessToken);
-        return ApiResponse.getSuccess(socialLoginAppService.login(request));
+        return ApiResponse.getSuccess(socialLoginAppService.login(request, userAgent));
     }
 
     @PostMapping("/access-token/reissue")
