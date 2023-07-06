@@ -1,32 +1,19 @@
 package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
-import com.alc.diary.domain.calendar.error.UserCalendarError;
-import com.alc.diary.domain.calendar.error.UserCalendarImageError;
-import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
-@ToString(exclude = "calendar")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-        name = "user_calendars",
-        indexes = {
-                @Index(name = "idx_user_calendars_user_id", columnList = "user_id"),
-                @Index(name = "idx_user_calendars_calendar_id", columnList = "calendar_id")
-        }
-)
+@Table(name = "user_calendars")
 @Entity
 public class UserCalendar extends BaseEntity {
 
@@ -39,8 +26,8 @@ public class UserCalendar extends BaseEntity {
     private long userId;
 
     @Audited
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "calendar_id", foreignKey = @ForeignKey(name = "fk_user_calendars_calendars"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
     @Audited
@@ -51,147 +38,38 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "`condition`", length = 20)
     private String condition;
 
-    @OneToMany(mappedBy = "userCalendar", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<UserCalendarDrink> drinks = new ArrayList<>();
+    @OneToMany(mappedBy = "userCalendar")
+    private List<DrinkRecord> drinkRecords = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userCalendar", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<UserCalendarImage> images = new ArrayList<>();
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-    @Audited
-    @Column(name = "total_price", nullable = false)
-    private int totalPrice;
-
-    @Audited
-    @Column(name = "total_calories", nullable = false)
-    private int totalCalories;
-
-    @Audited
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
-
-    private UserCalendar(
-            long userId,
-            String content,
-            String condition,
-            int totalPrice,
-            int totalCalories,
-            boolean isDeleted
-    ) {
-        if (StringUtils.length(content) > 1000) {
-
-        }
+    private UserCalendar(long userId, String content, String condition, LocalDateTime deletedAt) {
         this.userId = userId;
         this.content = content;
         this.condition = condition;
-        this.totalPrice = totalPrice;
-        this.totalCalories = totalCalories;
-        this.isDeleted = isDeleted;
+        this.deletedAt = deletedAt;
     }
 
-    public static UserCalendar create(
-            long userId,
-            String content,
-            String condition
-    ) {
-        return new UserCalendar(userId, content, condition, 0, 0, false);
+    public static UserCalendar create(long userId, String content, String condition) {
+        return new UserCalendar(userId, content, condition, null);
     }
 
-    public static UserCalendar createForTaggedUser(long userId) {
-        return new UserCalendar(userId, null, null, 0, 0, false);
+    public static UserCalendar createTaggedUserCalendar(long userId) {
+        return new UserCalendar(userId, null, null, null);
     }
 
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
     }
 
-    public void addImages(Iterable<UserCalendarImage> images) {
-        for (UserCalendarImage image : images) {
-            addImage(image);
+    public void addDrinkRecords(Iterable<DrinkRecord> drinkRecords) {
+        for (DrinkRecord drinkRecord : drinkRecords) {
+            addDrinkRecord(drinkRecord);
         }
     }
 
-    public void addImage(UserCalendarImage userCalendarImage) {
-        if (images.size() >= 5) {
-            throw new DomainException(UserCalendarImageError.IMAGE_LIMIT_EXCEEDED);
-        }
-        this.images.add(userCalendarImage);
-        userCalendarImage.setUserCalendar(this);
-    }
-
-    public void addDrinks(Iterable<UserCalendarDrink> drinks) {
-        for (UserCalendarDrink drink : drinks) {
-            addDrink(drink);
-        }
-    }
-
-    public void addDrink(UserCalendarDrink userCalendarDrink) {
-        this.drinks.add(userCalendarDrink);
-        userCalendarDrink.setUserCalendar(this);
-
-        totalPrice += userCalendarDrink.totalPrice();
-        totalCalories += userCalendarDrink.totalCalories();
-    }
-
-    public void delete(long userId) {
-        if (!isOwner(userId)) {
-            throw new DomainException(UserCalendarError.NO_PERMISSION);
-        }
-        this.isDeleted = true;
-    }
-
-    public boolean isOwner(long userId) {
-        return this.userId == userId;
-    }
-
-    public List<Long> getAllDrinkUnitInfoIds() {
-        return drinks.stream()
-                .map(UserCalendarDrink::getDrinkUnitInfoId)
-                .toList();
-    }
-
-    public float getTotalQuantity() {
-        return (float) drinks.stream()
-                .mapToDouble(UserCalendarDrink::getQuantity)
-                .sum();
-    }
-
-    public Optional<UserCalendarDrink> getMostConsumedDrink() {
-        return drinks.stream()
-                .max(Comparator.comparing(UserCalendarDrink::getQuantity));
-    }
-
-    public void updateContent(long userId, String newContent) {
-        if (!isOwner(userId)) {
-            throw new DomainException(UserCalendarError.NO_PERMISSION);
-        }
-        content = newContent;
-    }
-
-    public void updateCondition(long userId, String newCondition) {
-        if (!isOwner(userId)) {
-            throw new DomainException(UserCalendarError.NO_PERMISSION);
-        }
-        condition = newCondition;
-    }
-
-    public void updateDrinkById(long userCalendarDrinkId, float newQuantity) {
-        UserCalendarDrink foundDrink = drinks.stream()
-                .filter(userCalendarDrink -> userCalendarDrink.getId() == userCalendarDrinkId)
-                .findFirst()
-                .orElseThrow(EntityNotFoundException::new);
-        foundDrink.updateQuantity(newQuantity);
-    }
-
-    public void removeDrinksByIds(List<Long> userCalendarDrinkIds) {
-        drinks.removeAll(drinks.stream()
-                .filter(userCalendarDrink -> userCalendarDrinkIds.contains(userCalendarDrink.getId()))
-                .toList()
-        );
-    }
-
-    public void removeImagesByIds(List<Long> userCalendarImageIds) {
-        images.removeAll(images.stream()
-                .filter(userCalendarImage -> userCalendarImageIds.contains(userCalendarImage.getId()))
-                .toList());
+    public void addDrinkRecord(DrinkRecord drinkRecord) {
+        drinkRecords.add(drinkRecord);
     }
 }

@@ -3,9 +3,6 @@ package com.alc.diary.application.report;
 import com.alc.diary.application.report.dto.response.DrinkSummaryDto;
 import com.alc.diary.application.report.dto.response.DrinkingDaySummaryDto;
 import com.alc.diary.application.report.dto.response.GetMonthlyReportAppResponse;
-import com.alc.diary.application.report.dto.response.GetMonthlyReportResponse;
-import com.alc.diary.domain.calendar.Calendars;
-import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calender.Calender;
 import com.alc.diary.domain.calender.Report;
 import com.alc.diary.domain.calender.repository.CalenderRepository;
@@ -15,9 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,7 +20,7 @@ import java.util.List;
 public class ReportAppService {
 
     private final CalenderRepository calenderRepository;
-    private final CalendarRepository calendarRepository;
+//    private final CalendarLegacyRepository calendarLegacyRepository;
 
     @Cacheable(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public GetMonthlyReportAppResponse getMonthlyReport(Long userId, int year, int month) {

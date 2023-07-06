@@ -16,4 +16,8 @@ public enum DrinkType {
     ;
 
     public final List<DrinkUnit> allowedUnits;
+
+    public boolean isUnitAllowed(DrinkUnit drinkUnit) {
+        return allowedUnits.contains(drinkUnit);
+    }
 }

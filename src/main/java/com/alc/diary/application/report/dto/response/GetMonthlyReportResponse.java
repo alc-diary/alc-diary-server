@@ -1,6 +1,5 @@
 package com.alc.diary.application.report.dto.response;
 
-import com.alc.diary.domain.calendar.UserCalendarDrink;
 import com.alc.diary.domain.report.Report;
 
 import java.time.DayOfWeek;
@@ -22,18 +21,19 @@ public record GetMonthlyReportResponse(
 ) {
 
     public static GetMonthlyReportResponse from(Report report, Report lastMonthReport) {
-        return new GetMonthlyReportResponse(
-                report.totalQuantity(),
-                report.totalQuantity() - lastMonthReport.totalQuantity(),
-                report.totalDaysDrinking(),
-                report.totalDaysDrinking() - lastMonthReport.totalDaysDrinking(),
-                report.totalSpentOnDrinks(),
-                report.totalCalories(),
-                report.totalRunningTimeToBurnCalories(),
-                report.riceSoupEquivalent(),
-                report.mostConsumedDrink().map(UserCalendarDrink::getDrinkUnitInfoId).orElse(null),
-                report.mostFrequentDrinkingDay().orElse(null),
-                report.getLastDrinkingDateTime().map(DateTimeFormatter.ISO_OFFSET_DATE_TIME::format).orElse(null)
-        );
+//        return new GetMonthlyReportResponse(
+//                report.totalQuantity(),
+//                report.totalQuantity() - lastMonthReport.totalQuantity(),
+//                report.totalDaysDrinking(),
+//                report.totalDaysDrinking() - lastMonthReport.totalDaysDrinking(),
+//                report.totalSpentOnDrinks(),
+//                report.totalCalories(),
+//                report.totalRunningTimeToBurnCalories(),
+//                report.riceSoupEquivalent(),
+//                report.mostConsumedDrink().map(UserCalendarDrink::getDrinkUnitInfoId).orElse(null),
+//                report.mostFrequentDrinkingDay().orElse(null),
+//                report.getLastDrinkingDateTime().map(DateTimeFormatter.ISO_OFFSET_DATE_TIME::format).orElse(null)
+//        );
+        return null;
     }
 }

@@ -9,84 +9,84 @@ import java.util.stream.Collectors;
 
 @ToString
 public class Calendars {
-
-    private final List<Calendar> calendars;
-
-    private Calendars(List<Calendar> calendars) {
-        this.calendars = calendars;
-    }
-
-    public static Calendars from(List<Calendar> calendars) {
-        return new Calendars(calendars);
-    }
-
-    public int totalDaysDrinking() {
-        return (int) calendars.stream()
-                .map(Calendar::getDate)
-                .distinct()
-                .count();
-    }
-
-    public int calculateTotalSpent() {
-        return calendars.stream()
-                .mapToInt(calendar -> calendar.getUserCalendars().stream().mapToInt(UserCalendar::getTotalPrice).sum())
-                .sum();
-    }
-
-    public int calculateTotalCalories() {
-        return calendars.stream()
-                .mapToInt(calendars ->
-                        calendars.getUserCalendars().stream().mapToInt(UserCalendar::getTotalCalories).sum())
-                .sum();
-    }
-
-    public float calculateTotalQuantity() {
-        return (float) calendars.stream()
-                .mapToDouble(calendars ->
-                        calendars.getUserCalendars().stream()
-                                .mapToDouble(userCalendar -> userCalendar.getDrinks().stream()
-                                        .mapToDouble(UserCalendarDrink::getQuantity).sum())
-                                .sum())
-                .sum();
-    }
-
-    public Optional<UserCalendarDrink> mostConsumedDrink() {
-        return calendars.stream()
-                .flatMap(calendar -> calendar.getUserCalendars().stream())
-                .flatMap(userCalendar -> userCalendar.getDrinks().stream())
-                .max(Comparator.comparing(UserCalendarDrink::getQuantity));
-    }
-
-    public Optional<DayOfWeek> mostFrequentDrinkingDay() {
-        Map<DayOfWeek, Long> dayCounts = calendars.stream()
-                .collect(Collectors.groupingBy(Calendar::getDayOfWeek, Collectors.counting()));
-
-        return dayCounts.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey);
-    }
-
-    public List<Calendar> getMostAlcoholConsumedPerDay(long userId) {
-        return calendars.stream()
-                .collect(Collectors.groupingBy(Calendar::getDate,
-                        Collectors.maxBy(comparingByAlcoholConsumed(userId)
-                        )))
-                .values().stream()
-                .flatMap(Optional::stream)
-                .toList();
-    }
-
-    private static Comparator<Calendar> comparingByAlcoholConsumed(long userId) {
-        return Comparator.comparing(calendar ->
-                calendar.getUserCalendarByUserId(userId)
-                        .map(UserCalendar::getMostConsumedDrink)
-                        .map(userCalendarDrink -> userCalendarDrink.map(UserCalendarDrink::getQuantity).orElse(0.0f))
-                        .orElse(0.0f));
-    }
-
-    public Optional<ZonedDateTime> getLastDrinkingDateTime() {
-        return calendars.stream()
-                .map(Calendar::getDrinkStartTime)
-                .max(ZonedDateTime::compareTo);
-    }
+//
+//    private final List<CalendarLegacy> calendarLagacies;
+//
+//    private Calendars(List<CalendarLegacy> calendarLagacies) {
+//        this.calendarLagacies = calendarLagacies;
+//    }
+//
+//    public static Calendars from(List<CalendarLegacy> calendarLagacies) {
+//        return new Calendars(calendarLagacies);
+//    }
+//
+//    public int totalDaysDrinking() {
+//        return (int) calendarLagacies.stream()
+//                .map(CalendarLegacy::getDate)
+//                .distinct()
+//                .count();
+//    }
+//
+//    public int calculateTotalSpent() {
+//        return calendarLagacies.stream()
+//                .mapToInt(calendar -> calendar.getUserCalendarLagecies().stream().mapToInt(UserCalendarLegacy::getTotalPrice).sum())
+//                .sum();
+//    }
+//
+//    public int calculateTotalCalories() {
+//        return calendarLagacies.stream()
+//                .mapToInt(calendars ->
+//                        calendars.getUserCalendarLagecies().stream().mapToInt(UserCalendarLegacy::getTotalCalories).sum())
+//                .sum();
+//    }
+//
+//    public float calculateTotalQuantity() {
+//        return (float) calendarLagacies.stream()
+//                .mapToDouble(calendars ->
+//                        calendars.getUserCalendarLagecies().stream()
+//                                .mapToDouble(userCalendar -> userCalendar.getDrinks().stream()
+//                                        .mapToDouble(UserCalendarDrink::getQuantity).sum())
+//                                .sum())
+//                .sum();
+//    }
+//
+//    public Optional<UserCalendarDrink> mostConsumedDrink() {
+//        return calendarLagacies.stream()
+//                .flatMap(calendar -> calendar.getUserCalendarLagecies().stream())
+//                .flatMap(userCalendar -> userCalendar.getDrinks().stream())
+//                .max(Comparator.comparing(UserCalendarDrink::getQuantity));
+//    }
+//
+//    public Optional<DayOfWeek> mostFrequentDrinkingDay() {
+//        Map<DayOfWeek, Long> dayCounts = calendarLagacies.stream()
+//                .collect(Collectors.groupingBy(CalendarLegacy::getDayOfWeek, Collectors.counting()));
+//
+//        return dayCounts.entrySet().stream()
+//                .max(Map.Entry.comparingByValue())
+//                .map(Map.Entry::getKey);
+//    }
+//
+//    public List<CalendarLegacy> getMostAlcoholConsumedPerDay(long userId) {
+//        return calendarLagacies.stream()
+//                .collect(Collectors.groupingBy(CalendarLegacy::getDate,
+//                        Collectors.maxBy(comparingByAlcoholConsumed(userId)
+//                        )))
+//                .values().stream()
+//                .flatMap(Optional::stream)
+//                .toList();
+//    }
+//
+//    private static Comparator<CalendarLegacy> comparingByAlcoholConsumed(long userId) {
+//        return Comparator.comparing(calendar ->
+//                calendar.getUserCalendarByUserId(userId)
+//                        .map(UserCalendarLegacy::getMostConsumedDrink)
+//                        .map(userCalendarDrink -> userCalendarDrink.map(UserCalendarDrink::getQuantity).orElse(0.0f))
+//                        .orElse(0.0f));
+//    }
+//
+//    public Optional<ZonedDateTime> getLastDrinkingDateTime() {
+//        return calendarLagacies.stream()
+//                .map(CalendarLegacy::getDrinkStartTime)
+//                .max(ZonedDateTime::compareTo);
+//    }
 }
