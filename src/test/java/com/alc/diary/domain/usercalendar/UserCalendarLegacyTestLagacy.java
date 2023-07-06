@@ -2,7 +2,7 @@ package com.alc.diary.domain.usercalendar;
 
 import org.junit.jupiter.api.Test;
 
-class UserCalendarTest {
+class UserCalendarLegacyTestLagacy {
 
     @Test
     void test() {

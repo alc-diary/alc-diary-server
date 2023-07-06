@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "photo")
+@Table(name = "calendar_photos")
 @Entity
 public class Photo {
 
@@ -20,9 +20,22 @@ public class Photo {
     private long userId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "calendar_entry_id")
-    private CalendarEntry calendarEntry;
+    @JoinColumn(name = "calendar_id")
+    private Calendar calendar;
 
     @Column(name = "url", length = 1000, nullable = false)
     private String url;
+
+    private Photo(long userId, String url) {
+        this.userId = userId;
+        this.url = url;
+    }
+
+    public static Photo create(long userId, String url) {
+        return new Photo(userId, url);
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
 }

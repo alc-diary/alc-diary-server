@@ -6,24 +6,17 @@ import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-        name = "calendars",
-        indexes = {@Index(name = "idx_calendars_drink_start_time", columnList = "drink_start_time")}
-)
+@Table(name = "calendars")
 @Entity
 public class Calendar extends BaseEntity {
 
@@ -32,11 +25,11 @@ public class Calendar extends BaseEntity {
     private Long id;
 
     @Audited
-    @Column(name = "owner_id", nullable = false) // Foreign key referencing 'users' table by 'id' column
+    @Column(name = "owner_id")
     private long ownerId;
 
     @Audited
-    @Column(name = "title", length = 30, nullable = false)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
     @Audited
@@ -47,45 +40,55 @@ public class Calendar extends BaseEntity {
     @Column(name = "drink_end_time", nullable = false)
     private ZonedDateTime drinkEndTime;
 
-    @OneToMany(mappedBy = "calendar", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<UserCalendar> userCalendars = new ArrayList<>();
 
-    private Calendar(Long ownerId, String title, ZonedDateTime drinkStartTime, ZonedDateTime drinkEndTime) {
-        if (ownerId == null) {
-            throw new DomainException(CalendarError.OWNER_NULL);
-        }
-        if (title == null) {
-            throw new DomainException(CalendarError.TITLE_NULL);
-        }
-        if (drinkStartTime == null) {
-            throw new DomainException(CalendarError.DRINK_START_TIME_NULL);
-        }
-        if (drinkEndTime == null) {
-            throw new DomainException(CalendarError.DRINK_END_TIME_NULL);
-        }
+    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
+    private List<Photo> photos = new ArrayList<>();
 
+    @Column(name = "deletedAt")
+    private LocalDateTime deletedAt;
+
+    private Calendar(
+            long ownerId,
+            String title,
+            ZonedDateTime drinkStartTime,
+            ZonedDateTime drinkEndTime,
+            LocalDateTime deletedAt
+    ) {
         this.ownerId = ownerId;
         this.title = title;
         this.drinkStartTime = drinkStartTime;
         this.drinkEndTime = drinkEndTime;
+        this.deletedAt = deletedAt;
     }
 
     public static Calendar create(
-            Long ownerId,
+            long ownerId,
             String title,
             ZonedDateTime drinkStartTime,
             ZonedDateTime drinkEndTime
     ) {
-        return new Calendar(
-                ownerId,
-                title,
-                drinkStartTime,
-                drinkEndTime
-        );
+        if (title == null) {
+            throw new DomainException(CalendarError.NULL_TITLE);
+        }
+        if (drinkStartTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_START_TIME);
+        }
+        if (drinkEndTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_END_TIME);
+        }
+        if (drinkStartTime.isAfter(drinkEndTime)) {
+            throw new DomainException(CalendarError.);
+        }
+        if (drinkEndTime.isAfter(ZonedDateTime.now())) {
+            throw new DomainException();
+        }
+        return new Calendar(ownerId, title, drinkStartTime, drinkEndTime, null);
     }
 
-    public void addUserCalendars(Iterable<UserCalendar> userCalendars) {
-        for (UserCalendar userCalendar : userCalendars) {
+    public void addUserCalendars(Iterable<UserCalendar> userCalendarEntries) {
+        for (UserCalendar userCalendar : userCalendarEntries) {
             addUserCalendar(userCalendar);
         }
     }
@@ -95,81 +98,14 @@ public class Calendar extends BaseEntity {
         userCalendar.setCalendar(this);
     }
 
-    public boolean isInvolvedUser(long userId) {
-        return userCalendars.stream()
-                .anyMatch(userCalendar -> userCalendar.isOwner(userId));
-    }
-
-    public Optional<UserCalendar> getUserCalendarByUserId(long userId) {
-        return userCalendars.stream()
-                .filter(userCalendar -> userCalendar.isOwner(userId))
-                .findFirst();
-    }
-
-    public List<UserCalendar> getUserCalendarsExceptByUserId(long userId) {
-        return userCalendars.stream()
-                .filter(userCalendar -> !userCalendar.isOwner(userId))
-                .toList();
-    }
-
-    public LocalDate getDate() {
-        return drinkStartTime.toLocalDate();
-    }
-
-    public DayOfWeek getDayOfWeek() {
-        return drinkStartTime.getDayOfWeek();
-    }
-
-    public void updateTitle(long userId, String newTitle) {
-        if (!isOwner(userId)) {
-            throw new DomainException(CalendarError.NO_PERMISSION);
+    public void addPhotos(List<Photo> photos) {
+        for (Photo photo : photos) {
+            addPhoto(photo);
         }
-        this.title = newTitle;
     }
 
-    public void updateDrinkStartTime(long userId, ZonedDateTime newDrinkStartTime) {
-        if (!isOwner(userId)) {
-            throw new DomainException(CalendarError.NO_PERMISSION);
-        }
-        drinkStartTime = newDrinkStartTime;
-    }
-
-    public void updateDrinkEndTime(long userId, ZonedDateTime newDrinkEndTime) {
-        if (!isOwner(userId)) {
-            throw new DomainException(CalendarError.NO_PERMISSION);
-        }
-        drinkEndTime = newDrinkEndTime;
-    }
-
-    public void updateContent(long userId, String newContent) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow();
-        userCalendar.updateContent(userId, newContent);
-    }
-
-    public void updateCondition(long userId, String newCondition) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow();
-        userCalendar.updateCondition(userId, newCondition);
-    }
-
-    public boolean isOwner(long userId) {
-        return ownerId == userId;
-    }
-
-    public void updateUserCalendarDrink(long userCalendarId, long userCalendarDrinkId, float newQuantity) {
-        UserCalendar foundUserCalendar = userCalendars.stream()
-                .filter(userCalendar -> userCalendar.getId() == userCalendarId)
-                .findFirst()
-                .orElseThrow(EntityNotFoundException::new);
-        foundUserCalendar.updateDrinkById(userCalendarDrinkId, newQuantity);
-    }
-
-    public void removeDrinkByIds(long userId, List<Long> userCalendarDrinkIds) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow();
-        userCalendar.removeDrinksByIds(userCalendarDrinkIds);
-    }
-
-    public void removeImagesByIds(long userId, List<Long> userCalendarImageIds) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId).orElseThrow(RuntimeException::new);
-        userCalendar.removeImagesByIds(userCalendarImageIds);
+    public void addPhoto(Photo photo) {
+        photos.add(photo);
+        photo.setCalendar(this);
     }
 }

@@ -1,6 +1,5 @@
 package com.alc.diary.application.calendar.dto.response;
 
-import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.user.User;
 
 import java.time.format.DateTimeFormatter;
@@ -17,28 +16,6 @@ public record GetDailyCalendarsResponse(
         float currentUserDrinkTotal,
         List<UserDto> taggedUsers
 ) {
-
-    public static GetDailyCalendarsResponse of(Calendar calendar, long userId, Map<Long, User> userById) {
-        return calendar.getUserCalendarByUserId(userId).map(userCalendar ->
-                new GetDailyCalendarsResponse(
-                        calendar.getId(),
-                        calendar.getTitle(),
-                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkStartTime()),
-                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkEndTime()),
-                        userCalendar.getAllDrinkUnitInfoIds(),
-                        userCalendar.getTotalQuantity(),
-                        calendar.getUserCalendarsExceptByUserId(userId).stream()
-                                .map(taggedUserCalendar -> {
-                                    User taggedUser = userById.get(taggedUserCalendar.getUserId());
-                                    return new GetDailyCalendarsResponse.UserDto(
-                                            taggedUser.getId(),
-                                            taggedUser.getProfileImage()
-                                    );
-                                })
-                                .toList()
-                ))
-                .orElse(null);
-    }
 
     public record UserDto(
 

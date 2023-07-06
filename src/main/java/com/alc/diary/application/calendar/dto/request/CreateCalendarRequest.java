@@ -1,8 +1,10 @@
 package com.alc.diary.application.calendar.dto.request;
 
+import com.alc.diary.domain.drink.DrinkType;
+import com.alc.diary.domain.drink.DrinkUnit;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
@@ -14,21 +16,22 @@ public record CreateCalendarRequest(
         @NotNull ZonedDateTime drinkStartTime,
         @NotNull ZonedDateTime drinkEndTime,
         String drinkCondition,
-        @NotNull List<UserCalendarDrinkDto> userCalendarDrinks,
-        @NotNull @Size(max = 5, message = "The number of images cannot exceed 5.") List<UserCalendarImageDto> userCalendarImages,
+        @NotNull List<DrinkCreationDto> drinks,
+        @NotNull List<PhotoCreationDto> photos,
         @NotNull Set<Long> taggedUserIds
 ) {
 
-    public record UserCalendarDrinkDto(
+    public record DrinkCreationDto(
 
-            long drinkUnitInfoId,
+            DrinkType drinkType,
+            DrinkUnit drinkUnit,
             float quantity
     ) {
     }
 
-    public record UserCalendarImageDto(
+    public record PhotoCreationDto(
 
-            String imageUrl
+            String url
     ) {
     }
 }

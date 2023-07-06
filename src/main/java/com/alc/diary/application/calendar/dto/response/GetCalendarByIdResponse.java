@@ -1,7 +1,5 @@
 package com.alc.diary.application.calendar.dto.response;
 
-import com.alc.diary.domain.calendar.Calendar;
-
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -15,39 +13,6 @@ public record GetCalendarByIdResponse(
         List<UserCalendarDto> userCalendars
 ) {
 
-    public static GetCalendarByIdResponse of(Calendar calendar, long userId) {
-        return new GetCalendarByIdResponse(
-                calendar.getId(),
-                calendar.getOwnerId(),
-                calendar.getTitle(),
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkStartTime()),
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkEndTime()),
-                calendar.getUserCalendars().stream()
-                        .map(userCalendar -> new UserCalendarDto(
-                                userCalendar.getId(),
-                                userCalendar.getUserId(),
-                                userCalendar.isOwner(userId),
-                                userCalendar.getContent(),
-                                userCalendar.getCondition(),
-                                userCalendar.getTotalPrice(),
-                                userCalendar.getTotalCalories(),
-                                userCalendar.getDrinks().stream()
-                                        .map(userCalendarDrink -> new UserCalendarDrinkDto(
-                                                userCalendarDrink.getId(),
-                                                userCalendarDrink.getDrinkUnitInfoId(),
-                                                userCalendarDrink.getQuantity()
-                                        ))
-                                        .toList(),
-                                userCalendar.getImages().stream()
-                                        .map(userCalendarImage -> new UserCalendarImageDto(
-                                                userCalendarImage.getId(),
-                                                userCalendarImage.getImageUrl()
-                                        ))
-                                        .toList()
-                        ))
-                        .toList()
-        );
-    }
 
     public record UserCalendarDto(
 

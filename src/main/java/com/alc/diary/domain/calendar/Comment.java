@@ -5,10 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "comment")
+@Table(name = "calendar_comments")
 @Entity
 public class Comment {
 
@@ -21,7 +22,11 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
-    private Calendar calendarId;
+    private Calendar calendar;
 
+    @Column(name = "text", length = 500, nullable = false)
     private String text;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

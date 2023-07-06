@@ -9,7 +9,6 @@ import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import io.swagger.annotations.ApiParam;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -41,7 +40,8 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId
     ) {
-        return ApiResponse.getSuccess(calendarService.getCalendarByIdResponse(userId, calendarId));
+//        return ApiResponse.getSuccess(calendarService.getCalendarByIdResponse(userId, calendarId));
+        return null;
     }
 
     @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
@@ -51,7 +51,7 @@ public class CalendarApiController {
             @PathVariable long userCalendarId,
             @RequestBody UpdateCalendarRequest request
     ) {
-        calendarService.updateCalendar(userId, calendarId, userCalendarId, request);
+//        calendarService.updateCalendar(userId, calendarId, userCalendarId, request);
         return ApiResponse.getSuccess();
     }
 
@@ -60,7 +60,7 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long userCalendarId
     ) {
-        calendarService.deleteUserCalendar(userId, userCalendarId);
+//        calendarService.deleteUserCalendar(userId, userCalendarId);
         return ApiResponse.getSuccess();
     }
 
@@ -70,7 +70,8 @@ public class CalendarApiController {
             @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
-        return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
+//        return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
+        return null;
     }
 
     @GetMapping("/monthly")
@@ -79,6 +80,7 @@ public class CalendarApiController {
             @ApiParam(value = "yyyy-MM") @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
     ) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
-        return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
+//        return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
+        return null;
     }
 }
