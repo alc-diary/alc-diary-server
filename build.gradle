@@ -110,13 +110,20 @@ bootJar {
 task buildZip(type: Zip) {
     dependsOn bootJar
 
-    from file('/build/libs/alc-diary-0.0.1-SNAPSHOT.jar')
-    into file('/alc-diary-0.0.1-SNAPSHOT.jar')
-
-    from ('.') {
-        include 'alc-diary-0.0.1-SNAPSHOT.jar'
-        include '.ebextensions/**'
-        include '.platform/**'
+    from('.ebextensions') {
+        into '.ebextensions'
+        include '/**'
     }
+
+    from('.platform') {
+        into '.platform'
+        include '/**'
+    }
+
+    from('build/libs') {
+        into '.'
+        include 'alc-diary-0.0.1-SNAPSHOT.jar'
+    }
+
     archiveFileName = 'alc-diary.zip'
 }
