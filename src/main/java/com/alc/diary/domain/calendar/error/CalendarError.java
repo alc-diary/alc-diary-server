@@ -16,6 +16,8 @@ public enum CalendarError implements ErrorModel {
     NULL_DRINK_END_TIME("C_E0005", "Drink end time cannot be null."),
     NULL_USER_CALENDAR("C_E0006", "UserCalendar cannot be null."),
     NULL_USER_CALENDARS("C_E0007", "UserCalendars cannot be null."),
+    START_TIME_AFTER_END_TIME("C_E0008", "Start time cannot be after end time."),
+    END_TIME_IN_FUTURE("C_E0009", "End time cannot be int the future."),
     ;
 
     private final String code;

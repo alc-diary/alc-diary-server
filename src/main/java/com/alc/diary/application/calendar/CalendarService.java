@@ -62,8 +62,8 @@ public class CalendarService {
         calendarToSave.addUserCalendar(userCalendarToSave);
         calendarToSave.addUserCalendars(taggedUserCalendarsToSave);
         calendarToSave.addPhotos(photosToSave);
-
         Calendar calendar = calendarRepository.save(calendarToSave);
+
         return new CreateCalendarResponse(
                 calendar.getId(),
                 calendar.getUserCalendars().stream()
