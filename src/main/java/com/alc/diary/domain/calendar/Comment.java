@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,4 +30,18 @@ public class Comment {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    private Comment(long userId, String text, LocalDateTime deletedAt) {
+        this.userId = userId;
+        this.text = text;
+        this.deletedAt = deletedAt;
+    }
+
+    public static Comment create(long userId, String text) {
+        return new Comment(userId, text, null);
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
 }

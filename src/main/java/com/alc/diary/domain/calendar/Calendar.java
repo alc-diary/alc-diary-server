@@ -79,10 +79,10 @@ public class Calendar extends BaseEntity {
             throw new DomainException(CalendarError.NULL_DRINK_END_TIME);
         }
         if (drinkStartTime.isAfter(drinkEndTime)) {
-            throw new DomainException(CalendarError.);
+            throw new DomainException(CalendarError.START_TIME_AFTER_END_TIME);
         }
         if (drinkEndTime.isAfter(ZonedDateTime.now())) {
-            throw new DomainException();
+            throw new DomainException(CalendarError.END_TIME_IN_FUTURE);
         }
         return new Calendar(ownerId, title, drinkStartTime, drinkEndTime, null);
     }
@@ -104,8 +104,17 @@ public class Calendar extends BaseEntity {
         }
     }
 
+    public void addComment(Comment comment) {
+
+    }
+
     public void addPhoto(Photo photo) {
         photos.add(photo);
         photo.setCalendar(this);
+    }
+
+    public boolean hasPermission(long userId) {
+        return userCalendars.stream()
+                .anyMatch(userCalendar -> userCalendar.isOwner(userId));
     }
 }

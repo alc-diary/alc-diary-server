@@ -1,16 +1,24 @@
 package com.alc.diary.application.calendar;
 
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
+import com.alc.diary.application.calendar.dto.request.CreateCommentRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
+import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.domain.calendar.*;
+import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.drink.repository.DrinkUnitInfoRepository;
+import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -20,27 +28,6 @@ public class CalendarService {
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
     private final DrinkUnitInfoRepository drinkUnitInfoRepository;
-
-//    /**
-//     * 캘린더 생성
-//     *
-//     * @param userId
-//     * @param request
-//     * @return
-//     */
-//    @Transactional
-//    public CreateCalendarResponse createCalendarLegacy(long userId, CreateCalendarRequest request) {
-//        CalendarLegacy calendarLegacyToSave = createNewCalendar(userId, request);
-//
-//        CalendarLegacy calendarLegacy = calendarLegacyRepository.save(calendarLegacyToSave);
-//
-//        return new CreateCalendarResponse(
-//                calendarLegacy.getId(),
-//                calendarLegacy.getUserCalendarLagecies().stream()
-//                        .map(UserCalendarLegacy::getId)
-//                        .toList()
-//        );
-//    }
 
     @Transactional
     public CreateCalendarResponse createCalendar(long userId, CreateCalendarRequest request) {
@@ -152,6 +139,31 @@ public class CalendarService {
 //                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
 //    }
 //
+
+    public GetCalendarByIdResponse getCalendarById(long userId, long calendarId) {
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+
+        List<Long> userIds = calendar.getUserCalendars().stream()
+                .map(UserCalendar::getUserId)
+                .toList();
+        Map<Long, User> userByUserId = userRepository.findActiveUsersByIdIn(userIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
+        return GetCalendarByIdResponse.of(userId, calendar, userByUserId);
+    }
+
+    @Transactional
+    public void createComment(long userId, long calendarId, CreateCommentRequest request) {
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+        if (!calendar.hasPermission(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+
+
+    }
+
 //    /**
 //     * 요청한 유저의 캘린더 데이터 삭제 (캘린더 삭제 x, 캘린더 데이터 중 자신의 데이터만 삭제)
 //     *
@@ -241,7 +253,7 @@ public class CalendarService {
 //        }
 //
 //        if (request.conditionShouldBeUpdated()) {
-//            calendarLegacy.updateCondition(userId, request.condition());
+//            calendarLegacy.updateCondition(userId, request.drinkCondition());
 //        }
 //
 //        if (request.drinkStartTime() != null) {

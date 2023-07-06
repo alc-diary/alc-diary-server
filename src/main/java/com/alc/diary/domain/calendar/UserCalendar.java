@@ -35,8 +35,8 @@ public class UserCalendar extends BaseEntity {
     private String content;
 
     @Audited
-    @Column(name = "`condition`", length = 20)
-    private String condition;
+    @Column(name = "drink_condition", length = 20)
+    private String drinkCondition;
 
     @OneToMany(mappedBy = "userCalendar")
     private List<DrinkRecord> drinkRecords = new ArrayList<>();
@@ -44,10 +44,10 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    private UserCalendar(long userId, String content, String condition, LocalDateTime deletedAt) {
+    private UserCalendar(long userId, String content, String drinkCondition, LocalDateTime deletedAt) {
         this.userId = userId;
         this.content = content;
-        this.condition = condition;
+        this.drinkCondition = drinkCondition;
         this.deletedAt = deletedAt;
     }
 
@@ -71,5 +71,9 @@ public class UserCalendar extends BaseEntity {
 
     public void addDrinkRecord(DrinkRecord drinkRecord) {
         drinkRecords.add(drinkRecord);
+    }
+
+    public boolean isOwner(long userId) {
+        return this.userId == userId;
     }
 }

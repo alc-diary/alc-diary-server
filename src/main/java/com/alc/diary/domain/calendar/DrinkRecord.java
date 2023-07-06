@@ -26,7 +26,7 @@ public class DrinkRecord {
 
     @Audited
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_calendar_entry_id")
+    @JoinColumn(name = "user_calendar_id")
     private UserCalendar userCalendar;
 
     @Audited
