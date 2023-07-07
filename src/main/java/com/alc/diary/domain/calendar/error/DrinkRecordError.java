@@ -9,8 +9,9 @@ import lombok.RequiredArgsConstructor;
 public enum DrinkRecordError implements ErrorModel {
 
     NULL_DRINK_TYPE("DR_E0000", "DrinkType cannot be null."),
-    NULL_DRINK_UNIT("ER_E0001", "DrinkUnit cannot be null."),
-    INVALID_DRINK_UNIT("ER_E0002", "The provided DrinkUnit is not allowed for the selected DrinkType."),
+    NULL_DRINK_UNIT("DR_E0001", "DrinkUnit cannot be null."),
+    INVALID_DRINK_UNIT("DR_E0002", "The provided DrinkUnit is not allowed for the selected DrinkType."),
+    ZERO_QUANTITY("DR_E0003", "Quantity cannot be zero."),
     ;
 
     private final String code;

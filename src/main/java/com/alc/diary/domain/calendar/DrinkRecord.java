@@ -57,6 +57,9 @@ public class DrinkRecord {
         if (!drinkType.isUnitAllowed(drinkUnit)) {
             throw new DomainException(DrinkRecordError.INVALID_DRINK_UNIT);
         }
+        if (quantity == 0) {
+            throw new DomainException(DrinkRecordError.ZERO_QUANTITY);
+        }
         this.type = drinkType;
         this.unit = drinkUnit;
         this.quantity = quantity;

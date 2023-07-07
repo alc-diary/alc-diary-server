@@ -9,7 +9,6 @@ import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsRespon
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
-import com.alc.diary.domain.drink.repository.DrinkUnitInfoRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
@@ -18,15 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,7 +34,6 @@ public class CalendarService {
 
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
-    private final DrinkUnitInfoRepository drinkUnitInfoRepository;
 
     @Transactional
     public CreateCalendarResponse createCalendar(long userId, CreateCalendarRequest request) {
@@ -47,7 +45,14 @@ public class CalendarService {
                 .toList();
         userCalendarToSave.addDrinkRecords(drinkRecordsToSave);
 
+        Set<Long> activeTaggedUserIds = userRepository.findActiveUserIdsByIdIn(
+                request.taggedUserIds().stream()
+                        .filter(taggedUserId -> taggedUserId != userId)
+                        .toList()
+        );
+
         List<UserCalendar> taggedUserCalendarsToSave = request.taggedUserIds().stream()
+                .filter(activeTaggedUserIds::contains)
                 .map(UserCalendar::createTaggedUserCalendar)
                 .toList();
         List<Photo> photosToSave = request.photos().stream()
@@ -133,20 +138,6 @@ public class CalendarService {
 //                .map(UserCalendarLegacy::createForTaggedUser)
 //                .toList();
 //    }
-//
-//    /**
-//     * 캘린더 상세 조회
-//     *
-//     * @param calendarId
-//     * @return
-//     */
-//    public GetCalendarByIdResponse getCalendarByIdResponse(long userId, long calendarId) {
-//        return calendarLegacyRepository.findById(calendarId)
-//                .filter(calendar -> calendar.isInvolvedUser(userId))
-//                .map(calendar -> GetCalendarByIdResponse.of(calendar, userId))
-//                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-//    }
-//
 
     public GetCalendarByIdResponse getCalendarById(long userId, long calendarId) {
         Calendar calendar = calendarRepository.findById(calendarId)
@@ -195,7 +186,7 @@ public class CalendarService {
     public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date, ZoneId zoneId) {
         ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
-        List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
+        List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
         Set<Long> userIds = calendars.stream()
                 .flatMap(calendar -> calendar.findUserCalendarsExcludingUserId(userId).stream())
                 .map(UserCalendar::getUserId)
@@ -205,30 +196,30 @@ public class CalendarService {
         return GetDailyCalendarsResponse.of(userId, calendars, userById);
     }
 
-//    /**
-//     * 해당 유저의 캘린더 조회(월별)
-//     *
-//     * @param userId
-//     * @param month
-//     * @return
-//     */
-//    public List<GetMonthlyCalendarsResponse> getMonthlyCalendars(long userId, YearMonth month, ZoneId zoneId) {
-//        ZonedDateTime rangeStart = month.atDay(1).atStartOfDay(zoneId);
-//        ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);
-//        Calendars calendars = Calendars.from(calendarLegacyRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd));
-//
-//        return calendars.getMostAlcoholConsumedPerDay(userId).stream()
-//                .map(calendar -> createResponseFromCalendar(calendar, userId))
-//                .flatMap(Optional::stream)
-//                .toList();
-//    }
-//
-//    public Optional<GetMonthlyCalendarsResponse> createResponseFromCalendar(CalendarLegacy calendarLegacy, long userId) {
-//        return calendarLegacy.getUserCalendarByUserId(userId)
-//                .flatMap(UserCalendarLegacy::getMostConsumedDrink)
-//                .map(UserCalendarDrink::getDrinkUnitInfoId)
-//                .map(drinkUnitInfoId -> new GetMonthlyCalendarsResponse(calendarLegacy.getDate().toString(), drinkUnitInfoId));
-//    }
+    /**
+     * 해당 유저의 캘린더 조회(월별)
+     *
+     * @param userId
+     * @param month
+     * @param zoneId
+     * @return
+     */
+    public List<GetMonthlyCalendarsResponse> getMonthlyCalendars(long userId, YearMonth month, ZoneId zoneId) {
+        ZonedDateTime rangeStart = month.atDay(1).atStartOfDay(zoneId);
+        ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);
+
+        Calendars calendars =
+                new Calendars(calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd));
+
+        return calendars.getCalendarsByMaxDrinkPerDay(zoneId).stream()
+                .map(calendar -> new GetMonthlyCalendarsResponse(
+                        calendar.getDrinkStartTimeLocalDate(zoneId).toString(),
+                        calendar.getMostConsumedDrinkType()
+                ))
+                .sorted(Comparator.comparing(GetMonthlyCalendarsResponse::date))
+                .toList();
+    }
+
 //
 //    /**
 //     * 캘린더 데이터 수정

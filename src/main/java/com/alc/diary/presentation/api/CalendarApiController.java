@@ -81,17 +81,15 @@ public class CalendarApiController {
             @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(name = "zoneId", defaultValue = "Asia/Seoul") ZoneId zoneId
     ) {
-//        ZoneId zoneId = ZoneId.of("Asia/Seoul");
         return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
     }
 
     @GetMapping("/monthly")
     public ApiResponse<List<GetMonthlyCalendarsResponse>> getMonthlyCalendars(
             @ApiIgnore @RequestAttribute long userId,
-            @ApiParam(value = "yyyy-MM") @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
+            @ApiParam(value = "yyyy-MM") @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month,
+            @RequestParam(name = "zoneId", defaultValue = "Asia/Seoul") ZoneId zoneId
     ) {
-        ZoneId zoneId = ZoneId.of("Asia/Seoul");
-//        return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
-        return null;
+        return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
     }
 }
