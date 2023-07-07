@@ -18,15 +18,18 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
     @Column(name = "text", length = 500, nullable = false)
     private String text;
+
+    @Column(name = "user_visible_created_at", nullable = false)
+    public ZonedDateTime userVisibleCreatedAt;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;

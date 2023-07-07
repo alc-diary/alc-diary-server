@@ -38,7 +38,7 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "drink_condition", length = 20)
     private String drinkCondition;
 
-    @OneToMany(mappedBy = "userCalendar")
+    @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
     private List<DrinkRecord> drinkRecords = new ArrayList<>();
 
     @Column(name = "deleted_at")
@@ -71,6 +71,7 @@ public class UserCalendar extends BaseEntity {
 
     public void addDrinkRecord(DrinkRecord drinkRecord) {
         drinkRecords.add(drinkRecord);
+        drinkRecord.setUserCalendar(this);
     }
 
     public boolean isOwner(long userId) {

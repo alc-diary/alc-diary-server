@@ -47,12 +47,12 @@ public class CalendarApiController {
             @PathVariable long calendarId,
             @RequestBody CreateCommentRequest request
             ) {
-
+        return null;
     }
 
     @GetMapping("/{calendarId}/comments")
     public ApiResponse<GetCalendarCommentsByCalendarIdResponse> getCalendarCommentsByCalendarId() {
-
+        return null;
     }
 
     @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
@@ -78,11 +78,11 @@ public class CalendarApiController {
     @GetMapping("/daily")
     public ApiResponse<List<GetDailyCalendarsResponse>> getDailyCalendars(
             @ApiIgnore @RequestAttribute long userId,
-            @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+            @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(name = "zoneId", defaultValue = "Asia/Seoul") ZoneId zoneId
     ) {
-        ZoneId zoneId = ZoneId.of("Asia/Seoul");
-//        return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
-        return null;
+//        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
     }
 
     @GetMapping("/monthly")
