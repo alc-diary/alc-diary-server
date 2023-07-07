@@ -2,6 +2,7 @@ package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.drink.DrinkType;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,11 +10,12 @@ import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -133,5 +135,32 @@ public class Calendar extends BaseEntity {
         return userCalendars.stream()
                 .filter(userCalendar -> !userCalendar.isOwner(userId))
                 .toList();
+    }
+
+    public LocalDate getDrinkStartTimeLocalDate() {
+        return getDrinkStartTimeLocalDate(ZoneId.of("Asia/Seoul"));
+    }
+
+    public LocalDate getDrinkStartTimeLocalDate(ZoneId zoneId) {
+        return drinkStartTime.withZoneSameInstant(zoneId).toLocalDate();
+    }
+
+    public float getTotalDrinkQuantity() {
+        return (float) userCalendars.stream()
+                .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
+                .mapToDouble(DrinkRecord::getQuantity)
+                .sum();
+    }
+
+    public DrinkType getMostConsumedDrinkType() {
+        return userCalendars.stream()
+                .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
+                .collect(Collectors.groupingBy(
+                        DrinkRecord::getType,
+                        Collectors.summingDouble(DrinkRecord::getQuantity)
+                )).entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 }
