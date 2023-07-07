@@ -4,6 +4,8 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.CreateCommentRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
+import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
+import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
@@ -15,10 +17,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -160,8 +168,6 @@ public class CalendarService {
         if (!calendar.hasPermission(userId)) {
             throw new DomainException(CalendarError.NO_PERMISSION);
         }
-
-
     }
 
 //    /**
@@ -177,28 +183,28 @@ public class CalendarService {
 //        userCalendarLegacy.delete(userId);
 //    }
 //
-//    /**
-//     * 해당 유저의 캘린더 조회(일별)
-//     *
-//     * @param userId
-//     * @param date
-//     * @return
-//     */
-//    public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date, ZoneId zoneId) {
-//        ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
-//        ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
-//        List<CalendarLegacy> calendarLagacies = calendarLegacyRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
-//        Set<Long> userIds = calendarLagacies.stream()
-//                .flatMap(calendar -> calendar.getUserCalendarsExceptByUserId(userId).stream())
-//                .map(UserCalendarLegacy::getUserId)
-//                .collect(Collectors.toSet());
-//        Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
-//                .collect(Collectors.toMap(User::getId, Function.identity()));
-//        return calendarLagacies.stream()
-//                .map(calendar -> GetDailyCalendarsResponse.of(calendar, userId, userById))
-//                .toList();
-//    }
-//
+
+    /**
+     * 해당 유저의 캘린더 조회(일별)
+     *
+     * @param userId
+     * @param date
+     * @param zoneId
+     * @return
+     */
+    public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date, ZoneId zoneId) {
+        ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
+        ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
+        List<Calendar> calendars = calendarRepository.findCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
+        Set<Long> userIds = calendars.stream()
+                .flatMap(calendar -> calendar.findUserCalendarsExcludingUserId(userId).stream())
+                .map(UserCalendar::getUserId)
+                .collect(Collectors.toSet());
+        Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+        return GetDailyCalendarsResponse.of(userId, calendars, userById);
+    }
+
 //    /**
 //     * 해당 유저의 캘린더 조회(월별)
 //     *

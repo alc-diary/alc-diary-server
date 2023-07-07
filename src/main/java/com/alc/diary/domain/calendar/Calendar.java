@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,6 +46,9 @@ public class Calendar extends BaseEntity {
 
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<Photo> photos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
+    private List<Comment> comments = new ArrayList<>();
 
     @Column(name = "deletedAt")
     private LocalDateTime deletedAt;
@@ -104,17 +108,30 @@ public class Calendar extends BaseEntity {
         }
     }
 
-    public void addComment(Comment comment) {
-
-    }
-
     public void addPhoto(Photo photo) {
         photos.add(photo);
         photo.setCalendar(this);
     }
 
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setCalendar(this);
+    }
+
     public boolean hasPermission(long userId) {
         return userCalendars.stream()
                 .anyMatch(userCalendar -> userCalendar.isOwner(userId));
+    }
+
+    public Optional<UserCalendar> findUserCalendarByUserId(long userId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> userCalendar.isOwner(userId))
+                .findFirst();
+    }
+
+    public List<UserCalendar> findUserCalendarsExcludingUserId(long userId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> !userCalendar.isOwner(userId))
+                .toList();
     }
 }
