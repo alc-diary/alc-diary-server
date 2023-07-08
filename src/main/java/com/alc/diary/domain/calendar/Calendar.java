@@ -2,6 +2,7 @@ package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.drink.DrinkType;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,21 +11,17 @@ import lombok.ToString;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-        name = "calendars",
-        indexes = {@Index(name = "idx_calendars_drink_start_time", columnList = "drink_start_time")}
-)
+@Table(name = "calendars")
 @Entity
 public class Calendar extends BaseEntity {
 
@@ -33,11 +30,11 @@ public class Calendar extends BaseEntity {
     private Long id;
 
     @Audited
-    @Column(name = "owner_id", nullable = false) // Foreign key referencing 'users' table by 'id' column
+    @Column(name = "owner_id")
     private long ownerId;
 
     @Audited
-    @Column(name = "title", length = 30, nullable = false)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
     @Audited
@@ -51,42 +48,55 @@ public class Calendar extends BaseEntity {
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<UserCalendar> userCalendars = new ArrayList<>();
 
-    private Calendar(Long ownerId, String title, ZonedDateTime drinkStartTime, ZonedDateTime drinkEndTime) {
-        if (ownerId == null) {
-            throw new DomainException(CalendarError.OWNER_NULL);
-        }
-        if (title == null) {
-            throw new DomainException(CalendarError.TITLE_NULL);
-        }
-        if (drinkStartTime == null) {
-            throw new DomainException(CalendarError.DRINK_START_TIME_NULL);
-        }
-        if (drinkEndTime == null) {
-            throw new DomainException(CalendarError.DRINK_END_TIME_NULL);
-        }
+    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
+    private List<Photo> photos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
+    private List<Comment> comments = new ArrayList<>();
+
+    @Column(name = "deletedAt")
+    private LocalDateTime deletedAt;
+
+    private Calendar(
+            long ownerId,
+            String title,
+            ZonedDateTime drinkStartTime,
+            ZonedDateTime drinkEndTime,
+            LocalDateTime deletedAt
+    ) {
         this.ownerId = ownerId;
         this.title = title;
         this.drinkStartTime = drinkStartTime;
         this.drinkEndTime = drinkEndTime;
+        this.deletedAt = deletedAt;
     }
 
     public static Calendar create(
-            Long ownerId,
+            long ownerId,
             String title,
             ZonedDateTime drinkStartTime,
             ZonedDateTime drinkEndTime
     ) {
-        return new Calendar(
-                ownerId,
-                title,
-                drinkStartTime,
-                drinkEndTime
-        );
+        if (title == null) {
+            throw new DomainException(CalendarError.NULL_TITLE);
+        }
+        if (drinkStartTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_START_TIME);
+        }
+        if (drinkEndTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_END_TIME);
+        }
+        if (drinkStartTime.isAfter(drinkEndTime)) {
+            throw new DomainException(CalendarError.START_TIME_AFTER_END_TIME);
+        }
+        if (drinkEndTime.isAfter(ZonedDateTime.now())) {
+            throw new DomainException(CalendarError.END_TIME_IN_FUTURE);
+        }
+        return new Calendar(ownerId, title, drinkStartTime, drinkEndTime, null);
     }
 
-    public void addUserCalendars(Iterable<UserCalendar> userCalendars) {
-        for (UserCalendar userCalendar : userCalendars) {
+    public void addUserCalendars(Iterable<UserCalendar> userCalendarEntries) {
+        for (UserCalendar userCalendar : userCalendarEntries) {
             addUserCalendar(userCalendar);
         }
     }
@@ -96,28 +106,75 @@ public class Calendar extends BaseEntity {
         userCalendar.setCalendar(this);
     }
 
-    public boolean isInvolvedUser(long userId) {
+    public void addPhotos(List<Photo> photos) {
+        for (Photo photo : photos) {
+            addPhoto(photo);
+        }
+    }
+
+    public void addPhoto(Photo photo) {
+        photos.add(photo);
+        photo.setCalendar(this);
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setCalendar(this);
+    }
+
+    public boolean hasPermission(long userId) {
         return userCalendars.stream()
                 .anyMatch(userCalendar -> userCalendar.isOwner(userId));
     }
 
-    public Optional<UserCalendar> getUserCalendarOfUser(long userId) {
+    public Optional<UserCalendar> findUserCalendarByUserId(long userId) {
         return userCalendars.stream()
                 .filter(userCalendar -> userCalendar.isOwner(userId))
                 .findFirst();
     }
 
-    public List<UserCalendar> getUserCalendarsExcludingUser(long userId) {
+    public List<UserCalendar> findUserCalendarsExcludingUserId(long userId) {
         return userCalendars.stream()
                 .filter(userCalendar -> !userCalendar.isOwner(userId))
                 .toList();
     }
 
-    public LocalDate getDate() {
-        return drinkStartTime.toLocalDate();
+    public LocalDate getDrinkStartTimeLocalDate() {
+        return getDrinkStartTimeLocalDate(ZoneId.of("Asia/Seoul"));
     }
 
-    public DayOfWeek getDayOfWeek() {
-        return drinkStartTime.getDayOfWeek();
+    public LocalDate getDrinkStartTimeLocalDate(ZoneId zoneId) {
+        return drinkStartTime.withZoneSameInstant(zoneId).toLocalDate();
+    }
+
+    public float getTotalDrinkQuantity() {
+        return (float) userCalendars.stream()
+                .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
+                .mapToDouble(DrinkRecord::getQuantity)
+                .sum();
+    }
+
+    public DrinkType getMostConsumedDrinkType() {
+        return userCalendars.stream()
+                .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
+                .collect(Collectors.groupingBy(
+                        DrinkRecord::getType,
+                        Collectors.summingDouble(DrinkRecord::getQuantity)
+                )).entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    public int getTotalPrice() {
+        return userCalendars.stream()
+                .mapToInt(UserCalendar::totalPrice)
+                .sum();
+    }
+
+    public int getTotalCalories() {
+        return userCalendars.stream()
+                .mapToInt(UserCalendar::totalCalories)
+                .sum();
     }
 }

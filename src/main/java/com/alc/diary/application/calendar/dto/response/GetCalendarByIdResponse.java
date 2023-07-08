@@ -1,9 +1,13 @@
 package com.alc.diary.application.calendar.dto.response;
 
 import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.drink.DrinkType;
+import com.alc.diary.domain.drink.DrinkUnit;
+import com.alc.diary.domain.user.User;
+import io.swagger.annotations.ApiModel;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public record GetCalendarByIdResponse(
 
@@ -12,69 +16,83 @@ public record GetCalendarByIdResponse(
         String title,
         String drinkStartTime,
         String drinkEndTime,
-        List<UserCalendarDto> userCalendars
+        List<UserCalendarDto> userCalendars,
+        List<PhotoDto> photos
 ) {
 
-    public static GetCalendarByIdResponse of(Calendar calendar, long userId) {
+    public static GetCalendarByIdResponse of(long userId, Calendar calendar, Map<Long, User> userByUserId) {
         return new GetCalendarByIdResponse(
                 calendar.getId(),
                 calendar.getOwnerId(),
                 calendar.getTitle(),
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkStartTime()),
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(calendar.getDrinkEndTime()),
+                calendar.getDrinkStartTime().toString(),
+                calendar.getDrinkEndTime().toString(),
                 calendar.getUserCalendars().stream()
                         .map(userCalendar -> new UserCalendarDto(
                                 userCalendar.getId(),
-                                userCalendar.getUserId(),
-                                userCalendar.isOwner(userId),
+                                new UserDto(
+                                        userCalendar.getUserId(),
+                                        userByUserId.get(userCalendar.getUserId()).getNickname(),
+                                        userByUserId.get(userCalendar.getUserId()).getProfileImage()
+                                ),
                                 userCalendar.getContent(),
-                                userCalendar.getCondition(),
-                                userCalendar.getTotalPrice(),
-                                userCalendar.getTotalCalories(),
-                                userCalendar.getDrinks().stream()
-                                        .map(userCalendarDrink -> new UserCalendarDrinkDto(
-                                                userCalendarDrink.getId(),
-                                                userCalendarDrink.getDrinkUnitInfoId(),
-                                                userCalendarDrink.getQuantity()
-                                        ))
-                                        .toList(),
-                                userCalendar.getImages().stream()
-                                        .map(userCalendarImage -> new UserCalendarImageDto(
-                                                userCalendarImage.getId(),
-                                                userCalendarImage.getImageUrl()
+                                userCalendar.getDrinkCondition(),
+                                userCalendar.getDrinkRecords().stream()
+                                        .map(drinkRecord -> new DrinkRecordDto(
+                                                drinkRecord.getId(),
+                                                drinkRecord.getType(),
+                                                drinkRecord.getUnit(),
+                                                drinkRecord.getQuantity()
                                         ))
                                         .toList()
+                        ))
+                        .toList(),
+                calendar.getPhotos().stream()
+                        .map(photo -> new PhotoDto(
+                                photo.getId(),
+                                photo.getUserId(),
+                                photo.getUrl()
                         ))
                         .toList()
         );
     }
 
+    @ApiModel(value = "GetCalendarByIdResponse_UserCalendarDto")
     public record UserCalendarDto(
 
             long id,
-            long userId,
-            boolean isOwner,
+            UserDto user,
             String content,
-            String condition,
-            int totalPrice,
-            int totalCalories,
-            List<UserCalendarDrinkDto> drinks,
-            List<UserCalendarImageDto> images
+            String drinkCondition,
+            List<DrinkRecordDto> drinkRecords
     ) {
     }
 
-    public record UserCalendarDrinkDto(
+    @ApiModel(value = "GetCalendarByIdResponse_UserDto")
+    public record UserDto(
 
             long id,
-            long drinkUnitInfoId,
+            String nickname,
+            String profileImageUrl
+    ) {
+    }
+
+    @ApiModel(value = "GetCalendarByIdResponse_DrinkRecordDto")
+    public record DrinkRecordDto(
+
+            long id,
+            DrinkType drinkType,
+            DrinkUnit drinkUnit,
             float quantity
     ) {
     }
 
-    public record UserCalendarImageDto(
+    @ApiModel(value = "GetCalendarByIdResponse_PhotoDto")
+    public record PhotoDto(
 
             long id,
-            String imageUrl
+            long userId,
+            String url
     ) {
     }
 }

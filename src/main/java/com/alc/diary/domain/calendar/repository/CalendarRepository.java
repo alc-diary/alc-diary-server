@@ -16,25 +16,28 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
             "FROM Calendar c " +
             "JOIN FETCH c.userCalendars uc " +
             "WHERE c.id = :calendarId " +
-            "AND uc.isDeleted IS FALSE ")
+            "AND uc.deletedAt IS NULL " +
+            "AND c.deletedAt IS NULL ")
     Optional<Calendar> findById(long calendarId);
 
     @Query("SELECT DISTINCT c " +
-           "FROM Calendar c " +
-           "JOIN c.userCalendars uc " +
-           "JOIN FETCH c.userCalendars " +
-           "WHERE uc.userId = :userId " +
-           "AND c.drinkStartTime >= :rangeStart " +
-           "AND c.drinkStartTime < :rangeEnd " +
-           "AND uc.isDeleted IS FALSE ")
-    List<Calendar> findCalendarsWithInRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
+            "FROM Calendar c " +
+            "JOIN c.userCalendars uc " +
+            "JOIN FETCH c.userCalendars " +
+            "WHERE uc.userId = :userId " +
+            "AND c.drinkStartTime >= :rangeStart " +
+            "AND c.drinkEndTime < :rangeEnd " +
+            "AND uc.deletedAt IS NULL " +
+            "AND c.deletedAt IS NULL")
+    List<Calendar> findAllUserCalendarsInCalendarsWithInRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
 
     @Query("SELECT DISTINCT c " +
-           "FROM Calendar c " +
-           "JOIN FETCH c.userCalendars uc " +
-           "WHERE uc.userId = :userId " +
-           "AND c.drinkStartTime >= :rangeStart " +
-           "AND c.drinkStartTime < :rangeEnd " +
-           "AND uc.isDeleted IS FALSE ")
-    List<Calendar> findCalendarsWithInRangeForSpecificUser(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
+            "FROM Calendar c " +
+            "JOIN FETCH c.userCalendars uc " +
+            "WHERE uc.userId = :userId " +
+            "AND c.drinkStartTime >= :rangeStart " +
+            "AND c.drinkEndTime < :rangeEnd " +
+            "AND uc.deletedAt IS NULL " +
+            "AND c.deletedAt IS NULL")
+    List<Calendar> findUserCalendarsForSpecificUserWithRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
 }

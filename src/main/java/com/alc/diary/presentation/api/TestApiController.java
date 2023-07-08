@@ -29,4 +29,9 @@ public class TestApiController {
     public void localDateTimeTest() {
         LocalDateTime now = LocalDateTime.now();
     }
+
+    @GetMapping("/deploy")
+    public String deploy() {
+        return "good";
+    }
 }
