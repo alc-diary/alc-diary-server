@@ -30,7 +30,7 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @Validated @RequestBody CreateCalendarRequest request
     ) {
-        return ApiResponse.getCreated(calendarService.createCalendar(userId, request));
+        return ApiResponse.getCreated(calendarService.createCalendarAndGenerateResponse(userId, request));
     }
 
     @GetMapping("/{calendarId}")
@@ -39,20 +39,6 @@ public class CalendarApiController {
             @PathVariable long calendarId
     ) {
         return ApiResponse.getSuccess(calendarService.getCalendarById(userId, calendarId));
-    }
-
-    @PostMapping("/{calendarId}/comments")
-    public ApiResponse<Long> createComment(
-            @ApiIgnore @RequestAttribute long userId,
-            @PathVariable long calendarId,
-            @RequestBody CreateCommentRequest request
-            ) {
-        return null;
-    }
-
-    @GetMapping("/{calendarId}/comments")
-    public ApiResponse<GetCalendarCommentsByCalendarIdResponse> getCalendarCommentsByCalendarId() {
-        return null;
     }
 
     @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
@@ -91,5 +77,19 @@ public class CalendarApiController {
             @RequestParam(name = "zoneId", defaultValue = "Asia/Seoul") ZoneId zoneId
     ) {
         return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
+    }
+
+    @PostMapping("/{calendarId}/comments")
+    public ApiResponse<Long> createComment(
+            @ApiIgnore @RequestAttribute long userId,
+            @PathVariable long calendarId,
+            @RequestBody CreateCommentRequest request
+    ) {
+        return null;
+    }
+
+    @GetMapping("/{calendarId}/comments")
+    public ApiResponse<GetCalendarCommentsByCalendarIdResponse> getCalendarCommentsByCalendarId() {
+        return null;
     }
 }
