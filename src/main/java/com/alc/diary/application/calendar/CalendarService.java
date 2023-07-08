@@ -13,6 +13,7 @@ import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,40 +37,59 @@ public class CalendarService {
     private final CalendarRepository calendarRepository;
 
     @Transactional
-    public CreateCalendarResponse createCalendar(long userId, CreateCalendarRequest request) {
-        Calendar calendarToSave =
-                Calendar.create(userId, request.title(), request.drinkStartTime(), request.drinkEndTime());
-        UserCalendar userCalendarToSave = UserCalendar.create(userId, request.content(), request.drinkCondition());
-        List<DrinkRecord> drinkRecordsToSave = request.drinks().stream()
-                .map(drinkDto -> DrinkRecord.create(drinkDto.drinkType(), drinkDto.drinkUnit(), drinkDto.quantity()))
-                .toList();
+    public CreateCalendarResponse createCalendarAndGenerateResponse(long userId, CreateCalendarRequest request) {
+        Calendar calendarToSave = createCalendar(userId, request);
+        UserCalendar userCalendarToSave = createUserCalendar(userId, request);
+        List<DrinkRecord> drinkRecordsToSave = createDrinkRecords(request);
         userCalendarToSave.addDrinkRecords(drinkRecordsToSave);
 
-        Set<Long> activeTaggedUserIds = userRepository.findActiveUserIdsByIdIn(
-                request.taggedUserIds().stream()
-                        .filter(taggedUserId -> taggedUserId != userId)
-                        .toList()
-        );
-
-        List<UserCalendar> taggedUserCalendarsToSave = request.taggedUserIds().stream()
-                .filter(activeTaggedUserIds::contains)
-                .map(UserCalendar::createTaggedUserCalendar)
-                .toList();
-        List<Photo> photosToSave = request.photos().stream()
-                .map(photoDto -> Photo.create(userId, photoDto.url()))
-                .toList();
+        List<UserCalendar> taggedUserCalendarsToSave = createTaggedUserCalendars(userId, request);
+        List<Photo> photosToSave = createPhotos(userId, request);
 
         calendarToSave.addUserCalendar(userCalendarToSave);
         calendarToSave.addUserCalendars(taggedUserCalendarsToSave);
         calendarToSave.addPhotos(photosToSave);
         Calendar calendar = calendarRepository.save(calendarToSave);
 
-        return new CreateCalendarResponse(
-                calendar.getId(),
-                calendar.getUserCalendars().stream()
-                        .map(UserCalendar::getId)
+        return CreateCalendarResponse.from(calendar);
+    }
+
+    @NotNull
+    private Calendar createCalendar(long userId, CreateCalendarRequest request) {
+        return Calendar.create(userId, request.title(), request.drinkStartTime(), request.drinkEndTime());
+    }
+
+    @NotNull
+    private static UserCalendar createUserCalendar(long userId, CreateCalendarRequest request) {
+        return UserCalendar.create(userId, request.content(), request.drinkCondition());
+    }
+
+    @NotNull
+    private static List<DrinkRecord> createDrinkRecords(CreateCalendarRequest request) {
+        return request.drinks().stream()
+                .map(drinkDto -> DrinkRecord.create(drinkDto.drinkType(), drinkDto.drinkUnit(), drinkDto.quantity()))
+                .toList();
+    }
+
+    @NotNull
+    private List<UserCalendar> createTaggedUserCalendars(long userId, CreateCalendarRequest request) {
+        Set<Long> activeTaggedUserIds = userRepository.findActiveUserIdsByIdIn(
+                request.taggedUserIds().stream()
+                        .filter(taggedUserId -> taggedUserId != userId)
                         .toList()
         );
+
+        return request.taggedUserIds().stream()
+                .filter(activeTaggedUserIds::contains)
+                .map(UserCalendar::createTaggedUserCalendar)
+                .toList();
+    }
+
+    @NotNull
+    private static List<Photo> createPhotos(long userId, CreateCalendarRequest request) {
+        return request.photos().stream()
+                .map(photoDto -> Photo.create(userId, photoDto.url()))
+                .toList();
     }
 //
 //    @NotNull
