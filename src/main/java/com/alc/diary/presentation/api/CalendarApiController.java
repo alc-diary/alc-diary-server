@@ -2,13 +2,11 @@ package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.calendar.CalendarService;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
-import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
-import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
-import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
-import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
+import com.alc.diary.application.calendar.dto.request.CreateCommentRequest;
+import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
+import com.alc.diary.application.calendar.dto.response.*;
 import com.alc.diary.presentation.dto.ApiResponse;
 import io.swagger.annotations.ApiParam;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +30,7 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @Validated @RequestBody CreateCalendarRequest request
     ) {
-        return ApiResponse.getCreated(calendarService.createCalendar(userId, request));
+        return ApiResponse.getCreated(calendarService.createCalendarAndGenerateResponse(userId, request));
     }
 
     @GetMapping("/{calendarId}")
@@ -40,102 +38,58 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId
     ) {
-        return ApiResponse.getSuccess(calendarService.getCalendarByIdResponse(userId, calendarId));
+        return ApiResponse.getSuccess(calendarService.getCalendarById(userId, calendarId));
     }
 
-    @DeleteMapping("/user-calendars/{userCalendarId}")
+    // @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
+    public ApiResponse<Void> updateCalendar(
+            @ApiIgnore @RequestAttribute long userId,
+            @PathVariable long calendarId,
+            @PathVariable long userCalendarId,
+            @RequestBody UpdateCalendarRequest request
+    ) {
+//        calendarService.updateCalendar(userId, calendarId, userCalendarId, request);
+        return ApiResponse.getSuccess();
+    }
+
+    // @DeleteMapping("/user-calendars/{userCalendarId}")
     public ApiResponse<Void> deleteUserCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long userCalendarId
     ) {
-        calendarService.deleteUserCalendar(userId, userCalendarId);
+//        calendarService.deleteUserCalendar(userId, userCalendarId);
         return ApiResponse.getSuccess();
     }
 
     @GetMapping("/daily")
     public ApiResponse<List<GetDailyCalendarsResponse>> getDailyCalendars(
             @ApiIgnore @RequestAttribute long userId,
-            @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+            @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(name = "zoneId", defaultValue = "Asia/Seoul") ZoneId zoneId
     ) {
-        ZoneId zoneId = ZoneId.of("Asia/Seoul");
         return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
     }
 
     @GetMapping("/monthly")
     public ApiResponse<List<GetMonthlyCalendarsResponse>> getMonthlyCalendars(
             @ApiIgnore @RequestAttribute long userId,
-            @ApiParam(value = "yyyy-MM") @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month
+            @ApiParam(value = "yyyy-MM") @RequestParam(name = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month,
+            @RequestParam(name = "zoneId", defaultValue = "Asia/Seoul") ZoneId zoneId
     ) {
-        ZoneId zoneId = ZoneId.of("Asia/Seoul");
         return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
     }
 
-//    @PostMapping
-//    public ApiResponse<Void> createCalendar(
-//            @ApiIgnore @RequestAttribute long userId,
-//            @Validated @RequestBody CreateCalendarAppRequest request
-//    ) {
-//        calendarAppService.createCalendar(userId, request);
-//        return ApiResponse.getCreated();
-//    }
-//
-//    @GetMapping("/{calendarId}")
-//    public ApiResponse<CalendarDto> find(
-//            @ApiIgnore @RequestAttribute long userId,
-//            @PathVariable long calendarId
-//    ) {
-//        return ApiResponse.getSuccess(calendarAppService.findCalendar(userId, calendarId));
-//    }
-//
-//    @GetMapping("/search")
-//    public ApiResponse<List<CalendarDto>> search(
-//            @ApiIgnore @RequestAttribute long userId,
-//            @RequestParam(value = "query", required = false) String query,
-//            @RequestParam(value = "year", required = false) Integer year,
-//            @RequestParam(value = "month", required = false) Integer month,
-//            @RequestParam(value = "day", required = false) Integer day
-//    ) {
-//        return ApiResponse.getSuccess(
-//                calendarAppService.search(
-//                        userId,
-//                        new SearchCalendarAppRequest(query, year, month, day)
-//                ));
-//    }
-//
-//    @GetMapping("/monthly")
-//    public ApiResponse<GetMonthlyCalendarsAppResponse> getMonthlyCalendars(
-//            @ApiIgnore @RequestAttribute long userId,
-//            @RequestParam(value = "year", required = false) Integer year,
-//            @RequestParam(value = "month", required = false) Integer month
-//    ) {
-//        return ApiResponse.getSuccess(
-//                calendarAppService.getMonthlyCalendars(userId, year, month)
-//        );
-//    }
-//
-//    @GetMapping("/requests")
-//    public ApiResponse<GetCalendarRequestsAppResponse> getCalendarRequests(
-//            @ApiIgnore @RequestAttribute long userId
-//    ) {
-//        return ApiResponse.getSuccess(
-//                calendarAppService.getCalendarRequests(userId)
-//        );
-//    }
-//
-////    @PutMapping("/{calendarId}")
-//    public ApiResponse<?> update(
-//            @ApiIgnore @RequestAttribute long userId,
-//            @PathVariable long calendarId,
-//            @RequestBody String request
-//    ) {
-//        return null;
-//    }
-//
-////    @DeleteMapping("/{calendarId}")
-//    public ApiResponse<?> delete(
-//            @ApiIgnore @RequestAttribute long userId,
-//            @PathVariable long calendarId
-//    ) {
-//        return null;
-//    }
+    // @PostMapping("/{calendarId}/comments")
+    public ApiResponse<Long> createComment(
+            @ApiIgnore @RequestAttribute long userId,
+            @PathVariable long calendarId,
+            @RequestBody CreateCommentRequest request
+    ) {
+        return null;
+    }
+
+    // @GetMapping("/{calendarId}/comments")
+    public ApiResponse<GetCalendarCommentsByCalendarIdResponse> getCalendarCommentsByCalendarId() {
+        return null;
+    }
 }

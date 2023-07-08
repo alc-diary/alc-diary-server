@@ -17,20 +17,26 @@ import java.time.ZonedDateTime;
 @Service
 public class ReportService {
 
+    //    private final CalendarLegacyRepository calendarLegacyRepository;
     private final CalendarRepository calendarRepository;
 
     public GetMonthlyReportResponse getMonthlyReport(long userId, YearMonth month, ZoneId zoneId) {
         ZonedDateTime rangeStart = month.atDay(1).atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);
-        Calendars calendars =
-                Calendars.from(calendarRepository.findCalendarsWithInRangeForSpecificUser(userId, rangeStart, rangeEnd));
+        Calendars calendars = new Calendars(
+                calendarRepository.findUserCalendarsForSpecificUserWithRangeAndUserId(userId, rangeStart, rangeEnd),
+                zoneId
+        );
+        Report report = new Report(calendars);
 
         ZonedDateTime lastMonthRangeStart = month.minusMonths(1).atDay(1).atStartOfDay(zoneId);
         ZonedDateTime lastMonthRangeEnd = lastMonthRangeStart.plusMonths(1);
-        Calendars lastMonthCalendars = Calendars.from(calendarRepository.findCalendarsWithInRangeForSpecificUser(userId, lastMonthRangeStart, lastMonthRangeEnd));
-
-        Report report = new Report(calendars);
+        Calendars lastMonthCalendars = new Calendars(
+                calendarRepository.findUserCalendarsForSpecificUserWithRangeAndUserId(userId, lastMonthRangeStart, lastMonthRangeEnd),
+                zoneId
+        );
         Report lastMonthReport = new Report(lastMonthCalendars);
+
         return GetMonthlyReportResponse.from(report, lastMonthReport);
     }
 }

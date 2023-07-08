@@ -1,62 +1,57 @@
 package com.alc.diary.domain.report;
 
-import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.Calendars;
-import com.alc.diary.domain.calendar.UserCalendarDrink;
+import com.alc.diary.domain.drink.DrinkType;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Getter
+@RequiredArgsConstructor
 public class Report {
 
-    private static final int CALORIES_BURN_PER_HOUR_RUNNING = 580;
-    private static final int PRICE_OF_A_BOWL_OF_RICE_SOUP = 8000;
+   private static final int CALORIES_BURN_PER_HOUR_RUNNING = 580;
+   private static final int PRICE_OF_A_BOWL_OF_RICE_SOUP = 8000;
 
-    public final Calendars calendars;
+   public final Calendars calendars;
 
-    public Report(List<Calendar> calendars) {
-        this(Calendars.from(calendars));
-    }
+   public int totalDaysDrinking() {
+       return calendars.totalDaysDrinking();
+   }
 
-    public Report(Calendars calendars) {
-        this.calendars = calendars;
-    }
+   public int totalSpentOnDrinks() {
+       return calendars.calculateTotalSpent();
+   }
 
-    public int totalDaysDrinking() {
-        return calendars.totalDaysDrinking();
-    }
+   public int totalCalories() {
+       return calendars.calculateTotalCalories();
+   }
 
-    public int totalSpentOnDrinks() {
-        return calendars.calculateTotalSpent();
-    }
+   public float totalQuantity() {
+       return calendars.calculateTotalQuantity();
+   }
 
-    public int totalCalories() {
-        return calendars.calculateTotalCalories();
-    }
+   public int totalRunningTimeToBurnCalories() {
+       return Math.round((float) totalCalories() / CALORIES_BURN_PER_HOUR_RUNNING);
+   }
 
-    public float totalQuantity() {
-        return calendars.calculateTotalQuantity();
-    }
+   public int riceSoupEquivalent() {
+       return Math.round((float) totalCalories() / PRICE_OF_A_BOWL_OF_RICE_SOUP);
+   }
 
-    public int totalRunningTimeToBurnCalories() {
-        return Math.round((float) totalCalories() / CALORIES_BURN_PER_HOUR_RUNNING);
-    }
+   public Optional<DrinkType> mostConsumedDrink() {
+       return calendars.mostConsumedDrink();
+   }
 
-    public int riceSoupEquivalent() {
-        return Math.round((float) totalCalories() / PRICE_OF_A_BOWL_OF_RICE_SOUP);
-    }
+   public Optional<DayOfWeek> mostFrequentDrinkingDay() {
+       return calendars.mostFrequentDrinkingDay();
+   }
 
-    public Optional<UserCalendarDrink> mostConsumedDrink() {
-        return calendars.mostConsumedDrink();
-    }
-
-    public Optional<DayOfWeek> mostFrequentDrinkingDay() {
-        return calendars.mostFrequentDrinkingDay();
-    }
-
-    public Optional<ZonedDateTime> getLastDrinkingDateTime() {
-        return calendars.getLastDrinkingDateTime();
-    }
+   public Optional<ZonedDateTime> getLastDrinkingDateTime() {
+       return calendars.getLastDrinkingDateTime();
+   }
 }
