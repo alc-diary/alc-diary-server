@@ -77,4 +77,16 @@ public class UserCalendar extends BaseEntity {
     public boolean isOwner(long userId) {
         return this.userId == userId;
     }
+
+    public int totalPrice() {
+        return drinkRecords.stream()
+                .mapToInt(DrinkRecord::getTotalPrice)
+                .sum();
+    }
+
+    public int totalCalories() {
+        return drinkRecords.stream()
+                .mapToInt(DrinkRecord::getTotalCalories)
+                .sum();
+    }
 }

@@ -7,6 +7,7 @@ import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "calendars")
 @Entity
@@ -162,5 +164,17 @@ public class Calendar extends BaseEntity {
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .orElse(null);
+    }
+
+    public int getTotalPrice() {
+        return userCalendars.stream()
+                .mapToInt(UserCalendar::totalPrice)
+                .sum();
+    }
+
+    public int getTotalCalories() {
+        return userCalendars.stream()
+                .mapToInt(UserCalendar::totalCalories)
+                .sum();
     }
 }
