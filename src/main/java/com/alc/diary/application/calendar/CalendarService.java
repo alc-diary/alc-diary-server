@@ -55,7 +55,7 @@ public class CalendarService {
     }
 
     @NotNull
-    private Calendar createCalendar(long userId, CreateCalendarRequest request) {
+    Calendar createCalendar(long userId, CreateCalendarRequest request) {
         return Calendar.create(userId, request.title(), request.drinkStartTime(), request.drinkEndTime());
     }
 
@@ -229,7 +229,10 @@ public class CalendarService {
         ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);
 
         Calendars calendars =
-                new Calendars(calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd));
+                new Calendars(
+                        calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd),
+                        zoneId
+                );
 
         return calendars.getCalendarsByMaxDrinkPerDay(zoneId).stream()
                 .map(calendar -> new GetMonthlyCalendarsResponse(

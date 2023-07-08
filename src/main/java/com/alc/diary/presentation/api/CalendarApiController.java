@@ -41,7 +41,7 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getCalendarById(userId, calendarId));
     }
 
-    @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
+    // @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
     public ApiResponse<Void> updateCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,
@@ -52,7 +52,7 @@ public class CalendarApiController {
         return ApiResponse.getSuccess();
     }
 
-    @DeleteMapping("/user-calendars/{userCalendarId}")
+    // @DeleteMapping("/user-calendars/{userCalendarId}")
     public ApiResponse<Void> deleteUserCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long userCalendarId
@@ -79,7 +79,7 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
     }
 
-    @PostMapping("/{calendarId}/comments")
+    // @PostMapping("/{calendarId}/comments")
     public ApiResponse<Long> createComment(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,
@@ -88,7 +88,7 @@ public class CalendarApiController {
         return null;
     }
 
-    @GetMapping("/{calendarId}/comments")
+    // @GetMapping("/{calendarId}/comments")
     public ApiResponse<GetCalendarCommentsByCalendarIdResponse> getCalendarCommentsByCalendarId() {
         return null;
     }

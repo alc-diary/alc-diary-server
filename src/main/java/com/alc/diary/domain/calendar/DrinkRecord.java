@@ -73,4 +73,12 @@ public class DrinkRecord {
     public void setUserCalendar(UserCalendar userCalendar) {
         this.userCalendar = userCalendar;
     }
+
+    public int getTotalPrice() {
+        return Math.round(type.getPrice() * quantity);
+    }
+
+    public int getTotalCalories() {
+        return Math.round(type.getCalories() * quantity);
+    }
 }
