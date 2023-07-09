@@ -85,7 +85,7 @@ public class Calendars {
 
     public Optional<ZonedDateTime> getLastDrinkingDateTime() {
         return calendars.stream()
-                .map(Calendar::getDrinkStartTime)
+                .map(Calendar::getDrinkEndTime)
                 .max(Comparator.naturalOrder());
     }
 }
