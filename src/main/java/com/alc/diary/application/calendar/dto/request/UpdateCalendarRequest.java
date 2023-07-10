@@ -1,5 +1,8 @@
 package com.alc.diary.application.calendar.dto.request;
 
+import com.alc.diary.domain.drink.DrinkType;
+import com.alc.diary.domain.drink.DrinkUnit;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -12,34 +15,36 @@ public record UpdateCalendarRequest(
         boolean conditionShouldBeUpdated,
         ZonedDateTime drinkStartTime,
         ZonedDateTime drinkEndTime,
-        UpdateDrinkData drinks,
-        UpdateImageData images
+        UpdateDrinkRecordData drinks,
+        UpdatePhotoData photos
 ) {
 
-    public record UpdateDrinkData(
+    public record UpdateDrinkRecordData(
 
-            List<DrinkCreationData> added,
-            List<DrinkUpdateData> updated,
+            List<DrinkRecordCreationData> added,
+            List<DrinkRecordUpdateData> updated,
             List<Long> deleted
     ) {
     }
 
-    public record DrinkCreationData(
+    public record DrinkRecordCreationData(
 
-            long drinkUnitInfoId,
+            DrinkType drinkType,
+            DrinkUnit drinkUnit,
             float quantity
     ) {
     }
 
-    public record DrinkUpdateData(
+    public record DrinkRecordUpdateData(
 
             long id,
-            long drinkUnitInfoId,
+            DrinkType drinkType,
+            DrinkUnit drinkUnit,
             float quantity
     ) {
     }
 
-    public record UpdateImageData(
+    public record UpdatePhotoData(
 
             List<ImageCreationData> added,
             List<Long> deleted
@@ -48,7 +53,7 @@ public record UpdateCalendarRequest(
 
     public record ImageCreationData(
 
-            String imageUrl
+            String url
     ) {
     }
 }

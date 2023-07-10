@@ -18,6 +18,7 @@ public enum CalendarError implements ErrorModel {
     NULL_USER_CALENDARS("C_E0007", "UserCalendars cannot be null."),
     START_TIME_AFTER_END_TIME("C_E0008", "Start time cannot be after end time."),
     END_TIME_IN_FUTURE("C_E0009", "End time cannot be int the future."),
+    TITLE_LENGTH_EXCEEDED("C_E0010", "Calendar title length cannot exceed 100 characters.")
     ;
 
     private final String code;
