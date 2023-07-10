@@ -2,6 +2,7 @@ package com.alc.diary.application.calendar;
 
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.CreateCommentRequest;
+import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
@@ -296,4 +297,24 @@ public class CalendarService {
 //        calendarLegacy.removeImagesByIds(userId, request.images().deleted());
 //
 //    }
+
+    @Transactional
+    public void updateUserCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
+        Calendar calendar =
+                calendarRepository.findById(calendarId)
+                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+
+        calendar.updateTitle(userId, request.title());
+        if (request.contentShouldBeUpdated()) {
+            calendar.updateContent(userId, request.content());
+        }
+
+        if (request.conditionShouldBeUpdated()) {
+            calendar.updateCondition(userId, request.condition());
+        }
+
+        calendar.updateDrinkStartTimeAndEndTime(userId, request.drinkStartTime(), request.drinkEndTime());
+
+        calendar.
+    }
 }

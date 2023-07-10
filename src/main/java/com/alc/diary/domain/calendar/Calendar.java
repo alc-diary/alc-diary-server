@@ -2,12 +2,14 @@ package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.error.UserCalendarError;
 import com.alc.diary.domain.drink.DrinkType;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -64,21 +66,11 @@ public class Calendar extends BaseEntity {
             ZonedDateTime drinkEndTime,
             LocalDateTime deletedAt
     ) {
-        this.ownerId = ownerId;
-        this.title = title;
-        this.drinkStartTime = drinkStartTime;
-        this.drinkEndTime = drinkEndTime;
-        this.deletedAt = deletedAt;
-    }
-
-    public static Calendar create(
-            long ownerId,
-            String title,
-            ZonedDateTime drinkStartTime,
-            ZonedDateTime drinkEndTime
-    ) {
         if (title == null) {
             throw new DomainException(CalendarError.NULL_TITLE);
+        }
+        if (StringUtils.length(title) > 100) {
+            throw new DomainException(CalendarError.TITLE_LENGTH_EXCEEDED);
         }
         if (drinkStartTime == null) {
             throw new DomainException(CalendarError.NULL_DRINK_START_TIME);
@@ -92,6 +84,19 @@ public class Calendar extends BaseEntity {
         if (drinkEndTime.isAfter(ZonedDateTime.now())) {
             throw new DomainException(CalendarError.END_TIME_IN_FUTURE);
         }
+        this.ownerId = ownerId;
+        this.title = title;
+        this.drinkStartTime = drinkStartTime;
+        this.drinkEndTime = drinkEndTime;
+        this.deletedAt = deletedAt;
+    }
+
+    public static Calendar create(
+            long ownerId,
+            String title,
+            ZonedDateTime drinkStartTime,
+            ZonedDateTime drinkEndTime
+    ) {
         return new Calendar(ownerId, title, drinkStartTime, drinkEndTime, null);
     }
 
@@ -137,6 +142,53 @@ public class Calendar extends BaseEntity {
         return userCalendars.stream()
                 .filter(userCalendar -> !userCalendar.isOwner(userId))
                 .toList();
+    }
+
+    public void updateTitle(long userId, String newTitle) {
+        if (newTitle == null) {
+            throw new DomainException(CalendarError.NULL_TITLE);
+        }
+        if (ownerId != userId) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+        title = newTitle;
+    }
+
+    public void updateContent(long userId, String newContent) {
+        UserCalendar userCalendar = findUserCalendarByUserId(userId)
+                        .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        userCalendar.updateContent(userId, newContent);
+    }
+
+    public void updateCondition(long userId, String newCondition) {
+        UserCalendar userCalendar = findUserCalendarByUserId(userId)
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        userCalendar.updateCondition(userId, newCondition);
+    }
+
+    public void updateDrinkStartTimeAndEndTime(
+            long userId,
+            ZonedDateTime newDrinkStartTime,
+            ZonedDateTime newDrinkEndTime
+    ) {
+        if (ownerId != userId) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+        if (newDrinkStartTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_START_TIME);
+        }
+        if (newDrinkEndTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_END_TIME);
+        }
+        if (newDrinkStartTime.isAfter(newDrinkEndTime)) {
+            throw new DomainException(CalendarError.START_TIME_AFTER_END_TIME);
+        }
+        drinkStartTime = newDrinkStartTime;
+        drinkEndTime = newDrinkEndTime;
+    }
+
+    public void updateDrinkRecord(long userId, List<>) {
+
     }
 
     public LocalDate getDrinkStartTimeLocalDate() {

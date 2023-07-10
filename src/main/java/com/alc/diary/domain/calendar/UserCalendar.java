@@ -1,9 +1,12 @@
 package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
+import com.alc.diary.domain.calendar.error.UserCalendarError;
+import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -45,6 +48,9 @@ public class UserCalendar extends BaseEntity {
     private LocalDateTime deletedAt;
 
     private UserCalendar(long userId, String content, String drinkCondition, LocalDateTime deletedAt) {
+        if (StringUtils.length(content) > 1000) {
+            throw new DomainException(UserCalendarError.CONTENT_LENGTH_EXCEEDED);
+        }
         this.userId = userId;
         this.content = content;
         this.drinkCondition = drinkCondition;
@@ -76,6 +82,23 @@ public class UserCalendar extends BaseEntity {
 
     public boolean isOwner(long userId) {
         return this.userId == userId;
+    }
+
+    public void updateContent(long userId, String newContent) {
+        if (this.userId != userId) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
+        }
+        if (StringUtils.length(newContent) > 1000) {
+            throw new DomainException(UserCalendarError.CONTENT_LENGTH_EXCEEDED);
+        }
+        content = newContent;
+    }
+
+    public void updateCondition(long userId, String newCondition) {
+        if (this.userId != userId) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
+        }
+        content = newCondition;
     }
 
     public int totalPrice() {
