@@ -1,8 +1,9 @@
 package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.calendar.error.DrinkRecordError;
-import com.alc.diary.domain.drink.DrinkType;
-import com.alc.diary.domain.drink.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -80,5 +81,27 @@ public class DrinkRecord {
 
     public int getTotalCalories() {
         return Math.round(type.getCalories() * quantity);
+    }
+
+    public void updateRecord(DrinkRecordUpdateVo updateVo) {
+        if (updateVo.drinkType() == null) {
+            throw new DomainException(DrinkRecordError.NULL_DRINK_TYPE);
+        }
+        if (updateVo.drinkUnit() == null) {
+            throw new DomainException(DrinkRecordError.NULL_DRINK_UNIT);
+        }
+        if (!updateVo.drinkType().isUnitAllowed(updateVo.drinkUnit())) {
+            throw new DomainException(DrinkRecordError.INVALID_DRINK_UNIT);
+        }
+        if (quantity == 0) {
+            throw new DomainException(DrinkRecordError.ZERO_QUANTITY);
+        }
+        type = updateVo.drinkType();
+        unit = updateVo.drinkUnit();
+        quantity = updateVo.quantity();
+    }
+
+    public void delete() {
+        deletedAt = LocalDateTime.now();
     }
 }

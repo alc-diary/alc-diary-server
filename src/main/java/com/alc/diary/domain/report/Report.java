@@ -1,13 +1,12 @@
 package com.alc.diary.domain.report;
 
 import com.alc.diary.domain.calendar.Calendars;
-import com.alc.diary.domain.drink.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Getter

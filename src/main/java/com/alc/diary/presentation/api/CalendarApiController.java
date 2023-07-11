@@ -41,14 +41,14 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getCalendarById(userId, calendarId));
     }
 
-    // @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
+     @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
     public ApiResponse<Void> updateCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,
             @PathVariable long userCalendarId,
             @RequestBody UpdateCalendarRequest request
     ) {
-//        calendarService.updateCalendar(userId, calendarId, userCalendarId, request);
+        calendarService.updateCalendar(userId, calendarId, userCalendarId, request);
         return ApiResponse.getSuccess();
     }
 

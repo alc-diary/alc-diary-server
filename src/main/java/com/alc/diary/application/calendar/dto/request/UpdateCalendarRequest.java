@@ -1,7 +1,7 @@
 package com.alc.diary.application.calendar.dto.request;
 
-import com.alc.diary.domain.drink.DrinkType;
-import com.alc.diary.domain.drink.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkUnit;
 
 import java.time.ZonedDateTime;
 import java.util.List;

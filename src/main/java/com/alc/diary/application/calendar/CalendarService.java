@@ -8,8 +8,11 @@ import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
 import com.alc.diary.domain.calendar.*;
+import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
+import com.alc.diary.domain.calendar.repository.PhotoRepository;
+import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
@@ -22,10 +25,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +36,7 @@ public class CalendarService {
 
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
+    private final PhotoRepository photoRepository;
 
     @Transactional
     public CreateCalendarResponse createCalendarAndGenerateResponse(long userId, CreateCalendarRequest request) {
@@ -244,62 +245,16 @@ public class CalendarService {
                 .toList();
     }
 
-//
-//    /**
-//     * 캘린더 데이터 수정
-//     *
-//     * @param userId
-//     * @param calendarId
-//     * @param userCalendarId
-//     * @param request
-//     */
-//    @Transactional
-//    public void updateCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
-//        CalendarLegacy calendarLegacy = calendarLegacyRepository.findByIdAndUserCalendarId(calendarId, userCalendarId)
-//                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-//
-//        if (calendarLegacy.getUserCalendarByUserId(userId).isEmpty()) {
-//            throw new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND);
-//        }
-//
-//        if (request.title() != null) {
-//            if (!calendarLegacy.isOwner(userId)) {
-//                throw new DomainException(CalendarError.NO_PERMISSION);
-//            }
-//            calendarLegacy.updateTitle(userId, request.title());
-//        }
-//
-//        if (request.contentShouldBeUpdated()) {
-//            calendarLegacy.updateContent(userId, request.content());
-//        }
-//
-//        if (request.conditionShouldBeUpdated()) {
-//            calendarLegacy.updateCondition(userId, request.drinkCondition());
-//        }
-//
-//        if (request.drinkStartTime() != null) {
-//            if (!calendarLegacy.isOwner(userId)) {
-//                throw new DomainException(CalendarError.NO_PERMISSION);
-//            }
-//            calendarLegacy.updateDrinkStartTime(userId, request.drinkStartTime());
-//        }
-//        if (request.drinkEndTime() != null) {
-//            if (!calendarLegacy.isOwner(userId)) {
-//                throw new DomainException(CalendarError.NO_PERMISSION);
-//            }
-//            calendarLegacy.updateDrinkEndTime(userId, request.drinkEndTime());
-//        }
-//
-//        request.drinks().updated().forEach(drinkUpdateData ->
-//                calendarLegacy.updateUserCalendarDrink(userCalendarId, drinkUpdateData.id(), drinkUpdateData.quantity()));
-//
-//        calendarLegacy.removeDrinkByIds(userId, request.drinks().deleted());
-//        calendarLegacy.removeImagesByIds(userId, request.images().deleted());
-//
-//    }
-
+    /**
+     * 캘린더 데이터 수정
+     *
+     * @param userId
+     * @param calendarId
+     * @param userCalendarId
+     * @param request
+     */
     @Transactional
-    public void updateUserCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
+    public void updateCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
         Calendar calendar =
                 calendarRepository.findById(calendarId)
                         .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
@@ -315,6 +270,34 @@ public class CalendarService {
 
         calendar.updateDrinkStartTimeAndEndTime(userId, request.drinkStartTime(), request.drinkEndTime());
 
-        calendar.
+        calendar.updateDrinkRecords(userId, request.drinks().updated().stream().map(drinkRecordUpdateData ->
+                        new DrinkRecordUpdateVo(
+                                drinkRecordUpdateData.id(),
+                                drinkRecordUpdateData.drinkType(),
+                                drinkRecordUpdateData.drinkUnit(),
+                                drinkRecordUpdateData.quantity()
+                        ))
+                .toList());
+        calendar.deleteDrinkRecords(userId, request.drinks().deleted());
+
+        List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
+                .map(creationData -> DrinkRecord.create(
+                        creationData.drinkType(),
+                        creationData.drinkUnit(),
+                        creationData.quantity()
+                ))
+                .toList();
+        calendar.addDrinkRecords(userId, drinkRecordsToSave);
+
+        List<Photo> photosToSave = request.photos().added().stream()
+                .map(imageCreationData -> Photo.create(userId, imageCreationData.url()))
+                .toList();
+        calendar.addPhotos(photosToSave);
+
+        List<Long> photoIdsToDelete = calendar.getPhotos().stream()
+                .map(Photo::getId)
+                .filter(photoId -> request.photos().deleted().contains(photoId))
+                .toList();
+        photoRepository.deleteByIdIn(photoIdsToDelete);
     }
 }
