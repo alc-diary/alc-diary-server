@@ -3,8 +3,8 @@ package com.alc.diary.application.calendar.dto.response;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.DrinkRecord;
 import com.alc.diary.domain.calendar.UserCalendar;
-import com.alc.diary.domain.drink.DrinkType;
-import com.alc.diary.domain.drink.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkUnit;
 import com.alc.diary.domain.user.User;
 import io.swagger.annotations.ApiModel;
 

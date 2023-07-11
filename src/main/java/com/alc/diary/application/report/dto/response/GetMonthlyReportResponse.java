@@ -1,6 +1,6 @@
 package com.alc.diary.application.report.dto.response;
 
-import com.alc.diary.domain.drink.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.report.Report;
 
 import java.time.DayOfWeek;

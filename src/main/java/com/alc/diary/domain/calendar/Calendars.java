@@ -1,6 +1,6 @@
 package com.alc.diary.domain.calendar;
 
-import com.alc.diary.domain.drink.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkType;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 

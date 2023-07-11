@@ -1,4 +1,4 @@
-package com.alc.diary.domain.drink;
+package com.alc.diary.domain.calendar.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

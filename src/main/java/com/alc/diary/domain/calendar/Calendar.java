@@ -3,7 +3,8 @@ package com.alc.diary.domain.calendar;
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
-import com.alc.diary.domain.drink.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkType;
+import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -100,7 +101,7 @@ public class Calendar extends BaseEntity {
         return new Calendar(ownerId, title, drinkStartTime, drinkEndTime, null);
     }
 
-    public void addUserCalendars(Iterable<UserCalendar> userCalendarEntries) {
+    public void addUserCalendars(Collection<UserCalendar> userCalendarEntries) {
         for (UserCalendar userCalendar : userCalendarEntries) {
             addUserCalendar(userCalendar);
         }
@@ -125,6 +126,11 @@ public class Calendar extends BaseEntity {
     public void addComment(Comment comment) {
         comments.add(comment);
         comment.setCalendar(this);
+    }
+
+    public void addDrinkRecords(long userId, Collection<DrinkRecord> drinkRecords) {
+        UserCalendar userCalendar = getUserCalendarByUserId(userId);
+        userCalendar.addDrinkRecords(drinkRecords);
     }
 
     public boolean hasPermission(long userId) {
@@ -155,14 +161,12 @@ public class Calendar extends BaseEntity {
     }
 
     public void updateContent(long userId, String newContent) {
-        UserCalendar userCalendar = findUserCalendarByUserId(userId)
-                        .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        UserCalendar userCalendar = getUserCalendarByUserId(userId);
         userCalendar.updateContent(userId, newContent);
     }
 
     public void updateCondition(long userId, String newCondition) {
-        UserCalendar userCalendar = findUserCalendarByUserId(userId)
-                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        UserCalendar userCalendar = getUserCalendarByUserId(userId);
         userCalendar.updateCondition(userId, newCondition);
     }
 
@@ -187,8 +191,21 @@ public class Calendar extends BaseEntity {
         drinkEndTime = newDrinkEndTime;
     }
 
-    public void updateDrinkRecord(long userId, List<>) {
+    public void updateDrinkRecords(long userId, List<DrinkRecordUpdateVo> updateVo) {
+        UserCalendar userCalendar = getUserCalendarByUserId(userId);
+        userCalendar.updateDrinkRecord(userId, updateVo);
+    }
 
+    public void deleteDrinkRecords(long userId, List<Long> drinkRecordIdsToDelete) {
+        UserCalendar userCalendar = getUserCalendarByUserId(userId);
+        userCalendar.deleteDrinkRecords(userId, drinkRecordIdsToDelete);
+    }
+
+    private UserCalendar getUserCalendarByUserId(long userId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> userCalendar.isOwner(userId))
+                .findFirst()
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
     }
 
     public LocalDate getDrinkStartTimeLocalDate() {

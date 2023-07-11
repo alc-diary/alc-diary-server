@@ -2,6 +2,7 @@ package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
+import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +13,9 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -69,7 +72,7 @@ public class UserCalendar extends BaseEntity {
         this.calendar = calendar;
     }
 
-    public void addDrinkRecords(Iterable<DrinkRecord> drinkRecords) {
+    public void addDrinkRecords(Collection<DrinkRecord> drinkRecords) {
         for (DrinkRecord drinkRecord : drinkRecords) {
             addDrinkRecord(drinkRecord);
         }
@@ -99,6 +102,31 @@ public class UserCalendar extends BaseEntity {
             throw new DomainException(UserCalendarError.NO_PERMISSION);
         }
         content = newCondition;
+    }
+
+    public void updateDrinkRecord(long userId, Collection<DrinkRecordUpdateVo> updateVos) {
+        if (this.userId != userId) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
+        }
+        updateVos.forEach(drinkRecordUpdateVo ->
+            drinkRecords.stream()
+                    .filter(drinkRecord -> drinkRecord.getId() == drinkRecordUpdateVo.id())
+                    .findFirst()
+                    .ifPresent(drinkRecord -> drinkRecord.updateRecord(drinkRecordUpdateVo))
+        );
+    }
+
+    public void deleteDrinkRecords(long userId, Collection<Long> drinkRecordIdsToDelete) {
+        if (this.userId != userId) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
+        }
+        drinkRecordIdsToDelete.forEach(drinkRecordId ->
+                drinkRecords.stream()
+                        .filter(drinkRecord -> Objects.equals(drinkRecord.getId(), drinkRecordId))
+                        .findFirst()
+                        .ifPresent(DrinkRecord::delete)
+        );
+
     }
 
     public int totalPrice() {
