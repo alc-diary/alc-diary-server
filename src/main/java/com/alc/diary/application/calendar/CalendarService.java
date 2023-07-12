@@ -1,7 +1,6 @@
 package com.alc.diary.application.calendar;
 
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
-import com.alc.diary.application.calendar.dto.request.CreateCommentRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
@@ -21,10 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -88,7 +84,6 @@ public class CalendarService {
                 });
     }
 
-    @NotNull
     private static boolean isHalfUnit(float value) {
         float multiplied = value * 2;
         float epsilon = 0.0001f;
@@ -98,7 +93,13 @@ public class CalendarService {
 
     @NotNull
     private static Calendar createCalendar(long userId, CreateCalendarRequest request) {
-        return Calendar.create(userId, request.title(), request.totalDrinkQuantity(), request.drinkStartTime(), request.drinkEndTime());
+        return Calendar.create(
+                userId,
+                request.title(),
+                request.totalDrinkQuantity(),
+                request.drinkStartTime(),
+                request.drinkEndTime()
+        );
     }
 
     @NotNull
