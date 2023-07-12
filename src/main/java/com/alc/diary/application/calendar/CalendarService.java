@@ -40,50 +40,82 @@ public class CalendarService {
 
     @Transactional
     public CreateCalendarResponse createCalendarAndGenerateResponse(long userId, CreateCalendarRequest request) {
+        validRequest(request);
         Calendar calendarToSave = createCalendar(userId, request);
-        UserCalendar userCalendarToSave = createUserCalendar(userId, request);
-        List<DrinkRecord> drinkRecordsToSave = createDrinkRecords(request);
-        userCalendarToSave.addDrinkRecords(drinkRecordsToSave);
-
-        List<UserCalendar> taggedUserCalendarsToSave = createTaggedUserCalendars(userId, request);
         List<Photo> photosToSave = createPhotos(userId, request);
-
-        calendarToSave.addUserCalendar(userCalendarToSave);
-        calendarToSave.addUserCalendars(taggedUserCalendarsToSave);
         calendarToSave.addPhotos(photosToSave);
+
+        List<UserCalendar> userCalendarsToSave = createUserCalendars(request);
+        calendarToSave.addUserCalendars(userCalendarsToSave);
+
         Calendar calendar = calendarRepository.save(calendarToSave);
 
         return CreateCalendarResponse.from(calendar);
     }
 
-    @NotNull
-    Calendar createCalendar(long userId, CreateCalendarRequest request) {
-        return Calendar.create(userId, request.title(), request.drinkStartTime(), request.drinkEndTime());
+    private void validRequest(CreateCalendarRequest request) {
+        List<Long> userIds = request.userCalendars().stream()
+                .map(CreateCalendarRequest.UserCalendarCreationDto::userId)
+                .toList();
+        HashSet<Long> uniqueUserIds = new HashSet<>(userIds);
+
+        if (userIds.size() != uniqueUserIds.size()) {
+            throw new DomainException(CalendarError.DUPLICATE_USER_CALENDAR);
+        }
+
+        if (uniqueUserIds.size() != userRepository.findActiveUserIdsByIdIn(uniqueUserIds).size()) {
+            throw new DomainException(CalendarError.DEACTIVATED_USER_INCLUDE);
+        }
+
+        if (!isHalfUnit(request.totalDrinkQuantity())) {
+            throw new DomainException(CalendarError.INVALID_DRINK_QUANTITY_INCREMENT);
+        }
+
+        request.userCalendars().stream()
+                .flatMap(it -> it.drinks().stream())
+                .map(CreateCalendarRequest.DrinkCreationDto::quantity)
+                .forEach(quantity -> {
+                    if (!isHalfUnit(quantity)) {
+                        throw new DomainException(CalendarError.INVALID_DRINK_QUANTITY_INCREMENT);
+                    }
+                });
+    }
+
+    private boolean isHalfUnit(float value) {
+        float multiplied = value * 2;
+        float epsilon = 0.0001f;
+
+        return Math.abs(multiplied - Math.round(multiplied)) < epsilon;
     }
 
     @NotNull
-    private static UserCalendar createUserCalendar(long userId, CreateCalendarRequest request) {
-        return UserCalendar.create(userId, request.content(), request.drinkCondition());
+    private static Calendar createCalendar(long userId, CreateCalendarRequest request) {
+        return Calendar.create(userId, request.title(), request.totalDrinkQuantity(), request.drinkStartTime(), request.drinkEndTime());
     }
 
     @NotNull
-    private static List<DrinkRecord> createDrinkRecords(CreateCalendarRequest request) {
-        return request.drinks().stream()
-                .map(drinkDto -> DrinkRecord.create(drinkDto.drinkType(), drinkDto.drinkUnit(), drinkDto.quantity()))
+    private static List<UserCalendar> createUserCalendars(CreateCalendarRequest request) {
+        return request.userCalendars().stream()
+                .map(userCalendarCreationDto -> {
+                    UserCalendar userCalendarToSave = UserCalendar.create(
+                            userCalendarCreationDto.userId(),
+                            userCalendarCreationDto.content(),
+                            userCalendarCreationDto.condition());
+                    List<DrinkRecord> drinkRecordsToSave = createDrinkRecords(userCalendarCreationDto);
+                    userCalendarToSave.addDrinkRecords(drinkRecordsToSave);
+                    return userCalendarToSave;
+                })
                 .toList();
     }
 
     @NotNull
-    private List<UserCalendar> createTaggedUserCalendars(long userId, CreateCalendarRequest request) {
-        Set<Long> activeTaggedUserIds = userRepository.findActiveUserIdsByIdIn(
-                request.taggedUserIds().stream()
-                        .filter(taggedUserId -> taggedUserId != userId)
-                        .toList()
-        );
-
-        return request.taggedUserIds().stream()
-                .filter(activeTaggedUserIds::contains)
-                .map(UserCalendar::createTaggedUserCalendar)
+    private static List<DrinkRecord> createDrinkRecords(CreateCalendarRequest.UserCalendarCreationDto userCalendarCreationDto) {
+        return userCalendarCreationDto.drinks().stream()
+                .map(drinkCreationDto -> DrinkRecord.create(
+                        drinkCreationDto.drinkType(),
+                        drinkCreationDto.drinkUnit(),
+                        drinkCreationDto.quantity()
+                ))
                 .toList();
     }
 
@@ -93,73 +125,6 @@ public class CalendarService {
                 .map(photoDto -> Photo.create(userId, photoDto.url()))
                 .toList();
     }
-//
-//    @NotNull
-//    private CalendarLegacy createNewCalendar(long userId, CreateCalendarRequest request) {
-//        CalendarLegacy calendarLegacyToSave =
-//                CalendarLegacy.create(userId, request.title(), request.drinkStartTime(), request.drinkEndTime());
-//
-//        UserCalendarLegacy userCalendarLegacyToSave = createUserCalendar(userId, request);
-//        List<UserCalendarLegacy> taggedUsersCalendarsToSave = createUserCalendarsForTaggedUsers(userId, request);
-//
-//        calendarLegacyToSave.addUserCalendar(userCalendarLegacyToSave);
-//        calendarLegacyToSave.addUserCalendars(taggedUsersCalendarsToSave);
-//
-//        return calendarLegacyToSave;
-//    }
-//
-//    @NotNull
-//    private UserCalendarLegacy createUserCalendar(long userId, CreateCalendarRequest request) {
-//        UserCalendarLegacy userCalendarLegacyToSave = UserCalendarLegacy.create(userId, request.content(), request.drinkCondition());
-//
-//        List<Long> drinkUnitInfoIds = request.userCalendarDrinks().stream()
-//                .map(CreateCalendarRequest.DrinkDto::drinkUnitInfoId)
-//                .toList();
-//        List<UserCalendarDrink> userCalendarDrinksToSave =
-//                createUserCalendarDrinks(drinkUnitInfoIds, request.userCalendarDrinks());
-//        List<UserCalendarImage> userCalendarImagesToSave = createUserCalendarImages(request.userCalendarImages());
-//        userCalendarLegacyToSave.addImages(userCalendarImagesToSave);
-//        userCalendarLegacyToSave.addDrinks(userCalendarDrinksToSave);
-//
-//        return userCalendarLegacyToSave;
-//    }
-//
-//    @NotNull
-//    private List<UserCalendarDrink> createUserCalendarDrinks(
-//            List<Long> drinkUnitInfoIds,
-//            List<CreateCalendarRequest.DrinkDto> drinkDtos
-//    ) {
-//        Map<Long, DrinkUnitInfo> drinkUnitInfoById = drinkUnitInfoRepository.findByIdIn(drinkUnitInfoIds).stream()
-//                .collect(Collectors.toMap(DrinkUnitInfo::getId, Function.identity()));
-//        return drinkDtos.stream()
-//                .map(dto -> {
-//                    DrinkUnitInfo drinkUnitInfo = drinkUnitInfoById.get(dto.drinkUnitInfoId());
-//                    return new UserCalendarDrink(
-//                            drinkUnitInfo.getId(),
-//                            drinkUnitInfo.getPrice(),
-//                            drinkUnitInfo.getCalories(),
-//                            dto.quantity()
-//                    );
-//                })
-//                .toList();
-//    }
-//
-//    @NotNull
-//    private static List<UserCalendarImage> createUserCalendarImages(List<CreateCalendarRequest.UserCalendarImageDto> userCalendarImageDtos) {
-//        return userCalendarImageDtos.stream()
-//                .map(dto -> new UserCalendarImage(dto.imageUrl()))
-//                .toList();
-//    }
-//
-//    @NotNull
-//    private List<UserCalendarLegacy> createUserCalendarsForTaggedUsers(long userId, CreateCalendarRequest request) {
-//        Set<Long> activeUserIds = userRepository.findActiveUserIdsByIdIn(request.taggedUserIds());
-//        return request.taggedUserIds().stream()
-//                .filter(taggedUserId -> taggedUserId != userId)
-//                .filter(activeUserIds::contains)
-//                .map(UserCalendarLegacy::createForTaggedUser)
-//                .toList();
-//    }
 
     public GetCalendarByIdResponse getCalendarById(long userId, long calendarId) {
         Calendar calendar = calendarRepository.findById(calendarId)
