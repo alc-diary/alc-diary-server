@@ -48,6 +48,7 @@ public class UserCalendar extends BaseEntity {
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
     private List<DrinkRecord> drinkRecords = new ArrayList<>();
 
+    @Audited
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
