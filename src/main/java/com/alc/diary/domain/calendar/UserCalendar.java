@@ -12,6 +12,7 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -139,5 +140,12 @@ public class UserCalendar extends BaseEntity {
         return drinkRecords.stream()
                 .mapToInt(DrinkRecord::getTotalCalories)
                 .sum();
+    }
+
+    public void delete(long userId) {
+        if (!isOwner(userId)) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION_TO_DELETE);
+        }
+        this.deletedAt = LocalDateTime.now();
     }
 }

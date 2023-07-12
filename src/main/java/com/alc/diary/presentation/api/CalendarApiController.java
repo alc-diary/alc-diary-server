@@ -52,12 +52,13 @@ public class CalendarApiController {
         return ApiResponse.getSuccess();
     }
 
-    // @DeleteMapping("/user-calendars/{userCalendarId}")
+    @DeleteMapping("/{calendarId}/user-calendars/{userCalendarId}")
     public ApiResponse<Void> deleteUserCalendar(
             @ApiIgnore @RequestAttribute long userId,
+            @PathVariable long calendarId,
             @PathVariable long userCalendarId
     ) {
-//        calendarService.deleteUserCalendar(userId, userCalendarId);
+       calendarService.deleteUserCalendar(userId, calendarId, userCalendarId);
         return ApiResponse.getSuccess();
     }
 

@@ -155,24 +155,8 @@ public class CalendarService {
         return GetCalendarByIdResponse.of(userId, calendar, userByUserId);
     }
 
-//    @Transactional
-//    public void createComment(long userId, long calendarId, CreateCommentRequest request) {
-//        Calendar calendar = calendarRepository.findById(calendarId)
-//                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-//        if (!calendar.hasPermission(userId)) {
-//            throw new DomainException(CalendarError.NO_PERMISSION);
-//        }
-//    }
-
-//    /**
-//     * 요청한 유저의 캘린더 데이터 삭제 (캘린더 삭제 x, 캘린더 데이터 중 자신의 데이터만 삭제)
-//     *
-//     * @param userId
-//     * @param userCalendarId
-//     */
-
     /**
-     * 해당 유저의 캘린더 조회(일별)
+     * 해당 유저의 캘린더 조회 (일별)
      *
      * @param userId
      * @param date
@@ -190,6 +174,19 @@ public class CalendarService {
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
         return GetDailyCalendarsResponse.of(userId, calendars, userById);
+    }
+
+    /**
+     * 유저의 캘린더 삭제 (해당 유저의 데이터만 삭제, 캘린더 전체 삭제 x)
+     *
+     * @param userId
+     * @param userCalendarId
+     */
+    @Transactional
+    public void deleteUserCalendar(long userId, long calendarId, long userCalendarId) {
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+        calendar.deleteUserCalendar(userId, userCalendarId);
     }
 
     /**

@@ -280,4 +280,20 @@ public class Calendar extends BaseEntity {
                 .mapToInt(UserCalendar::totalCalories)
                 .sum();
     }
+
+    public void deleteUserCalendar(long userId, long userCalendarId) {
+        UserCalendar foundUserCalendar = userCalendars.stream()
+                .filter(userCalendar -> userCalendar.getId() == userCalendarId)
+                .findFirst()
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        foundUserCalendar.delete(userId);
+
+        userCalendars.stream()
+                .filter(userCalendar -> !userCalendar.isOwner(userId))
+                .findFirst()
+                .ifPresentOrElse(
+                        userCalendar -> ownerId = userCalendar.getUserId(),
+                        () -> deletedAt = LocalDateTime.now()
+                );
+    }
 }

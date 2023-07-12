@@ -13,6 +13,7 @@ public enum UserCalendarError implements ErrorModel {
     STATUS_NULL("UC_E0002", "Status cannot be null."),
     NO_PERMISSION("UC_E0003", "User do not have permission to this user calendar"),
     CONTENT_LENGTH_EXCEEDED("UC_E0004", "UserCalendar content length cannot exceed 1000 characters."),
+    NO_PERMISSION_TO_DELETE("UC_E0005", "You do not have permission to delete this UserCalendar."),
     ;
 
     private final String code;
