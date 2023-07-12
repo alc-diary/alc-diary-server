@@ -22,7 +22,7 @@ public class Calendars {
                 .collect(
                         Collectors.groupingBy(
                                 calendar -> calendar.getDrinkStartTimeLocalDate(zoneId),
-                                Collectors.maxBy(Comparator.comparing(Calendar::getTotalDrinkQuantity))
+                                Collectors.maxBy(Comparator.comparing(Calendar::calculateTotalDrinkQuantity))
                         )
                 )
                 .values().stream()
@@ -55,7 +55,7 @@ public class Calendars {
 
     public float calculateTotalQuantity() {
         return (float) calendars.stream()
-                .mapToDouble(Calendar::getTotalDrinkQuantity)
+                .mapToDouble(Calendar::calculateTotalDrinkQuantity)
                 .sum();
     }
 

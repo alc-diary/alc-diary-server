@@ -18,7 +18,10 @@ public enum CalendarError implements ErrorModel {
     NULL_USER_CALENDARS("C_E0007", "UserCalendars cannot be null."),
     START_TIME_AFTER_END_TIME("C_E0008", "Start time cannot be after end time."),
     END_TIME_IN_FUTURE("C_E0009", "End time cannot be int the future."),
-    TITLE_LENGTH_EXCEEDED("C_E0010", "Calendar title length cannot exceed 100 characters.")
+    TITLE_LENGTH_EXCEEDED("C_E0010", "Calendar title length cannot exceed 100 characters."),
+    DUPLICATE_USER_CALENDAR("C_E0011", "A UserCalendar with the same userId already exists."),
+    DEACTIVATED_USER_INCLUDE("C_E0012", "The request include an user who has already withdrawn."),
+    INVALID_DRINK_QUANTITY_INCREMENT("C_E0013", "The drink quantity should increase in increments of 0.5."),
     ;
 
     private final String code;

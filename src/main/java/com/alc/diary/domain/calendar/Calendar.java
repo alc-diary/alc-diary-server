@@ -41,6 +41,10 @@ public class Calendar extends BaseEntity {
     private String title;
 
     @Audited
+    @Column(name = "total_drink_quantity", nullable = false)
+    private float totalDrinkQuantity;
+
+    @Audited
     @Column(name = "drink_start_time", nullable = false)
     private ZonedDateTime drinkStartTime;
 
@@ -63,6 +67,7 @@ public class Calendar extends BaseEntity {
     private Calendar(
             long ownerId,
             String title,
+            float totalDrinkQuantity,
             ZonedDateTime drinkStartTime,
             ZonedDateTime drinkEndTime,
             LocalDateTime deletedAt
@@ -87,6 +92,7 @@ public class Calendar extends BaseEntity {
         }
         this.ownerId = ownerId;
         this.title = title;
+        this.totalDrinkQuantity = totalDrinkQuantity;
         this.drinkStartTime = drinkStartTime;
         this.drinkEndTime = drinkEndTime;
         this.deletedAt = deletedAt;
@@ -95,10 +101,11 @@ public class Calendar extends BaseEntity {
     public static Calendar create(
             long ownerId,
             String title,
+            float totalDrinkQuantity,
             ZonedDateTime drinkStartTime,
             ZonedDateTime drinkEndTime
     ) {
-        return new Calendar(ownerId, title, drinkStartTime, drinkEndTime, null);
+        return new Calendar(ownerId, title, totalDrinkQuantity, drinkStartTime, drinkEndTime, null);
     }
 
     public void addUserCalendars(Collection<UserCalendar> userCalendarEntries) {
@@ -216,7 +223,7 @@ public class Calendar extends BaseEntity {
         return drinkStartTime.withZoneSameInstant(zoneId).toLocalDate();
     }
 
-    public float getTotalDrinkQuantity() {
+    public float calculateTotalDrinkQuantity() {
         return (float) userCalendars.stream()
                 .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
                 .mapToDouble(DrinkRecord::getQuantity)

@@ -5,6 +5,7 @@ import com.alc.diary.domain.user.enums.SocialType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,13 +26,13 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
             "JOIN FETCH u.detail ud " +
             "WHERE u.id IN (:userIds) " +
             "AND u.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE ")
-    List<User> findActiveUsersByIdIn(Iterable<Long> userIds);
+    List<User> findActiveUsersByIdIn(Collection<Long> userIds);
 
     @Query("SELECT u.id " +
             "FROM User u " +
             "WHERE u.id IN (:userIds) " +
             "AND u.status = com.alc.diary.domain.user.enums.UserStatus.ACTIVE ")
-    Set<Long> findActiveUserIdsByIdIn(Iterable<Long> userIds);
+    Set<Long> findActiveUserIdsByIdIn(Collection<Long> userIds);
 
     @Query("SELECT u " +
             "FROM User u " +

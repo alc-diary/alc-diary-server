@@ -2,36 +2,48 @@ package com.alc.diary.application.calendar.dto.request;
 
 import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import io.swagger.annotations.ApiModel;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Set;
 
 public record CreateCalendarRequest(
 
-        @NotNull String title,
-        @Size(max = 1000) String content,
+        @NotNull @Size(max = 100) String title,
+        @NotNull @Min(0) Float totalDrinkQuantity,
         @NotNull ZonedDateTime drinkStartTime,
         @NotNull ZonedDateTime drinkEndTime,
-        String drinkCondition,
-        @NotNull List<DrinkCreationDto> drinks,
-        @NotNull List<PhotoCreationDto> photos,
-        @NotNull Set<Long> taggedUserIds
+        @Valid @NotNull List<PhotoCreationDto> photos,
+        @Valid @NotNull List<UserCalendarCreationDto> userCalendars
 ) {
 
-    public record DrinkCreationDto(
+    @ApiModel(value = "CreateCalendarRequest_UserCalendarCreationDto")
+    public record UserCalendarCreationDto(
 
-            DrinkType drinkType,
-            DrinkUnit drinkUnit,
-            float quantity
+            @NotNull Long userId,
+            @Size(max = 1000) String content,
+            String condition,
+            @Valid @NotNull List<DrinkCreationDto> drinks
     ) {
     }
 
+    @ApiModel(value = "CreateCalendarRequest_DrinkCreationDto")
+    public record DrinkCreationDto(
+
+            @NotNull DrinkType drinkType,
+            @NotNull DrinkUnit drinkUnit,
+            @NotNull @Min(0) Float quantity
+    ) {
+    }
+
+    @ApiModel(value = "CreateCalendarRequest_PhotoCreationDto")
     public record PhotoCreationDto(
 
-            String url
+            @NotNull @Size(max = 1000) String url
     ) {
     }
 }
