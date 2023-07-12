@@ -70,7 +70,8 @@ public class Calendar extends BaseEntity {
             float totalDrinkQuantity,
             ZonedDateTime drinkStartTime,
             ZonedDateTime drinkEndTime,
-            LocalDateTime deletedAt
+            LocalDateTime deletedAt,
+            ZonedDateTime now
     ) {
         if (title == null) {
             throw new DomainException(CalendarError.NULL_TITLE);
@@ -87,7 +88,7 @@ public class Calendar extends BaseEntity {
         if (drinkStartTime.isAfter(drinkEndTime)) {
             throw new DomainException(CalendarError.START_TIME_AFTER_END_TIME);
         }
-        if (drinkEndTime.isAfter(ZonedDateTime.now())) {
+        if (drinkEndTime.isAfter(now)) {
             throw new DomainException(CalendarError.END_TIME_IN_FUTURE);
         }
         this.ownerId = ownerId;
@@ -105,7 +106,26 @@ public class Calendar extends BaseEntity {
             ZonedDateTime drinkStartTime,
             ZonedDateTime drinkEndTime
     ) {
-        return new Calendar(ownerId, title, totalDrinkQuantity, drinkStartTime, drinkEndTime, null);
+        return new Calendar(
+                ownerId,
+                title,
+                totalDrinkQuantity,
+                drinkStartTime,
+                drinkEndTime,
+                null,
+                ZonedDateTime.now()
+        );
+    }
+
+    static Calendar create(
+            long ownerId,
+            String title,
+            float totalDrinkQuantity,
+            ZonedDateTime drinkStartTime,
+            ZonedDateTime drinkEndTime,
+            ZonedDateTime now
+    ) {
+        return new Calendar(ownerId, title, totalDrinkQuantity, drinkStartTime, drinkEndTime, null, now);
     }
 
     public void addUserCalendars(Collection<UserCalendar> userCalendarEntries) {
@@ -140,6 +160,10 @@ public class Calendar extends BaseEntity {
         userCalendar.addDrinkRecords(drinkRecords);
     }
 
+    public boolean isOwner(long userId) {
+        return ownerId == userId;
+    }
+
     public boolean hasPermission(long userId) {
         return userCalendars.stream()
                 .anyMatch(userCalendar -> userCalendar.isOwner(userId));
@@ -161,8 +185,11 @@ public class Calendar extends BaseEntity {
         if (newTitle == null) {
             throw new DomainException(CalendarError.NULL_TITLE);
         }
+        if (StringUtils.length(newTitle) > 100) {
+            throw new DomainException(CalendarError.TITLE_LENGTH_EXCEEDED);
+        }
         if (ownerId != userId) {
-            throw new DomainException(CalendarError.NO_PERMISSION);
+            throw new DomainException(CalendarError.NO_PERMISSION_TO_UPDATE_TITLE);
         }
         title = newTitle;
     }

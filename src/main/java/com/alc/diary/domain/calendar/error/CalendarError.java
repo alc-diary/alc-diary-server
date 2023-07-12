@@ -22,6 +22,7 @@ public enum CalendarError implements ErrorModel {
     DUPLICATE_USER_CALENDAR("C_E0011", "A UserCalendar with the same userId already exists."),
     DEACTIVATED_USER_INCLUDE("C_E0012", "The request include an user who has already withdrawn."),
     INVALID_DRINK_QUANTITY_INCREMENT("C_E0013", "The drink quantity should increase in increments of 0.5."),
+    NO_PERMISSION_TO_UPDATE_TITLE("C_E0014", "You do not have permission to update title."),
     ;
 
     private final String code;
