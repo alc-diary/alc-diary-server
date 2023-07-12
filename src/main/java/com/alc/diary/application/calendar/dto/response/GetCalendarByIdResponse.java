@@ -1,6 +1,7 @@
 package com.alc.diary.application.calendar.dto.response;
 
 import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.calendar.Photo;
 import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.enums.DrinkUnit;
 import com.alc.diary.domain.user.User;
@@ -48,6 +49,7 @@ public record GetCalendarByIdResponse(
                         ))
                         .toList(),
                 calendar.getPhotos().stream()
+                        // .filter(photo -> !photo.isDeleted())
                         .map(photo -> new PhotoDto(
                                 photo.getId(),
                                 photo.getUserId(),

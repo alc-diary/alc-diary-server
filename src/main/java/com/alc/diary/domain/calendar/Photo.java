@@ -1,10 +1,13 @@
 package com.alc.diary.domain.calendar;
 
+import com.alc.diary.domain.calendar.error.PhotoError;
+import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,16 +29,35 @@ public class Photo {
     @Column(name = "url", length = 1000, nullable = false)
     private String url;
 
-    private Photo(long userId, String url) {
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    private Photo(long userId, String url, LocalDateTime deletedAt) {
         this.userId = userId;
         this.url = url;
+        this.deletedAt = deletedAt;
     }
 
     public static Photo create(long userId, String url) {
-        return new Photo(userId, url);
+        return new Photo(userId, url, null);
     }
 
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
+    }
+
+    public boolean isOwner(long userId) {
+        return this.userId == userId;
+    }
+
+    public void delete(long userId) {
+        if (this.userId != userId) {
+            throw new DomainException(PhotoError.NO_PERMISSION_TO_DELETE_PHOTO);
+        }
+        deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return deletedAt != null;
     }
 }

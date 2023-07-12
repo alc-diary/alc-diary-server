@@ -295,5 +295,8 @@ public class Calendar extends BaseEntity {
                         userCalendar -> ownerId = userCalendar.getUserId(),
                         () -> deletedAt = LocalDateTime.now()
                 );
+        photos.stream()
+                .filter(photo -> photo.isOwner(userId))
+                .forEach(photo -> photo.delete(userId));
     }
 }

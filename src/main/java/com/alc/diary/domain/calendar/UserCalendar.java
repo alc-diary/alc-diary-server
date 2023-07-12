@@ -146,6 +146,7 @@ public class UserCalendar extends BaseEntity {
         if (!isOwner(userId)) {
             throw new DomainException(UserCalendarError.NO_PERMISSION_TO_DELETE);
         }
+        drinkRecords.forEach(DrinkRecord::delete);
         this.deletedAt = LocalDateTime.now();
     }
 }

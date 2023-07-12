@@ -13,12 +13,20 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
     Calendar save(Calendar calendar);
 
     @Query("SELECT DISTINCT c " +
-            "FROM Calendar c " +
-            "JOIN FETCH c.userCalendars uc " +
-            "WHERE c.id = :calendarId " +
-            "AND uc.deletedAt IS NULL " +
-            "AND c.deletedAt IS NULL ")
+           "FROM Calendar c " +
+           "JOIN FETCH c.userCalendars uc " +
+           "WHERE c.id = :calendarId " +
+           "AND c.deletedAt IS NULL " +
+           "AND uc.deletedAt IS NULL ")
     Optional<Calendar> findById(long calendarId);
+
+    @Query("SELECT DISTINCT c " +
+           "FROM Calendar c " +
+           "JOIN FETCH c.photos p " +
+           "WHERE c.id = :calendarId " +
+           "AND c.deletedAt IS NULL " +
+           "AND p.deletedAt IS NULL ")
+    Optional<Calendar> findWithPhotoById(long calendarId);
 
     @Query("SELECT DISTINCT c " +
             "FROM Calendar c " +
