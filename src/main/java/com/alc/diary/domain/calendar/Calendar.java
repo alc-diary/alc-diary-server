@@ -61,6 +61,7 @@ public class Calendar extends BaseEntity {
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<Comment> comments = new ArrayList<>();
 
+    @Audited
     @Column(name = "deletedAt")
     private LocalDateTime deletedAt;
 
