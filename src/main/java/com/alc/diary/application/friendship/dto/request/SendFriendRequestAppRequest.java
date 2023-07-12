@@ -5,7 +5,7 @@ import javax.validation.constraints.Size;
 
 public record SendFriendRequestAppRequest(
 
-        @NotNull(message = "User ID cannot be null.") long receiverId,
+        @NotNull(message = "User ID cannot be null.") Long receiverId,
         @Size(max = 100, message = "Message length cannot exceed 100 characters.") String message
 ) {
 }

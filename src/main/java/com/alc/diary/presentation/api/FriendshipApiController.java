@@ -34,7 +34,7 @@ public class FriendshipApiController {
     public ApiResponse<Void> updateFriendLabel(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @PathVariable long friendshipId,
-            @RequestBody UpdateFriendLabelAppRequest request
+            @Validated @RequestBody UpdateFriendLabelAppRequest request
     ) {
         friendshipAppService.updateFriendLabel(userId, friendshipId, request);
         return ApiResponse.getSuccess();
@@ -89,7 +89,7 @@ public class FriendshipApiController {
     public ApiResponse<Void> acceptFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
             @PathVariable long friendRequestId,
-            @RequestBody AcceptFriendRequestAppRequest request
+            @Validated @RequestBody AcceptFriendRequestAppRequest request
             ) {
         friendshipAppService.acceptFriendRequest(userId, friendRequestId, request);
         return ApiResponse.getSuccess();
