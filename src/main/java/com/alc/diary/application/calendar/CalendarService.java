@@ -38,6 +38,13 @@ public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final PhotoRepository photoRepository;
 
+    /**
+     * 캘린더 생성
+     *
+     * @param userId
+     * @param request
+     * @return
+     */
     @Transactional
     public CreateCalendarResponse createCalendarAndGenerateResponse(long userId, CreateCalendarRequest request) {
         validRequest(request);
@@ -81,7 +88,8 @@ public class CalendarService {
                 });
     }
 
-    private boolean isHalfUnit(float value) {
+    @NotNull
+    private static boolean isHalfUnit(float value) {
         float multiplied = value * 2;
         float epsilon = 0.0001f;
 
@@ -126,6 +134,13 @@ public class CalendarService {
                 .toList();
     }
 
+    /**
+     * 캘린더 상세 조회
+     *
+     * @param userId
+     * @param calendarId
+     * @return
+     */
     public GetCalendarByIdResponse getCalendarById(long userId, long calendarId) {
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
@@ -139,14 +154,14 @@ public class CalendarService {
         return GetCalendarByIdResponse.of(userId, calendar, userByUserId);
     }
 
-    @Transactional
-    public void createComment(long userId, long calendarId, CreateCommentRequest request) {
-        Calendar calendar = calendarRepository.findById(calendarId)
-                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-        if (!calendar.hasPermission(userId)) {
-            throw new DomainException(CalendarError.NO_PERMISSION);
-        }
-    }
+//    @Transactional
+//    public void createComment(long userId, long calendarId, CreateCommentRequest request) {
+//        Calendar calendar = calendarRepository.findById(calendarId)
+//                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+//        if (!calendar.hasPermission(userId)) {
+//            throw new DomainException(CalendarError.NO_PERMISSION);
+//        }
+//    }
 
 //    /**
 //     * 요청한 유저의 캘린더 데이터 삭제 (캘린더 삭제 x, 캘린더 데이터 중 자신의 데이터만 삭제)
@@ -154,13 +169,6 @@ public class CalendarService {
 //     * @param userId
 //     * @param userCalendarId
 //     */
-//    @Transactional
-//    public void deleteUserCalendar(long userId, long userCalendarId) {
-//        UserCalendarLegacy userCalendarLegacy = userCalendarLegacyRepository.findByIdAndIsDeletedEqFalse(userCalendarId)
-//                .orElseThrow(() -> new DomainException(UserCalendarImageError.IMAGE_LIMIT_EXCEEDED));
-//        userCalendarLegacy.delete(userId);
-//    }
-//
 
     /**
      * 해당 유저의 캘린더 조회(일별)
