@@ -1,9 +1,12 @@
 package com.alc.diary.application.nickname;
 
+import com.alc.diary.application.nickname.dto.request.AddNicknameBannedWordRequest;
 import com.alc.diary.application.user.dto.request.CreateRandomNicknameTokenAppRequest;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameTokens;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.nickname.BannedWord;
+import com.alc.diary.domain.nickname.NicknameBlackListRepository;
 import com.alc.diary.domain.user.NicknameToken;
 import com.alc.diary.domain.user.enums.NicknameTokenOrdinal;
 import com.alc.diary.domain.user.error.UserError;
@@ -28,6 +31,7 @@ public class NicknameAppService {
 
     private final UserDetailRepository userDetailRepository;
     private final NicknameTokenRepository nicknameTokenRepository;
+    private final NicknameBlackListRepository nicknameBlackListRepository;
 
     @Transactional
     public void createRandomNicknameToken(CreateRandomNicknameTokenAppRequest request) {
@@ -77,5 +81,22 @@ public class NicknameAppService {
                                       .findFirst()
                                       .map(NicknameToken::getToken)
                                       .orElseThrow(RuntimeException::new);
+    }
+
+    public List<BannedWord> getAllBannedWords() {
+        return nicknameBlackListRepository.findAll();
+    }
+
+    @Transactional
+    public long addNicknameBannedWord(long userId, AddNicknameBannedWordRequest request) {
+        BannedWord bannedWordToSave = new BannedWord(request.bannedWord().trim());
+        BannedWord bannedWord = nicknameBlackListRepository.save(bannedWordToSave);
+
+        return bannedWord.getId();
+    }
+
+    @Transactional
+    public void deleteNicknameBannedWord(long userId, long bannedWordId) {
+        nicknameBlackListRepository.deleteById(bannedWordId);
     }
 }

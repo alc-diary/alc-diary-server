@@ -2,15 +2,13 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.application.message.MessageService;
 import com.alc.diary.application.user.dto.request.*;
-import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
-import com.alc.diary.domain.badword.BadWord;
-import com.alc.diary.domain.badword.BadWordRepository;
+import com.alc.diary.domain.nickname.BannedWord;
+import com.alc.diary.domain.nickname.NicknameBlackListRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserWithdrawal;
-import com.alc.diary.domain.user.enums.NicknameTokenOrdinal;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -33,7 +30,7 @@ public class UserAppService {
     private final UserDetailRepository userDetailRepository;
     private final UserWithdrawalRepository userWithdrawalRepository;
     private final MessageService messageService;
-    private final BadWordRepository badWordRepository;
+    private final NicknameBlackListRepository nicknameBlackListRepository;
 
     /**
      * 유저 검색 (현재는 nickname만)
@@ -94,9 +91,9 @@ public class UserAppService {
     @Transactional
     public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
         User foundUser = getUserById(userId);
-        List<BadWord> blackList = badWordRepository.findAll();
-        for (BadWord badWord : blackList) {
-            if (request.newNickname().contains(badWord.getWord())) {
+        List<BannedWord> blackList = nicknameBlackListRepository.findAll();
+        for (BannedWord bannedWord : blackList) {
+            if (request.newNickname().contains(bannedWord.getWord())) {
                 throw new DomainException(UserError.NICKNAME_CONTAINS_BAD_WORD, "request: " + request.newNickname());
             }
         }
