@@ -3,8 +3,8 @@ package com.alc.diary.application.onboarding;
 import com.alc.diary.application.message.MessageService;
 import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
 import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResponse;
-import com.alc.diary.domain.badword.BadWord;
-import com.alc.diary.domain.badword.BadWordRepository;
+import com.alc.diary.domain.nickname.BannedWord;
+import com.alc.diary.domain.nickname.NicknameBlackListRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserDetail;
@@ -27,7 +27,7 @@ public class OnboardingAppService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final MessageService messageService;
-    private final BadWordRepository badWordRepository;
+    private final NicknameBlackListRepository nicknameBlackListRepository;
 
     public CheckNicknameAvailableAppResponse checkNicknameAvailable(String nickname) {
         if (userDetailRepository.findByNickname(nickname).isPresent()) {
@@ -46,9 +46,9 @@ public class OnboardingAppService {
         if (userDetailRepository.findByNickname(request.nickname()).isPresent()) {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
         }
-        List<BadWord> blackList = badWordRepository.findAll();
-        for (BadWord badWord : blackList) {
-            if (request.nickname().contains(badWord.getWord())) {
+        List<BannedWord> blackList = nicknameBlackListRepository.findAll();
+        for (BannedWord bannedWord : blackList) {
+            if (request.nickname().contains(bannedWord.getWord())) {
                 throw new DomainException(UserError.NICKNAME_CONTAINS_BAD_WORD, "request: " + request.nickname());
             }
         }

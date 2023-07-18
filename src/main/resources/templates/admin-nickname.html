@@ -9,8 +9,8 @@
 <div class="nav-bar">
     <div class="main-logo" onclick="location.href='/admin/main'">Alcohol Diary</div>
     <div class="menu">
-        <div class="menu-item" onclick="location.href='/admin/nickname'">nickname</div>
-        <div class="menu-item">b</div>
+        <div class="menu-item" onclick="location.href='/admin/nicknames'">Nickname</div>
+        <div class="menu-item" onclick="location.href='/admin/nicknames/black-list'">Black List</div>
         <div class="menu-item">c</div>
         <div class="menu-item">d</div>
     </div>
@@ -19,13 +19,13 @@
     <div class="nickname-wrapper">
         <div class="nickname-tokens">
             <div class="nickname-header">first</div>
-            <form class="nickname-token-form" action="/admin/nickname" method="post">
+            <form class="nickname-token-form" action="/admin/nicknames" method="post">
                 <input class="nickname-token-form-button" type="submit" value="제출">
                 <input class="nickname-token-form-input" type="text" name="keyword"/>
                 <input type="hidden" name="ordinal" value="FIRST"/>
             </form>
             <div class="nickname-token-wrapper" th:each="tokenDto : ${randomNicknameTokens.firstNicknameTokens()}">
-                <form action="/admin/nickname/delete" method="post">
+                <form action="/admin/nicknames/delete" method="post">
                     <input type="hidden" name="tokenId" th:value="|${tokenDto.id()}|"/>
                     <button class="nickname-token" th:text="${tokenDto.token()}"></button>
                 </form>
@@ -33,13 +33,13 @@
         </div>
         <div class="nickname-tokens">
             <div class="nickname-header">second</div>
-            <form class="nickname-token-form" action="/admin/nickname" method="post">
+            <form class="nickname-token-form" action="/admin/nicknames" method="post">
                 <input class="nickname-token-form-button" type="submit" value="제출">
                 <input class="nickname-token-form-input" type="text" name="keyword"/>
                 <input type="hidden" name="ordinal" value="SECOND"/>
             </form>
             <div class="nickname-token-wrapper" th:each="tokenDto : ${randomNicknameTokens.secondNicknameTokens()}">
-                <form action="/admin/nickname/delete" method="post">
+                <form action="/admin/nicknames/delete" method="post">
                     <input type="hidden" name="tokenId" th:value="|${tokenDto.id()}|"/>
                     <button class="nickname-token" th:text="${tokenDto.token()}"></button>
                 </form>

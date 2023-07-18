@@ -99,3 +99,40 @@ div {
     background: azure;
     cursor: pointer;
 }
+
+.nickname-banned-word-container {
+    width: 512px;
+    min-height: 1000px;
+    margin: 0 auto;
+    border: black 1px solid;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.nickname-banned-word-wrapper {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    border: black 1px solid;
+    margin: 0 5px;
+}
+
+.nickname-banned-word-form {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 0 5px;
+}
+
+.nickname-banned-word-form-button {
+    display: inline;
+}
+
+.nickname-token-form-input {
+    display: inline;
+}
+
+.nickname-banned-word {
+}
