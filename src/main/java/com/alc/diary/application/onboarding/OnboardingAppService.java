@@ -3,6 +3,8 @@ package com.alc.diary.application.onboarding;
 import com.alc.diary.application.message.MessageService;
 import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
 import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResponse;
+import com.alc.diary.domain.badword.BadWord;
+import com.alc.diary.domain.badword.BadWordRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserDetail;
@@ -14,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class OnboardingAppService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final MessageService messageService;
+    private final BadWordRepository badWordRepository;
 
     public CheckNicknameAvailableAppResponse checkNicknameAvailable(String nickname) {
         if (userDetailRepository.findByNickname(nickname).isPresent()) {
@@ -40,6 +45,12 @@ public class OnboardingAppService {
         }
         if (userDetailRepository.findByNickname(request.nickname()).isPresent()) {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN);
+        }
+        List<BadWord> blackList = badWordRepository.findAll();
+        for (BadWord badWord : blackList) {
+            if (request.nickname().contains(badWord.getWord())) {
+                throw new DomainException(UserError.NICKNAME_CONTAINS_BAD_WORD, "request: " + request.nickname());
+            }
         }
         UserDetail userDetail = new UserDetail(
                 null,

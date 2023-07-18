@@ -20,7 +20,8 @@ public enum UserError implements ErrorModel {
     NICKNAME_LENGTH_EXCEEDED("US_E0008", "닉네임은 16자를 초과할 수 없습니다."),
     INVALID_DESCRIPTION_STYLE("US_E0009", "Description Style은 null이 아니어야 합니다."),
     NOT_IN_ONBOARDING_PROCESS("US_E0010", "온보딩 상태의 유저가 아닙니다."),
-    INVALID_NICKNAME_FORMAT("US_E0011", "닉네임은 한글, 영어 대소문자, 숫자로만 검색할 수 있습니다.")
+    INVALID_NICKNAME_FORMAT("US_E0011", "닉네임은 한글, 영어 대소문자, 숫자로만 검색할 수 있습니다."),
+    NICKNAME_CONTAINS_BAD_WORD("US_E0012", "The nickname contains prohibited words."),
     ;
     private final String code;
     private final String message;
