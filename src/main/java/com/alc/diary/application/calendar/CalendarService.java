@@ -1,5 +1,7 @@
 package com.alc.diary.application.calendar;
 
+import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequest;
+import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequest.DrinkCreationDto;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
@@ -271,5 +273,24 @@ public class CalendarService {
                 .filter(photoId -> request.photos().deleted().contains(photoId))
                 .toList();
         photoRepository.deleteByIdIn(photoIdsToDelete);
+    }
+
+    /**
+     * 메인에서 캘린더 생성
+     *
+     * @param userId
+     * @param request
+     */
+    @Transactional
+    public long createCalendarFromMain(long userId, CreateCalendarFromMainRequest request) {
+        float totalDrinkQuantity = (float) request.drinks().stream()
+                .mapToDouble(DrinkCreationDto::quantity)
+                .sum();
+        Calendar calendarToSave = Calendar.create(userId, "오늘의 음주기록", totalDrinkQuantity, request.drinkStartTime(), request.drinkEndTime());
+        UserCalendar userCalendarToSave = UserCalendar.create(userId, null, null);
+        calendarToSave.addUserCalendar(userCalendarToSave);
+
+        Calendar calendar = calendarRepository.save(calendarToSave);
+        return calendar.getId();
     }
 }
