@@ -1,6 +1,7 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.calendar.CalendarService;
+import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequest;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.CreateCommentRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
@@ -41,7 +42,7 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getCalendarById(userId, calendarId));
     }
 
-     @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
+    @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
     public ApiResponse<Void> updateCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,
@@ -58,7 +59,7 @@ public class CalendarApiController {
             @PathVariable long calendarId,
             @PathVariable long userCalendarId
     ) {
-       calendarService.deleteUserCalendar(userId, calendarId, userCalendarId);
+        calendarService.deleteUserCalendar(userId, calendarId, userCalendarId);
         return ApiResponse.getSuccess();
     }
 
@@ -78,6 +79,14 @@ public class CalendarApiController {
             @RequestParam(name = "zoneId", defaultValue = "Asia/Seoul") ZoneId zoneId
     ) {
         return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
+    }
+
+    @PostMapping("/main")
+    public ApiResponse<Long> createCalendarFromMain(
+            @ApiIgnore long userId,
+            @Validated @RequestBody CreateCalendarFromMainRequest request
+    ) {
+        return ApiResponse.getSuccess(calendarService.createCalendarFromMain(userId, request));
     }
 
     // @PostMapping("/{calendarId}/comments")

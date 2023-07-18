@@ -131,7 +131,8 @@ public class User extends BaseEntity {
         detail.updateNickname(newNickname);
     }
 
-    public void delete() {
+    public void deactivate(String deactivateNickname) {
+        updateNickname(deactivateNickname);
         status = UserStatus.DEACTIVATED;
     }
 

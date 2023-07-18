@@ -1,19 +1,24 @@
 package com.alc.diary.application.user;
 
+import com.alc.diary.application.message.MessageService;
 import com.alc.diary.application.user.dto.request.*;
+import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserWithdrawal;
+import com.alc.diary.domain.user.enums.NicknameTokenOrdinal;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -24,6 +29,7 @@ public class UserAppService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final UserWithdrawalRepository userWithdrawalRepository;
+    private final MessageService messageService;
 
     /**
      * 유저 검색 (현재는 nickname만)
@@ -111,8 +117,17 @@ public class UserAppService {
     @Transactional
     public void deactivateUser(Long requesterId, DeactivateUserAppRequest request) {
         User targetUser = getUserById(request.targetUserId());
-        targetUser.delete();
+        String nickname = targetUser.getNickname();
+
+        targetUser.deactivate(createDeactivateNickname());
+
         userWithdrawalRepository.save(UserWithdrawal.of(targetUser, request.reason()));
+
+        messageService.send("#알림", nickname + "님이 탈퇴했습니다."); // TODO: 추후에 서비스 분리해서 트랜잭션 분리 예정
+    }
+
+    private String createDeactivateNickname() {
+        return "탈퇴한유저" + RandomStringUtils.randomAlphanumeric(8);
     }
 
     private User getUserById(Long userId) {
