@@ -5,6 +5,8 @@ import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
+import com.alc.diary.domain.badword.BadWord;
+import com.alc.diary.domain.badword.BadWordRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserWithdrawal;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -30,6 +33,7 @@ public class UserAppService {
     private final UserDetailRepository userDetailRepository;
     private final UserWithdrawalRepository userWithdrawalRepository;
     private final MessageService messageService;
+    private final BadWordRepository badWordRepository;
 
     /**
      * 유저 검색 (현재는 nickname만)
@@ -90,6 +94,12 @@ public class UserAppService {
     @Transactional
     public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
         User foundUser = getUserById(userId);
+        List<BadWord> blackList = badWordRepository.findAll();
+        for (BadWord badWord : blackList) {
+            if (request.newNickname().contains(badWord.getWord())) {
+                throw new DomainException(UserError.NICKNAME_CONTAINS_BAD_WORD, "request: " + request.newNickname());
+            }
+        }
         if (userDetailRepository.existsByNickname(request.newNickname())) {
             throw new DomainException(UserError.NICKNAME_ALREADY_TAKEN, "Nickname: " + request.newNickname());
         }
