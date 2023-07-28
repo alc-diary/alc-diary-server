@@ -34,7 +34,7 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
             "JOIN FETCH c.userCalendars " +
             "WHERE uc.userId = :userId " +
             "AND c.drinkStartTime >= :rangeStart " +
-            "AND c.drinkEndTime < :rangeEnd " +
+            "AND c.drinkStartTime < :rangeEnd " +
             "AND uc.deletedAt IS NULL " +
             "AND c.deletedAt IS NULL")
     List<Calendar> findAllUserCalendarsInCalendarsWithInRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
@@ -44,7 +44,7 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
             "JOIN FETCH c.userCalendars uc " +
             "WHERE uc.userId = :userId " +
             "AND c.drinkStartTime >= :rangeStart " +
-            "AND c.drinkEndTime < :rangeEnd " +
+            "AND c.drinkStartTime < :rangeEnd " +
             "AND uc.deletedAt IS NULL " +
             "AND c.deletedAt IS NULL")
     List<Calendar> findUserCalendarsForSpecificUserWithRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
