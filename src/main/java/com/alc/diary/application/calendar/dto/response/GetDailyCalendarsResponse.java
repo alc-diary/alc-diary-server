@@ -18,6 +18,7 @@ public record GetDailyCalendarsResponse(
         String title,
         String drinkStartTime,
         String drinkEndTime,
+        boolean drinkingRecorded,
         List<DrinkRecordDto> drinkRecords,
         float currentUserDrinkTotal,
         List<UserDto> taggedUsers
@@ -30,6 +31,7 @@ public record GetDailyCalendarsResponse(
                         calendar.getTitle(),
                         calendar.getDrinkStartTime().toString(),
                         calendar.getDrinkEndTime().toString(),
+                        calendar.findUserCalendarByUserId(userId).map(UserCalendar::isDrinkingRecorded).orElse(false),
                         calendar.findUserCalendarByUserId(userId)
                                 .map(userCalendar -> userCalendar.getDrinkRecords().stream()
                                         .map(drinkRecord -> new GetDailyCalendarsResponse.DrinkRecordDto(

@@ -105,6 +105,7 @@ public class CalendarService {
         Set<Long> activeUserIds = userRepository.findActiveUserIdsByIdIn(request.taggedUserIds());
         List<UserCalendar> taggedUserCalendars = request.taggedUserIds().stream()
                 .filter(activeUserIds::contains)
+                .filter(it -> it != userCalendar.getUserId())
                 .map(UserCalendar::createTaggedUserCalendar)
                 .toList();
         userCalendars.addAll(taggedUserCalendars);
