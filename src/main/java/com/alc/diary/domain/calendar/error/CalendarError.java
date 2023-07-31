@@ -23,6 +23,8 @@ public enum CalendarError implements ErrorModel {
     DEACTIVATED_USER_INCLUDE("C_E0012", "The request include an user who has already withdrawn."),
     INVALID_DRINK_QUANTITY_INCREMENT("C_E0013", "The drink quantity should increase in increments of 0.5."),
     NO_PERMISSION_TO_UPDATE_TITLE("C_E0014", "You do not have permission to update title."),
+    INVALID_REQUEST("C_E0015", "Invalid request"),
+    IMAGE_LIMIT_EXCEEDED("C_E0016", "The number of images cannot exceed 20."),
     ;
 
     private final String code;
