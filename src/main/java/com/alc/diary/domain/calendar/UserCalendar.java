@@ -46,7 +46,7 @@ public class UserCalendar extends BaseEntity {
 
     @Audited
     @Column(name = "drinking_recorded")
-    private boolean drinkingRecorded;
+    private Boolean drinkingRecorded;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
     private List<DrinkRecord> drinkRecords = new ArrayList<>();
