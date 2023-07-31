@@ -37,7 +37,7 @@ public record GetCalendarByIdResponse(
                                 ),
                                 userCalendar.getContent(),
                                 userCalendar.getDrinkCondition(),
-                                userCalendar.isDrinkingRecorded(),
+                                userCalendar.getDrinkingRecorded(),
                                 userCalendar.getDrinkRecords().stream()
                                         .map(drinkRecord -> new DrinkRecordDto(
                                                 drinkRecord.getId(),
