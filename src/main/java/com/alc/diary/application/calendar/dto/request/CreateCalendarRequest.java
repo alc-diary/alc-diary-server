@@ -16,7 +16,7 @@ public record CreateCalendarRequest(
         @NotNull @Size(max = 100) String title,
         @NotNull ZonedDateTime drinkStartTime,
         @NotNull ZonedDateTime drinkEndTime,
-        @Valid @NotNull List<PhotoCreationDto> photos,
+        @Valid @NotNull @Size(max = 20) List<PhotoCreationDto> photos,
         @Valid @NotNull UserCalendarCreationDto userCalendar,
         @NotNull List<Long> taggedUserIds
 ) {
