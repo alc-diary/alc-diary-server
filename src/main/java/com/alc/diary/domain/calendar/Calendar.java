@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
@@ -27,6 +28,8 @@ import java.util.stream.Collectors;
 @Table(name = "calendars")
 @Entity
 public class Calendar extends BaseEntity {
+
+    private static final int MAX_PHOTO_COUNT = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -141,12 +144,18 @@ public class Calendar extends BaseEntity {
     }
 
     public void addPhotos(List<Photo> photos) {
+        if (CollectionUtils.size(this.photos) + CollectionUtils.size(photos) > MAX_PHOTO_COUNT) {
+            throw new DomainException(CalendarError.IMAGE_LIMIT_EXCEEDED);
+        }
         for (Photo photo : photos) {
             addPhoto(photo);
         }
     }
 
     public void addPhoto(Photo photo) {
+        if (CollectionUtils.size(photos) >= MAX_PHOTO_COUNT) {
+            throw new DomainException(CalendarError.IMAGE_LIMIT_EXCEEDED);
+        }
         photos.add(photo);
         photo.setCalendar(this);
     }

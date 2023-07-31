@@ -1,7 +1,6 @@
 package com.alc.diary.application.calendar.dto.response;
 
 import com.alc.diary.domain.calendar.Calendar;
-import com.alc.diary.domain.calendar.Photo;
 import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.enums.DrinkUnit;
 import com.alc.diary.domain.user.User;
@@ -38,6 +37,7 @@ public record GetCalendarByIdResponse(
                                 ),
                                 userCalendar.getContent(),
                                 userCalendar.getDrinkCondition(),
+                                userCalendar.isDrinkingRecorded(),
                                 userCalendar.getDrinkRecords().stream()
                                         .map(drinkRecord -> new DrinkRecordDto(
                                                 drinkRecord.getId(),
@@ -66,6 +66,7 @@ public record GetCalendarByIdResponse(
             UserDto user,
             String content,
             String drinkCondition,
+            boolean drinkingRecorded,
             List<DrinkRecordDto> drinkRecords
     ) {
     }
