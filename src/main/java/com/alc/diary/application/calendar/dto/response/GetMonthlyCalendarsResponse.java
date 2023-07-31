@@ -5,6 +5,7 @@ import com.alc.diary.domain.calendar.enums.DrinkType;
 public record GetMonthlyCalendarsResponse(
 
         String date,
-        DrinkType drinkType
+        DrinkType drinkType,
+        boolean drinkRecorded
 ) {
 }

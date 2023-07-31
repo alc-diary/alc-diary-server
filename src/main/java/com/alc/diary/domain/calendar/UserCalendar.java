@@ -12,7 +12,6 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,8 +45,8 @@ public class UserCalendar extends BaseEntity {
     private String drinkCondition;
 
     @Audited
-    @Column(name = "is_drinking_recorded")
-    private boolean isDrinkingRecorded;
+    @Column(name = "drinking_recorded")
+    private boolean drinkingRecorded;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
     private List<DrinkRecord> drinkRecords = new ArrayList<>();
@@ -56,14 +55,14 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    private UserCalendar(long userId, String content, String drinkCondition, boolean isDrinkingRecorded, LocalDateTime deletedAt) {
+    private UserCalendar(long userId, String content, String drinkCondition, boolean drinkingRecorded, LocalDateTime deletedAt) {
         if (StringUtils.length(content) > 1000) {
             throw new DomainException(UserCalendarError.CONTENT_LENGTH_EXCEEDED);
         }
         this.userId = userId;
         this.content = content;
         this.drinkCondition = drinkCondition;
-        this.isDrinkingRecorded = isDrinkingRecorded;
+        this.drinkingRecorded = drinkingRecorded;
         this.deletedAt = deletedAt;
     }
 
