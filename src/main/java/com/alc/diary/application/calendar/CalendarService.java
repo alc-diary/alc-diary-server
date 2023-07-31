@@ -209,7 +209,8 @@ public class CalendarService {
         return calendars.getCalendarsByMaxDrinkPerDay(zoneId).stream()
                 .map(calendar -> new GetMonthlyCalendarsResponse(
                         calendar.getDrinkStartTimeLocalDate(zoneId).toString(),
-                        calendar.getMostConsumedDrinkType()
+                        calendar.getMostConsumedDrinkType(),
+                        true
                 ))
                 .sorted(Comparator.comparing(GetMonthlyCalendarsResponse::date))
                 .toList();
