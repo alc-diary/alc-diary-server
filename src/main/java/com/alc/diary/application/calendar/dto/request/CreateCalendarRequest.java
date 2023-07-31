@@ -14,11 +14,11 @@ import java.util.List;
 public record CreateCalendarRequest(
 
         @NotNull @Size(max = 100) String title,
-        @NotNull @Min(0) Float totalDrinkQuantity,
         @NotNull ZonedDateTime drinkStartTime,
         @NotNull ZonedDateTime drinkEndTime,
         @Valid @NotNull List<PhotoCreationDto> photos,
-        @Valid @NotNull List<UserCalendarCreationDto> userCalendars
+        @Valid @NotNull UserCalendarCreationDto userCalendar,
+        @NotNull List<Long> taggedUserIds
 ) {
 
     @ApiModel(value = "CreateCalendarRequest_UserCalendarCreationDto")

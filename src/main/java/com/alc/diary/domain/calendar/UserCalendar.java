@@ -45,6 +45,10 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "drink_condition", length = 20)
     private String drinkCondition;
 
+    @Audited
+    @Column(name = "is_drinking_recorded")
+    private boolean isDrinkingRecorded;
+
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.PERSIST)
     private List<DrinkRecord> drinkRecords = new ArrayList<>();
 
@@ -52,22 +56,23 @@ public class UserCalendar extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    private UserCalendar(long userId, String content, String drinkCondition, LocalDateTime deletedAt) {
+    private UserCalendar(long userId, String content, String drinkCondition, boolean isDrinkingRecorded, LocalDateTime deletedAt) {
         if (StringUtils.length(content) > 1000) {
             throw new DomainException(UserCalendarError.CONTENT_LENGTH_EXCEEDED);
         }
         this.userId = userId;
         this.content = content;
         this.drinkCondition = drinkCondition;
+        this.isDrinkingRecorded = isDrinkingRecorded;
         this.deletedAt = deletedAt;
     }
 
     public static UserCalendar create(long userId, String content, String condition) {
-        return new UserCalendar(userId, content, condition, null);
+        return new UserCalendar(userId, content, condition, true, null);
     }
 
     public static UserCalendar createTaggedUserCalendar(long userId) {
-        return new UserCalendar(userId, null, null, null);
+        return new UserCalendar(userId, null, null, false, null);
     }
 
     public void setCalendar(Calendar calendar) {

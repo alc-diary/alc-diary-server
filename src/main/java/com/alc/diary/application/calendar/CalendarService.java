@@ -18,6 +18,7 @@ import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +46,7 @@ public class CalendarService {
      */
     @Transactional
     public CreateCalendarResponse createCalendarAndGenerateResponse(long userId, CreateCalendarRequest request) {
-        validRequest(request);
+        validRequest(userId, request);
         Calendar calendarToSave = createCalendar(userId, request);
         List<Photo> photosToSave = createPhotos(userId, request);
         calendarToSave.addPhotos(photosToSave);
@@ -58,32 +59,17 @@ public class CalendarService {
         return CreateCalendarResponse.from(calendar);
     }
 
-    private void validRequest(CreateCalendarRequest request) {
-        List<Long> userIds = request.userCalendars().stream()
-                .map(CreateCalendarRequest.UserCalendarCreationDto::userId)
-                .toList();
-        HashSet<Long> uniqueUserIds = new HashSet<>(userIds);
-
-        if (userIds.size() != uniqueUserIds.size()) {
-            throw new DomainException(CalendarError.DUPLICATE_USER_CALENDAR);
+    private void validRequest(long userId, CreateCalendarRequest request) {
+        if (userId != request.userCalendar().userId()) {
+            throw new DomainException(CalendarError.INVALID_REQUEST);
         }
 
-        if (uniqueUserIds.size() != userRepository.findActiveUserIdsByIdIn(uniqueUserIds).size()) {
-            throw new DomainException(CalendarError.DEACTIVATED_USER_INCLUDE);
-        }
-
-        if (!isHalfUnit(request.totalDrinkQuantity())) {
+        boolean allValid = request.userCalendar().drinks().stream()
+                .map(CreateCalendarRequest.DrinkCreationDto::quantity)
+                .allMatch(CalendarService::isHalfUnit);
+        if (!allValid) {
             throw new DomainException(CalendarError.INVALID_DRINK_QUANTITY_INCREMENT);
         }
-
-        request.userCalendars().stream()
-                .flatMap(it -> it.drinks().stream())
-                .map(CreateCalendarRequest.DrinkCreationDto::quantity)
-                .forEach(quantity -> {
-                    if (!isHalfUnit(quantity)) {
-                        throw new DomainException(CalendarError.INVALID_DRINK_QUANTITY_INCREMENT);
-                    }
-                });
     }
 
     private static boolean isHalfUnit(float value) {
@@ -95,10 +81,13 @@ public class CalendarService {
 
     @NotNull
     private static Calendar createCalendar(long userId, CreateCalendarRequest request) {
+        float totalDrinkQuantity = (float) request.userCalendar().drinks().stream()
+                .mapToDouble(CreateCalendarRequest.DrinkCreationDto::quantity)
+                .sum();
         return Calendar.create(
                 userId,
                 request.title(),
-                request.totalDrinkQuantity(),
+                totalDrinkQuantity,
                 request.drinkStartTime(),
                 request.drinkEndTime()
         );
@@ -106,17 +95,18 @@ public class CalendarService {
 
     @NotNull
     private static List<UserCalendar> createUserCalendars(CreateCalendarRequest request) {
-        return request.userCalendars().stream()
-                .map(userCalendarCreationDto -> {
-                    UserCalendar userCalendarToSave = UserCalendar.create(
-                            userCalendarCreationDto.userId(),
-                            userCalendarCreationDto.content(),
-                            userCalendarCreationDto.condition());
-                    List<DrinkRecord> drinkRecordsToSave = createDrinkRecords(userCalendarCreationDto);
-                    userCalendarToSave.addDrinkRecords(drinkRecordsToSave);
-                    return userCalendarToSave;
-                })
+        List<UserCalendar> userCalendars = new ArrayList<>();
+
+        UserCalendar userCalendar = UserCalendar.create(request.userCalendar().userId(), request.userCalendar().content(), request.userCalendar().condition());
+        List<DrinkRecord> drinkRecords = createDrinkRecords(request.userCalendar());
+        userCalendar.addDrinkRecords(drinkRecords);
+        userCalendars.add(userCalendar);
+
+        List<UserCalendar> taggedUserCalendars = request.taggedUserIds().stream()
+                .map(UserCalendar::createTaggedUserCalendar)
                 .toList();
+        userCalendars.addAll(taggedUserCalendars);
+        return userCalendars;
     }
 
     @NotNull
@@ -132,6 +122,9 @@ public class CalendarService {
 
     @NotNull
     private static List<Photo> createPhotos(long userId, CreateCalendarRequest request) {
+        if (CollectionUtils.size(request.photos()) > 20) {
+            throw new DomainException(CalendarError.IMAGE_LIMIT_EXCEEDED);
+        }
         return request.photos().stream()
                 .map(photoDto -> Photo.create(userId, photoDto.url()))
                 .toList();
