@@ -94,7 +94,7 @@ public class CalendarService {
     }
 
     @NotNull
-    private static List<UserCalendar> createUserCalendars(CreateCalendarRequest request) {
+    private List<UserCalendar> createUserCalendars(CreateCalendarRequest request) {
         List<UserCalendar> userCalendars = new ArrayList<>();
 
         UserCalendar userCalendar = UserCalendar.create(request.userCalendar().userId(), request.userCalendar().content(), request.userCalendar().condition());
@@ -102,7 +102,9 @@ public class CalendarService {
         userCalendar.addDrinkRecords(drinkRecords);
         userCalendars.add(userCalendar);
 
+        Set<Long> activeUserIds = userRepository.findActiveUserIdsByIdIn(request.taggedUserIds());
         List<UserCalendar> taggedUserCalendars = request.taggedUserIds().stream()
+                .filter(activeUserIds::contains)
                 .map(UserCalendar::createTaggedUserCalendar)
                 .toList();
         userCalendars.addAll(taggedUserCalendars);
