@@ -50,10 +50,7 @@ public class Photo {
         return this.userId == userId;
     }
 
-    public void delete(long userId) {
-        if (this.userId != userId) {
-            throw new DomainException(PhotoError.NO_PERMISSION_TO_DELETE_PHOTO);
-        }
+    public void delete() {
         deletedAt = LocalDateTime.now();
     }
 

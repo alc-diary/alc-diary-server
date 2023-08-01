@@ -53,7 +53,7 @@ public class CalendarApiController {
         return ApiResponse.getSuccess();
     }
 
-    @PatchMapping("/{calendarId}")
+    @PutMapping("/{calendarId}")
     public ApiResponse<Void> updateCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,

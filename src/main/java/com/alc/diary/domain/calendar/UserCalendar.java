@@ -147,10 +147,7 @@ public class UserCalendar extends BaseEntity {
                 .sum();
     }
 
-    public void delete(long userId) {
-        if (!isOwner(userId)) {
-            throw new DomainException(UserCalendarError.NO_PERMISSION_TO_DELETE);
-        }
+    public void delete() {
         drinkRecords.forEach(DrinkRecord::delete);
         this.deletedAt = LocalDateTime.now();
     }

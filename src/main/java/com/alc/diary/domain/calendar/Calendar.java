@@ -305,22 +305,36 @@ public class Calendar extends BaseEntity {
                 .sum();
     }
 
-    public void deleteUserCalendar(long userId, long userCalendarId) {
+    public void deleteUserCalendars(Collection<Long> userCalendarIds) {
+        userCalendarIds.forEach(this::deleteUserCalendar);
+    }
+
+    public void deleteUserCalendar(long userCalendarId) {
         UserCalendar foundUserCalendar = userCalendars.stream()
                 .filter(userCalendar -> userCalendar.getId() == userCalendarId)
                 .findFirst()
                 .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
-        foundUserCalendar.delete(userId);
+        long userId = foundUserCalendar.getUserId();
+        foundUserCalendar.delete();
 
-        userCalendars.stream()
-                .filter(userCalendar -> !userCalendar.isOwner(userId))
-                .findFirst()
-                .ifPresentOrElse(
-                        userCalendar -> ownerId = userCalendar.getUserId(),
-                        () -> deletedAt = LocalDateTime.now()
-                );
+        if (isOwner(userId)) {
+            userCalendars.stream()
+                    .filter(userCalendar -> !userCalendar.isOwner(userId))
+                    .findFirst()
+                    .ifPresentOrElse(
+                            userCalendar -> ownerId = userCalendar.getUserId(),
+                            () -> deletedAt = LocalDateTime.now()
+                    );
+        }
+
         photos.stream()
                 .filter(photo -> photo.isOwner(userId))
-                .forEach(photo -> photo.delete(userId));
+                .forEach(photo -> photo.delete());
+    }
+
+    public List<UserCalendar> getTaggedUserCalendars() {
+        return userCalendars.stream()
+                .filter(userCalendar -> !isOwner(userCalendar.getUserId()))
+                .toList();
     }
 }
