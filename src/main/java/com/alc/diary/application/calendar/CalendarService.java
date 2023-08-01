@@ -4,6 +4,7 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequ
 import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequest.DrinkCreationDto;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
+import com.alc.diary.application.calendar.dto.request.UpdateUserCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
@@ -272,7 +273,19 @@ public class CalendarService {
      * @param request
      */
     @Transactional
-    public void updateCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
+    public void updateUserCalendar(long userId, long calendarId, long userCalendarId, UpdateUserCalendarRequest request) {
+        UserCalendar userCalendar = userCalendarRepository.findById(userCalendarId)
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        if (!userCalendar.isOwner(userId)) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION_TO_UPDATE);
+        }
+
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+
+        if (request.contentShouldBeUpdated()) {
+            calendar.updateContent();
+        }
 //        Calendar calendar =
 //                calendarRepository.findById(calendarId)
 //                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));

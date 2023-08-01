@@ -239,7 +239,7 @@ public class Calendar extends BaseEntity {
         }
     }
 
-    public void updateContent(long userId, String newContent) {
+    public void updateContent(String newContent) {
         UserCalendar userCalendar = getUserCalendarByUserId(userId);
         userCalendar.updateContent(userId, newContent);
     }
@@ -329,7 +329,7 @@ public class Calendar extends BaseEntity {
 
         photos.stream()
                 .filter(photo -> photo.isOwner(userId))
-                .forEach(photo -> photo.delete());
+                .forEach(Photo::delete);
     }
 
     public List<UserCalendar> getTaggedUserCalendars() {
