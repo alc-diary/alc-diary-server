@@ -284,7 +284,10 @@ public class CalendarService {
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
 
         if (request.contentShouldBeUpdated()) {
-            calendar.updateContent();
+            calendar.updateContent(userCalendarId, request.content());
+        }
+        if (request.conditionShouldBeUpdated()) {
+            calendar.updateCondition(userCalendarId, request.condition());
         }
 //        Calendar calendar =
 //                calendarRepository.findById(calendarId)

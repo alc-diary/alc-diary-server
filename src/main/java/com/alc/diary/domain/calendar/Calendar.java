@@ -239,14 +239,27 @@ public class Calendar extends BaseEntity {
         }
     }
 
-    public void updateContent(String newContent) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId);
-        userCalendar.updateContent(userId, newContent);
+    public void updateContent(final long userCalendarId, final String newContent) {
+        UserCalendar userCalendar = getUserCalendarById(userCalendarId);
+        userCalendar.updateContent(newContent);
     }
 
-    public void updateCondition(long userId, String newCondition) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId);
-        userCalendar.updateCondition(userId, newCondition);
+    public void updateCondition(final long userCalendarId, final String newCondition) {
+        UserCalendar userCalendar = getUserCalendarById(userCalendarId);
+        userCalendar.updateCondition(newCondition);
+    }
+
+    private Optional<UserCalendar> findUserCalendarById(final long userCalendarId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> userCalendar.getId().equals(userCalendarId))
+                .findFirst();
+    }
+
+    private UserCalendar getUserCalendarById(final long userCalendarId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> userCalendar.getId().equals(userCalendarId))
+                .findFirst()
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
     }
 
     public void updateDrinkRecords(long userId, List<DrinkRecordUpdateVo> updateVo) {
