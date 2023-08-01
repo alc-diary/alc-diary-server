@@ -7,9 +7,9 @@ import java.util.List;
 
 public record UpdateCalendarRequest(
 
-        @NotNull @Size(max = 100) String title,
-        @NotNull ZonedDateTime drinkStartTime,
-        @NotNull ZonedDateTime drinkEndTime,
-        @NotNull List<Long> taggedUsers
+        @NotNull @Size(max = 100) String newTitle,
+        @NotNull ZonedDateTime newDrinkStartTime,
+        @NotNull ZonedDateTime newDrinkEndTime,
+        @NotNull List<Long> newTaggedUserIds
 ) {
 }
