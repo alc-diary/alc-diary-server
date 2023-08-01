@@ -217,6 +217,22 @@ public class CalendarService {
     }
 
     /**
+     * 캘린더 수정
+     *
+     * @param userId
+     * @param calendarId
+     * @param request
+     */
+    @Transactional
+    public void updateCalendar(long userId, long calendarId, UpdateCalendarRequest request) {
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+        if (!calendar.isOwner(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+    }
+
+    /**
      * 캘린더 데이터 수정
      *
      * @param userId
@@ -226,50 +242,50 @@ public class CalendarService {
      */
     @Transactional
     public void updateCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
-        Calendar calendar =
-                calendarRepository.findById(calendarId)
-                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-
-        calendar.updateTitle(userId, request.title());
-        if (request.contentShouldBeUpdated()) {
-            calendar.updateContent(userId, request.content());
-        }
-
-        if (request.conditionShouldBeUpdated()) {
-            calendar.updateCondition(userId, request.condition());
-        }
-
-        calendar.updateDrinkStartTimeAndEndTime(userId, request.drinkStartTime(), request.drinkEndTime());
-
-        calendar.updateDrinkRecords(userId, request.drinks().updated().stream().map(drinkRecordUpdateData ->
-                        new DrinkRecordUpdateVo(
-                                drinkRecordUpdateData.id(),
-                                drinkRecordUpdateData.drinkType(),
-                                drinkRecordUpdateData.drinkUnit(),
-                                drinkRecordUpdateData.quantity()
-                        ))
-                .toList());
-        calendar.deleteDrinkRecords(userId, request.drinks().deleted());
-
-        List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
-                .map(creationData -> DrinkRecord.create(
-                        creationData.drinkType(),
-                        creationData.drinkUnit(),
-                        creationData.quantity()
-                ))
-                .toList();
-        calendar.addDrinkRecords(userId, drinkRecordsToSave);
-
-        List<Photo> photosToSave = request.photos().added().stream()
-                .map(imageCreationData -> Photo.create(userId, imageCreationData.url()))
-                .toList();
-        calendar.addPhotos(photosToSave);
-
-        List<Long> photoIdsToDelete = calendar.getPhotos().stream()
-                .map(Photo::getId)
-                .filter(photoId -> request.photos().deleted().contains(photoId))
-                .toList();
-        photoRepository.deleteByIdIn(photoIdsToDelete);
+//        Calendar calendar =
+//                calendarRepository.findById(calendarId)
+//                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+//
+//        calendar.updateTitle(userId, request.title());
+//        if (request.contentShouldBeUpdated()) {
+//            calendar.updateContent(userId, request.content());
+//        }
+//
+//        if (request.conditionShouldBeUpdated()) {
+//            calendar.updateCondition(userId, request.condition());
+//        }
+//
+//        calendar.updateDrinkStartTimeAndEndTime(userId, request.drinkStartTime(), request.drinkEndTime());
+//
+//        calendar.updateDrinkRecords(userId, request.drinks().updated().stream().map(drinkRecordUpdateData ->
+//                        new DrinkRecordUpdateVo(
+//                                drinkRecordUpdateData.id(),
+//                                drinkRecordUpdateData.drinkType(),
+//                                drinkRecordUpdateData.drinkUnit(),
+//                                drinkRecordUpdateData.quantity()
+//                        ))
+//                .toList());
+//        calendar.deleteDrinkRecords(userId, request.drinks().deleted());
+//
+//        List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
+//                .map(creationData -> DrinkRecord.create(
+//                        creationData.drinkType(),
+//                        creationData.drinkUnit(),
+//                        creationData.quantity()
+//                ))
+//                .toList();
+//        calendar.addDrinkRecords(userId, drinkRecordsToSave);
+//
+//        List<Photo> photosToSave = request.photos().added().stream()
+//                .map(imageCreationData -> Photo.create(userId, imageCreationData.url()))
+//                .toList();
+//        calendar.addPhotos(photosToSave);
+//
+//        List<Long> photoIdsToDelete = calendar.getPhotos().stream()
+//                .map(Photo::getId)
+//                .filter(photoId -> request.photos().deleted().contains(photoId))
+//                .toList();
+//        photoRepository.deleteByIdIn(photoIdsToDelete);
     }
 
     /**
