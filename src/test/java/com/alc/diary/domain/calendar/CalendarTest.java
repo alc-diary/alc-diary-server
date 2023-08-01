@@ -208,27 +208,31 @@ class CalendarTest {
                 .isEqualTo(CalendarError.TITLE_LENGTH_EXCEEDED);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {2, 3, 4, 5})
-    void 캘린더의_owner가아닌유저가_title을업데이트하면_예외가발생한다(int input) {
-        // given
-        String newTitle = "New Title";
-
-        Calendar calendar = Calendar.create(
-                1L,
-                "test title",
-                1.5f,
-                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
-                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
-                ZonedDateTime.now(now)
-        );
-
-        // when
-        // then
-        assertThatThrownBy(() -> calendar.updateTitle(newTitle))
-                .isInstanceOf(DomainException.class)
-                .hasMessage("You do not have permission to update title.")
-                .extracting(ex -> ((DomainException) ex).getErrorModel())
-                .isEqualTo(CalendarError.NO_PERMISSION_TO_UPDATE_TITLE);
-    }
+    /**
+     * 권한 검증 로직이 도메인 바깥으로 빠져서 나중에 다시 테스트 예정
+     *
+     */
+    // @ParameterizedTest
+    // @ValueSource(ints = {2, 3, 4, 5})
+    // void 캘린더의_owner가아닌유저가_title을업데이트하면_예외가발생한다(int input) {
+    //     // given
+    //     String newTitle = "New Title";
+    //
+    //     Calendar calendar = Calendar.create(
+    //             1L,
+    //             "test title",
+    //             1.5f,
+    //             ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
+    //             ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
+    //             ZonedDateTime.now(now)
+    //     );
+    //
+    //     // when
+    //     // then
+    //     assertThatThrownBy(() -> calendar.updateTitle(newTitle))
+    //             .isInstanceOf(DomainException.class)
+    //             .hasMessage("You do not have permission to update title.")
+    //             .extracting(ex -> ((DomainException) ex).getErrorModel())
+    //             .isEqualTo(CalendarError.NO_PERMISSION_TO_UPDATE_TITLE);
+    // }
 }
