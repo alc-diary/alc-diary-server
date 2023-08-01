@@ -4,6 +4,7 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequ
 import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequest.DrinkCreationDto;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
+import com.alc.diary.application.calendar.dto.request.UpdateUserCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
@@ -11,8 +12,10 @@ import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsRespon
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.error.UserCalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calendar.repository.PhotoRepository;
+import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
 import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
@@ -36,6 +39,7 @@ public class CalendarService {
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
     private final PhotoRepository photoRepository;
+    private final UserCalendarRepository userCalendarRepository;
 
     /**
      * 캘린더 생성
@@ -183,9 +187,15 @@ public class CalendarService {
      */
     @Transactional
     public void deleteUserCalendar(long userId, long calendarId, long userCalendarId) {
+        UserCalendar userCalendar = userCalendarRepository.findById(userCalendarId)
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        if (!userCalendar.isOwner(userId)) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION_TO_DELETE);
+        }
+
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-        calendar.deleteUserCalendar(userId, userCalendarId);
+        calendar.deleteUserCalendar(userCalendarId);
     }
 
     /**
@@ -217,6 +227,44 @@ public class CalendarService {
     }
 
     /**
+     * 캘린더 수정
+     *
+     * @param userId
+     * @param calendarId
+     * @param request
+     */
+    @Transactional
+    public void updateCalendar(long userId, long calendarId, UpdateCalendarRequest request) {
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+        if (!calendar.isOwner(userId)) {
+            throw new DomainException(CalendarError.NO_PERMISSION);
+        }
+        ZonedDateTime now = ZonedDateTime.now();
+        calendar.update(request.newTitle(), request.newDrinkStartTime(), request.newDrinkEndTime(), now);
+
+        // Update UserCalendars
+        List<UserCalendar> taggedUserCalendars = calendar.getTaggedUserCalendars();
+        Set<Long> taggedUserCalendarIds = taggedUserCalendars.stream()
+                .map(UserCalendar::getUserId)
+                .collect(Collectors.toSet());
+        // 1. Add new UserCalendars
+        List<Long> addedTaggedUserIds = request.newTaggedUserIds().stream()
+                .filter(taggedUserId -> !taggedUserCalendarIds.contains(taggedUserId))
+                .toList();
+        List<UserCalendar> userCalendarsToSave = addedTaggedUserIds.stream()
+                .map(UserCalendar::createTaggedUserCalendar)
+                .toList();
+        calendar.addUserCalendars(userCalendarsToSave);
+        // 2. Delete UserCalendars
+        List<Long> userCalendarIdsToDelete = taggedUserCalendars.stream()
+                .filter(userCalendar -> !request.newTaggedUserIds().contains(userCalendar.getUserId()))
+                .map(UserCalendar::getId)
+                .toList();
+        calendar.deleteUserCalendars(userCalendarIdsToDelete);
+    }
+
+    /**
      * 캘린더 데이터 수정
      *
      * @param userId
@@ -225,51 +273,66 @@ public class CalendarService {
      * @param request
      */
     @Transactional
-    public void updateCalendar(long userId, long calendarId, long userCalendarId, UpdateCalendarRequest request) {
-        Calendar calendar =
-                calendarRepository.findById(calendarId)
-                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+    public void updateUserCalendar(long userId, long calendarId, long userCalendarId, UpdateUserCalendarRequest request) {
+        UserCalendar userCalendar = userCalendarRepository.findById(userCalendarId)
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
+        if (!userCalendar.isOwner(userId)) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION_TO_UPDATE);
+        }
 
-        calendar.updateTitle(userId, request.title());
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+
         if (request.contentShouldBeUpdated()) {
-            calendar.updateContent(userId, request.content());
+            calendar.updateContent(userCalendarId, request.content());
         }
-
         if (request.conditionShouldBeUpdated()) {
-            calendar.updateCondition(userId, request.condition());
+            calendar.updateCondition(userCalendarId, request.condition());
         }
-
-        calendar.updateDrinkStartTimeAndEndTime(userId, request.drinkStartTime(), request.drinkEndTime());
-
-        calendar.updateDrinkRecords(userId, request.drinks().updated().stream().map(drinkRecordUpdateData ->
-                        new DrinkRecordUpdateVo(
-                                drinkRecordUpdateData.id(),
-                                drinkRecordUpdateData.drinkType(),
-                                drinkRecordUpdateData.drinkUnit(),
-                                drinkRecordUpdateData.quantity()
-                        ))
-                .toList());
-        calendar.deleteDrinkRecords(userId, request.drinks().deleted());
-
-        List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
-                .map(creationData -> DrinkRecord.create(
-                        creationData.drinkType(),
-                        creationData.drinkUnit(),
-                        creationData.quantity()
-                ))
-                .toList();
-        calendar.addDrinkRecords(userId, drinkRecordsToSave);
-
-        List<Photo> photosToSave = request.photos().added().stream()
-                .map(imageCreationData -> Photo.create(userId, imageCreationData.url()))
-                .toList();
-        calendar.addPhotos(photosToSave);
-
-        List<Long> photoIdsToDelete = calendar.getPhotos().stream()
-                .map(Photo::getId)
-                .filter(photoId -> request.photos().deleted().contains(photoId))
-                .toList();
-        photoRepository.deleteByIdIn(photoIdsToDelete);
+//        Calendar calendar =
+//                calendarRepository.findById(calendarId)
+//                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+//
+//        calendar.updateTitle(userId, request.title());
+//        if (request.contentShouldBeUpdated()) {
+//            calendar.updateContent(userId, request.content());
+//        }
+//
+//        if (request.conditionShouldBeUpdated()) {
+//            calendar.updateCondition(userId, request.condition());
+//        }
+//
+//        calendar.updateDrinkStartTimeAndEndTime(userId, request.drinkStartTime(), request.drinkEndTime());
+//
+//        calendar.updateDrinkRecords(userId, request.drinks().updated().stream().map(drinkRecordUpdateData ->
+//                        new DrinkRecordUpdateVo(
+//                                drinkRecordUpdateData.id(),
+//                                drinkRecordUpdateData.drinkType(),
+//                                drinkRecordUpdateData.drinkUnit(),
+//                                drinkRecordUpdateData.quantity()
+//                        ))
+//                .toList());
+//        calendar.deleteDrinkRecords(userId, request.drinks().deleted());
+//
+//        List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
+//                .map(creationData -> DrinkRecord.create(
+//                        creationData.drinkType(),
+//                        creationData.drinkUnit(),
+//                        creationData.quantity()
+//                ))
+//                .toList();
+//        calendar.addDrinkRecords(userId, drinkRecordsToSave);
+//
+//        List<Photo> photosToSave = request.photos().added().stream()
+//                .map(imageCreationData -> Photo.create(userId, imageCreationData.url()))
+//                .toList();
+//        calendar.addPhotos(photosToSave);
+//
+//        List<Long> photoIdsToDelete = calendar.getPhotos().stream()
+//                .map(Photo::getId)
+//                .filter(photoId -> request.photos().deleted().contains(photoId))
+//                .toList();
+//        photoRepository.deleteByIdIn(photoIdsToDelete);
     }
 
     /**

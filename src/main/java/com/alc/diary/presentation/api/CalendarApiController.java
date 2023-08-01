@@ -1,10 +1,7 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.calendar.CalendarService;
-import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequest;
-import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
-import com.alc.diary.application.calendar.dto.request.CreateCommentRequest;
-import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
+import com.alc.diary.application.calendar.dto.request.*;
 import com.alc.diary.application.calendar.dto.response.*;
 import com.alc.diary.presentation.dto.ApiResponse;
 import io.swagger.annotations.ApiParam;
@@ -47,9 +44,19 @@ public class CalendarApiController {
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,
             @PathVariable long userCalendarId,
+            @RequestBody UpdateUserCalendarRequest request
+    ) {
+        calendarService.updateUserCalendar(userId, calendarId, userCalendarId, request);
+        return ApiResponse.getSuccess();
+    }
+
+    @PutMapping("/{calendarId}")
+    public ApiResponse<Void> updateCalendar(
+            @ApiIgnore @RequestAttribute long userId,
+            @PathVariable long calendarId,
             @RequestBody UpdateCalendarRequest request
     ) {
-        calendarService.updateCalendar(userId, calendarId, userCalendarId, request);
+        calendarService.updateCalendar(userId, calendarId, request);
         return ApiResponse.getSuccess();
     }
 

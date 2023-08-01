@@ -77,12 +77,7 @@ public class Calendar extends BaseEntity {
             LocalDateTime deletedAt,
             ZonedDateTime now
     ) {
-        if (title == null) {
-            throw new DomainException(CalendarError.NULL_TITLE);
-        }
-        if (StringUtils.length(title) > 100) {
-            throw new DomainException(CalendarError.TITLE_LENGTH_EXCEEDED);
-        }
+        validateTitle(title);
         if (drinkStartTime == null) {
             throw new DomainException(CalendarError.NULL_DRINK_START_TIME);
         }
@@ -191,48 +186,80 @@ public class Calendar extends BaseEntity {
                 .toList();
     }
 
-    public void updateTitle(long userId, String newTitle) {
-        if (newTitle == null) {
-            throw new DomainException(CalendarError.NULL_TITLE);
-        }
-        if (StringUtils.length(newTitle) > 100) {
-            throw new DomainException(CalendarError.TITLE_LENGTH_EXCEEDED);
-        }
-        if (ownerId != userId) {
-            throw new DomainException(CalendarError.NO_PERMISSION_TO_UPDATE_TITLE);
-        }
+    public void updateTitle(String newTitle) {
+        validateTitle(newTitle);
         title = newTitle;
     }
 
-    public void updateContent(long userId, String newContent) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId);
-        userCalendar.updateContent(userId, newContent);
-    }
-
-    public void updateCondition(long userId, String newCondition) {
-        UserCalendar userCalendar = getUserCalendarByUserId(userId);
-        userCalendar.updateCondition(userId, newCondition);
-    }
-
-    public void updateDrinkStartTimeAndEndTime(
-            long userId,
+    /**
+     * 캘린더 데이터 업데이트
+     *
+     * @param newTitle
+     * @param newDrinkStartTime
+     * @param newDrinkEndTime
+     */
+    public void update(
+            String newTitle,
             ZonedDateTime newDrinkStartTime,
-            ZonedDateTime newDrinkEndTime
+            ZonedDateTime newDrinkEndTime,
+            ZonedDateTime now
     ) {
-        if (ownerId != userId) {
-            throw new DomainException(CalendarError.NO_PERMISSION);
-        }
-        if (newDrinkStartTime == null) {
-            throw new DomainException(CalendarError.NULL_DRINK_START_TIME);
-        }
-        if (newDrinkEndTime == null) {
-            throw new DomainException(CalendarError.NULL_DRINK_END_TIME);
-        }
-        if (newDrinkStartTime.isAfter(newDrinkEndTime)) {
-            throw new DomainException(CalendarError.START_TIME_AFTER_END_TIME);
-        }
+        validateTitle(newTitle);
+        validateDrinkStartTimeAndDrinkEndTime(newDrinkStartTime, newDrinkEndTime, now);
+
         drinkStartTime = newDrinkStartTime;
         drinkEndTime = newDrinkEndTime;
+    }
+
+    private void validateTitle(String title) {
+        if (title == null) {
+            throw new DomainException(CalendarError.NULL_TITLE);
+        }
+        if (StringUtils.length(title) > 100) {
+            throw new DomainException(CalendarError.TITLE_LENGTH_EXCEEDED);
+        }
+    }
+
+    private void validateDrinkStartTimeAndDrinkEndTime(
+            ZonedDateTime drinkStartTime,
+            ZonedDateTime drinkEndTime,
+            ZonedDateTime now
+    ) {
+        if (drinkStartTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_START_TIME);
+        }
+        if (drinkEndTime == null) {
+            throw new DomainException(CalendarError.NULL_DRINK_END_TIME);
+        }
+        if (drinkStartTime.isAfter(drinkEndTime)) {
+            throw new DomainException(CalendarError.START_TIME_AFTER_END_TIME);
+        }
+        if (drinkEndTime.isAfter(now)) {
+            throw new DomainException(CalendarError.END_TIME_IN_FUTURE);
+        }
+    }
+
+    public void updateContent(final long userCalendarId, final String newContent) {
+        UserCalendar userCalendar = getUserCalendarById(userCalendarId);
+        userCalendar.updateContent(newContent);
+    }
+
+    public void updateCondition(final long userCalendarId, final String newCondition) {
+        UserCalendar userCalendar = getUserCalendarById(userCalendarId);
+        userCalendar.updateCondition(newCondition);
+    }
+
+    private Optional<UserCalendar> findUserCalendarById(final long userCalendarId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> userCalendar.getId().equals(userCalendarId))
+                .findFirst();
+    }
+
+    private UserCalendar getUserCalendarById(final long userCalendarId) {
+        return userCalendars.stream()
+                .filter(userCalendar -> userCalendar.getId().equals(userCalendarId))
+                .findFirst()
+                .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
     }
 
     public void updateDrinkRecords(long userId, List<DrinkRecordUpdateVo> updateVo) {
@@ -291,22 +318,36 @@ public class Calendar extends BaseEntity {
                 .sum();
     }
 
-    public void deleteUserCalendar(long userId, long userCalendarId) {
+    public void deleteUserCalendars(Collection<Long> userCalendarIds) {
+        userCalendarIds.forEach(this::deleteUserCalendar);
+    }
+
+    public void deleteUserCalendar(long userCalendarId) {
         UserCalendar foundUserCalendar = userCalendars.stream()
                 .filter(userCalendar -> userCalendar.getId() == userCalendarId)
                 .findFirst()
                 .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
-        foundUserCalendar.delete(userId);
+        long userId = foundUserCalendar.getUserId();
+        foundUserCalendar.delete();
 
-        userCalendars.stream()
-                .filter(userCalendar -> !userCalendar.isOwner(userId))
-                .findFirst()
-                .ifPresentOrElse(
-                        userCalendar -> ownerId = userCalendar.getUserId(),
-                        () -> deletedAt = LocalDateTime.now()
-                );
+        if (isOwner(userId)) {
+            userCalendars.stream()
+                    .filter(userCalendar -> !userCalendar.isOwner(userId))
+                    .findFirst()
+                    .ifPresentOrElse(
+                            userCalendar -> ownerId = userCalendar.getUserId(),
+                            () -> deletedAt = LocalDateTime.now()
+                    );
+        }
+
         photos.stream()
                 .filter(photo -> photo.isOwner(userId))
-                .forEach(photo -> photo.delete(userId));
+                .forEach(Photo::delete);
+    }
+
+    public List<UserCalendar> getTaggedUserCalendars() {
+        return userCalendars.stream()
+                .filter(userCalendar -> !isOwner(userCalendar.getUserId()))
+                .toList();
     }
 }

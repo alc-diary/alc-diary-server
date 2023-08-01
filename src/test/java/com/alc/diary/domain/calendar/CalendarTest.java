@@ -155,7 +155,7 @@ class CalendarTest {
         );
 
         // when
-        calendar.updateTitle(1, newTitle);
+        calendar.updateTitle(newTitle);
 
         // then
         assertThat(calendar.getTitle()).isEqualTo(newTitle);
@@ -177,7 +177,7 @@ class CalendarTest {
 
         // when
         // then
-        assertThatThrownBy(() -> calendar.updateTitle(1, newTitle))
+        assertThatThrownBy(() -> calendar.updateTitle(newTitle))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Title cannot be null.")
                 .extracting(ex -> ((DomainException) ex).getErrorModel())
@@ -201,7 +201,7 @@ class CalendarTest {
 
         // when
         // then
-        assertThatThrownBy(() -> calendar.updateTitle(1, newTitle))
+        assertThatThrownBy(() -> calendar.updateTitle(newTitle))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Calendar title length cannot exceed 100 characters.")
                 .extracting(ex -> ((DomainException) ex).getErrorModel())
@@ -225,7 +225,7 @@ class CalendarTest {
 
         // when
         // then
-        assertThatThrownBy(() -> calendar.updateTitle(input, newTitle))
+        assertThatThrownBy(() -> calendar.updateTitle(newTitle))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("You do not have permission to update title.")
                 .extracting(ex -> ((DomainException) ex).getErrorModel())

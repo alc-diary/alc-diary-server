@@ -93,20 +93,14 @@ public class UserCalendar extends BaseEntity {
         return this.userId == userId;
     }
 
-    public void updateContent(long userId, String newContent) {
-        if (this.userId != userId) {
-            throw new DomainException(UserCalendarError.NO_PERMISSION);
-        }
+    public void updateContent(final String newContent) {
         if (StringUtils.length(newContent) > 1000) {
             throw new DomainException(UserCalendarError.CONTENT_LENGTH_EXCEEDED);
         }
         content = newContent;
     }
 
-    public void updateCondition(long userId, String newCondition) {
-        if (this.userId != userId) {
-            throw new DomainException(UserCalendarError.NO_PERMISSION);
-        }
+    public void updateCondition(final String newCondition) {
         content = newCondition;
     }
 
@@ -147,10 +141,7 @@ public class UserCalendar extends BaseEntity {
                 .sum();
     }
 
-    public void delete(long userId) {
-        if (!isOwner(userId)) {
-            throw new DomainException(UserCalendarError.NO_PERMISSION_TO_DELETE);
-        }
+    public void delete() {
         drinkRecords.forEach(DrinkRecord::delete);
         this.deletedAt = LocalDateTime.now();
     }
