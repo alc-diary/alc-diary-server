@@ -3,18 +3,14 @@ package com.alc.diary.application.calendar.dto.request;
 import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.enums.DrinkUnit;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 public record UpdateUserCalendarRequest(
 
-        String title,
         String content,
         boolean contentShouldBeUpdated,
         String condition,
         boolean conditionShouldBeUpdated,
-        ZonedDateTime drinkStartTime,
-        ZonedDateTime drinkEndTime,
         UpdateDrinkRecordData drinks,
         UpdatePhotoData photos
 ) {
