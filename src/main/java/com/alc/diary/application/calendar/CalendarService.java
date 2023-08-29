@@ -5,10 +5,7 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarFromMainRequ
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateUserCalendarRequest;
-import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
-import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
-import com.alc.diary.application.calendar.dto.response.GetDailyCalendarsResponse;
-import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponse;
+import com.alc.diary.application.calendar.dto.response.*;
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
@@ -17,8 +14,10 @@ import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calendar.repository.PhotoRepository;
 import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
 import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
+import com.alc.diary.domain.calender.repository.CustomCalenderRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,6 +39,7 @@ public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final PhotoRepository photoRepository;
     private final UserCalendarRepository userCalendarRepository;
+    private final CustomCalenderRepository customCalenderRepository;
 
     /**
      * 캘린더 생성
@@ -352,5 +352,16 @@ public class CalendarService {
 
         Calendar calendar = calendarRepository.save(calendarToSave);
         return calendar.getId();
+    }
+
+    public GetMainResponse getMain(long userId) {
+        User user = userRepository.findActiveUserById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        long overAlcoholLimit = customCalenderRepository.countAlcoholLimitV2(userId);
+        return GetMainResponse.create(
+                user.getDetail().getNickname(),
+                user.getDetail().getDescriptionStyle(),
+                overAlcoholLimit,
+                user.getDetail().getNonAlcoholGoal()
+        );
     }
 }
