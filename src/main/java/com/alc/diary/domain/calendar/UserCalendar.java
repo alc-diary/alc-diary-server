@@ -101,7 +101,7 @@ public class UserCalendar extends BaseEntity {
     }
 
     public void updateCondition(final String newCondition) {
-        content = newCondition;
+        drinkCondition = newCondition;
     }
 
     public void updateDrinkRecord(long userId, Collection<DrinkRecordUpdateVo> updateVos) {
