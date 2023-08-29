@@ -90,10 +90,17 @@ public class CalendarApiController {
 
     @PostMapping("/main")
     public ApiResponse<Long> createCalendarFromMain(
-            @ApiIgnore long userId,
+            @ApiIgnore @RequestAttribute long userId,
             @Validated @RequestBody CreateCalendarFromMainRequest request
     ) {
         return ApiResponse.getSuccess(calendarService.createCalendarFromMain(userId, request));
+    }
+
+    @GetMapping("/main")
+    public ApiResponse<GetMainResponse> getMain(
+            @ApiIgnore @RequestAttribute long userId
+    ) {
+        return ApiResponse.getSuccess(calendarService.getMain(userId));
     }
 
     // @PostMapping("/{calendarId}/comments")

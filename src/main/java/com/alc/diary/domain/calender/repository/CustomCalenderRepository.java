@@ -10,4 +10,6 @@ public interface CustomCalenderRepository {
     List<Calender> search(long userId, QueryType queryType, LocalDate date);
 
     long countAlcoholLimit(long userId);
+
+    long countAlcoholLimitV2(long userId);
 }
