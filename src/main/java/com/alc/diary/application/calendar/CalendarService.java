@@ -289,50 +289,37 @@ public class CalendarService {
         if (request.conditionShouldBeUpdated()) {
             calendar.updateCondition(userCalendarId, request.condition());
         }
-//        Calendar calendar =
-//                calendarRepository.findById(calendarId)
-//                        .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-//
-//        calendar.updateTitle(userId, request.title());
-//        if (request.contentShouldBeUpdated()) {
-//            calendar.updateContent(userId, request.content());
-//        }
-//
-//        if (request.conditionShouldBeUpdated()) {
-//            calendar.updateCondition(userId, request.condition());
-//        }
-//
-//        calendar.updateDrinkStartTimeAndEndTime(userId, request.drinkStartTime(), request.drinkEndTime());
-//
-//        calendar.updateDrinkRecords(userId, request.drinks().updated().stream().map(drinkRecordUpdateData ->
-//                        new DrinkRecordUpdateVo(
-//                                drinkRecordUpdateData.id(),
-//                                drinkRecordUpdateData.drinkType(),
-//                                drinkRecordUpdateData.drinkUnit(),
-//                                drinkRecordUpdateData.quantity()
-//                        ))
-//                .toList());
-//        calendar.deleteDrinkRecords(userId, request.drinks().deleted());
-//
-//        List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
-//                .map(creationData -> DrinkRecord.create(
-//                        creationData.drinkType(),
-//                        creationData.drinkUnit(),
-//                        creationData.quantity()
-//                ))
-//                .toList();
-//        calendar.addDrinkRecords(userId, drinkRecordsToSave);
-//
-//        List<Photo> photosToSave = request.photos().added().stream()
-//                .map(imageCreationData -> Photo.create(userId, imageCreationData.url()))
-//                .toList();
-//        calendar.addPhotos(photosToSave);
-//
-//        List<Long> photoIdsToDelete = calendar.getPhotos().stream()
-//                .map(Photo::getId)
-//                .filter(photoId -> request.photos().deleted().contains(photoId))
-//                .toList();
-//        photoRepository.deleteByIdIn(photoIdsToDelete);
+
+        List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
+                .map(it -> DrinkRecord.create(it.drinkType(), it.drinkUnit(), it.quantity()))
+                .toList();
+        userCalendar.addDrinkRecords(drinkRecordsToSave);
+
+        for (UpdateUserCalendarRequest.DrinkRecordUpdateData drinkRecordUpdateData : request.drinks().updated()) {
+            userCalendar.getDrinkRecords().stream()
+                    .filter(it -> it.getId().equals(drinkRecordUpdateData.id()))
+                    .findFirst()
+                    .ifPresent(it -> it.updateRecord(new DrinkRecordUpdateVo(
+                            drinkRecordUpdateData.id(),
+                            drinkRecordUpdateData.drinkType(),
+                            drinkRecordUpdateData.drinkUnit(),
+                            drinkRecordUpdateData.quantity()
+                            )));
+        }
+
+        userCalendar.deleteDrinkRecords(userId, request.drinks().deleted());
+
+        List<Photo> photosToSave = request.photos().added().stream()
+                .map(it -> Photo.create(userId, it.url()))
+                .toList();
+        calendar.addPhotos(photosToSave);
+
+        for (Long photoId : request.photos().deleted()) {
+            calendar.getPhotos().stream()
+                    .filter(it -> it.getId().equals(photoId))
+                    .findFirst()
+                    .ifPresent(Photo::delete);
+        }
     }
 
     /**
