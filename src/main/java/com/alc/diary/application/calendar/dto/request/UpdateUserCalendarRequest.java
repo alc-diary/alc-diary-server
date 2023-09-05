@@ -11,8 +11,7 @@ public record UpdateUserCalendarRequest(
         boolean contentShouldBeUpdated,
         String condition,
         boolean conditionShouldBeUpdated,
-        UpdateDrinkRecordData drinks,
-        UpdatePhotoData photos
+        UpdateDrinkRecordData drinks
 ) {
 
     public record UpdateDrinkRecordData(
@@ -37,19 +36,6 @@ public record UpdateUserCalendarRequest(
             DrinkType drinkType,
             DrinkUnit drinkUnit,
             float quantity
-    ) {
-    }
-
-    public record UpdatePhotoData(
-
-            List<ImageCreationData> added,
-            List<Long> deleted
-    ) {
-    }
-
-    public record ImageCreationData(
-
-            String url
     ) {
     }
 }

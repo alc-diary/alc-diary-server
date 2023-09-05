@@ -207,6 +207,7 @@ public class Calendar extends BaseEntity {
         validateTitle(newTitle);
         validateDrinkStartTimeAndDrinkEndTime(newDrinkStartTime, newDrinkEndTime, now);
 
+        title = newTitle;
         drinkStartTime = newDrinkStartTime;
         drinkEndTime = newDrinkEndTime;
     }
