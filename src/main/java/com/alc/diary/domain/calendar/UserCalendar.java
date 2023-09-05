@@ -145,4 +145,8 @@ public class UserCalendar extends BaseEntity {
         drinkRecords.forEach(DrinkRecord::delete);
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void markAsRecorded() {
+        drinkingRecorded = true;
+    }
 }

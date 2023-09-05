@@ -311,6 +311,8 @@ public class CalendarService {
 
         userCalendar.deleteDrinkRecords(userId, request.drinks().deleted());
 
+        userCalendar.markAsRecorded();
+
         // 사진 삭제
         for (Long photoId : request.photos().deleted()) {
             calendar.getPhotos().stream()
