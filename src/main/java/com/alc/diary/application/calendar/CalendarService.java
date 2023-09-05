@@ -248,6 +248,7 @@ public class CalendarService {
         Set<Long> taggedUserCalendarIds = taggedUserCalendars.stream()
                 .map(UserCalendar::getUserId)
                 .collect(Collectors.toSet());
+
         // 1. Add new UserCalendars
         List<Long> addedTaggedUserIds = request.newTaggedUserIds().stream()
                 .filter(taggedUserId -> !taggedUserCalendarIds.contains(taggedUserId))
@@ -256,16 +257,30 @@ public class CalendarService {
                 .map(UserCalendar::createTaggedUserCalendar)
                 .toList();
         calendar.addUserCalendars(userCalendarsToSave);
+
         // 2. Delete UserCalendars
         List<Long> userCalendarIdsToDelete = taggedUserCalendars.stream()
                 .filter(userCalendar -> !request.newTaggedUserIds().contains(userCalendar.getUserId()))
                 .map(UserCalendar::getId)
                 .toList();
         calendar.deleteUserCalendars(userCalendarIdsToDelete);
+
+        // 3. 사진 추가 및 삭제
+        for (Long photoId : request.photos().deleted()) {
+            calendar.getPhotos().stream()
+                    .filter(it -> it.getId().equals(photoId))
+                    .findFirst()
+                    .ifPresent(Photo::delete);
+        }
+
+        List<Photo> photosToSave = request.photos().added().stream()
+                .map(it -> Photo.create(userId, it.url()))
+                .toList();
+        calendar.addPhotos(photosToSave);
     }
 
     /**
-     * 캘린더 데이터 수정
+     * 유저 캘린더 데이터 수정
      *
      * @param userId
      * @param calendarId
@@ -308,18 +323,6 @@ public class CalendarService {
         }
 
         userCalendar.deleteDrinkRecords(userId, request.drinks().deleted());
-
-        List<Photo> photosToSave = request.photos().added().stream()
-                .map(it -> Photo.create(userId, it.url()))
-                .toList();
-        calendar.addPhotos(photosToSave);
-
-        for (Long photoId : request.photos().deleted()) {
-            calendar.getPhotos().stream()
-                    .filter(it -> it.getId().equals(photoId))
-                    .findFirst()
-                    .ifPresent(Photo::delete);
-        }
     }
 
     /**

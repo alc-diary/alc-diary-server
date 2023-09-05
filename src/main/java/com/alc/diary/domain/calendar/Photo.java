@@ -5,11 +5,13 @@ import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
+@ToString(exclude = "calendar")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "calendar_photos")
 @Entity

@@ -10,6 +10,20 @@ public record UpdateCalendarRequest(
         @NotNull @Size(max = 100) String newTitle,
         @NotNull ZonedDateTime newDrinkStartTime,
         @NotNull ZonedDateTime newDrinkEndTime,
-        @NotNull List<Long> newTaggedUserIds
+        @NotNull List<Long> newTaggedUserIds,
+        @NotNull UpdatePhotoData photos
 ) {
+
+    public record UpdatePhotoData(
+
+            List<ImageCreationData> added,
+            List<Long> deleted
+    ) {
+    }
+
+    public record ImageCreationData(
+
+            String url
+    ) {
+    }
 }
