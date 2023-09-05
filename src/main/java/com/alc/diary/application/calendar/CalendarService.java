@@ -264,19 +264,6 @@ public class CalendarService {
                 .map(UserCalendar::getId)
                 .toList();
         calendar.deleteUserCalendars(userCalendarIdsToDelete);
-
-        // 3. 사진 추가 및 삭제
-        for (Long photoId : request.photos().deleted()) {
-            calendar.getPhotos().stream()
-                    .filter(it -> it.getId().equals(photoId))
-                    .findFirst()
-                    .ifPresent(Photo::delete);
-        }
-
-        List<Photo> photosToSave = request.photos().added().stream()
-                .map(it -> Photo.create(userId, it.url()))
-                .toList();
-        calendar.addPhotos(photosToSave);
     }
 
     /**
@@ -323,6 +310,21 @@ public class CalendarService {
         }
 
         userCalendar.deleteDrinkRecords(userId, request.drinks().deleted());
+
+        // 사진 삭제
+        for (Long photoId : request.photos().deleted()) {
+            calendar.getPhotos().stream()
+                    .filter(photo -> photo.getId().equals(photoId))
+                    .findFirst()
+                    .filter(photo -> photo.canBeDeletedBy(userId))
+                    .ifPresent(Photo::delete);
+        }
+
+        // 사진 추가
+        List<Photo> photosToSave = request.photos().added().stream()
+                .map(it -> Photo.create(userId, it.url()))
+                .toList();
+        calendar.addPhotos(photosToSave);
     }
 
     /**

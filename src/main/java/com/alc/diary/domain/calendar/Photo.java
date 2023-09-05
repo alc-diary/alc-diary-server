@@ -48,12 +48,16 @@ public class Photo {
         this.calendar = calendar;
     }
 
-    public boolean isOwner(long userId) {
-        return this.userId == userId;
-    }
-
     public void delete() {
         deletedAt = LocalDateTime.now();
+    }
+
+    public boolean canBeDeletedBy(long userId) {
+        return isOwner(userId);
+    }
+
+    public boolean isOwner(long userId) {
+        return this.userId == userId;
     }
 
     public boolean isDeleted() {
