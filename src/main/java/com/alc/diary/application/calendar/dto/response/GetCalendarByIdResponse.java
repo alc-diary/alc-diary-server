@@ -51,7 +51,7 @@ public record GetCalendarByIdResponse(
                         ))
                         .toList(),
                 calendar.getPhotos().stream()
-                        // .filter(photo -> !photo.isDeleted())
+                        .filter(photo -> !photo.isDeleted())
                         .map(photo -> new PhotoDto(
                                 photo.getId(),
                                 photo.getUserId(),
