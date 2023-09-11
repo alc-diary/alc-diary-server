@@ -54,8 +54,8 @@ public class CalendarService {
      * @return
      */
     @Caching(evict = {
-            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().year + '_' + #request.drinkStartTime().monthValue", cacheManager = "cacheManager"),
-            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().plusMonths(1).year + '_' + #request.drinkStartTime().plusMonths(1).monthValue", cacheManager = "cacheManager")
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().year + '-' + #request.drinkStartTime().monthValue", cacheManager = "cacheManager"),
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().plusMonths(1).year + '-' + #request.drinkStartTime().plusMonths(1).monthValue", cacheManager = "cacheManager")
     })
     @Transactional
     public CreateCalendarResponse createCalendarAndGenerateResponse(long userId, CreateCalendarRequest request) {
@@ -251,9 +251,6 @@ public class CalendarService {
      * @param calendarId
      * @param request
      */
-    @Caching(evict = {
-            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.newDrinkStartTime()")
-    })
     @Transactional
     public void updateCalendar(long userId, long calendarId, UpdateCalendarRequest request) {
         Calendar calendar = calendarRepository.findById(calendarId)
