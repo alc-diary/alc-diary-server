@@ -341,9 +341,18 @@ public class CalendarService {
                 .mapToDouble(DrinkCreationDto::quantity)
                 .sum();
         Calendar calendarToSave = Calendar.create(userId, "오늘의 음주기록", totalDrinkQuantity, request.drinkStartTime(), request.drinkEndTime());
-        UserCalendar userCalendarToSave = UserCalendar.create(userId, null, null);
-        calendarToSave.addUserCalendar(userCalendarToSave);
 
+        UserCalendar userCalendarToSave = UserCalendar.create(userId, null, null);
+        List<DrinkRecord> drinkRecordsToSave = request.drinks().stream()
+                .map(dto -> DrinkRecord.create(
+                        dto.drinkType(),
+                        dto.drinkUnit(),
+                        dto.quantity()
+                ))
+                .toList();
+        userCalendarToSave.addDrinkRecords(drinkRecordsToSave);
+
+        calendarToSave.addUserCalendar(userCalendarToSave);
         Calendar calendar = calendarRepository.save(calendarToSave);
         return calendar.getId();
     }
