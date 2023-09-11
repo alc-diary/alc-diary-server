@@ -9,6 +9,7 @@ import com.alc.diary.application.calendar.dto.response.*;
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.error.DrinkRecordError;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calendar.repository.PhotoRepository;
@@ -344,11 +345,16 @@ public class CalendarService {
 
         UserCalendar userCalendarToSave = UserCalendar.create(userId, null, null);
         List<DrinkRecord> drinkRecordsToSave = request.drinks().stream()
-                .map(dto -> DrinkRecord.create(
-                        dto.drinkType(),
-                        dto.drinkUnit(),
-                        dto.quantity()
-                ))
+                .map(dto -> {
+                    if (!isHalfUnit(dto.quantity())) {
+                        throw new DomainException(CalendarError.INVALID_DRINK_QUANTITY_INCREMENT);
+                    }
+                    return DrinkRecord.create(
+                            dto.drinkType(),
+                            dto.drinkUnit(),
+                            dto.quantity()
+                    );
+                })
                 .toList();
         userCalendarToSave.addDrinkRecords(drinkRecordsToSave);
 
