@@ -23,6 +23,9 @@ import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +44,7 @@ public class CalendarService {
     private final PhotoRepository photoRepository;
     private final UserCalendarRepository userCalendarRepository;
     private final CustomCalenderRepository customCalenderRepository;
+    private final CacheManager cacheManager;
 
     /**
      * 캘린더 생성
@@ -49,6 +53,10 @@ public class CalendarService {
      * @param request
      * @return
      */
+    @Caching(evict = {
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().year + '_' + #request.drinkStartTime().monthValue", cacheManager = "cacheManager"),
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().plusMonths(1).year + '_' + #request.drinkStartTime().plusMonths(1).monthValue", cacheManager = "cacheManager")
+    })
     @Transactional
     public CreateCalendarResponse createCalendarAndGenerateResponse(long userId, CreateCalendarRequest request) {
         validRequest(userId, request);
@@ -197,6 +205,15 @@ public class CalendarService {
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
         calendar.deleteUserCalendar(userCalendarId);
+        evictMonthlyReportCacheForCurrentAndNextMonth(userId, calendar.getDrinkStartTime());
+    }
+
+    private void evictMonthlyReportCacheForCurrentAndNextMonth(long userId, ZonedDateTime drinkStartTime) {
+        ZonedDateTime drinkStartTimePlusOneMonth = drinkStartTime.plusMonths(1);
+        if (cacheManager.getCache("monthlyReport") != null) {
+            cacheManager.getCache("monthlyReport").evict(userId + "_" + drinkStartTime.getYear() + "-" + drinkStartTime.getMonthValue());
+            cacheManager.getCache("monthlyReport").evict(userId + "_" + drinkStartTimePlusOneMonth.getYear() + "-" + drinkStartTimePlusOneMonth.getMonthValue());
+        }
     }
 
     /**
@@ -234,6 +251,9 @@ public class CalendarService {
      * @param calendarId
      * @param request
      */
+    @Caching(evict = {
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.newDrinkStartTime()")
+    })
     @Transactional
     public void updateCalendar(long userId, long calendarId, UpdateCalendarRequest request) {
         Calendar calendar = calendarRepository.findById(calendarId)
@@ -243,6 +263,10 @@ public class CalendarService {
         }
         ZonedDateTime now = ZonedDateTime.now();
         calendar.update(request.newTitle(), request.newDrinkStartTime(), request.newDrinkEndTime(), now);
+        evictMonthlyReportCacheForCurrentAndNextMonth(userId, calendar.getDrinkStartTime());
+        if (!calendar.getDrinkStartTime().equals(request.newDrinkStartTime())) {
+            evictMonthlyReportCacheForCurrentAndNextMonth(userId, request.newDrinkStartTime());
+        }
 
         // Update UserCalendars
         List<UserCalendar> taggedUserCalendars = calendar.getTaggedUserCalendars();
@@ -285,6 +309,8 @@ public class CalendarService {
 
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+
+        evictMonthlyReportCacheForCurrentAndNextMonth(userId, calendar.getDrinkStartTime());
 
         if (request.contentShouldBeUpdated()) {
             calendar.updateContent(userCalendarId, request.content());
@@ -336,6 +362,10 @@ public class CalendarService {
      * @param userId
      * @param request
      */
+    @Caching(evict = {
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().year + '-' + #request.drinkStartTime().monthValue", cacheManager = "cacheManager"),
+            @CacheEvict(value = "monthlyReport", key = "#userId + '_' + #request.drinkStartTime().plusMonths(1).year + '-' + #request.drinkStartTime().plusMonths(1).monthValue", cacheManager = "cacheManager")
+    })
     @Transactional
     public long createCalendarFromMain(long userId, CreateCalendarFromMainRequest request) {
         float totalDrinkQuantity = (float) request.drinks().stream()
