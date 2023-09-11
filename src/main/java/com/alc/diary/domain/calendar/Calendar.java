@@ -139,7 +139,7 @@ public class Calendar extends BaseEntity {
     }
 
     public void addPhotos(List<Photo> photos) {
-        if (CollectionUtils.size(this.photos) + CollectionUtils.size(photos) > MAX_PHOTO_COUNT) {
+        if (getCurrentPhotoCount() + CollectionUtils.size(photos) > MAX_PHOTO_COUNT) {
             throw new DomainException(CalendarError.IMAGE_LIMIT_EXCEEDED);
         }
         for (Photo photo : photos) {
@@ -148,11 +148,21 @@ public class Calendar extends BaseEntity {
     }
 
     public void addPhoto(Photo photo) {
-        if (CollectionUtils.size(photos) >= MAX_PHOTO_COUNT) {
+        if (getCurrentPhotoCount() >= MAX_PHOTO_COUNT) {
             throw new DomainException(CalendarError.IMAGE_LIMIT_EXCEEDED);
         }
         photos.add(photo);
         photo.setCalendar(this);
+    }
+
+    /**
+     * 현재 캘린더에서 삭제되지 않은 사진 갯수 조회
+     * @return
+     */
+    private int getCurrentPhotoCount() {
+        return (int) photos.stream()
+                .filter(photo -> !photo.isDeleted())
+                .count();
     }
 
     public void addComment(Comment comment) {
