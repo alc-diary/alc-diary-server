@@ -180,9 +180,21 @@ public class CalendarService {
         ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
         List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
         Set<Long> userIds = calendars.stream()
-                .flatMap(calendar -> calendar.findUserCalendarsExcludingUserId(userId).stream())
-                .map(UserCalendar::getUserId)
+                .flatMap(calendar -> {
+                    List<Long> ids = new ArrayList<>();
+                    ids.add(calendar.getOwnerId());
+                    ids.addAll(
+                            calendar.getUserCalendars().stream()
+                                    .map(UserCalendar::getUserId)
+                                    .toList()
+                    );
+                    return ids.stream();
+                })
                 .collect(Collectors.toSet());
+        // Set<Long> userIds = calendars.stream()
+        //         .flatMap(calendar -> calendar.findUserCalendarsExcludingUserId(userId).stream())
+        //         .map(UserCalendar::getUserId)
+        //         .collect(Collectors.toSet());
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
         return GetDailyCalendarsResponse.of(userId, calendars, userById);
