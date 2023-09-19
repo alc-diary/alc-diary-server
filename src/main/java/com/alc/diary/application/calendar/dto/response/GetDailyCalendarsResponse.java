@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 public record GetDailyCalendarsResponse(
 
         long calendarId,
+        UserDto owner,
         String title,
         String drinkStartTime,
         String drinkEndTime,
@@ -26,35 +27,39 @@ public record GetDailyCalendarsResponse(
 
     public static List<GetDailyCalendarsResponse> of(long userId, List<Calendar> calendars, Map<Long, User> userById) {
         return calendars.stream()
-                .map(calendar -> new GetDailyCalendarsResponse(
-                        calendar.getId(),
-                        calendar.getTitle(),
-                        calendar.getDrinkStartTime().toString(),
-                        calendar.getDrinkEndTime().toString(),
-                        calendar.findUserCalendarByUserId(userId).map(UserCalendar::getDrinkingRecorded).orElse(false),
-                        calendar.findUserCalendarByUserId(userId)
-                                .map(userCalendar -> userCalendar.getDrinkRecords().stream()
-                                        .map(drinkRecord -> new GetDailyCalendarsResponse.DrinkRecordDto(
-                                                drinkRecord.getType(),
-                                                drinkRecord.getUnit()
-                                        )))
-                                .orElseGet(Stream::empty)
-                                .toList(),
-                        calendar.findUserCalendarByUserId(userId)
-                                .map(userCalendar -> userCalendar.getDrinkRecords().stream()
-                                        .mapToDouble(DrinkRecord::getQuantity)
-                                        .sum())
-                                .orElse(0.0)
-                                .floatValue(),
-                        calendar.findUserCalendarsExcludingUserId(userId).stream()
-                                .map(UserCalendar::getUserId)
-                                .map(userById::get)
-                                .map(user -> new GetDailyCalendarsResponse.UserDto(
-                                        user.getId(),
-                                        user.getProfileImage()
-                                ))
-                                .toList()
-                ))
+                .map(calendar -> {
+                    User owner = userById.get(calendar.getOwnerId());
+                    return new GetDailyCalendarsResponse(
+                            calendar.getId(),
+                            new UserDto(owner.getId(), owner.getProfileImage()),
+                            calendar.getTitle(),
+                            calendar.getDrinkStartTime().toString(),
+                            calendar.getDrinkEndTime().toString(),
+                            calendar.findUserCalendarByUserId(userId).map(UserCalendar::getDrinkingRecorded).orElse(false),
+                            calendar.findUserCalendarByUserId(userId)
+                                    .map(userCalendar -> userCalendar.getDrinkRecords().stream()
+                                            .map(drinkRecord -> new GetDailyCalendarsResponse.DrinkRecordDto(
+                                                    drinkRecord.getType(),
+                                                    drinkRecord.getUnit()
+                                            )))
+                                    .orElseGet(Stream::empty)
+                                    .toList(),
+                            calendar.findUserCalendarByUserId(userId)
+                                    .map(userCalendar -> userCalendar.getDrinkRecords().stream()
+                                            .mapToDouble(DrinkRecord::getQuantity)
+                                            .sum())
+                                    .orElse(0.0)
+                                    .floatValue(),
+                            calendar.findUserCalendarsExcludingUserId(userId).stream()
+                                    .map(UserCalendar::getUserId)
+                                    .map(userById::get)
+                                    .map(user -> new GetDailyCalendarsResponse.UserDto(
+                                            user.getId(),
+                                            user.getProfileImage()
+                                    ))
+                                    .toList()
+                    );
+                })
                 .toList();
     }
 
