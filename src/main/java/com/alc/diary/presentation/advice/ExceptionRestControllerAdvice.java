@@ -21,12 +21,13 @@ import java.util.Objects;
 @RestControllerAdvice
 public class ExceptionRestControllerAdvice {
 
+    private static final String ERROR_LOG_FORMAT = "[{} {} from {}] - {}: {} at {}.{}():{}";
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Logger slackLogger = LoggerFactory.getLogger("SLACK");
 
     @ExceptionHandler(value = {DomainException.class, CalenderException.class})
     public ResponseEntity<ErrorResponse<Void>> domainExceptionHandler(HttpServletRequest request, DomainException e) {
-        log.error("[{} {} from {}] - {}: {} at {}.{}():{}",
+        log.error(ERROR_LOG_FORMAT,
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getRemoteAddr(),
@@ -49,7 +50,7 @@ public class ExceptionRestControllerAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse<?>> validExceptionHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse<String>> validExceptionHandler(MethodArgumentNotValidException e) {
         log.error("Error - Message: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse<>(
@@ -61,8 +62,8 @@ public class ExceptionRestControllerAdvice {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse<?>> httpRequestMethodNotSupportedExceptionHandler(HttpServletRequest request, HttpRequestMethodNotSupportedException e) {
-        log.error("[{} {} from {}] - {}: {} at {}.{}():{}",
+    public ResponseEntity<ErrorResponse<Void>> httpRequestMethodNotSupportedExceptionHandler(HttpServletRequest request, HttpRequestMethodNotSupportedException e) {
+        log.error(ERROR_LOG_FORMAT,
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getRemoteAddr(),
@@ -84,8 +85,8 @@ public class ExceptionRestControllerAdvice {
     }
 
     @ExceptionHandler(ServletRequestBindingException.class)
-    public ResponseEntity<ErrorResponse<?>> servletRequestBindingExceptionHandler(HttpServletRequest request, ServletRequestBindingException e) {
-        log.error("[{} {} from {}] - {}: {} at {}.{}():{}",
+    public ResponseEntity<ErrorResponse<Void>> servletRequestBindingExceptionHandler(HttpServletRequest request, ServletRequestBindingException e) {
+        log.error(ERROR_LOG_FORMAT,
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getRemoteAddr(),
@@ -107,7 +108,7 @@ public class ExceptionRestControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse<?>> exceptionHandler(HttpServletRequest request, Exception e) {
+    public ResponseEntity<ErrorResponse<String>> exceptionHandler(HttpServletRequest request, Exception e) {
         slackLogger.error("Unexpected error occurred at {} {} from {}: {}",
                 request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), e.getMessage(), e);
         return ResponseEntity
