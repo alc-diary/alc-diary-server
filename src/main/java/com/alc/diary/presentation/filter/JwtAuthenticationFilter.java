@@ -9,6 +9,7 @@ import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,8 +23,8 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 @Order(Integer.MIN_VALUE)
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTH_HEADER_NAME = "Authorization";
     private final JwtService jwtService;
