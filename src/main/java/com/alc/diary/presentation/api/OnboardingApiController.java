@@ -7,7 +7,9 @@ import com.alc.diary.application.user.UserStatusAppService;
 import com.alc.diary.application.user.dto.request.UpdateUserOnboardingInfoAppRequest;
 import com.alc.diary.application.user.dto.response.CheckNicknameAvailableAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.UserDetail;
+import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,10 +39,10 @@ public class OnboardingApiController {
 
     @GetMapping("/check-nickname-available")
     public ApiResponse<CheckNicknameAvailableAppResponse> checkNicknameAvailable(
-        @RequestParam @Validated String nickname
+        @RequestParam String nickname
     ) {
         if (nickname == null || !UserDetail.NICKNAME_PATTERN.matcher(nickname).matches()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임은 한글, 영어 대소문자, 숫자만 가능합니다.");
+            throw new DomainException(UserError.INVALID_NICKNAME_FORMAT, "닉네임은 한글, 영어 대소문자, 숫자만 가능합니다.");
         }
         return ApiResponse.getSuccess(onboardingAppService.checkNicknameAvailable(nickname));
     }
