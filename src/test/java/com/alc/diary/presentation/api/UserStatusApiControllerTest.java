@@ -47,8 +47,7 @@ class UserStatusApiControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("S0000"))
                 .andExpect(jsonPath("$.message").value("success"))
-                .andExpect(jsonPath("$.data.isOnboardingDone").value(true))
-                .andDo(print());
+                .andExpect(jsonPath("$.data.isOnboardingDone").value(true));
         then(userStatusAppService).should().getIsOnboardingDone(anyLong());
     }
 
@@ -67,8 +66,7 @@ class UserStatusApiControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("S0000"))
                 .andExpect(jsonPath("$.message").value("success"))
-                .andExpect(jsonPath("$.data.isOnboardingDone").value(false))
-                .andDo(print());
+                .andExpect(jsonPath("$.data.isOnboardingDone").value(false));
         then(userStatusAppService).should().getIsOnboardingDone(anyLong());
     }
 }
