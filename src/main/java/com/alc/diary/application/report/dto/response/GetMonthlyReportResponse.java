@@ -22,18 +22,18 @@ public record GetMonthlyReportResponse(
 ) {
 
     public static GetMonthlyReportResponse from(Report report, Report lastMonthReport) {
-       return new GetMonthlyReportResponse(
-               report.totalQuantity(),
-               report.totalQuantity() - lastMonthReport.totalQuantity(),
-               report.totalDaysDrinking(),
-               report.totalDaysDrinking() - lastMonthReport.totalDaysDrinking(),
-               report.totalSpentOnDrinks(),
-               report.totalCalories(),
-               report.totalRunningTimeToBurnCalories(),
-               report.riceSoupEquivalent(),
-               report.mostConsumedDrink().orElse(null),
-               report.mostFrequentDrinkingDay().orElse(null),
-               report.getLastDrinkingDateTime().map(DateTimeFormatter.ISO_OFFSET_DATE_TIME::format).orElse(null)
-       );
+        return new GetMonthlyReportResponse(
+                report.totalQuantity(),
+                report.totalQuantity() - lastMonthReport.totalQuantity(),
+                report.totalDaysDrinking(),
+                report.totalDaysDrinking() - lastMonthReport.totalDaysDrinking(),
+                report.totalSpentOnDrinks(),
+                report.totalCalories(),
+                report.totalRunningTimeToBurnCalories(),
+                report.riceSoupEquivalent(),
+                report.mostConsumedDrink().orElse(null),
+                report.mostFrequentDrinkingDay().orElse(null),
+                report.getLastDrinkingDateTime().map(DateTimeFormatter.ISO_OFFSET_DATE_TIME::format).orElse(null)
+        );
     }
 }
