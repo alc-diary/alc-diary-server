@@ -2,6 +2,7 @@ package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.exception.DomainException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -12,6 +13,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -19,12 +21,17 @@ class CalendarTest {
 
     private static final Clock now = Clock.fixed(Instant.parse("2023-07-02T12:00:00.000+09:00"), ZoneId.of("Asia/Seoul"));
 
+    @DisplayName("캘린더 생성시 제목이 null이면 NULL_TITLE 예외가 발생한다.")
     @Test
-    void 캘린더생성시_title이_null이면_예외가발생한다() {
+    void givenNullTitle_whenCreatingCalendar_thenThrowsNULL_TITLE_Exception() {
+        // given
+        String title = null;
+
+        // when & then
         assertThatThrownBy(() ->
                         Calendar.create(
                                 1L,
-                                null,
+                                title,
                                 1.0f,
                                 ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
                                 ZonedDateTime.of(2023, 7, 1, 22, 0, 0, 0, ZoneId.of("Asia/Seoul")),
@@ -36,10 +43,14 @@ class CalendarTest {
                 .isEqualTo(CalendarError.NULL_TITLE);
     }
 
+    @DisplayName("캘린더 생성시 제목이 100자를 초과하면 TITLE_LENGTH_EXCEEDED 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(ints = {101, 102, 103})
-    void 캘린더생성시_title글자수가_100을_초과하면_예외가발생한다(int input) {
+    void givenTitleExceeds100_whenCreatingCalendar_thenThrowsTITLE_LENGTH_EXCEEDED_Exception(int input) {
+        // given
         String title = "a".repeat(input);
+
+        // when & then
         assertThatThrownBy(() ->
                 Calendar.create(
                         1L,
@@ -54,14 +65,19 @@ class CalendarTest {
                 .isEqualTo(CalendarError.TITLE_LENGTH_EXCEEDED);
     }
 
+    @DisplayName("캘린더 생성시 음주 시작 시간이 null이면 NULL_DRINK_START_TIME 예외가 발생한다.")
     @Test
-    void 캘린더생성시_음주시작시간이_null일경우_예외가발생한다() {
+    void givenNullDrinkStartTime_whenCreatingCalendar_thenThrowsNULL_DRINK_START_TIME_Exception() {
+        // given
+        ZonedDateTime drinkStartTime = null;
+
+        // when & then
         assertThatThrownBy(() ->
                 Calendar.create(
                         1L,
                         "test title",
                         1.0f,
-                        null,
+                        drinkStartTime,
                         ZonedDateTime.of(2023, 7, 1, 22, 0, 0, 0, ZoneId.of("Asia/Seoul")),
                         ZonedDateTime.now(now)))
                 .isInstanceOf(DomainException.class)
@@ -70,15 +86,20 @@ class CalendarTest {
                 .isEqualTo(CalendarError.NULL_DRINK_START_TIME);
     }
 
+    @DisplayName("캘린더 생성시 음주 종료 시간이 null이면 NULL_DRINK_END_TIME 예외가 발생한다.")
     @Test
-    void 캘린더생성시_음주종료시간이_null일경우_예외가발생한다() {
+    void givenNullDrinkEndTime_whenCreatingCalendar_thenThrowsNULL_DRINK_END_TIME_Exception() {
+        // given
+        ZonedDateTime drinkEndTime = null;
+
+        // when & then
         assertThatThrownBy(() ->
                 Calendar.create(
                         1L,
                         "test title",
                         1.0f,
                         ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
-                        null,
+                        drinkEndTime,
                         ZonedDateTime.now(now)))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Drink end time cannot be null.")
@@ -86,10 +107,14 @@ class CalendarTest {
                 .isEqualTo(CalendarError.NULL_DRINK_END_TIME);
     }
 
+    @DisplayName("캘린더 생성시 음주 시작 시간이 음주 종료 시간보다 뒤일 경우 START_TIME_AFTER_END_TIME 예외가 발생한다.")
     @Test
-    void 캘린더생성시_음주시작시간이_음주종료시간보다_뒤일경우_예외가발생한다() {
+    void givenDrinkStartTimeAfterEndTime_whenCreatingCalendar_thenThrowsSTART_TIME_AFTER_END_TIME_Exception() {
+        // given
         ZonedDateTime drinkStartTime = ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul"));
         ZonedDateTime drinkEndTime = ZonedDateTime.of(2023, 7, 1, 16, 0, 0, 0, ZoneId.of("Asia/Seoul"));
+
+        // when & then
         assertThatThrownBy(() ->
                 Calendar.create(
                         1L,
@@ -104,10 +129,14 @@ class CalendarTest {
                 .isEqualTo(CalendarError.START_TIME_AFTER_END_TIME);
     }
 
+    @DisplayName("캘린더 생성 시 음주 종료시간이 현재 시간보다 뒤일 경우 END_TIME_IN_FUTURE 예외가 발생한다.")
     @Test
-    void 캘린더생성시_음주종료시간이_현재시간보다_뒤일경우_예외가발생한다() {
+    void givenDrinkEndTimeInFutureWhenCreatingCalendar_thenThrowsEND_TIME_IN_FUTURE_Exception() {
+        // given
         ZonedDateTime drinkStartTime = ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul"));
         ZonedDateTime drinkEndTime = ZonedDateTime.of(2023, 7, 2, 16, 0, 0, 0, ZoneId.of("Asia/Seoul"));
+
+        // when & then
         assertThatThrownBy(() ->
                 Calendar.create(
                         1L,
@@ -122,30 +151,11 @@ class CalendarTest {
                 .isEqualTo(CalendarError.END_TIME_IN_FUTURE);
     }
 
+    @DisplayName("유효한 제목이 주어졌을 때, 캘린더의 제목이 정상적으로 업데이트 된다.")
     @Test
-    void isOwner() {
-        // given
-        Calendar calendar = Calendar.create(
-                1L,
-                "test title",
-                1.5f,
-                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
-                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
-                ZonedDateTime.now(now)
-        );
-
-        long userId = 1L;
-
-        // when
-        // then
-        assertThat(calendar.isOwner(userId)).isTrue();
-    }
-
-    @Test
-    void updateTitle() {
+    void givenValidTitle_whenUpdatingCalendar_thenTitleIsUpdated() {
         // given
         String newTitle = "New Title";
-
         Calendar calendar = Calendar.create(
                 1L,
                 "test title",
@@ -162,11 +172,11 @@ class CalendarTest {
         assertThat(calendar.getTitle()).isEqualTo(newTitle);
     }
 
+    @DisplayName("캘린더 업데이트시 title이 null이면 NULL_TITLE 예외가 발생한다.")
     @Test
-    void title을_null으로_업데이트하면_예외가발생한다() {
+    void givenNullTitle_whenUpdatingCalendar_thenThrowsNULL_TITLE_Exception() {
         // given
         String newTitle = null;
-
         Calendar calendar = Calendar.create(
                 1L,
                 "test title",
@@ -176,8 +186,7 @@ class CalendarTest {
                 ZonedDateTime.now(now)
         );
 
-        // when
-        // then
+        // when & then
         assertThatThrownBy(() -> calendar.updateTitle(newTitle))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Title cannot be null.")
@@ -185,9 +194,10 @@ class CalendarTest {
                 .isEqualTo(CalendarError.NULL_TITLE);
     }
 
+    @DisplayName("캘린더 업데이트시 제목이 100자를 초과하면 TITLE_LENGTH_EXCEEDE 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(ints = {101, 102, 103})
-    void title을_100자이상으로_업데이트하면_예외가발생한다(int input) {
+    void givenTitleExceed100_whenUpdatingCalendar_thenThrowsTITLE_LENGTH_EXCEEDED_Exception(int input) {
         // given
         String newTitle = "a".repeat(input);
 
@@ -200,8 +210,7 @@ class CalendarTest {
                 ZonedDateTime.now(now)
         );
 
-        // when
-        // then
+        // when & then
         assertThatThrownBy(() -> calendar.updateTitle(newTitle))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Calendar title length cannot exceed 100 characters.")
@@ -209,31 +218,39 @@ class CalendarTest {
                 .isEqualTo(CalendarError.TITLE_LENGTH_EXCEEDED);
     }
 
-    /**
-     * 권한 검증 로직이 도메인 바깥으로 빠져서 나중에 다시 테스트 예정
-     *
-     */
-    // @ParameterizedTest
-    // @ValueSource(ints = {2, 3, 4, 5})
-    // void 캘린더의_owner가아닌유저가_title을업데이트하면_예외가발생한다(int input) {
-    //     // given
-    //     String newTitle = "New Title";
-    //
-    //     Calendar calendar = Calendar.create(
-    //             1L,
-    //             "test title",
-    //             1.5f,
-    //             ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
-    //             ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
-    //             ZonedDateTime.now(now)
-    //     );
-    //
-    //     // when
-    //     // then
-    //     assertThatThrownBy(() -> calendar.updateTitle(newTitle))
-    //             .isInstanceOf(DomainException.class)
-    //             .hasMessage("You do not have permission to update title.")
-    //             .extracting(ex -> ((DomainException) ex).getErrorModel())
-    //             .isEqualTo(CalendarError.NO_PERMISSION_TO_UPDATE_TITLE);
-    // }
+    @DisplayName("캘린더와 사용자 ID가 있을 때, 사용자 ID가 캘린더 소유자 ID와 일치하면, isOwner()는 true를 반환한다.")
+    @Test
+    void givenCalendarAndUserId_whenUserIdMatchesOwnerId_thenIsOwnerReturnsTrue() {
+        // given
+        Calendar calendar = Calendar.create(
+                1L,
+                "test title",
+                1.5f,
+                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
+                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
+                ZonedDateTime.now(now)
+        );
+        long userId = 1L;
+
+        // when & then
+        assertThat(calendar.isOwner(userId)).isTrue();
+    }
+
+    @DisplayName("캘린더와 사용자 ID가 있을 때, 사용자 ID가 캘린더 소유자 ID와 일치하지 않으면, isOwner()는 false를 반환한다.")
+    @Test
+    void givenCalendarAndUserId_whenUserIdDoesNotMatchOwnerId_thenIsOwnerReturnsFalse() {
+        // given
+        Calendar calendar = Calendar.create(
+                1L,
+                "test title",
+                1.5f,
+                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
+                ZonedDateTime.of(2023, 7, 1, 18, 0, 0, 0, ZoneId.of("Asia/Seoul")),
+                ZonedDateTime.now(now)
+        );
+        long userId = 2L;
+
+        // when & then
+        assertThat(calendar.isOwner(userId)).isFalse();
+    }
 }
