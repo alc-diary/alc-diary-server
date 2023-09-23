@@ -68,7 +68,6 @@ public class CalendarService {
         calendarToSave.addUserCalendars(userCalendarsToSave);
 
         Calendar calendar = calendarRepository.save(calendarToSave);
-
         return CreateCalendarResponse.from(calendar);
     }
 

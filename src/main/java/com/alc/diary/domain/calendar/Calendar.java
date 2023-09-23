@@ -116,7 +116,7 @@ public class Calendar extends BaseEntity {
         );
     }
 
-    static Calendar create(
+    public static Calendar create(
             long ownerId,
             String title,
             float totalDrinkQuantity,
