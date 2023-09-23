@@ -1,12 +1,16 @@
 # 술렁술렁
-![1.png](images%2F1.png)
-![2.png](images%2F2.png)
+
+음주 기록을 관리해주는 '술렁술렁' 애플리케이션의 서버입니다.
+
+![1.png](images%2F1.png)![2.png](images%2F2.png)
+
 ![3.png](images%2F3.png)
 ![4.png](images%2F4.png)
 ![5.png](images%2F5.png)
 ![6.png](images%2F6.png)
 
-음주 기록을 관리해주는 '술렁술렁' 애플리케이션의 서버입니다.
+![7.png](images%2F7.png)
+![8.png](images%2F8.png)
 
 ## 목차
 1. [개요](#개요)
@@ -41,7 +45,7 @@
 ## 아키텍처
    - presentation, application, domain, infrastructure로 패키지 분류 후 패키지 내에서 도메인 별로 패키지를 분리해 의존성을 낮췄습니다.
    - 아키텍처 다이어그램
-     ![alc-diary.svg](images/alc-diary.svg)
+     ![infra.png](images%2Finfra.png)
 ## 팀원 및 역할
    - 김건우: iOS 개발
    - 박단비: AOS 개발
