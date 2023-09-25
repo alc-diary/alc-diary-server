@@ -191,10 +191,6 @@ public class CalendarService {
                     return ids.stream();
                 })
                 .collect(Collectors.toSet());
-        // Set<Long> userIds = calendars.stream()
-        //         .flatMap(calendar -> calendar.findUserCalendarsExcludingUserId(userId).stream())
-        //         .map(UserCalendar::getUserId)
-        //         .collect(Collectors.toSet());
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
         return GetDailyCalendarsResponse.of(userId, calendars, userById);
