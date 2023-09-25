@@ -61,8 +61,8 @@ public class Calendar extends BaseEntity {
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<Photo> photos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
-    private List<Comment> comments = new ArrayList<>();
+    // @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
+    // private List<Comment> comments = new ArrayList<>();
 
     @Audited
     @Column(name = "deletedAt")
@@ -165,10 +165,10 @@ public class Calendar extends BaseEntity {
                 .count();
     }
 
-    public void addComment(Comment comment) {
-        comments.add(comment);
-        comment.setCalendar(this);
-    }
+    // public void addComment(Comment comment) {
+    //     comments.add(comment);
+    //     comment.setCalendar(this);
+    // }
 
     public void addDrinkRecords(long userId, Collection<DrinkRecord> drinkRecords) {
         UserCalendar userCalendar = getUserCalendarByUserId(userId);
