@@ -28,24 +28,24 @@ public interface CalendarRepository extends Repository<Calendar, Long> {
            "AND p.deletedAt IS NULL ")
     Optional<Calendar> findWithPhotoById(long calendarId);
 
-    @Query("SELECT DISTINCT c " +
-            "FROM Calendar c " +
-            "JOIN c.userCalendars uc " +
-            "JOIN FETCH c.userCalendars " +
-            "WHERE uc.userId = :userId " +
-            "AND c.drinkStartTime >= :rangeStart " +
-            "AND c.drinkStartTime < :rangeEnd " +
-            "AND uc.deletedAt IS NULL " +
-            "AND c.deletedAt IS NULL")
-    List<Calendar> findAllUserCalendarsInCalendarsWithInRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
+    // @Query("SELECT DISTINCT c " +
+    //        "FROM Calendar c " +
+    //        "JOIN c.userCalendars uc " +
+    //        "JOIN FETCH c.userCalendars " +
+    //        "WHERE uc.userId = :userId " +
+    //        "AND c.drinkStartTime >= :rangeStart " +
+    //        "AND c.drinkStartTime < :rangeEnd " +
+    //        "AND uc.deletedAt IS NULL " +
+    //        "AND c.deletedAt IS NULL")
+    // List<Calendar> findAllUserCalendarsInCalendarsWithInRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
 
     @Query("SELECT DISTINCT c " +
-            "FROM Calendar c " +
-            "JOIN FETCH c.userCalendars uc " +
-            "WHERE uc.userId = :userId " +
-            "AND c.drinkStartTime >= :rangeStart " +
-            "AND c.drinkStartTime < :rangeEnd " +
-            "AND uc.deletedAt IS NULL " +
-            "AND c.deletedAt IS NULL")
+           "FROM Calendar c " +
+           "JOIN FETCH c.userCalendars uc " +
+           "WHERE uc.userId = :userId " +
+           "AND c.drinkStartTime >= :rangeStart " +
+           "AND c.drinkStartTime < :rangeEnd " +
+           "AND uc.deletedAt IS NULL " +
+           "AND c.deletedAt IS NULL")
     List<Calendar> findUserCalendarsForSpecificUserWithRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
 }
