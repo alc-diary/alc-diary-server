@@ -31,7 +31,7 @@ public record GetDailyCalendarsResponse(
                     User owner = userById.get(calendar.getOwnerId());
                     return new GetDailyCalendarsResponse(
                             calendar.getId(),
-                            new UserDto(owner.getId(), owner.getProfileImage()),
+                            new UserDto(owner.getId(), owner.getNickname(), owner.getProfileImage()),
                             calendar.getTitle(),
                             calendar.getDrinkStartTime().toString(),
                             calendar.getDrinkEndTime().toString(),
@@ -55,6 +55,7 @@ public record GetDailyCalendarsResponse(
                                     .map(userById::get)
                                     .map(user -> new GetDailyCalendarsResponse.UserDto(
                                             user.getId(),
+                                            user.getNickname(),
                                             user.getProfileImage()
                                     ))
                                     .toList()
@@ -75,6 +76,7 @@ public record GetDailyCalendarsResponse(
     public record UserDto(
 
             long id,
+            String nickname,
             String profileImageUrl
     ) {
     }
