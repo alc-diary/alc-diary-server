@@ -178,7 +178,7 @@ public class CalendarService {
     public List<GetDailyCalendarsResponse> getDailyCalendars(long userId, LocalDate date, ZoneId zoneId) {
         ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
-        List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
+        List<Calendar> calendars = calendarRepository.findUserCalendarsForSpecificUserWithRangeAndUserId(userId, rangeStart, rangeEnd);
         Set<Long> userIds = calendars.stream()
                 .flatMap(calendar -> {
                     List<Long> ids = new ArrayList<>();
@@ -238,7 +238,7 @@ public class CalendarService {
 
         Calendars calendars =
                 new Calendars(
-                        calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd),
+                        calendarRepository.findUserCalendarsForSpecificUserWithRangeAndUserId(userId, rangeStart, rangeEnd),
                         zoneId
                 );
 
