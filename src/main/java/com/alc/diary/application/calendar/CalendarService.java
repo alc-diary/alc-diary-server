@@ -247,7 +247,7 @@ public class CalendarService {
 
         Calendars calendars =
                 new Calendars(
-                        calendarRepository.findUserCalendarsForSpecificUserWithRangeAndUserId(userId, rangeStart, rangeEnd),
+                        calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd),
                         zoneId
                 );
 
