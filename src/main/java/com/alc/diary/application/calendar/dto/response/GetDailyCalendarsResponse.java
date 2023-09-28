@@ -38,7 +38,7 @@ public record GetDailyCalendarsResponse(
                             calendar.findUserCalendarByUserId(userId).map(UserCalendar::getDrinkingRecorded).orElse(false),
                             calendar.findUserCalendarByUserId(userId)
                                     .map(userCalendar -> userCalendar.getDrinkRecords().stream()
-                                            .map(drinkRecord -> new GetDailyCalendarsResponse.DrinkRecordDto(
+                                            .map(drinkRecord -> new DrinkRecordDto(
                                                     drinkRecord.getType(),
                                                     drinkRecord.getUnit()
                                             )))
@@ -50,10 +50,10 @@ public record GetDailyCalendarsResponse(
                                             .sum())
                                     .orElse(0.0)
                                     .floatValue(),
-                            calendar.findUserCalendarsExcludingUserId(userId).stream()
+                            calendar.findUserCalendarsExcludingUserId(owner.getId()).stream()
                                     .map(UserCalendar::getUserId)
                                     .map(userById::get)
-                                    .map(user -> new GetDailyCalendarsResponse.UserDto(
+                                    .map(user -> new UserDto(
                                             user.getId(),
                                             user.getNickname(),
                                             user.getProfileImage()
