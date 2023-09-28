@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -29,6 +30,11 @@ public class Calendars {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
+    }
+
+    public Map<LocalDate, List<Calendar>> getCalendarsPerDay(ZoneId zoneId) {
+        return calendars.stream()
+                .collect(Collectors.groupingBy(calendar -> calendar.getDrinkStartTimeLocalDate(zoneId)));
     }
 
     public int totalDaysDrinking() {
