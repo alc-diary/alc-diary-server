@@ -179,10 +179,6 @@ public class CalendarService {
         ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
         List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
-        System.out.println(rangeStart);
-        System.out.println(rangeEnd);
-
-        System.out.println(calendars);
 
         Set<Long> userIds = calendars.stream()
                 .flatMap(calendar -> {
@@ -199,7 +195,6 @@ public class CalendarService {
                     return ids.stream();
                 })
                 .collect(Collectors.toSet());
-        System.out.println(userIds);
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
         return GetDailyCalendarsResponse.of(userId, calendars, userById);
