@@ -181,6 +181,7 @@ public class CalendarService {
         ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
         List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
+        System.out.println(calendars);
 
         Set<Long> userIds = calendars.stream()
                 .flatMap(calendar -> {

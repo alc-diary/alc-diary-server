@@ -46,7 +46,7 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
            "JOIN FETCH c.userCalendars uc " +
            "WHERE EXISTS (SELECT 1 FROM UserCalendar uc2 WHERE uc2.calendar = c AND uc2.userId = :userId AND uc2.deletedAt IS NULL) " +
            "AND c.drinkStartTime >= :rangeStart " +
-           "AND c.drinkEndTime < :rangeEnd " +
+           "AND c.drinkStartTime < :rangeEnd " +
            "AND uc.deletedAt IS NULL " +
            "AND c.deletedAt IS NULL")
     List<Calendar> findAllUserCalendarsInCalendarsWithInRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
