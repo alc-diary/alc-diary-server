@@ -1,6 +1,8 @@
 package com.alc.diary.domain.calendar.repository;
 
 import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.calender.Calender;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -8,7 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface CalendarRepository extends Repository<Calendar, Long> {
+public interface CalendarRepository extends JpaRepository<Calendar, Long> {
 
     Calendar save(Calendar calendar);
 
