@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     private final String[] whiteList = new String[]{"/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs", "/kakao", "/admin", "/css", "/assets", "/test"};
-    private final String[] equalsList = new String[]{"/favicon.ico", "/swagger-ui/index.html", "/v2/api-docs"};
+    private final String[] equalsList = new String[]{"/favicon.ico", "/swagger-ui/index.html", "/v2/api-docs", "/temp/migration"};
     private final String ONBOARDING_API_PATTERN = "/v\\d+/onboarding.*";
 
     @Override
