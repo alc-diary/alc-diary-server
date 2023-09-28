@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface CalenderRepository extends Repository<Calender, Long> {
     Calender save(Calender calender);
 
+    List<Calender> findByIdGreaterThanEqual(long id);
+
     void deleteCalenderById(Long calenderId);
 
     Optional<Calender> getCalenderById(Long calenderId);
@@ -18,4 +20,6 @@ public interface CalenderRepository extends Repository<Calender, Long> {
     List<Calender> findByUser_IdAndDrinkStartDateTimeGreaterThanEqualAndDrinkStartDateTimeLessThan(Long userId, LocalDateTime start, LocalDateTime end);
 
     Optional<Calender> findById(Long calendarId);
+
+    List<Calender> findAll();
 }
