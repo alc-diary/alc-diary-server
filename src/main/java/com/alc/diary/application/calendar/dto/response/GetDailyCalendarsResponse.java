@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public record GetDailyCalendarsResponse(
@@ -46,6 +47,7 @@ public record GetDailyCalendarsResponse(
                                     .toList(),
                             calendar.findUserCalendarByUserId(userId)
                                     .map(userCalendar -> userCalendar.getDrinkRecords().stream()
+                                            .filter(drinkRecord -> !drinkRecord.isDeleted())
                                             .mapToDouble(DrinkRecord::getQuantity)
                                             .sum())
                                     .orElse(0.0)

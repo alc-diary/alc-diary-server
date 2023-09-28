@@ -151,4 +151,10 @@ public class UserCalendar extends BaseEntity {
     public void markAsRecorded() {
         drinkingRecorded = true;
     }
+
+    public List<DrinkRecord> getDrinkRecords() {
+        return drinkRecords.stream()
+                .filter(drinkRecord -> !drinkRecord.isDeleted())
+                .toList();
+    }
 }

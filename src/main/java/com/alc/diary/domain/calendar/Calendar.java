@@ -157,6 +157,7 @@ public class Calendar extends BaseEntity {
 
     /**
      * 현재 캘린더에서 삭제되지 않은 사진 갯수 조회
+     *
      * @return
      */
     private int getCurrentPhotoCount() {
@@ -307,7 +308,7 @@ public class Calendar extends BaseEntity {
 
     public DrinkType getMostConsumedDrinkType() {
         return userCalendars.stream()
-                .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
+                .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream().filter(drinkRecord -> !drinkRecord.isDeleted()))
                 .collect(Collectors.groupingBy(
                         DrinkRecord::getType,
                         Collectors.summingDouble(DrinkRecord::getQuantity)
@@ -359,6 +360,12 @@ public class Calendar extends BaseEntity {
     public List<UserCalendar> getTaggedUserCalendars() {
         return userCalendars.stream()
                 .filter(userCalendar -> !isOwner(userCalendar.getUserId()))
+                .toList();
+    }
+
+    public List<Photo> getPhotos() {
+        return photos.stream()
+                .filter(photo -> !photo.isDeleted())
                 .toList();
     }
 }
