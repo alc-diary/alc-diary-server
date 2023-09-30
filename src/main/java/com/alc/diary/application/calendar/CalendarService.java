@@ -41,7 +41,6 @@ public class CalendarService {
 
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
-    private final PhotoRepository photoRepository;
     private final UserCalendarRepository userCalendarRepository;
     private final CustomCalenderRepository customCalenderRepository;
     private final CacheManager cacheManager;
@@ -401,14 +400,15 @@ public class CalendarService {
         return calendar.getId();
     }
 
+    /**
+     * 메인 페이지 조회시 사용하는 부가정보 조회
+     *
+     * @param userId
+     * @return
+     */
     public GetMainResponse getMain(long userId) {
         User user = userRepository.findActiveUserById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         long overAlcoholLimit = customCalenderRepository.countAlcoholLimitV2(userId);
-        return GetMainResponse.create(
-                user.getDetail().getNickname(),
-                user.getDetail().getDescriptionStyle(),
-                overAlcoholLimit,
-                user.getDetail().getNonAlcoholGoal()
-        );
+        return GetMainResponse.of(user, overAlcoholLimit);
     }
 }
