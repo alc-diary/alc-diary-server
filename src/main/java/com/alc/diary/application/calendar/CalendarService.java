@@ -158,7 +158,6 @@ public class CalendarService {
     public GetCalendarByIdResponse getCalendarById(long userId, long calendarId) {
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-        // calendarRepository.findWithPhotoById(userId);
 
         List<Long> userIds = calendar.getUserCalendars().stream()
                 .map(UserCalendar::getUserId)

@@ -29,6 +29,7 @@ public record GetCalendarByIdResponse(
                 calendar.getDrinkStartTime().toString(),
                 calendar.getDrinkEndTime().toString(),
                 calendar.getUserCalendars().stream()
+                        .filter(userCalendar -> userByUserId.get(userCalendar.getUserId()) != null)
                         .map(userCalendar -> new UserCalendarDto(
                                 userCalendar.getId(),
                                 new UserDto(
