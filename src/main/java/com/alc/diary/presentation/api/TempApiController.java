@@ -25,6 +25,7 @@ public class TempApiController {
     @PostMapping("/slack-message")
     public String slackMessage() {
         log.info("테스트");
+        log.info(slackToken);
         messageService.send("#알림", "테스트");
         return slackToken;
     }
