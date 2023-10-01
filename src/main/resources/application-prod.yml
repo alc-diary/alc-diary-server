@@ -9,7 +9,7 @@ server:
       directory: ${TOMCAT_ACCESS_LOG_DIR}
       prefix: access_log
       suffix: .log
-      pattern: '%{yyyy-MM-dd HH:mm:ss}t %s "%r" %{User-Agent}i %{Referer}i %a %b %D "Authorization: %{Authorization}i"'
+      pattern: ${TOMCAT_ACCESS_LOG_PATTERN}
       max-days: 30
 
 spring:
