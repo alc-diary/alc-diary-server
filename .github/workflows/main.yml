@@ -61,4 +61,5 @@ jobs:
             -e TOMCAT_ACCESS_LOG_DIR=${{ secrets.TOMCAT_ACCESS_LOG_DIR }} \
             -e TOMCAT_ACCESS_LOG_PATTERN=${{ secrets.TOMCAT_ACCESS_LOG_PATTERN }} \
             -e SLACK_WEBHOOK_URI=${{ secrets.SLACK_WEBHOOK_URI }} \
+            -e SLACK_TOKEN=${{ secrets.SLACK_TOKEN }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
