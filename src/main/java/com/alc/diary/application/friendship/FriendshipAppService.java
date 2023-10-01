@@ -119,6 +119,9 @@ public class FriendshipAppService {
             String nickname
     ) {
         return userRepository.findActiveUserByNickname(nickname).map(friend -> {
+            if (friend.getId().equals(userId)) {
+                throw new DomainException(FriendshipError.SELF_SEARCH);
+            }
             if (friendRequestRepository.findPendingRequestWithUsers(userId, friend.getId()).isPresent()) {
                 return new SearchUserWithFriendStatusByNicknameAppResponse(
                         friend.getId(),
