@@ -44,7 +44,6 @@
      - AWS Network Services (VPC, Subnet, Routing Table, Internet Gateway, NAT Gateway)
      - AWS Route53, AWS Certificate Manager
 ## 아키텍처
-   - presentation, application, domain, infrastructure로 패키지 분류 후 패키지 내에서 도메인 별로 패키지를 분리해 의존성을 낮췄습니다.
    - 아키텍처 다이어그램
      ![infra.png](images%2Finfra.png)
 ## 팀원 및 역할
