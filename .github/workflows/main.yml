@@ -57,6 +57,7 @@ jobs:
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
             -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+            -e LOG_DIR=${{ secrets.LOG_DIR }} \
             -e TOMCAT_ACCESS_LOG_DIR=${{ secrets.TOMCAT_ACCESS_LOG_DIR }} \
             -e TOMCAT_ACCESS_LOG_PATTERN=${{ secrets.TOMCAT_ACCESS_LOG_PATTERN }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/alc-diary:latest
