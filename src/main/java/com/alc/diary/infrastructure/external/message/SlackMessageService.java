@@ -21,6 +21,7 @@ public class SlackMessageService implements MessageService {
     private final MethodsClient methods;
 
     public SlackMessageService(@Value("${slack.token}") String slackToken) {
+        log.info(slackToken);
         this.methods = Slack.getInstance().methods(slackToken);
     }
 

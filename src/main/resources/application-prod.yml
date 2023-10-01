@@ -1,0 +1,63 @@
+server:
+  port: 8080
+  secret: ${JWT_SECRET_KEY}
+
+  tomcat:
+    basedir: .
+    accesslog:
+      enabled: true
+      directory: ${TOMCAT_ACCESS_LOG_DIR}
+      prefix: access_log
+      suffix: .log
+      pattern: ${TOMCAT_ACCESS_LOG_PATTERN}
+      max-days: 30
+
+spring:
+  application:
+    name: alc-diary-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    tomcat:
+      max-active: 500
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        default_batch_fetch_size: 1000
+    open-in-view: false
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+  cache:
+    redis:
+      time-to-live: 60000
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 1000
+        read-timeout: 3000
+        logger-level: NONE
+      kakao-client:
+        connect-timeout: 1000
+        read-timeout: 10000
+        logger-level: HEADERS
+
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true
+      base-url: /
+
+slack.token: ${SLACK_TOKEN}
