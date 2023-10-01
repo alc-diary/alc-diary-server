@@ -54,6 +54,7 @@ public record GetDailyCalendarsResponse(
                                     .floatValue(),
                             calendar.findUserCalendarsExcludingUserId(owner.getId()).stream()
                                     .map(UserCalendar::getUserId)
+                                    .filter(id -> userById.get(id) != null)
                                     .map(userById::get)
                                     .map(user -> new UserDto(
                                             user.getId(),
