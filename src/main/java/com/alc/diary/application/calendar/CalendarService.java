@@ -254,6 +254,7 @@ public class CalendarService {
                     List<Calendar> value = localDateListEntry.getValue();
                     Map<DrinkType, Double> drinkSumByType = value.stream()
                             .flatMap(calendar -> calendar.getUserCalendars().stream())
+                            .filter(userCalendar -> userCalendar.isOwner(userId))
                             .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
                             .collect(Collectors.groupingBy(
                                     DrinkRecord::getType,
