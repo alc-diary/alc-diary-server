@@ -18,10 +18,9 @@ import java.time.ZonedDateTime;
 @Service
 public class ReportService {
 
-    //    private final CalendarLegacyRepository calendarLegacyRepository;
     private final CalendarRepository calendarRepository;
 
-    @Cacheable(value = "monthlyReportLegacy", key = "#userId + '_' + #month.year + '-' + #month.monthValue", cacheManager = "cacheManager")
+    @Cacheable(value = "monthlyReport", key = "#userId + '_' + #month.year + '-' + #month.monthValue", cacheManager = "cacheManager")
     public GetMonthlyReportResponse getMonthlyReport(long userId, YearMonth month, ZoneId zoneId) {
         ZonedDateTime rangeStart = month.atDay(1).atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = month.plusMonths(1).atDay(1).atStartOfDay(zoneId);

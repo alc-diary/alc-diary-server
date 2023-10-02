@@ -20,9 +20,8 @@ import java.util.List;
 public class ReportAppService {
 
     private final CalenderRepository calenderRepository;
-//    private final CalendarLegacyRepository calendarLegacyRepository;
 
-    @Cacheable(value = "monthlyReport", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
+    @Cacheable(value = "monthlyReportLegacy", key = "#userId + '_' + #year + '-' + #month", cacheManager = "cacheManager")
     public GetMonthlyReportAppResponse getMonthlyReport(Long userId, int year, int month) {
         LocalDateTime currentMonthStart = LocalDateTime.of(year, month, 1, 0, 0);
 
