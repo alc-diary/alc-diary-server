@@ -36,17 +36,19 @@
      - Redis 
    - 인프라
      - Docker
-     - Github Action
+     - GitHub Action
      - AWS EC2, AWS ELB
-     - AWS RDS
-     - AWS ElastiCache
+     - AWS RDS, AWS ElastiCache, AWS S3
+     - AWS CloudWatch
+     - AWS Cognito
      - AWS Network Services (VPC, Subnet, Routing Table, Internet Gateway, NAT Gateway)
      - AWS Route53, AWS Certificate Manager
-## 시스템 아키텍처
-![infra.png](images%2Finfra.png)
+## 아키텍처
+   - 아키텍처 다이어그램
+     ![infra.png](images%2Finfra.png)
 ## 팀원 및 역할
    - 김건우: iOS 개발
    - 박단비: AOS 개발
    - 정태영: 백엔드 개발
-   - 최다예: 디자인, QA
-   - 허정민: 백엔드 개발, QA
+   - 최다예: 디자인, QA(디자인, 기능)
+   - 허정민: 백엔드 개발, 운영

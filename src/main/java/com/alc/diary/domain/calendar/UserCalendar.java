@@ -7,6 +7,7 @@ import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
+@ToString(exclude = "calendar")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_calendars")
 @Entity
@@ -148,5 +150,11 @@ public class UserCalendar extends BaseEntity {
 
     public void markAsRecorded() {
         drinkingRecorded = true;
+    }
+
+    public List<DrinkRecord> getDrinkRecords() {
+        return drinkRecords.stream()
+                .filter(drinkRecord -> !drinkRecord.isDeleted())
+                .toList();
     }
 }

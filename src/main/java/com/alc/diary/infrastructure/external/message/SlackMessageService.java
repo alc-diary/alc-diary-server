@@ -7,6 +7,7 @@ import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,18 +15,21 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.imageio.IIOException;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
 public class SlackMessageService implements MessageService {
 
-    private static final MethodsClient methods = Slack.getInstance().methods("xoxb-3987321618736-5242072199362-jqAGxXmUVLB4gSlV7hGEoN5x");
+    private final MethodsClient methods;
+
+    public SlackMessageService(@Value("${slack.token}") String slackToken) {
+        this.methods = Slack.getInstance().methods(slackToken);
+    }
 
     @Override
     public void send(String channel, String message) {
         ChatPostMessageRequest slackMessage = ChatPostMessageRequest.builder()
-                                                             .channel(channel)
-                                                             .text(message)
-                                                             .build();
+                .channel(channel)
+                .text(message)
+                .build();
         try {
             methods.chatPostMessage(slackMessage);
         } catch (SlackApiException e) {

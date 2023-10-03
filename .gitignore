@@ -42,6 +42,5 @@ out/
 
 logs/
 /src/main/resources/data.sql
-/src/main/resources/logback-variables.properties
 /src/main/resources/application-local.yml
 /src/main/resources/logback-spring-local.xml

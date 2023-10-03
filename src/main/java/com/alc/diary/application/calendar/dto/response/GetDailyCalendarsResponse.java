@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public record GetDailyCalendarsResponse(
@@ -31,14 +32,14 @@ public record GetDailyCalendarsResponse(
                     User owner = userById.get(calendar.getOwnerId());
                     return new GetDailyCalendarsResponse(
                             calendar.getId(),
-                            new UserDto(owner.getId(), owner.getProfileImage()),
+                            new UserDto(owner.getId(), owner.getNickname(), owner.getProfileImage()),
                             calendar.getTitle(),
                             calendar.getDrinkStartTime().toString(),
                             calendar.getDrinkEndTime().toString(),
                             calendar.findUserCalendarByUserId(userId).map(UserCalendar::getDrinkingRecorded).orElse(false),
                             calendar.findUserCalendarByUserId(userId)
                                     .map(userCalendar -> userCalendar.getDrinkRecords().stream()
-                                            .map(drinkRecord -> new GetDailyCalendarsResponse.DrinkRecordDto(
+                                            .map(drinkRecord -> new DrinkRecordDto(
                                                     drinkRecord.getType(),
                                                     drinkRecord.getUnit()
                                             )))
@@ -46,15 +47,18 @@ public record GetDailyCalendarsResponse(
                                     .toList(),
                             calendar.findUserCalendarByUserId(userId)
                                     .map(userCalendar -> userCalendar.getDrinkRecords().stream()
+                                            .filter(drinkRecord -> !drinkRecord.isDeleted())
                                             .mapToDouble(DrinkRecord::getQuantity)
                                             .sum())
                                     .orElse(0.0)
                                     .floatValue(),
-                            calendar.findUserCalendarsExcludingUserId(userId).stream()
+                            calendar.findUserCalendarsExcludingUserId(owner.getId()).stream()
                                     .map(UserCalendar::getUserId)
+                                    .filter(id -> userById.get(id) != null)
                                     .map(userById::get)
-                                    .map(user -> new GetDailyCalendarsResponse.UserDto(
+                                    .map(user -> new UserDto(
                                             user.getId(),
+                                            user.getNickname(),
                                             user.getProfileImage()
                                     ))
                                     .toList()
@@ -75,6 +79,7 @@ public record GetDailyCalendarsResponse(
     public record UserDto(
 
             long id,
+            String nickname,
             String profileImageUrl
     ) {
     }

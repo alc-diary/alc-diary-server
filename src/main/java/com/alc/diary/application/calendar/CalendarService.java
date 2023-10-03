@@ -6,8 +6,10 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateUserCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.*;
+import com.alc.diary.application.report.dto.response.GetMonthlyReportResponse;
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.Calendar;
+import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.error.DrinkRecordError;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
@@ -154,7 +156,6 @@ public class CalendarService {
     public GetCalendarByIdResponse getCalendarById(long userId, long calendarId) {
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-        // calendarRepository.findWithPhotoById(userId);
 
         List<Long> userIds = calendar.getUserCalendars().stream()
                 .map(UserCalendar::getUserId)
@@ -177,6 +178,7 @@ public class CalendarService {
         ZonedDateTime rangeStart = date.atStartOfDay(zoneId);
         ZonedDateTime rangeEnd = date.plusDays(1).atStartOfDay(zoneId);
         List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, rangeStart, rangeEnd);
+
         Set<Long> userIds = calendars.stream()
                 .flatMap(calendar -> {
                     List<Long> ids = new ArrayList<>();
@@ -189,10 +191,6 @@ public class CalendarService {
                     return ids.stream();
                 })
                 .collect(Collectors.toSet());
-        // Set<Long> userIds = calendars.stream()
-        //         .flatMap(calendar -> calendar.findUserCalendarsExcludingUserId(userId).stream())
-        //         .map(UserCalendar::getUserId)
-        //         .collect(Collectors.toSet());
         Map<Long, User> userById = userRepository.findActiveUsersByIdIn(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
         return GetDailyCalendarsResponse.of(userId, calendars, userById);
@@ -244,10 +242,30 @@ public class CalendarService {
                         zoneId
                 );
 
-        return calendars.getCalendarsByMaxDrinkPerDay(zoneId).stream()
-                .map(calendar -> new GetMonthlyCalendarsResponse(
-                        calendar.getDrinkStartTimeLocalDate(zoneId).toString(),
-                        calendar.getMostConsumedDrinkType(),
+        return calendars.getCalendarsPerDay(zoneId).entrySet().stream()
+                .map(localDateListEntry -> {
+                    List<Calendar> value = localDateListEntry.getValue();
+                    Map<DrinkType, Double> drinkSumByType = value.stream()
+                            .flatMap(calendar -> calendar.getUserCalendars().stream())
+                            .filter(userCalendar -> userCalendar.isOwner(userId))
+                            .flatMap(userCalendar -> userCalendar.getDrinkRecords().stream())
+                            .collect(Collectors.groupingBy(
+                                    DrinkRecord::getType,
+                                    Collectors.summingDouble(DrinkRecord::getQuantity)
+                            ));
+                    Map<LocalDate, DrinkType> result = new HashMap<>();
+                    result.put(
+                            localDateListEntry.getKey(),
+                            drinkSumByType.entrySet().stream()
+                                    .max(Map.Entry.comparingByValue())
+                                    .map(Map.Entry::getKey)
+                                    .orElse(null));
+                    return result;
+                })
+                .flatMap(map -> map.entrySet().stream())
+                .map(entry -> new GetMonthlyCalendarsResponse(
+                        entry.getKey().toString(),
+                        entry.getValue(),
                         true
                 ))
                 .sorted(Comparator.comparing(GetMonthlyCalendarsResponse::date))
@@ -340,7 +358,7 @@ public class CalendarService {
                             drinkRecordUpdateData.drinkType(),
                             drinkRecordUpdateData.drinkUnit(),
                             drinkRecordUpdateData.quantity()
-                            )));
+                    )));
         }
 
         userCalendar.deleteDrinkRecords(userId, request.drinks().deleted());

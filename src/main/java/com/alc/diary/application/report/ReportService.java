@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 @Service
 public class ReportService {
 
-    //    private final CalendarLegacyRepository calendarLegacyRepository;
     private final CalendarRepository calendarRepository;
 
     @Cacheable(value = "monthlyReport", key = "#userId + '_' + #month.year + '-' + #month.monthValue", cacheManager = "cacheManager")

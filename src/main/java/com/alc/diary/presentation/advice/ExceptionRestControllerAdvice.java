@@ -111,6 +111,8 @@ public class ExceptionRestControllerAdvice {
     public ResponseEntity<ErrorResponse<String>> exceptionHandler(HttpServletRequest request, Exception e) {
         slackLogger.error("Unexpected error occurred at {} {} from {}: {}",
                 request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), e.getMessage(), e);
+        log.error("Unexpected error occurred at {} {} from {}: {}",
+                request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.internalServerError("An unexpected error occurred. Please try again later."));
