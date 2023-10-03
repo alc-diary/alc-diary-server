@@ -63,7 +63,6 @@ class ReportTest {
                 .isEqualTo(6);
     }
 
-    // 수정 예정
     @Test
     void getDaysOfDrinking_empty_list() {
         Report testReport = new Report(Collections.emptyList());
