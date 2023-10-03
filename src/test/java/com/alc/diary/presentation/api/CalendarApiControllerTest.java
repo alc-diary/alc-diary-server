@@ -4,6 +4,7 @@ import com.alc.diary.application.calendar.CalendarService;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
+import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.enums.DrinkUnit;
 import com.alc.diary.presentation.filter.JwtAuthenticationFilter;
@@ -16,15 +17,18 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -95,6 +99,48 @@ class CalendarApiControllerTest {
     }
 
     @Test
-    void getCalendarByIdTest() {
+    void getCalendarByIdTest() throws Exception {
+        // given
+        long userId = 1L;
+        long calendarId = 1L;
+        ZonedDateTime start = ZonedDateTime.now();
+        ZonedDateTime end = ZonedDateTime.now();
+        Calendar calendar = Calendar.create(calendarId, "title", 1.5f, start, end);
+        GetCalendarByIdResponse response = new GetCalendarByIdResponse(calendarId, userId, "title", start.toString(), end.toString(), List.of(), List.of());
+        when(calendarService.getCalendarById(userId, calendarId))
+                .thenReturn(response);
+
+        // when & then
+        ResultActions perform = mvc.perform(get("/v1/calendars/" + calendarId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .requestAttr("userId", userId));
+        assertSuccess(perform)
+                .andExpect(jsonPath("$.data.calendarId").value(1L))
+                .andExpect(jsonPath("$.data.ownerId").value(1L))
+                .andExpect(jsonPath("$.data.title").value("title"))
+                .andExpect(jsonPath("$.data.drinkStartTime").value(start.toString()))
+                .andExpect(jsonPath("$.data.drinkEndTime").value(end.toString()))
+                .andExpect(jsonPath("$.data.userCalendars", empty()))
+                .andExpect(jsonPath("$.data.photos", empty()));
+
+        then(calendarService).should().getCalendarById(userId, calendarId);
+    }
+
+    private ResultActions assertSuccess(ResultActions perform) throws Exception {
+        return perform
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.code").value("S0000"))
+                .andExpect(jsonPath("$.message").value("success"));
+    }
+
+    private ResultActions assertCreated(ResultActions perform) throws Exception {
+        return perform
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(201))
+                .andExpect(jsonPath("$.code").value("S0001"))
+                .andExpect(jsonPath("$.message").value("created"));
     }
 }
