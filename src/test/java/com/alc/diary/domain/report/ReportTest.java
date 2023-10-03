@@ -1,5 +1,9 @@
-package com.alc.diary.domain.calender;
+package com.alc.diary.domain.report;
 
+import com.alc.diary.domain.calender.Calender;
+import com.alc.diary.domain.calender.Calenders;
+import com.alc.diary.domain.calender.DrinkSummary;
+import com.alc.diary.domain.calender.Report;
 import com.alc.diary.domain.calender.enums.DrinkType;
 import com.alc.diary.domain.calender.model.CalenderImage;
 import com.alc.diary.domain.calender.model.DrinkModel;
@@ -19,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ReportTest {
 
-    private Report report;
+    private com.alc.diary.domain.calender.Report report;
 
     @BeforeEach
     void setUp() {
@@ -28,19 +32,19 @@ class ReportTest {
                 new DrinkModel(SOJU, 3.0f)
         );
         Calenders calenders = new Calenders(IntStream.rangeClosed(1, 11)
-                                                     .mapToObj(i -> Calender.builder()
-                                                                            .id((long) i)
-                                                                            .title("test title" + i)
-                                                                            .contents("test contents" + i)
-                                                                            .drinkStartDateTime(LocalDateTime.of(2023, 5, 7, 0, 0).plusHours(i * 12L))
-                                                                            .drinkEndDateTime(LocalDateTime.of(2023, 5, 7, 10, 10).plusHours(i * 12L))
-                                                                            .drinkModels(drinkModels)
-                                                                            .image(new CalenderImage("test image" + i))
-                                                                            .drinkCondition("😀")
-                                                                            .user(User.builder(SocialType.KAKAO, "123").build())
-                                                                            .build())
-                                                     .collect(Collectors.toList()));
-        report = new Report(calenders);
+                .mapToObj(i -> Calender.builder()
+                        .id((long) i)
+                        .title("test title" + i)
+                        .contents("test contents" + i)
+                        .drinkStartDateTime(LocalDateTime.of(2023, 5, 7, 0, 0).plusHours(i * 12L))
+                        .drinkEndDateTime(LocalDateTime.of(2023, 5, 7, 10, 10).plusHours(i * 12L))
+                        .drinkModels(drinkModels)
+                        .image(new CalenderImage("test image" + i))
+                        .drinkCondition("😀")
+                        .user(User.builder(SocialType.KAKAO, "123").build())
+                        .build())
+                .collect(Collectors.toList()));
+        report = new com.alc.diary.domain.calender.Report(calenders);
     }
 
     @Test
@@ -52,7 +56,7 @@ class ReportTest {
     // 수정 예정
     @Test
     void getNumberOfDrinks_empty_list() {
-        Report testReport = new Report(Collections.emptyList());
+        com.alc.diary.domain.calender.Report testReport = new com.alc.diary.domain.calender.Report(Collections.emptyList());
         assertThat(testReport.totalDrinkQuantity())
                 .isEqualTo(0.0f);
     }
@@ -65,7 +69,7 @@ class ReportTest {
 
     @Test
     void getDaysOfDrinking_empty_list() {
-        Report testReport = new Report(Collections.emptyList());
+        com.alc.diary.domain.calender.Report testReport = new com.alc.diary.domain.calender.Report(Collections.emptyList());
         assertThat(testReport.totalDrinkingDays())
                 .isEqualTo(0);
     }
@@ -79,7 +83,7 @@ class ReportTest {
 
     @Test
     void 가장_많이_마신_주종_empty_list() {
-        Report testReport = new Report(Collections.emptyList());
+        com.alc.diary.domain.calender.Report testReport = new Report(Collections.emptyList());
         assertThat(testReport.mostConsumedDrinkSummary())
                 .isEqualTo(DrinkSummary.EMPTY);
     }
