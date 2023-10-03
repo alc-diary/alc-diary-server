@@ -12,6 +12,9 @@
 ![7.png](images%2F7.png)
 ![8.png](images%2F8.png)
 
+![9.png](images%2F9.png)
+![10.png](images%2F10.png)
+
 ## 목차
 1. [개요](#개요)
 2. [기능](#기능)
