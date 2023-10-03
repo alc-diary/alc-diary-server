@@ -242,7 +242,7 @@ public class CalendarService {
                         zoneId
                 );
 
-        return calendars.getCalendarsPerDay(zoneId).entrySet().stream()
+        return calendars.getCalendarsPerDay().entrySet().stream()
                 .map(localDateListEntry -> {
                     List<Calendar> value = localDateListEntry.getValue();
                     Map<DrinkType, Double> drinkSumByType = value.stream()

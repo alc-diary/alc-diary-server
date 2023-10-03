@@ -18,21 +18,7 @@ public class Calendars {
     private final List<Calendar> calendars;
     private final ZoneId zoneId;
 
-    public List<Calendar> getCalendarsByMaxDrinkPerDay(ZoneId zoneId) {
-        return calendars.stream()
-                .collect(
-                        Collectors.groupingBy(
-                                calendar -> calendar.getDrinkStartTimeLocalDate(zoneId),
-                                Collectors.maxBy(Comparator.comparing(Calendar::calculateTotalDrinkQuantity))
-                        )
-                )
-                .values().stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-    }
-
-    public Map<LocalDate, List<Calendar>> getCalendarsPerDay(ZoneId zoneId) {
+    public Map<LocalDate, List<Calendar>> getCalendarsPerDay() {
         return calendars.stream()
                 .collect(Collectors.groupingBy(calendar -> calendar.getDrinkStartTimeLocalDate(zoneId)));
     }
