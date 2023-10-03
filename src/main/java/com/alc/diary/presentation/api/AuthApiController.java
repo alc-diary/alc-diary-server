@@ -30,6 +30,14 @@ public class AuthApiController {
     private final SocialLoginAppService socialLoginAppService;
     private final RefreshTokenAppService refreshTokenAppService;
 
+    /**
+     * 소셜 로그인
+     *
+     * @param bearerToken Bearer 토큰
+     * @param userAgent User-Agent
+     * @param socialType 소셜 타입
+     * @return 성공
+     */
     @PostMapping("/social-login")
     public ApiResponse<SocialLoginAppResponse> socialLogin(
         @RequestHeader("Authorization") String bearerToken,
@@ -44,6 +52,12 @@ public class AuthApiController {
         return ApiResponse.getSuccess(socialLoginAppService.login(request, userAgent));
     }
 
+    /**
+     * 액세스 토큰 재발급
+     *
+     * @param request 액세스 토큰 재발급 요청
+     * @return 성공
+     */
     @PostMapping("/access-token/reissue")
     public ApiResponse<ReissueAccessTokenAppResponse> reissueAccessToken(
         @RequestBody ReissueAccessTokenAppRequest request
@@ -51,6 +65,12 @@ public class AuthApiController {
         return ApiResponse.getSuccess(refreshTokenAppService.reissueToken(request));
     }
 
+    /**
+     * 카카오 로그인 성공 콜백
+     *
+     * @param request 카카오 로그인 응답
+     * @return 성공
+     */
     @PostMapping("/kakao/success")
     public ApiResponse<SocialLoginAppResponse> kakaoLogin(
         @RequestBody KakaoLoginResponse request
@@ -95,6 +115,12 @@ public class AuthApiController {
         return ApiResponse.getSuccess(socialLoginAppService.webSocialLogin(socialLoginStrategyResponse));
     }
 
+    /**
+     * 구글 로그인 성공 콜백
+     *
+     * @param request 구글 로그인 응답
+     * @return 성공
+     */
     @PostMapping("/google/success")
     public ApiResponse<SocialLoginAppResponse> googleLogin(
         @RequestBody GoogleUserInfoDto request

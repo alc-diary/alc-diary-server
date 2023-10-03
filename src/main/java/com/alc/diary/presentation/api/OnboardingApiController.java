@@ -30,6 +30,12 @@ public class OnboardingApiController {
     private final NicknameAppService nicknameAppService;
     private final UserStatusAppService userStatusAppService;
 
+    /**
+     * 온보딩 완료 여부를 가져온다.
+     *
+     * @param userId 사용자 ID
+     * @return 온보딩 완료 여부
+     */
     @GetMapping("/is-onboarding-done")
     public ApiResponse<GetIsOnboardingDoneAppResponse> getIsOnboardingDone(
             @ApiIgnore @RequestAttribute Long userId
@@ -37,6 +43,12 @@ public class OnboardingApiController {
         return ApiResponse.getSuccess(userStatusAppService.getIsOnboardingDone(userId));
     }
 
+    /**
+     * 닉네임 중복 체크
+     *
+     * @param nickname 닉네임
+     * @return 중복 여부
+     */
     @GetMapping("/check-nickname-available")
     public ApiResponse<CheckNicknameAvailableAppResponse> checkNicknameAvailable(
         @RequestParam String nickname
@@ -47,11 +59,23 @@ public class OnboardingApiController {
         return ApiResponse.getSuccess(onboardingAppService.checkNicknameAvailable(nickname));
     }
 
+    /**
+     * 랜덤 닉네임을 가져온다.
+     *
+     * @return 랜덤 닉네임
+     */
     @GetMapping("/random-nickname")
     public ApiResponse<GetRandomNicknameAppResponse> getRandomNickname() {
         return ApiResponse.getSuccess(nicknameAppService.getRandomNickname());
     }
 
+    /**
+     * 닉네임 토큰을 생성한다.
+     *
+     * @param userId 사용자 ID
+     * @param request 닉네임 토큰 생성 요청
+     * @return 성공
+     */
     @PutMapping("/user-info")
     public ApiResponse<Void> updateUserOnboardingInfo(
         @ApiIgnore @RequestAttribute long userId,
