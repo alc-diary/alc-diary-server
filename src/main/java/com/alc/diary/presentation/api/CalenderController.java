@@ -19,11 +19,25 @@ public class CalenderController {
 
     private final CalenderService calenderService;
 
+    /**
+     * 캘린더 상세 조회
+     *
+     * @param calenderId 캘린더 ID
+     * @return 캘린더 상세
+     */
     @GetMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<FindCalenderDetailResponse> find(@PathVariable Long calenderId) {
         return ApiResponse.getSuccess(calenderService.find(calenderId));
     }
 
+    /**
+     * 캘린더 검색
+     *
+     * @param query  검색어
+     * @param date   날짜
+     * @param userId 사용자 ID
+     * @return 캘린더 검색 결과
+     */
     @GetMapping(value = "v1/calender/search")
     public ApiResponse<SearchCalenderResponse> search(
             @RequestParam(value = "query", required = false) String query,
@@ -33,6 +47,14 @@ public class CalenderController {
         return ApiResponse.getSuccess(calenderService.searchV1(new SearchCalenderRequest(userId, QueryType.valueOf(query), date)));
     }
 
+    /**
+     * 캘린더 검색
+     *
+     * @param query  검색어
+     * @param date   날짜
+     * @param userId 사용자 ID
+     * @return 캘린더 검색 결과
+     */
     @GetMapping(value = "v2/calender/search")
     public ApiResponse<SearchCalenderResponse> searchV2(
             @RequestParam(value = "query", required = false) String query,
@@ -42,6 +64,13 @@ public class CalenderController {
         return ApiResponse.getSuccess(calenderService.search(new SearchCalenderRequest(userId, QueryType.valueOf(query), date)));
     }
 
+    /**
+     * 캘린더 저장
+     *
+     * @param request 캘린더 저장 요청
+     * @param userId  사용자 ID
+     * @return 성공
+     */
     @PostMapping(value = "v1/calender")
     public ApiResponse<Void> save(@RequestBody @Validated SaveCalenderRequest request,
                                   @ApiIgnore @RequestAttribute Long userId) {
@@ -49,6 +78,14 @@ public class CalenderController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 캘린더 수정
+     *
+     * @param calenderId 캘린더 ID
+     * @param userId 사용자 ID
+     * @param request 캘린더 수정 요청
+     * @return 성공
+     */
     @PutMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<Void> update(@PathVariable Long calenderId,
                                     @ApiIgnore @RequestAttribute Long userId,
@@ -57,6 +94,13 @@ public class CalenderController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     *  캘린더 삭제
+     *
+     * @param calenderId 캘린더 ID
+     * @param userId 사용자 ID
+     * @return 성공
+     */
     @DeleteMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<Void> delete(@PathVariable Long calenderId,
                                     @ApiIgnore @RequestAttribute Long userId) {

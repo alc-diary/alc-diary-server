@@ -17,6 +17,12 @@ public class UserStatusApiController {
 
     private final UserStatusAppService userStatusAppService;
 
+    /**
+     * 온보딩 완료 여부를 가져온다.
+     *
+     * @param userId 사용자 ID
+     * @return 온보딩 완료 여부
+     */
     @GetMapping("/is-onboarding-done")
     public ApiResponse<GetIsOnboardingDoneAppResponse> getIsOnboardingDone(
             @ApiIgnore @RequestAttribute long userId

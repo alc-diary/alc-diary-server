@@ -23,6 +23,13 @@ public class CalendarApiController {
 
     private final CalendarService calendarService;
 
+    /**
+     * 캘린더를 생성한다.
+     *
+     * @param userId 사용자 ID
+     * @param request 캘린더 생성 요청
+     * @return 생성된 캘린더 ID
+     */
     @PostMapping
     public ApiResponse<CreateCalendarResponse> createCalendar(
             @ApiIgnore @RequestAttribute long userId,
@@ -31,6 +38,13 @@ public class CalendarApiController {
         return ApiResponse.getCreated(calendarService.createCalendarAndGenerateResponse(userId, request));
     }
 
+    /**
+     * 캘린더를 가져온다.
+     *
+     * @param userId 사용자 ID
+     * @param calendarId 캘린더 ID
+     * @return 캘린더
+     */
     @GetMapping("/{calendarId}")
     public ApiResponse<GetCalendarByIdResponse> getCalendarById(
             @ApiIgnore @RequestAttribute long userId,
@@ -39,6 +53,15 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getCalendarById(userId, calendarId));
     }
 
+    /**
+     * 캘린더를 수정한다.
+     *
+     * @param userId 사용자 ID
+     * @param calendarId 캘린더 ID
+     * @param userCalendarId 사용자 캘린더 ID
+     * @param request 캘린더 수정 요청
+     * @return 성공
+     */
     @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
     public ApiResponse<Void> updateCalendar(
             @ApiIgnore @RequestAttribute long userId,
@@ -50,6 +73,14 @@ public class CalendarApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 캘린더를 수정한다.
+     *
+     * @param userId 사용자 ID
+     * @param calendarId 캘린더 ID
+     * @param request 캘린더 수정 요청
+     * @return 성공
+     */
     @PutMapping("/{calendarId}")
     public ApiResponse<Void> updateCalendar(
             @ApiIgnore @RequestAttribute long userId,
@@ -60,6 +91,14 @@ public class CalendarApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 사용자 캘린더를 삭제한다.
+     *
+     * @param userId 사용자 ID
+     * @param calendarId 캘린더 ID
+     * @param userCalendarId 사용자 캘린더 ID
+     * @return 성공
+     */
     @DeleteMapping("/{calendarId}/user-calendars/{userCalendarId}")
     public ApiResponse<Void> deleteUserCalendar(
             @ApiIgnore @RequestAttribute long userId,
@@ -70,6 +109,14 @@ public class CalendarApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 일일 캘린더를 조회한다.
+     *
+     * @param userId 사용자 ID
+     * @param date 날짜
+     * @param zoneId 타임존
+     * @return 일일 캘린더
+     */
     @GetMapping("/daily")
     public ApiResponse<List<GetDailyCalendarsResponse>> getDailyCalendars(
             @ApiIgnore @RequestAttribute long userId,
@@ -79,6 +126,14 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getDailyCalendars(userId, date, zoneId));
     }
 
+    /**
+     * 월간 캘린더를 조회한다.
+     *
+     * @param userId 사용자 ID
+     * @param month 월
+     * @param zoneId 타임존
+     * @return 월간 캘린더
+     */
     @GetMapping("/monthly")
     public ApiResponse<List<GetMonthlyCalendarsResponse>> getMonthlyCalendars(
             @ApiIgnore @RequestAttribute long userId,
@@ -88,6 +143,13 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.getMonthlyCalendars(userId, month, zoneId));
     }
 
+    /**
+     * 메인에서 캘린더를 생성한다.
+     *
+     * @param userId 사용자 ID
+     * @param request 메인에서 캘린더 생성 요청
+     * @return 생성된 캘린더 ID
+     */
     @PostMapping("/main")
     public ApiResponse<Long> createCalendarFromMain(
             @ApiIgnore @RequestAttribute long userId,
@@ -96,6 +158,12 @@ public class CalendarApiController {
         return ApiResponse.getSuccess(calendarService.createCalendarFromMain(userId, request));
     }
 
+    /**
+     * 메인 캘린더에 필요한 데이터를 조회한다.
+     *
+     * @param userId 사용자 ID
+     * @return 메인 캘린더에 필요한 데이터
+     */
     @GetMapping("/main")
     public ApiResponse<GetMainResponse> getMain(
             @ApiIgnore @RequestAttribute long userId

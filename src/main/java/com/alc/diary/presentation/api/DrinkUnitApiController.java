@@ -16,6 +16,12 @@ public class DrinkUnitApiController {
 
     private final DrinkUnitService drinkUnitService;
 
+    /**
+     * 음료 단위를 생성한다.
+     *
+     * @param request 음료 단위 생성 요청
+     * @return 생성된 음료 단위 ID
+     */
     @PostMapping
     public ApiResponse<Long> createDrinkUnit(
             @RequestBody CreateDrinkUnitRequest request
@@ -23,11 +29,22 @@ public class DrinkUnitApiController {
         return ApiResponse.getCreated(drinkUnitService.createDrinkUnit(request));
     }
 
+    /**
+     * 음료 단위를 가져온다.
+     *
+     * @return 음료 단위 목록
+     */
     @GetMapping
     public ApiResponse<List<GetAllDrinkUnitsResponse>> getAllDrinkUnits() {
         return ApiResponse.getSuccess(drinkUnitService.getAllDrinkUnits());
     }
 
+    /**
+     * 음료 단위를 삭제한다.
+     *
+     * @param drinkUnitId 음료 단위 ID
+     * @return 성공
+     */
     @DeleteMapping("/{drinkUnitId}")
     public ApiResponse<Void> deleteDrinkUnit(
             @PathVariable long drinkUnitId

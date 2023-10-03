@@ -139,6 +139,6 @@ public class UserAppService {
 
     private User getUserById(Long userId) {
         return userRepository.findActiveUserById(userId)
-                             .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 }

@@ -16,6 +16,14 @@ public class ReportApiController {
 
     private final ReportAppService reportAppService;
 
+    /**
+     * 월간 리포트를 가져온다.
+     *
+     * @param userId 사용자 ID
+     * @param year 년
+     * @param month 월
+     * @return 월간 리포트
+     */
     @GetMapping
     public ApiResponse<GetMonthlyReportAppResponse> getMonthlyReport(
             @ApiIgnore @RequestAttribute Long userId,

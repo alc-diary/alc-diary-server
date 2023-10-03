@@ -1,5 +1,6 @@
 package com.alc.diary.application.calendar.dto.response;
 
+import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.enums.DescriptionStyle;
 
 public record GetMainResponse(
@@ -7,8 +8,13 @@ public record GetMainResponse(
         DescriptionStyle descriptionStyle,
         Long overAlcoholLimit
 ) {
-    public static GetMainResponse create(String nickname, DescriptionStyle descriptionStyle, long overAlcoholLimit, long nonAlcoholGoal) {
-        return new GetMainResponse(nickname, descriptionStyle, calculateOverAlcohol(overAlcoholLimit, nonAlcoholGoal));
+
+    public static GetMainResponse of(User user, long overAlcoholLimit) {
+        return new GetMainResponse(
+                user.getDetail().getNickname(),
+                user.getDetail().getDescriptionStyle(),
+                calculateOverAlcohol(overAlcoholLimit, user.getDetail().getNonAlcoholGoal())
+        );
     }
 
     private static Long calculateOverAlcohol(long overAlcoholLimit, long nonAlcoholGoal) {

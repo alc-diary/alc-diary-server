@@ -23,6 +23,12 @@ public class FriendshipApiController {
 
     private final FriendshipAppService friendshipAppService;
 
+    /**
+     * 친구 목록 조회
+     *
+     * @param userId
+     * @return
+     */
     @GetMapping
     public ApiResponse<List<GetFriendListAppResponse>> getFriendList(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
@@ -30,6 +36,14 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.getFriendList(userId));
     }
 
+    /**
+     * 친구 별칭 수정
+     *
+     * @param userId
+     * @param friendshipId
+     * @param request
+     * @return
+     */
     @PutMapping("/{friendshipId}/friend-label")
     public ApiResponse<Void> updateFriendLabel(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
@@ -40,6 +54,13 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 친구 삭제
+     *
+     * @param requesterId
+     * @param friendshipId
+     * @return
+     */
     @DeleteMapping("/{friendshipId}")
     public ApiResponse<Void> deleteFriend(
             @ApiIgnore @RequestAttribute(name = "userId") long requesterId,
@@ -49,6 +70,13 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 친구 요청을 보낼 유저를 닉네임으로 검색
+     *
+     * @param userId
+     * @param nickname
+     * @return
+     */
     @GetMapping("/search-user-with-friendship-status")
     public ApiResponse<SearchUserWithFriendStatusByNicknameAppResponse> searchUserWithFriendStatusByNickname(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
@@ -62,6 +90,13 @@ public class FriendshipApiController {
         );
     }
 
+    /**
+     * 친구 요청 전송
+     *
+     * @param userId
+     * @param request
+     * @return
+     */
     @PostMapping("/request")
     public ApiResponse<Void> sendFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
@@ -71,6 +106,12 @@ public class FriendshipApiController {
         return ApiResponse.getCreated();
     }
 
+    /**
+     * 수락되지 않은 친구 요청 조회
+     *
+     * @param userId
+     * @return
+     */
     @GetMapping("/request/pending")
     public ApiResponse<List<GetPendingFriendRequestsAppResponse>> getPendingFriendRequests(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
@@ -78,6 +119,12 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.getPendingFriendRequests(userId));
     }
 
+    /**
+     * 나에게 온 친구 요청 목록 조회
+     *
+     * @param userId
+     * @return
+     */
     @GetMapping("/request/received")
     public ApiResponse<List<GetReceivedFriendRequestsAppResponse>> getReceivedFriendRequests(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
@@ -85,6 +132,14 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.getReceivedFriendRequests(userId));
     }
 
+    /**
+     * 친구 요청 수락
+     *
+     * @param userId
+     * @param friendRequestId
+     * @param request
+     * @return
+     */
     @PutMapping("/request/{friendRequestId}/accept")
     public ApiResponse<Void> acceptFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
@@ -95,6 +150,13 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 친구 요청 거절
+     *
+     * @param userId
+     * @param friendRequestId
+     * @return
+     */
     @PutMapping("/request/{friendRequestId}/reject")
     public ApiResponse<Void> rejectFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
@@ -104,6 +166,13 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 내가 보낸 친구 요청 취소
+     *
+     * @param userId
+     * @param friendRequestId
+     * @return
+     */
     @PutMapping("/request/{friendRequestId}/cancel")
     public ApiResponse<Void> cancelFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId,
@@ -113,6 +182,12 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess();
     }
 
+    /**
+     * 읽지 않은 친구 요청이 있는지 조회
+     *
+     * @param userId
+     * @return
+     */
     @GetMapping("/request/has-unread")
     public ApiResponse<Boolean> hasUnreadFriendRequest(
             @ApiIgnore @RequestAttribute(name = "userId") long userId
@@ -120,6 +195,12 @@ public class FriendshipApiController {
         return ApiResponse.getSuccess(friendshipAppService.hasUnreadFriendRequest(userId));
     }
 
+    /**
+     * 새로운 친구 요청 라벨 제거
+     *
+     * @param userId
+     * @return
+     */
     @PutMapping("/request/clear-unread-badge")
     public ApiResponse<Void> clearUnreadFriendRequestBadge(
             @ApiIgnore @RequestAttribute(name = "userId") long userId

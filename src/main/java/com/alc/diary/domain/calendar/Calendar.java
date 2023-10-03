@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class Calendar extends BaseEntity {
 
     private static final int MAX_PHOTO_COUNT = 20;
+    private static final String MAIN_CALENDAR_DEFAULT_TITLE = "오늘의 음주기록";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -116,7 +117,7 @@ public class Calendar extends BaseEntity {
         );
     }
 
-    static Calendar create(
+    public static Calendar create(
             long ownerId,
             String title,
             float totalDrinkQuantity,
@@ -125,6 +126,23 @@ public class Calendar extends BaseEntity {
             ZonedDateTime now
     ) {
         return new Calendar(ownerId, title, totalDrinkQuantity, drinkStartTime, drinkEndTime, null, now);
+    }
+
+    public static Calendar createForMain(
+            long ownerId,
+            float totalDrinkQuantity,
+            ZonedDateTime drinkStartTime,
+            ZonedDateTime drinkEndTime
+    ) {
+        return new Calendar(
+                ownerId,
+                MAIN_CALENDAR_DEFAULT_TITLE,
+                totalDrinkQuantity,
+                drinkStartTime,
+                drinkEndTime,
+                null,
+                ZonedDateTime.now()
+        );
     }
 
     public void addUserCalendars(Collection<UserCalendar> userCalendarEntries) {
