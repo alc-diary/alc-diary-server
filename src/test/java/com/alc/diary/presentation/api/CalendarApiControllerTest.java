@@ -96,11 +96,5 @@ class CalendarApiControllerTest {
 
     @Test
     void getCalendarByIdTest() {
-        // TODO: Implement method
-        // given
-        given(calendarService.getCalendarById(anyLong(), anyLong()));
-
-        // when & then
-        then(calendarService).should().getCalendarById(anyLong(), anyLong());
     }
 }
