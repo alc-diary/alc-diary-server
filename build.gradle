@@ -87,6 +87,9 @@ dependencies {
     // Hibernate Envers
     implementation 'org.hibernate:hibernate-envers'
 
+    // firebase admin
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
     // test
     testImplementation 'org.projectlombok:lombok:1.18.22'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
