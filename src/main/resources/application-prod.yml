@@ -61,3 +61,5 @@ springfox:
       base-url: /
 
 slack.token: ${SLACK_TOKEN}
+
+firebase.service-account.json: ${FIREBASE_SERVICE_ACCOUNT_JSON}
