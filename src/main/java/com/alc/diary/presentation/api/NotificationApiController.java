@@ -23,4 +23,12 @@ public class NotificationApiController {
         notificationService.saveFcmToken(userId, request);
         return ApiResponse.getSuccess();
     }
+
+    @PostMapping
+    public ApiResponse<Void> sendFcm(
+            @ApiIgnore @RequestAttribute long userId
+    ) {
+        notificationService.sendFcm(userId);
+        return ApiResponse.getSuccess();
+    }
 }
