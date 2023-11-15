@@ -5,6 +5,7 @@ import com.alc.diary.application.friendship.dto.request.AcceptFriendRequestAppRe
 import com.alc.diary.application.friendship.dto.request.SendFriendRequestAppRequest;
 import com.alc.diary.application.friendship.dto.request.UpdateFriendLabelAppRequest;
 import com.alc.diary.application.friendship.dto.response.*;
+import com.alc.diary.application.notification.NotificationService;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.friendship.Friendship;
 import com.alc.diary.domain.friendship.FriendRequest;
@@ -38,6 +39,7 @@ public class FriendshipAppService {
     private final FriendRequestRepository friendRequestRepository;
     private final FriendshipRepository friendshipRepository;
     private final CacheService cacheService;
+    private final NotificationService notificationService;
 
     /**
      * 친구 요청 보내기
@@ -57,6 +59,12 @@ public class FriendshipAppService {
         FriendRequest friendRequestToSave = FriendRequest.create(sender.getId(), receiver.getId(), request.message());
         friendRequestRepository.save(friendRequestToSave);
         cacheService.setUnreadFriendRequestBadge(receiver.getId());
+
+        try {
+            notificationService.sendFcm(receiver.getId(), "술렁술렁", "친구 요청이 왔어!\n누가 보냈는지 확인해볼까?", "FRIEND_REQUEST");
+        } catch (Exception e) {
+            log.error("push exception: ", e);
+        }
     }
 
     private void validFriendRequest(long userAId, long userBId) {
@@ -225,6 +233,19 @@ public class FriendshipAppService {
                 request.friendLabel()
         );
         friendshipRepository.save(friendshipToSave);
+
+        User receiver = userRepository.findActiveUserById(friendRequest.getReceiverId())
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+
+        try {
+            notificationService.sendFcm(
+                    friendRequest.getSenderId(),
+                    "술렁술렁",
+                    receiver.getNickname() + "이 친구를 수락했어.",
+                    "FRIEND_ACCEPTED");
+        } catch (Exception e) {
+            log.error("push exception: ", e);
+        }
     }
 
     private void validFriendshipCountLimit(long userAId, long userBId) {

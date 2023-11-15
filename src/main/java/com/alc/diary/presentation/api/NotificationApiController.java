@@ -28,7 +28,7 @@ public class NotificationApiController {
     public ApiResponse<Void> sendFcm(
             @ApiIgnore @RequestAttribute long userId
     ) {
-        notificationService.sendFcm(userId);
+        notificationService.sendFcm(userId, "test title", "test body", "TEST");
         return ApiResponse.getSuccess();
     }
 }

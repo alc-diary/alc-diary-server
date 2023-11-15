@@ -1,11 +1,16 @@
 package com.alc.diary.application.notification;
 
 import com.alc.diary.application.notification.dto.SaveFcmTokenRequest;
+import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.notification.FcmToken;
 import com.alc.diary.domain.notification.FcmTokenRepository;
+import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.error.UserError;
+import com.alc.diary.domain.user.repository.UserRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private final FcmTokenRepository fcmTokenRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void saveFcmToken(long userId, SaveFcmTokenRequest request) {
@@ -29,17 +35,22 @@ public class NotificationService {
                 );
     }
 
-    public void sendFcm(long userId) {
+    public void sendFcm(long userId, String title, String body, String eventName) {
         FcmToken fcmToken = fcmTokenRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Token Not Found"));
+        User user = userRepository.findActiveUserById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .setImage(user.getProfileImage())
+                .build();
         Message message = Message.builder()
-                .putData("title", "test title")
-                .putData("body", "test body")
+                .setNotification(notification)
+                .putData("event", eventName)
                 .setToken(fcmToken.getToken())
                 .build();
         try {
             FirebaseMessaging.getInstance().send(message);
-        } catch (FirebaseMessagingException e) {
-            throw new IllegalArgumentException(e);
+        } catch (FirebaseMessagingException ignored) {
         }
     }
 }

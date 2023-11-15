@@ -6,6 +6,7 @@ import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequest;
 import com.alc.diary.application.calendar.dto.request.UpdateUserCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.*;
+import com.alc.diary.application.notification.NotificationService;
 import com.alc.diary.domain.calendar.*;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.error.CalendarError;
@@ -19,6 +20,7 @@ import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.CacheManager;
@@ -32,6 +34,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -42,6 +45,7 @@ public class CalendarService {
     private final UserCalendarRepository userCalendarRepository;
     private final CustomCalenderRepository customCalenderRepository;
     private final CacheManager cacheManager;
+    private final NotificationService notificationService;
 
     /**
      * 캘린더 생성
@@ -265,7 +269,7 @@ public class CalendarService {
         List<UserCalendar> taggedUserCalendars = calendar.getTaggedUserCalendars();
         Set<Long> taggedUserCalendarIds = extractUserIds(taggedUserCalendars);
 
-        addUserCalendars(request, taggedUserCalendarIds, calendar);
+        addUserCalendars(userId, request, taggedUserCalendarIds, calendar);
 
         deleteUserCalendars(request, taggedUserCalendars, calendar);
     }
@@ -292,7 +296,7 @@ public class CalendarService {
         }
     }
 
-    private static void addUserCalendars(UpdateCalendarRequest request, Set<Long> taggedUserCalendarIds, Calendar calendar) {
+    private void addUserCalendars(long userId, UpdateCalendarRequest request, Set<Long> taggedUserCalendarIds, Calendar calendar) {
         List<Long> addedTaggedUserIds = request.newTaggedUserIds().stream()
                 .filter(taggedUserId -> !taggedUserCalendarIds.contains(taggedUserId))
                 .toList();
@@ -300,6 +304,22 @@ public class CalendarService {
                 .map(UserCalendar::createTaggedUserCalendar)
                 .toList();
         calendar.addUserCalendars(userCalendarsToSave);
+
+        User user = userRepository.findActiveUserById(userId)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+
+        addedTaggedUserIds.stream()
+                .forEach(taggedUserId -> {
+                    try {
+                        notificationService.sendFcm(
+                                taggedUserId,
+                                "술렁술렁",
+                                user.getNickname() + "이 음주기록에 널 태그했어! 어떤 기록인지 봐볼까?",
+                                "FRIEND_TAGGED");
+                    } catch (Exception e) {
+                        log.error("push exception: ", e);
+                    }
+                });
     }
 
     private static void deleteUserCalendars(UpdateCalendarRequest request, List<UserCalendar> taggedUserCalendars, Calendar calendar) {
