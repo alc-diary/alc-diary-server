@@ -36,7 +36,10 @@ public class NotificationService {
     }
 
     public void sendFcm(long userId, String title, String body, String eventName) {
-        FcmToken fcmToken = fcmTokenRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Token Not Found"));
+        FcmToken fcmToken = fcmTokenRepository.findByUserId(userId).orElse(null);
+        if (fcmToken == null) {
+            return;
+        }
         User user = userRepository.findActiveUserById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         Notification notification = Notification.builder()
                 .setTitle(title)
