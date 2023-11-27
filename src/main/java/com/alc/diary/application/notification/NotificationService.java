@@ -12,6 +12,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class NotificationService {
                 );
     }
 
+    @Async
     public void sendFcm(long userId, String title, String body, String eventName) {
         FcmToken fcmToken = fcmTokenRepository.findByUserId(userId).orElse(null);
         if (fcmToken == null) {
@@ -53,7 +55,8 @@ public class NotificationService {
                 .build();
         try {
             FirebaseMessaging.getInstance().send(message);
-        } catch (FirebaseMessagingException ignored) {
+            Thread.sleep(10000);
+        } catch (Exception ignored) {
         }
     }
 }
