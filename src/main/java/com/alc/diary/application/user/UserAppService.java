@@ -7,8 +7,10 @@ import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
 import com.alc.diary.domain.nickname.BannedWord;
 import com.alc.diary.domain.nickname.NicknameBlackListRepository;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.NotificationSetting;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserWithdrawal;
+import com.alc.diary.domain.user.error.NotificationSettingError;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class UserAppService {
     private final UserWithdrawalRepository userWithdrawalRepository;
     private final MessageService messageService;
     private final NicknameBlackListRepository nicknameBlackListRepository;
+    private final NotificationSettingRepository notificationSettingRepository;
 
     /**
      * 유저 검색 (현재는 nickname만)
@@ -140,5 +143,32 @@ public class UserAppService {
     private User getUserById(Long userId) {
         return userRepository.findActiveUserById(userId)
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
+    }
+
+    /**
+     * 푸시 알림 활성화
+     *
+     * @param userId
+     */
+    @Transactional
+    public void enableNotificationSetting(Long userId) {
+        NotificationSetting notificationSetting = getNotificationSetting(userId);
+        notificationSetting.enableNotification();
+    }
+
+    /**
+     * 푸시 알림 비활성화
+     *
+     * @param userId
+     */
+    @Transactional
+    public void disableNotificationSetting(Long userId) {
+        NotificationSetting notificationSetting = getNotificationSetting(userId);
+        notificationSetting.disableNotification();
+    }
+
+    private NotificationSetting getNotificationSetting(Long userId) {
+        return notificationSettingRepository.findByUserId(userId)
+                .orElseThrow(() -> new DomainException(NotificationSettingError.ENTITY_NOT_FOUND));
     }
 }

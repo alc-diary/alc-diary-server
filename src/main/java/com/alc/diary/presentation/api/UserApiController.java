@@ -159,4 +159,32 @@ public class UserApiController {
         userAppService.deactivateUser(requesterId, request);
         return ApiResponse.getSuccess();
     }
+
+    /**
+     * 푸시 알림 활성화
+     *
+     * @param userId
+     * @return
+     */
+    @PutMapping("/notification-settings/enable")
+    public ApiResponse<Void> enableNotificationSetting(
+            @ApiIgnore @RequestAttribute("userId") Long userId
+    ) {
+        userAppService.enableNotificationSetting(userId);
+        return ApiResponse.getSuccess();
+    }
+
+    /**
+     * 푸시 알림 비 활성화
+     *
+     * @param userId
+     * @return
+     */
+    @PutMapping("/notification-settings/disable")
+    public ApiResponse<Void> disableNotificationSetting(
+            @ApiIgnore @RequestAttribute("userId") Long userId
+    ) {
+        userAppService.disableNotificationSetting(userId);
+        return ApiResponse.getSuccess();
+    }
 }
