@@ -71,10 +71,14 @@ public class CalendarService {
         Calendar calendar = calendarRepository.save(calendarToSave);
 
         User user = userRepository.findActiveUserById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
-        userCalendarsToSave.stream()
+        List<Long> list = userCalendarsToSave.stream()
                 .map(UserCalendar::getUserId)
                 .filter(u -> u != userId)
-                .forEach(taggedUserId -> notificationService.sendFcm(taggedUserId, "술렁술렁", user.getNickname() + "이 음주기록에 널 태그했어! 어떤 기록인지 봐볼까?", "FRIEND_TAGGED"));
+                .toList();
+
+        for (Long taggedUserId : list) {
+            notificationService.sendFcm(taggedUserId, "술렁술렁", user.getNickname() + "이 음주기록에 널 태그했어! 어떤 기록인지 봐볼까?", "FRIEND_TAGGED");
+        }
 
         return CreateCalendarResponse.from(calendar);
     }
