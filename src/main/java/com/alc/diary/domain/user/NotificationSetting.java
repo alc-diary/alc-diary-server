@@ -19,28 +19,24 @@ public class NotificationSetting {
     @Column(name = "user_id", nullable = false, updatable = false, unique = true)
     private long userId;
 
-    @Column(name = "friend_request", nullable = false)
-    private Boolean friendRequest;
+    @Column(name = "notification_enabled", nullable = false)
+    private Boolean notificationEnabled;
 
-    @Column(name = "calendar_tag", nullable = false)
-    private Boolean calendarTag;
-
-    private NotificationSetting(Long id, Long userId, Boolean friendRequest, Boolean calendarTag) {
+    private NotificationSetting(Long id, Long userId, Boolean notificationEnabled) {
         this.id = id;
         this.userId = userId;
-        this.friendRequest = friendRequest;
-        this.calendarTag = calendarTag;
+        this.notificationEnabled = notificationEnabled;
     }
 
     public static NotificationSetting create(long userId) {
-        return new NotificationSetting(null, userId, true, true);
+        return new NotificationSetting(null, userId, true);
     }
 
-    public void updateFriendRequest(boolean newFriendRequest) {
-        friendRequest = newFriendRequest;
+    public void enableNotification() {
+        this.notificationEnabled = true;
     }
 
-    public void updateCalendarTag(boolean newCalendarTag) {
-        calendarTag = newCalendarTag;
+    public void disableNotification() {
+        this.notificationEnabled = false;
     }
 }

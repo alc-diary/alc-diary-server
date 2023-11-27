@@ -300,6 +300,7 @@ public class CalendarService {
         List<Long> addedTaggedUserIds = request.newTaggedUserIds().stream()
                 .filter(taggedUserId -> !taggedUserCalendarIds.contains(taggedUserId))
                 .toList();
+
         List<UserCalendar> userCalendarsToSave = addedTaggedUserIds.stream()
                 .map(UserCalendar::createTaggedUserCalendar)
                 .toList();
@@ -309,17 +310,7 @@ public class CalendarService {
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
 
         addedTaggedUserIds.stream()
-                .forEach(taggedUserId -> {
-                    try {
-                        notificationService.sendFcm(
-                                taggedUserId,
-                                "술렁술렁",
-                                user.getNickname() + "이 음주기록에 널 태그했어! 어떤 기록인지 봐볼까?",
-                                "FRIEND_TAGGED");
-                    } catch (Exception e) {
-                        log.error("push exception: ", e);
-                    }
-                });
+                .forEach(taggedUserId -> notificationService.sendFcm(taggedUserId, "술렁술렁", user.getNickname() + "이 음주기록에 널 태그했어! 어떤 기록인지 봐볼까?", "FRIEND_TAGGED"));
     }
 
     private static void deleteUserCalendars(UpdateCalendarRequest request, List<UserCalendar> taggedUserCalendars, Calendar calendar) {

@@ -9,7 +9,9 @@ import com.alc.diary.application.auth.strategy.SocialLoginStrategy;
 import com.alc.diary.application.message.MessageService;
 import com.alc.diary.domain.auth.RefreshToken;
 import com.alc.diary.domain.auth.repository.RefreshTokenRepository;
+import com.alc.diary.domain.user.NotificationSetting;
 import com.alc.diary.domain.user.User;
+import com.alc.diary.domain.user.repository.NotificationSettingRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class SocialLoginAppService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final NotificationSettingRepository notificationSettingRepository;
     private final MessageService messageService;
 
     @Transactional
@@ -59,6 +62,9 @@ public class SocialLoginAppService {
         return userRepository.findNotDeactivatedUserByIdAndSocialTypeAndSocialId(socialLoginStrategyResponse.socialType(), socialLoginStrategyResponse.socialUserId())
                              .orElseGet(() -> {
                                  User savedUser = userRepository.save(createUser(socialLoginStrategyResponse));
+                                 NotificationSetting notificationSettingToSave = NotificationSetting.create(savedUser.getId());
+                                 notificationSettingRepository.save(notificationSettingToSave);
+
                                  messageService.send(
                                          "#알림",
                                          "User-Agent: " + userAgent + "\n" +
