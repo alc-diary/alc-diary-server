@@ -54,7 +54,6 @@ public class NotificationService {
                 .build();
         try {
             FirebaseMessaging.getInstance().send(message);
-            Thread.sleep(10000);
         } catch (Exception ignored) {
         }
     }
