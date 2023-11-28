@@ -1,8 +1,10 @@
 package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.nickname.NicknameAppService;
+import com.alc.diary.application.user.LogoutAppService;
 import com.alc.diary.application.user.UserAppService;
 import com.alc.diary.application.user.dto.request.*;
+import com.alc.diary.application.user.dto.response.GetNotificationSettingAppResponse;
 import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
@@ -26,6 +28,7 @@ public class UserApiController {
 
     private final UserAppService userAppService;
     private final NicknameAppService nicknameAppService;
+    private final LogoutAppService logoutAppService;
 
     /**
      * 닉네임으로 사용자 검색
@@ -161,6 +164,19 @@ public class UserApiController {
     }
 
     /**
+     * 푸시 알림 활성화 여부 조회
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("/notification-settings")
+    public ApiResponse<GetNotificationSettingAppResponse> getNotificationSetting(
+            @ApiIgnore @RequestAttribute("userId") Long userId
+    ) {
+        return ApiResponse.getSuccess(userAppService.getNotificationSetting(userId));
+    }
+
+    /**
      * 푸시 알림 활성화
      *
      * @param userId
@@ -185,6 +201,20 @@ public class UserApiController {
             @ApiIgnore @RequestAttribute("userId") Long userId
     ) {
         userAppService.disableNotificationSetting(userId);
+        return ApiResponse.getSuccess();
+    }
+
+    /**
+     * 로그아웃
+     *
+     * @param userId
+     * @return
+     */
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(
+            @ApiIgnore @RequestAttribute("userId") Long userId
+    ) {
+        logoutAppService.logout(userId);
         return ApiResponse.getSuccess();
     }
 }

@@ -8,7 +8,12 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "notification_settings")
+@Table(
+        name = "notification_settings",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_notification_settings_user_id", columnNames = "user_id")
+        }
+)
 @Entity
 public class NotificationSetting {
 

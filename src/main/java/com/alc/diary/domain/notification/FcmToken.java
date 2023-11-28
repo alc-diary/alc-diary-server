@@ -22,7 +22,7 @@ public class FcmToken {
     @Column(name = "user_id", nullable = false, updatable = false, unique = true)
     private Long userId;
 
-    @Column(name = "token", length = 255, nullable = false, unique = true)
+    @Column(name = "token", length = 255, nullable = false)
     private String token;
 
     private FcmToken(Long id, Long userId, String token) {

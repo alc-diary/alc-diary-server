@@ -2,6 +2,7 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.application.message.MessageService;
 import com.alc.diary.application.user.dto.request.*;
+import com.alc.diary.application.user.dto.response.GetNotificationSettingAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
 import com.alc.diary.domain.nickname.BannedWord;
@@ -146,13 +147,23 @@ public class UserAppService {
     }
 
     /**
+     * 푸시 알림 활성화 여부 조회
+     *
+     * @return
+     */
+    public GetNotificationSettingAppResponse getNotificationSetting(Long userId) {
+        NotificationSetting notificationSetting = fetchNotificationSetting(userId);
+        return new GetNotificationSettingAppResponse(notificationSetting.getNotificationEnabled());
+    }
+
+    /**
      * 푸시 알림 활성화
      *
      * @param userId
      */
     @Transactional
     public void enableNotificationSetting(Long userId) {
-        NotificationSetting notificationSetting = getNotificationSetting(userId);
+        NotificationSetting notificationSetting = fetchNotificationSetting(userId);
         notificationSetting.enableNotification();
     }
 
@@ -163,11 +174,11 @@ public class UserAppService {
      */
     @Transactional
     public void disableNotificationSetting(Long userId) {
-        NotificationSetting notificationSetting = getNotificationSetting(userId);
+        NotificationSetting notificationSetting = fetchNotificationSetting(userId);
         notificationSetting.disableNotification();
     }
 
-    private NotificationSetting getNotificationSetting(Long userId) {
+    private NotificationSetting fetchNotificationSetting(Long userId) {
         return notificationSettingRepository.findByUserId(userId)
                 .orElseThrow(() -> new DomainException(NotificationSettingError.ENTITY_NOT_FOUND));
     }
