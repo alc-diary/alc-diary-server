@@ -317,7 +317,7 @@ public class CalendarService {
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
 
         addedTaggedUserIds.stream()
-                .forEach(taggedUserId -> notificationService.sendFcm(taggedUserId, "술렁술렁", user.getNickname() + "이 음주기록에 널 태그했어! 어떤 기록인지 봐볼까?", "FRIEND_TAGGED"));
+                .forEach(taggedUserId -> notificationService.sendFcm(taggedUserId, "술렁술렁", "[" + user.getNickname() + "] 친구가 음주기록에 널 태그했어!\n어떤 기록인지 봐볼까?", "FRIEND_TAGGED"));
     }
 
     private static void deleteUserCalendars(UpdateCalendarRequest request, List<UserCalendar> taggedUserCalendars, Calendar calendar) {

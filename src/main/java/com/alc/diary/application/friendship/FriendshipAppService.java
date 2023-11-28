@@ -241,7 +241,7 @@ public class FriendshipAppService {
             notificationService.sendFcm(
                     friendRequest.getSenderId(),
                     "술렁술렁",
-                    receiver.getNickname() + "이 친구를 수락했어.",
+                    "[" + receiver.getNickname() + "] 친구를 수락했어.\n같이 기록해보자!",
                     "FRIEND_ACCEPTED");
         } catch (Exception e) {
             log.error("push exception: ", e);
