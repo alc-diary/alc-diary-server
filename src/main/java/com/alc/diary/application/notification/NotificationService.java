@@ -61,6 +61,8 @@ public class NotificationService {
                 .build();
         Message message = Message.builder()
                 .setNotification(notification)
+                .putData("title", title)
+                .putData("body", body)
                 .putData("event", eventName)
                 .setToken(fcmToken.getToken())
                 .build();
