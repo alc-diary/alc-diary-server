@@ -53,7 +53,6 @@ public class NotificationService {
         if (fcmToken == null) {
             return;
         }
-        User user = userRepository.findActiveUserById(userId).orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
         Notification notification = Notification.builder()
                 .setTitle(title)
                 .setBody(body)
