@@ -47,7 +47,8 @@ public class KakaoLoginService implements SocialLoginStrategy {
         AgeRangeType ageRange = kakaoAccountOptional.map(KakaoAccount::getAgeRange)
             .map(s -> switch (s) {
                 case "1~9" -> UNDER_TEN;
-                case "15_19" -> TEN_TO_FOURTEEN;
+                case "10~14" -> TEN_TO_FOURTEEN;
+                case "15~19" -> FIFTEEN_TO_NINETEEN;
                 case "20~29" -> TWENTIES;
                 case "30~39" -> THIRTIES;
                 case "40~49" -> FORTIES;
