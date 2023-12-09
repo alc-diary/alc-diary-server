@@ -57,7 +57,6 @@ public class NotificationService {
         Notification notification = Notification.builder()
                 .setTitle(title)
                 .setBody(body)
-                .setImage(user.getProfileImage())
                 .build();
         Message message = Message.builder()
                 .setNotification(notification)
