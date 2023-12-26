@@ -57,27 +57,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             long userId = jwtService.getUserIdFromToken(accessToken);
 
-            if (isOnboardingEndpoint(path)) {
-                if (path.equals("/v1/onboarding/is-onboarding-done")) {
-                    if (!userRepository.existsNotDeactivatedUserById(userId)) {
-                        throw new DomainException(UserError.USER_NOT_FOUND);
-                    }
-                } else if (!userRepository.existsOnboardingUserById(userId)) {
-                    throw new DomainException(UserError.USER_NOT_FOUND);
-                }
-            } else if (path.startsWith("/v1/user-status")) {
-                if (!userRepository.existsNotDeactivatedUserById(userId)) {
-                    throw new DomainException(UserError.USER_NOT_FOUND);
-                }
-            } else {
-                if (!userRepository.existsActiveUserById(userId)) {
-                    throw new DomainException(UserError.USER_NOT_FOUND);
-                }
-            }
+            // TODO: 온보딩 관련 처리 작업 해야함.
+//            if (isOnboardingEndpoint(path)) {
+//                if (path.equals("/v1/onboarding/is-onboarding-done")) {
+//                    if (!userRepository.existsNotDeactivatedUserById(userId)) {
+//                        throw new DomainException(UserError.USER_NOT_FOUND);
+//                    }
+//                } else if (!userRepository.existsOnboardingUserById(userId)) {
+//                    throw new DomainException(UserError.USER_NOT_FOUND);
+//                }
+//            } else if (path.startsWith("/v1/user-status")) {
+//                if (!userRepository.existsNotDeactivatedUserById(userId)) {
+//                    throw new DomainException(UserError.USER_NOT_FOUND);
+//                }
+//            } else {
+//                if (!userRepository.existsActiveUserById(userId)) {
+//                    throw new DomainException(UserError.USER_NOT_FOUND);
+//                }
+//            }
 
             request.setAttribute("userId", userId);
             filterChain.doFilter(request, response);
         } catch (DomainException e) {
+            // TODO: 추후에 예외 처리 상세하게 분리
             handlerExceptionResolver.resolveException(request, response, null, e);
         } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, e);
@@ -95,7 +97,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return bearerToken.substring("Bearer ".length());
     }
 
-    private boolean isOnboardingEndpoint(String path) {
-        return path.matches(ONBOARDING_API_PATTERN);
-    }
+//    private boolean isOnboardingEndpoint(String path) {
+//        return path.matches(ONBOARDING_API_PATTERN);
+//    }
 }
