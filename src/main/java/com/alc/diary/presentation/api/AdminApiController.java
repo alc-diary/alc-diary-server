@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,10 @@ public class AdminApiController {
     @GetMapping("/calendar")
     public ApiResponse<Page<CalendarDto>> getAllCalendars(Pageable pageable) {
         return ApiResponse.getSuccess(adminService.getAllCalendars(pageable));
+    }
+
+    @GetMapping("/calendar/{calendarId}")
+    public ApiResponse<CalendarDto> getCalendar(@PathVariable Long calendarId) {
+        return ApiResponse.getSuccess(adminService.getCalendar(calendarId));
     }
 }
