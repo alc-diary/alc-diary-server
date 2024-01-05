@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @CrossOrigin(originPatterns = "**")
@@ -19,10 +21,13 @@ public class AdminApiController {
     private final AdminService adminService;
 
     @GetMapping("/calendars")
-    public ApiResponse<Page<CalendarDto>> getAllCalendars(Pageable pageable, HttpServletResponse response) {
+    public Map<String, Object> getAllCalendars(Pageable pageable, HttpServletResponse response) {
         Page<CalendarDto> allCalendars = adminService.getAllCalendars(pageable);
         response.addHeader("X-Total-Count", String.valueOf(allCalendars.getTotalElements()));
-        return ApiResponse.getSuccess(allCalendars);
+        Map<String, Object> map = new HashMap<>();
+        map.put("data", allCalendars.getContent());
+        map.put("total", allCalendars.getTotalElements());
+        return map;
     }
 
     @GetMapping("/calendars/{calendarId}")
