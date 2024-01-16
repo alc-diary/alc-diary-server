@@ -10,7 +10,7 @@ public class NotificationBatchService {
 
     private final NotificationService notificationService;
 
-    @Scheduled(cron = "0 * 15 * * MON, WED")
+    @Scheduled(cron = "0 * 10 * * MON,TUE")
     public void batchTest() {
         notificationService.sendFcm(120, "zz", "테스트", "TEST");
     }
