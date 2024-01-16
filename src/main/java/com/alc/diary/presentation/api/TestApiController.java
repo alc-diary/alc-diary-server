@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,5 +34,10 @@ public class TestApiController {
     @GetMapping("/deploy")
     public String deploy() {
         return "good";
+    }
+
+    @GetMapping("/user/notification-enabled")
+    public List<Long> testUserNotificationEnabled() {
+        return userRepository.findNotificationEnabledUserIdsWithToken();
     }
 }
