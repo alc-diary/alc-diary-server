@@ -5,18 +5,14 @@ import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.notification.FcmToken;
 import com.alc.diary.domain.notification.FcmTokenRepository;
 import com.alc.diary.domain.user.NotificationSetting;
-import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.error.NotificationSettingError;
-import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.repository.NotificationSettingRepository;
-import com.alc.diary.domain.user.repository.UserRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private final FcmTokenRepository fcmTokenRepository;
-    private final UserRepository userRepository;
     private final NotificationSettingRepository notificationSettingRepository;
 
     @Transactional
     public void saveFcmToken(long userId, SaveFcmTokenRequest request) {
+        fcmTokenRepository.findByToken(request.token()).ifPresent(fcmTokenRepository::delete);
+        
         fcmTokenRepository.findByUserId(userId)
                 .ifPresentOrElse(
                         fcmToken -> fcmToken.updateToken(request.token()),
