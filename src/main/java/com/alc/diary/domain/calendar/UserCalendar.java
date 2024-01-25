@@ -143,6 +143,13 @@ public class UserCalendar extends BaseEntity {
                 .sum();
     }
 
+    public float totalQuantity() {
+        return (float) drinkRecords.stream()
+                .filter(drinkRecord -> !drinkRecord.isDeleted())
+                .mapToDouble(DrinkRecord::getQuantity)
+                .sum();
+    }
+
     public void delete() {
         drinkRecords.forEach(DrinkRecord::delete);
         this.deletedAt = LocalDateTime.now();

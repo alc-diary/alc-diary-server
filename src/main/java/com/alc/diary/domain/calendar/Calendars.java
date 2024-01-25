@@ -77,6 +77,9 @@ public class Calendars {
 
     public Optional<ZonedDateTime> getLastDrinkingDateTime() {
         return calendars.stream()
+                .flatMap(calendar -> calendar.getUserCalendars().stream())
+                .filter(userCalendar -> userCalendar.getDrinkingRecorded() && userCalendar.totalQuantity() != 0)
+                .map(UserCalendar::getCalendar)
                 .map(Calendar::getDrinkEndTime)
                 .max(Comparator.naturalOrder());
     }
