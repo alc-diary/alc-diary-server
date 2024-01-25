@@ -32,7 +32,7 @@ public record GetDailyCalendarsResponse(
                     User owner = userById.get(calendar.getOwnerId());
                     return new GetDailyCalendarsResponse(
                             calendar.getId(),
-                            new UserDto(owner.getId(), owner.getNickname(), owner.getProfileImage()),
+                            UserDto.fromDomainModel(owner),
                             calendar.getTitle(),
                             calendar.getDrinkStartTime().toString(),
                             calendar.getDrinkEndTime().toString(),
@@ -82,5 +82,13 @@ public record GetDailyCalendarsResponse(
             String nickname,
             String profileImageUrl
     ) {
+
+        public static UserDto fromDomainModel(User user) {
+            return new UserDto(
+                    user != null ? user.getId() : 0,
+                    user != null ? user.getNickname() : "탈퇴한 유저",
+                    user != null ? user.getProfileImage() : null
+            );
+        }
     }
 }
