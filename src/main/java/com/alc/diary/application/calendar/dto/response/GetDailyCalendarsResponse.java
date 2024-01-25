@@ -30,9 +30,10 @@ public record GetDailyCalendarsResponse(
         return calendars.stream()
                 .map(calendar -> {
                     User owner = userById.get(calendar.getOwnerId());
+                    UserDto ownerDto = UserDto.fromDomainModel(owner);
                     return new GetDailyCalendarsResponse(
                             calendar.getId(),
-                            UserDto.fromDomainModel(owner),
+                            ownerDto,
                             calendar.getTitle(),
                             calendar.getDrinkStartTime().toString(),
                             calendar.getDrinkEndTime().toString(),
@@ -52,7 +53,7 @@ public record GetDailyCalendarsResponse(
                                             .sum())
                                     .orElse(0.0)
                                     .floatValue(),
-                            calendar.findUserCalendarsExcludingUserId(owner.getId()).stream()
+                            calendar.findUserCalendarsExcludingUserId(ownerDto.id()).stream()
                                     .map(UserCalendar::getUserId)
                                     .filter(id -> userById.get(id) != null)
                                     .map(userById::get)

@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ToString
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class Calendars {
     }
 
     public int totalDaysDrinking() {
-        return calendars.stream()
+        return filterNonDrinkingUserCalendars(calendars.stream())
                 .collect(
                         Collectors.groupingBy(
                                 calendar -> calendar.getDrinkStartTimeLocalDate(zoneId)
@@ -66,7 +67,7 @@ public class Calendars {
     }
 
     public Optional<DayOfWeek> mostFrequentDrinkingDay() {
-        return calendars.stream()
+        return filterNonDrinkingUserCalendars(calendars.stream())
                 .collect(Collectors.groupingBy(
                         calendar -> calendar.getDrinkStartTimeLocalDate(zoneId).getDayOfWeek(),
                         Collectors.counting()
@@ -76,11 +77,15 @@ public class Calendars {
     }
 
     public Optional<ZonedDateTime> getLastDrinkingDateTime() {
-        return calendars.stream()
-                .flatMap(calendar -> calendar.getUserCalendars().stream())
-                .filter(userCalendar -> userCalendar.getDrinkingRecorded() && userCalendar.totalQuantity() != 0)
-                .map(UserCalendar::getCalendar)
+        return filterNonDrinkingUserCalendars(calendars.stream())
                 .map(Calendar::getDrinkEndTime)
                 .max(Comparator.naturalOrder());
+    }
+
+    private static Stream<Calendar> filterNonDrinkingUserCalendars(Stream<Calendar> calendarStream) {
+        return calendarStream
+                .flatMap(calendar -> calendar.getUserCalendars().stream())
+                .filter(userCalendar -> userCalendar.getDrinkingRecorded() && userCalendar.totalQuantity() != 0)
+                .map(UserCalendar::getCalendar);
     }
 }
