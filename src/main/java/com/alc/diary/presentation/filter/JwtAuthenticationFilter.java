@@ -3,13 +3,9 @@ package com.alc.diary.presentation.filter;
 import com.alc.diary.application.auth.service.JwtService;
 import com.alc.diary.domain.auth.error.AuthError;
 import com.alc.diary.domain.exception.DomainException;
-import com.alc.diary.domain.user.User;
-import com.alc.diary.domain.user.error.UserError;
-import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,10 +24,9 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTH_HEADER_NAME = "Authorization";
     private final JwtService jwtService;
-    private final UserRepository userRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    private final String[] whiteList = new String[]{"/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs", "/kakao", "/admin", "/css", "/assets", "/test", "/temp", "/v1/admin"};
+    private final String[] whiteList = new String[]{"/admin", "/v1/auth", "/h2-console", "/swagger-ui", "/swagger-resources", "/v3/api-docs", "/kakao", "/admin", "/css", "/assets", "/test", "/temp", "/v1/admin"};
     private final String[] equalsList = new String[]{"/favicon.ico", "/swagger-ui/index.html", "/v2/api-docs"};
     private final String ONBOARDING_API_PATTERN = "/v\\d+/onboarding.*";
 

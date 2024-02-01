@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class AdminService {
+public class AdminCalendarService {
 
     private final CalendarRepository calendarRepository;
 
