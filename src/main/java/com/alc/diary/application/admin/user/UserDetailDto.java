@@ -14,6 +14,9 @@ public record UserDetailDto(
         DescriptionStyle descriptionStyle) {
 
     public static UserDetailDto fromDomainModel(UserDetail userDetail) {
+        if (userDetail == null) {
+            return null;
+        }
         return new UserDetailDto(
                 userDetail.getId(),
                 userDetail.getNickname(),
