@@ -1,4 +1,4 @@
-package com.alc.diary.application.admin.response;
+package com.alc.diary.application.admin.calendar.response;
 
 import com.alc.diary.domain.calendar.Calendar;
 

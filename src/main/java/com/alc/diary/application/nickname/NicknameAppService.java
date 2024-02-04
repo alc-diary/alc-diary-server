@@ -49,11 +49,11 @@ public class NicknameAppService {
 
     public GetRandomNicknameTokens getRandomNicknameTokens() {
         List<GetRandomNicknameTokens.NicknameTokenDto> firstNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.FIRST).stream()
-                                                                                                       .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
-                                                                                                       .toList();
+                .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
+                .toList();
         List<GetRandomNicknameTokens.NicknameTokenDto> secondNicknameTokenDtos = nicknameTokenRepository.findByOrdinal(NicknameTokenOrdinal.SECOND).stream()
-                                                                                                        .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
-                                                                                                        .toList();
+                .map(nicknameToken -> new GetRandomNicknameTokens.NicknameTokenDto(nicknameToken.getId(), nicknameToken.getToken()))
+                .toList();
         return new GetRandomNicknameTokens(firstNicknameTokenDtos, secondNicknameTokenDtos);
     }
 
@@ -78,9 +78,9 @@ public class NicknameAppService {
 
     private String getRandomToken(NicknameTokenOrdinal ordinal) {
         return nicknameTokenRepository.findByOrdinalOrderByRandLimit1(ordinal, PageRequest.of(0, 1)).stream()
-                                      .findFirst()
-                                      .map(NicknameToken::getToken)
-                                      .orElseThrow(RuntimeException::new);
+                .findFirst()
+                .map(NicknameToken::getToken)
+                .orElseThrow(RuntimeException::new);
     }
 
     public List<BannedWord> getAllBannedWords() {

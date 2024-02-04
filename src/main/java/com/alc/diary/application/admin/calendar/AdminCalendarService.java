@@ -1,6 +1,6 @@
-package com.alc.diary.application.admin;
+package com.alc.diary.application.admin.calendar;
 
-import com.alc.diary.application.admin.response.CalendarDto;
+import com.alc.diary.application.admin.calendar.response.CalendarDto;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.exception.DomainException;
@@ -22,7 +22,7 @@ public class AdminCalendarService {
                 .map(CalendarDto::fromDomainModel);
     }
 
-    public CalendarDto getCalendar(Long calendarId) {
+    public CalendarDto getCalendarById(Long calendarId) {
         return calendarRepository.findById(calendarId)
                 .map(CalendarDto::fromDomainModel)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));

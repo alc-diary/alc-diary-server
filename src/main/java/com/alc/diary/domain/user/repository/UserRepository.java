@@ -2,6 +2,8 @@ package com.alc.diary.domain.user.repository;
 
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.enums.SocialType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -11,6 +13,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface UserRepository extends Repository<User, Long>, CustomUserRepository {
+
+    Page<User> findAll(Pageable pageable);
+
+    Optional<User> findById(long id);
 
     User save(User user);
 
