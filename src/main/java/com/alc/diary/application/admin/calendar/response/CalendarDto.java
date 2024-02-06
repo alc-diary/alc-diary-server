@@ -16,7 +16,9 @@ public record CalendarDto(
         ZonedDateTime drinkEndTime,
         List<UserCalendarDto> userCalendars,
         List<PhotoDto> photos,
-        LocalDateTime deletedAt
+        LocalDateTime deletedAt,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
 
     public static CalendarDto fromDomainModel(Calendar calendar) {
@@ -33,7 +35,9 @@ public record CalendarDto(
                 calendar.getPhotos().stream()
                         .map(PhotoDto::fromDomainModel)
                         .toList(),
-                calendar.getDeletedAt()
+                calendar.getDeletedAt(),
+                calendar.getCreatedAt(),
+                calendar.getUpdatedAt()
         );
     }
 }

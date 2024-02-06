@@ -6,6 +6,8 @@ import com.alc.diary.domain.user.enums.GenderType;
 import com.alc.diary.domain.user.enums.SocialType;
 import com.alc.diary.domain.user.enums.UserStatus;
 
+import java.time.LocalDateTime;
+
 public record UserDto(
 
         long id,
@@ -16,7 +18,9 @@ public record UserDto(
         String email,
         GenderType gender,
         AgeRangeType ageRange,
-        String profileImage) {
+        String profileImage,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt) {
 
     public static UserDto fromDomainModel(User user) {
         return new UserDto(
@@ -28,7 +32,9 @@ public record UserDto(
                 user.getEmail(),
                 user.getGender(),
                 user.getAgeRange(),
-                user.getProfileImage()
+                user.getProfileImage(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
     }
 }
