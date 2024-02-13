@@ -71,7 +71,7 @@ public record GetDailyCalendarsResponse(
     public record DrinkRecordDto(
 
             DrinkType drinkType,
-            DrinkUnitType drinkUnitType
+            DrinkUnitType drinkUnit
     ) {
     }
 

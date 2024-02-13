@@ -137,7 +137,7 @@ public class CalendarService {
         return userCalendarCreationDto.drinks().stream()
                 .map(drinkCreationDto -> DrinkRecord.create(
                         drinkCreationDto.drinkType(),
-                        drinkCreationDto.drinkUnitType(),
+                        drinkCreationDto.drinkUnit(),
                         drinkCreationDto.quantity()
                 ))
                 .toList();
@@ -374,7 +374,7 @@ public class CalendarService {
 
     private static void updateDrinkRecords(long userId, UpdateUserCalendarRequest request, UserCalendar userCalendar) {
         List<DrinkRecord> drinkRecordsToSave = request.drinks().added().stream()
-                .map(it -> DrinkRecord.create(it.drinkType(), it.drinkUnitType(), it.quantity()))
+                .map(it -> DrinkRecord.create(it.drinkType(), it.drinkUnit(), it.quantity()))
                 .toList();
         userCalendar.addDrinkRecords(drinkRecordsToSave);
 
@@ -392,7 +392,7 @@ public class CalendarService {
                 .ifPresent(it -> it.updateRecord(new DrinkRecordUpdateVo(
                         drinkRecordUpdateData.id(),
                         drinkRecordUpdateData.drinkType(),
-                        drinkRecordUpdateData.drinkUnitType(),
+                        drinkRecordUpdateData.drinkUnit(),
                         drinkRecordUpdateData.quantity()
                 )));
     }
@@ -456,7 +456,7 @@ public class CalendarService {
         List<DrinkRecord> drinkRecordsToSave = request.drinks().stream()
                 .map(dto -> DrinkRecord.create(
                         dto.drinkType(),
-                        dto.drinkUnitType(),
+                        dto.drinkUnit(),
                         dto.quantity()
                 ))
                 .toList();

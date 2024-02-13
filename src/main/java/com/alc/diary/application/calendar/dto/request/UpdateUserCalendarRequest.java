@@ -26,7 +26,7 @@ public record UpdateUserCalendarRequest(
     public record DrinkRecordCreationData(
 
             DrinkType drinkType,
-            DrinkUnitType drinkUnitType,
+            DrinkUnitType drinkUnit,
             float quantity
     ) {
     }
@@ -35,7 +35,7 @@ public record UpdateUserCalendarRequest(
 
             long id,
             DrinkType drinkType,
-            DrinkUnitType drinkUnitType,
+            DrinkUnitType drinkUnit,
             float quantity
     ) {
     }

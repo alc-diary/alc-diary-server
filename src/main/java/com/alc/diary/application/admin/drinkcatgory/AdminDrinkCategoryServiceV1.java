@@ -1,6 +1,7 @@
-package com.alc.diary.application.drinkcategory;
+package com.alc.diary.application.admin.drinkcatgory;
 
-import com.alc.diary.application.drinkcategory.dto.request.CreateDrinkCategoryRequest;
+import com.alc.diary.application.admin.drinkcatgory.request.AdminCreateDrinkCategoryRequest;
+import com.alc.diary.application.admin.drinkcatgory.response.AdminGetAllDrinkCategoriesResponse;
 import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategoriesResponse;
 import com.alc.diary.domain.drinkcategory.DrinkCategory;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
@@ -15,22 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class DrinkCategoryService {
+public class AdminDrinkCategoryServiceV1 {
 
     private final DrinkCategoryRepository drinkCategoryRepository;
 
-    /**
-     * 음료 카테고리 생성
-     *
-     * @param request
-     * @return
-     */
     @Transactional
-    public long createDrinkCategory(CreateDrinkCategoryRequest request) {
-        if (drinkCategoryRepository.findByName(request.drinkCategoryName()).isPresent()) {
+    public long createDrinkCategory(AdminCreateDrinkCategoryRequest request) {
+        if (drinkCategoryRepository.findByName(request.name()).isPresent()) {
             throw new DomainException(DrinkCategoryError.DUPLICATE_NAME);
         }
-        DrinkCategory drinkCategoryToSave = new DrinkCategory(request.drinkCategoryName());
+        DrinkCategory drinkCategoryToSave = new DrinkCategory(request.name());
         DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
         return drinkCategory.getId();
     }
@@ -40,18 +35,8 @@ public class DrinkCategoryService {
      *
      * @return
      */
-    public Page<GetAllDrinkCategoriesResponse> getAllDrinkCategories(Pageable pageable) {
+    public Page<AdminGetAllDrinkCategoriesResponse> getAllDrinkCategories(Pageable pageable) {
         return drinkCategoryRepository.findAll(pageable)
-                .map(GetAllDrinkCategoriesResponse::from);
-    }
-
-    /**
-     * 음료 카테고리 삭제
-     *
-     * @param drinkCategoryId
-     */
-    @Transactional
-    public void deleteDrinkCategory(long drinkCategoryId) {
-        drinkCategoryRepository.deleteById(drinkCategoryId);
+                .map(AdminGetAllDrinkCategoriesResponse::from);
     }
 }

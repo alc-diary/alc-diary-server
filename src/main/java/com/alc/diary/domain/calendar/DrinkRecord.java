@@ -101,17 +101,17 @@ public class DrinkRecord {
         if (updateVo.drinkType() == null) {
             throw new DomainException(DrinkRecordError.NULL_DRINK_TYPE);
         }
-        if (updateVo.drinkUnitType() == null) {
+        if (updateVo.drinkUnit() == null) {
             throw new DomainException(DrinkRecordError.NULL_DRINK_UNIT);
         }
-        if (!updateVo.drinkType().isUnitAllowed(updateVo.drinkUnitType())) {
+        if (!updateVo.drinkType().isUnitAllowed(updateVo.drinkUnit())) {
             throw new DomainException(DrinkRecordError.INVALID_DRINK_UNIT);
         }
         if (quantity == 0) {
             throw new DomainException(DrinkRecordError.ZERO_QUANTITY);
         }
         type = updateVo.drinkType();
-        unit = updateVo.drinkUnitType();
+        unit = updateVo.drinkUnit();
         quantity = updateVo.quantity();
     }
 

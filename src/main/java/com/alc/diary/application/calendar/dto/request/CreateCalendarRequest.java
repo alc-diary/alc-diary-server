@@ -35,7 +35,7 @@ public record CreateCalendarRequest(
     public record DrinkCreationDto(
 
             @NotNull DrinkType drinkType,
-            @NotNull DrinkUnitType drinkUnitType,
+            @NotNull DrinkUnitType drinkUnit,
             @NotNull @Min(0) Float quantity
     ) {
     }
