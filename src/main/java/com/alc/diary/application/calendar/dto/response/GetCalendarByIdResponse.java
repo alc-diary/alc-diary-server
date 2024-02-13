@@ -87,7 +87,7 @@ public record GetCalendarByIdResponse(
 
             long id,
             DrinkType drinkType,
-            DrinkUnitType drinkUnitType,
+            DrinkUnitType drinkUnit,
             float quantity
     ) {
     }
