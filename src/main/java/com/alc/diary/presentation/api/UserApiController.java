@@ -4,10 +4,7 @@ import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.LogoutAppService;
 import com.alc.diary.application.user.UserAppService;
 import com.alc.diary.application.user.dto.request.*;
-import com.alc.diary.application.user.dto.response.GetNotificationSettingAppResponse;
-import com.alc.diary.application.user.dto.response.GetRandomNicknameAppResponse;
-import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
-import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
+import com.alc.diary.application.user.dto.response.*;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.UserDetail;
 import com.alc.diary.domain.user.error.UserError;
@@ -19,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -216,5 +215,10 @@ public class UserApiController {
     ) {
         logoutAppService.logout(userId);
         return ApiResponse.getSuccess();
+    }
+
+    @GetMapping("/drinks")
+    public ApiResponse<List<GetDrinksResponse>> getDrinks(@ApiIgnore @RequestAttribute("userId") Long userId) {
+        return ApiResponse.getSuccess(userAppService.getDrinks(userId));
     }
 }

@@ -2,9 +2,14 @@ package com.alc.diary.application.user;
 
 import com.alc.diary.application.message.MessageService;
 import com.alc.diary.application.user.dto.request.*;
+import com.alc.diary.application.user.dto.response.GetDrinksResponse;
 import com.alc.diary.application.user.dto.response.GetNotificationSettingAppResponse;
 import com.alc.diary.application.user.dto.response.GetUserInfoAppResponse;
 import com.alc.diary.application.user.dto.response.SearchUserAppResponse;
+import com.alc.diary.domain.drink.Drink;
+import com.alc.diary.domain.drink.repository.DrinkRepository;
+import com.alc.diary.domain.drinkcategory.DrinkCategory;
+import com.alc.diary.domain.drinkcategory.DrinkCategoryRepository;
 import com.alc.diary.domain.nickname.BannedWord;
 import com.alc.diary.domain.nickname.NicknameBlackListRepository;
 import com.alc.diary.domain.exception.DomainException;
@@ -21,7 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -35,6 +43,8 @@ public class UserAppService {
     private final MessageService messageService;
     private final NicknameBlackListRepository nicknameBlackListRepository;
     private final NotificationSettingRepository notificationSettingRepository;
+    private final DrinkCategoryRepository drinkCategoryRepository;
+    private final DrinkRepository drinkRepository;
 
     /**
      * 유저 검색 (현재는 nickname만)
@@ -181,5 +191,12 @@ public class UserAppService {
     private NotificationSetting fetchNotificationSetting(Long userId) {
         return notificationSettingRepository.findByUserId(userId)
                 .orElseThrow(() -> new DomainException(NotificationSettingError.ENTITY_NOT_FOUND));
+    }
+
+    public List<GetDrinksResponse> getDrinks(long userId) {
+        List<DrinkCategory> drinkCategories = drinkCategoryRepository.findAll();
+        List<Drink> drinks = drinkRepository.findAll();
+
+        return GetDrinksResponse.of(drinkCategories, drinks);
     }
 }
