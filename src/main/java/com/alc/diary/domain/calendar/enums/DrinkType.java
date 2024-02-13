@@ -9,17 +9,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public enum DrinkType {
 
-    BEER(List.of(DrinkUnit.BOTTLE, DrinkUnit.CAN, DrinkUnit.GLASS, DrinkUnit.ML_500, DrinkUnit.PITCHER), 4000, 408),
-    SOJU(List.of(DrinkUnit.BOTTLE, DrinkUnit.GLASS), 4000, 256),
-    WINE(List.of(DrinkUnit.BOTTLE, DrinkUnit.GLASS), 30000, 548),
-    MAKGEOLLI(List.of(DrinkUnit.BOTTLE, DrinkUnit.GLASS), 4000, 344),
+    BEER(List.of(DrinkUnitType.BOTTLE, DrinkUnitType.CAN, DrinkUnitType.GLASS, DrinkUnitType.ML_500, DrinkUnitType.PITCHER), 4000, 408),
+    SOJU(List.of(DrinkUnitType.BOTTLE, DrinkUnitType.GLASS), 4000, 256),
+    WINE(List.of(DrinkUnitType.BOTTLE, DrinkUnitType.GLASS), 30000, 548),
+    MAKGEOLLI(List.of(DrinkUnitType.BOTTLE, DrinkUnitType.GLASS), 4000, 344),
     ;
 
-    private final List<DrinkUnit> allowedUnits;
+    private final List<DrinkUnitType> allowedUnits;
     private final int price;
     private final int calories;
 
-    public boolean isUnitAllowed(DrinkUnit drinkUnit) {
-        return allowedUnits.contains(drinkUnit);
+    public boolean isUnitAllowed(DrinkUnitType drinkUnitType) {
+        return allowedUnits.contains(drinkUnitType);
     }
 }

@@ -1,6 +1,7 @@
 package com.alc.diary.domain.drink;
 
 import com.alc.diary.domain.BaseEntity;
+import com.alc.diary.domain.drinkcategory.DrinkCategory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

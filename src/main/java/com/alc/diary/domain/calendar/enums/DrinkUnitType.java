@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum DrinkUnit {
+public enum DrinkUnitType {
 
     BOTTLE("병"),
     GLASS("잔"),

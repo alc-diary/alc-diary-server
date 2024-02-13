@@ -6,7 +6,7 @@ import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.enums.DrinkType;
-import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 import com.alc.diary.presentation.filter.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -90,7 +90,7 @@ class CalendarApiControllerTest {
                 1L,
                 "content",
                 "condition",
-                List.of(new CreateCalendarRequest.DrinkCreationDto(DrinkType.BEER, DrinkUnit.BOTTLE, 1.0f))
+                List.of(new CreateCalendarRequest.DrinkCreationDto(DrinkType.BEER, DrinkUnitType.BOTTLE, 1.0f))
         );
     }
 

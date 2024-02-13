@@ -1,9 +1,8 @@
 package com.alc.diary.application.calendar.dto.response;
 
 import com.alc.diary.domain.calendar.Calendar;
-import com.alc.diary.domain.calendar.DrinkRecord;
 import com.alc.diary.domain.calendar.enums.DrinkType;
-import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 import com.alc.diary.domain.user.User;
 import io.swagger.annotations.ApiModel;
 
@@ -88,7 +87,7 @@ public record GetCalendarByIdResponse(
 
             long id,
             DrinkType drinkType,
-            DrinkUnit drinkUnit,
+            DrinkUnitType drinkUnitType,
             float quantity
     ) {
     }

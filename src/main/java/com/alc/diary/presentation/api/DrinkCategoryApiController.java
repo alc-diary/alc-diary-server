@@ -5,6 +5,8 @@ import com.alc.diary.application.drinkcategory.dto.request.CreateDrinkCategoryRe
 import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategoriesResponse;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +37,8 @@ public class DrinkCategoryApiController {
      * @return 음료 카테고리 목록
      */
     @GetMapping
-    private ApiResponse<List<GetAllDrinkCategoriesResponse>> getAllDrinkCategories() {
-        return ApiResponse.getSuccess(drinkCategoryService.getAllDrinkCategories());
+    private ApiResponse<Page<GetAllDrinkCategoriesResponse>> getAllDrinkCategories(Pageable pageable) {
+        return ApiResponse.getSuccess(drinkCategoryService.getAllDrinkCategories(pageable));
     }
 
     /**

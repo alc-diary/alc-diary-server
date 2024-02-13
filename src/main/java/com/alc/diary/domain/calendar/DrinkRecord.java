@@ -1,8 +1,8 @@
 package com.alc.diary.domain.calendar;
 
-import com.alc.diary.domain.calendar.error.DrinkRecordError;
 import com.alc.diary.domain.calendar.enums.DrinkType;
-import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
+import com.alc.diary.domain.calendar.error.DrinkRecordError;
 import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
@@ -36,9 +36,17 @@ public class DrinkRecord {
     private DrinkType type;
 
     @Audited
+    @Column(name = "drink_id")
+    private Long drinkId;
+
+    @Audited
     @Enumerated(EnumType.STRING)
     @Column(name = "unit", nullable = false)
-    private DrinkUnit unit;
+    private DrinkUnitType unit;
+
+    @Audited
+    @Column(name = "drink_unit_id")
+    private Long drinkUnitId;
 
     @Audited
     @Column(name = "quantity", nullable = false)
@@ -48,27 +56,33 @@ public class DrinkRecord {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    private DrinkRecord(DrinkType drinkType, DrinkUnit drinkUnit, float quantity, LocalDateTime deletedAt) {
+    private DrinkRecord(DrinkType drinkType, DrinkUnitType drinkUnitType, Long drinkId, Long drinkUnitId, float quantity, LocalDateTime deletedAt) {
         if (drinkType == null) {
             throw new DomainException(DrinkRecordError.NULL_DRINK_TYPE);
         }
-        if (drinkUnit == null) {
+        if (drinkUnitType == null) {
             throw new DomainException(DrinkRecordError.NULL_DRINK_UNIT);
         }
-        if (!drinkType.isUnitAllowed(drinkUnit)) {
+        if (!drinkType.isUnitAllowed(drinkUnitType)) {
             throw new DomainException(DrinkRecordError.INVALID_DRINK_UNIT);
         }
         if (quantity == 0) {
             throw new DomainException(DrinkRecordError.ZERO_QUANTITY);
         }
         this.type = drinkType;
-        this.unit = drinkUnit;
+        this.unit = drinkUnitType;
+        this.drinkId = drinkId;
+        this.drinkUnitId = drinkUnitId;
         this.quantity = quantity;
         this.deletedAt = deletedAt;
     }
 
-    public static DrinkRecord create(DrinkType drinkType, DrinkUnit drinkUnit, float quantity) {
-        return new DrinkRecord(drinkType, drinkUnit, quantity, null);
+    public static DrinkRecord create(DrinkType drinkType, DrinkUnitType drinkUnitType, float quantity) {
+        return new DrinkRecord(drinkType, drinkUnitType, null, null, quantity, null);
+    }
+
+    public static DrinkRecord create(long drinkId, long drinkUnitId, float quantity) {
+        return new DrinkRecord(DrinkType.BEER, DrinkUnitType.BOTTLE, drinkId, drinkUnitId, quantity, null);
     }
 
     public void setUserCalendar(UserCalendar userCalendar) {
@@ -87,17 +101,17 @@ public class DrinkRecord {
         if (updateVo.drinkType() == null) {
             throw new DomainException(DrinkRecordError.NULL_DRINK_TYPE);
         }
-        if (updateVo.drinkUnit() == null) {
+        if (updateVo.drinkUnitType() == null) {
             throw new DomainException(DrinkRecordError.NULL_DRINK_UNIT);
         }
-        if (!updateVo.drinkType().isUnitAllowed(updateVo.drinkUnit())) {
+        if (!updateVo.drinkType().isUnitAllowed(updateVo.drinkUnitType())) {
             throw new DomainException(DrinkRecordError.INVALID_DRINK_UNIT);
         }
         if (quantity == 0) {
             throw new DomainException(DrinkRecordError.ZERO_QUANTITY);
         }
         type = updateVo.drinkType();
-        unit = updateVo.drinkUnit();
+        unit = updateVo.drinkUnitType();
         quantity = updateVo.quantity();
     }
 

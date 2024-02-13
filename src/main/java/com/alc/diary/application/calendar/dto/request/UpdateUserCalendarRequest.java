@@ -1,7 +1,7 @@
 package com.alc.diary.application.calendar.dto.request;
 
 import com.alc.diary.domain.calendar.enums.DrinkType;
-import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public record UpdateUserCalendarRequest(
     public record DrinkRecordCreationData(
 
             DrinkType drinkType,
-            DrinkUnit drinkUnit,
+            DrinkUnitType drinkUnitType,
             float quantity
     ) {
     }
@@ -35,7 +35,7 @@ public record UpdateUserCalendarRequest(
 
             long id,
             DrinkType drinkType,
-            DrinkUnit drinkUnit,
+            DrinkUnitType drinkUnitType,
             float quantity
     ) {
     }

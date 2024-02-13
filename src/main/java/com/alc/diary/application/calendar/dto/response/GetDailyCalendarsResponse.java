@@ -4,13 +4,12 @@ import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.DrinkRecord;
 import com.alc.diary.domain.calendar.UserCalendar;
 import com.alc.diary.domain.calendar.enums.DrinkType;
-import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 import com.alc.diary.domain.user.User;
 import io.swagger.annotations.ApiModel;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public record GetDailyCalendarsResponse(
@@ -72,7 +71,7 @@ public record GetDailyCalendarsResponse(
     public record DrinkRecordDto(
 
             DrinkType drinkType,
-            DrinkUnit drinkUnit
+            DrinkUnitType drinkUnitType
     ) {
     }
 

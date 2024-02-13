@@ -1,7 +1,7 @@
 package com.alc.diary.application.calendar.dto.request;
 
 import com.alc.diary.domain.calendar.enums.DrinkType;
-import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 import io.swagger.annotations.ApiModel;
 
 import javax.validation.Valid;
@@ -35,7 +35,7 @@ public record CreateCalendarRequest(
     public record DrinkCreationDto(
 
             @NotNull DrinkType drinkType,
-            @NotNull DrinkUnit drinkUnit,
+            @NotNull DrinkUnitType drinkUnitType,
             @NotNull @Min(0) Float quantity
     ) {
     }

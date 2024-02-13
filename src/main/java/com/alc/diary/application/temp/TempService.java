@@ -5,7 +5,7 @@ import com.alc.diary.domain.calendar.DrinkRecord;
 import com.alc.diary.domain.calendar.Photo;
 import com.alc.diary.domain.calendar.UserCalendar;
 import com.alc.diary.domain.calendar.enums.DrinkType;
-import com.alc.diary.domain.calendar.enums.DrinkUnit;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calender.Calender;
 import com.alc.diary.domain.calender.model.DrinkModel;
@@ -47,7 +47,7 @@ public class TempService {
                                 .filter(drinkModel -> drinkModel.getType() != null)
                                 .map(drinkModel -> DrinkRecord.create(
                                         DrinkType.valueOf(drinkModel.getType().toString()),
-                                        DrinkUnit.BOTTLE,
+                                        DrinkUnitType.BOTTLE,
                                         drinkModel.getQuantity()
                                 ))
                                 .toList();

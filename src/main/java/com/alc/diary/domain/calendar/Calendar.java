@@ -56,6 +56,10 @@ public class Calendar extends BaseEntity {
     @Column(name = "drink_end_time", nullable = false)
     private ZonedDateTime drinkEndTime;
 
+    @Audited
+    @Column(name = "drink_date")
+    private String drinkDate;
+
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<UserCalendar> userCalendars = new ArrayList<>();
 

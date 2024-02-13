@@ -1,5 +1,7 @@
 package com.alc.diary.domain.drinkcategory;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;
@@ -14,6 +16,8 @@ public interface DrinkCategoryRepository extends Repository<DrinkCategory, Long>
     Optional<DrinkCategory> findByName(String name);
 
     List<DrinkCategory> findAll();
+
+    Page<DrinkCategory> findAll(Pageable pageable);
 
     void deleteById(long id);
 }

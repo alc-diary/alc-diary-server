@@ -7,6 +7,8 @@ import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryRepository;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +42,9 @@ public class DrinkCategoryService {
      *
      * @return
      */
-    public List<GetAllDrinkCategoriesResponse> getAllDrinkCategories() {
-        return drinkCategoryRepository.findAll().stream()
-                .map(GetAllDrinkCategoriesResponse::from)
-                .toList();
+    public Page<GetAllDrinkCategoriesResponse> getAllDrinkCategories(Pageable pageable) {
+        return drinkCategoryRepository.findAll(pageable)
+                .map(GetAllDrinkCategoriesResponse::from);
     }
 
     /**
