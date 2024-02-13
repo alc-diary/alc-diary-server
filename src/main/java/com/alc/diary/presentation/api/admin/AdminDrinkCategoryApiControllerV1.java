@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-@RequestMapping("/v1/admin/drink-categories")
+@RequestMapping("/admin/v1/drink-categories")
 @RestController
 public class AdminDrinkCategoryApiControllerV1 {
 
-    private AdminDrinkCategoryServiceV1 adminDrinkCategoryServiceV1;
+    private final AdminDrinkCategoryServiceV1 adminDrinkCategoryServiceV1;
 
     /**
      * 음료 카테고리를 생성한다.
