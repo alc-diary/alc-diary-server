@@ -1,6 +1,7 @@
 package com.alc.diary.domain.drink;
 
 import com.alc.diary.domain.BaseEntity;
+import com.alc.diary.domain.drink.enums.DrinkType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,25 +29,44 @@ public class Drink extends BaseEntity {
     @Column(name = "name", length = 30, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
-    private List<DrinkUnitInfo> drinkUnitInfos = new ArrayList<>();
+    @Column(name = "creator_id")
+    private Long creatorId;
 
-    public Drink(
-            Long categoryId,
-            String name
-    ) {
+    @Column(name = "is_public", nullable = false)
+    private Boolean isPublic;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", length = 20, nullable = false)
+    private DrinkType type;
+
+    // @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
+    // private List<DrinkUnitInfo> drinkUnitInfos = new ArrayList<>();
+
+    private Drink(Long id, long categoryId, String name, Long creatorId, Boolean isPublic, DrinkType type) {
+        this.id = id;
         this.categoryId = categoryId;
         this.name = name;
+        this.creatorId = creatorId;
+        this.isPublic = isPublic;
+        this.type = type;
     }
 
-    public void addDrinkUnitInfos(List<DrinkUnitInfo> drinkUnitInfos) {
-        for (DrinkUnitInfo drinkUnitInfo : drinkUnitInfos) {
-            addDrinkUnitInfo(drinkUnitInfo);
-        }
+    public static Drink createBasicDrink(long categoryId, String name) {
+        return new Drink(null, categoryId, name, null, true, DrinkType.BASIC);
     }
 
-    public void addDrinkUnitInfo(DrinkUnitInfo drinkUnitInfo) {
-        drinkUnitInfos.add(drinkUnitInfo);
-        drinkUnitInfo.setDrink(this);
+    public static Drink createCustomDrink(long categoryId, String name, long creatorId) {
+        return new Drink(null, categoryId, name, creatorId, false, DrinkType.CUSTOM);
     }
+
+    // public void addDrinkUnitInfos(List<DrinkUnitInfo> drinkUnitInfos) {
+    //     for (DrinkUnitInfo drinkUnitInfo : drinkUnitInfos) {
+    //         addDrinkUnitInfo(drinkUnitInfo);
+    //     }
+    // }
+    //
+    // public void addDrinkUnitInfo(DrinkUnitInfo drinkUnitInfo) {
+    //     drinkUnitInfos.add(drinkUnitInfo);
+    //     drinkUnitInfo.setDrink(this);
+    // }
 }

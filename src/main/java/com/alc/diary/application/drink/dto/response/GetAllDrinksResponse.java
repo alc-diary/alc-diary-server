@@ -23,15 +23,16 @@ public record GetAllDrinksResponse(
                     List<Drink> drinks = drinkUnitInfoByCategoryId.get(drinkCategory.getId());
                     List<DrinkDto> drinkDtos = drinks.stream()
                             .map(drink -> {
-                                List<DrinkUnitInfoDto> drinkUnitInfoDtos = drink.getDrinkUnitInfos().stream()
-                                        .map(drinkUnitInfo -> new DrinkUnitInfoDto(
-                                                drinkUnitInfo.getId(),
-                                                drinkUnitById.get(drinkUnitInfo.getDrinkUnitId()).getName()
-                                        ))
-                                        .toList();
+                                // List<DrinkUnitInfoDto> drinkUnitInfoDtos = drink.getDrinkUnitInfos().stream()
+                                //         .map(drinkUnitInfo -> new DrinkUnitInfoDto(
+                                //                 drinkUnitInfo.getId(),
+                                //                 drinkUnitById.get(drinkUnitInfo.getDrinkUnitId()).getName()
+                                //         ))
+                                //         .toList(); // FIXME
                                 return new DrinkDto(
                                         drink.getName(),
-                                        drinkUnitInfoDtos
+                                        // drinkUnitInfoDtos
+                                        List.of()
                                 );
                             })
                             .toList();

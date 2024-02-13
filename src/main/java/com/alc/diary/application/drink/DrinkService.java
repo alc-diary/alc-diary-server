@@ -33,7 +33,7 @@ public class DrinkService {
 
     @Transactional
     public long createDrink(CreateDrinkRequest request) {
-        Drink drinkToSave = new Drink(request.drinkCategoryId(), request.drinkName());
+        Drink drinkToSave = Drink.createCustomDrink(request.drinkCategoryId(), request.drinkName(), 0); // FIXME
         List<DrinkUnitInfo> drinkUnitInfosToSave = request.drinkUnits().stream()
                 .map(drinkUnitDto -> new DrinkUnitInfo(
                         drinkUnitDto.drinkUnitId(),
@@ -41,7 +41,7 @@ public class DrinkService {
                         drinkUnitDto.calories()
                 ))
                 .toList();
-        drinkToSave.addDrinkUnitInfos(drinkUnitInfosToSave);
+        // drinkToSave.addDrinkUnitInfos(drinkUnitInfosToSave);
 
         Drink drink = drinkRepository.save(drinkToSave);
 
@@ -52,7 +52,7 @@ public class DrinkService {
     public long addDrinkUnitInfo(long drinkId, AddDrinkUnitInfoRequest request) {
         Drink drink = drinkRepository.findById(drinkId).orElseThrow();
         DrinkUnitInfo drinkUnitInfoToSave = new DrinkUnitInfo(request.drinkUnitId(), request.price(), request.calories());
-        drink.addDrinkUnitInfo(drinkUnitInfoToSave);
+        // drink.addDrinkUnitInfo(drinkUnitInfoToSave); // FIXME
 
         drinkUnitInfoRepository.save(drinkUnitInfoToSave);
 

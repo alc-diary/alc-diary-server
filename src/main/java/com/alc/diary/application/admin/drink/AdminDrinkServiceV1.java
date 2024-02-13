@@ -18,7 +18,7 @@ public class AdminDrinkServiceV1 {
 
     @Transactional
     public DrinkDto createDrink(AdminCreateDrinkRequest request) {
-        Drink drinkToSave = new Drink(request.drinkCategoryId(), request.name());
+        Drink drinkToSave = Drink.createBasicDrink(request.drinkCategoryId(), request.name());
         Drink drink = drinkRepository.save(drinkToSave);
         return DrinkDto.from(drink);
     }
