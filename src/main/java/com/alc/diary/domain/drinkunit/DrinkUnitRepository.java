@@ -1,5 +1,7 @@
 package com.alc.diary.domain.drinkunit;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;
@@ -12,6 +14,8 @@ public interface DrinkUnitRepository extends Repository<DrinkUnit, Long> {
     Optional<DrinkUnit> findByName(String name);
 
     List<DrinkUnit> findAll();
+
+    Page<DrinkUnit> findAll(Pageable pageable);
 
     void deleteById(long id);
 }

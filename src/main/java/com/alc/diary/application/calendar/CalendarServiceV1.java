@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class CalendarService {
+public class CalendarServiceV1 {
 
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
@@ -86,7 +86,7 @@ public class CalendarService {
 
         boolean allValid = request.userCalendar().drinks().stream()
                 .map(CreateCalendarRequest.DrinkCreationDto::quantity)
-                .allMatch(CalendarService::isHalfUnit);
+                .allMatch(CalendarServiceV1::isHalfUnit);
         if (!allValid) {
             throw new DomainException(CalendarError.INVALID_DRINK_QUANTITY_INCREMENT);
         }

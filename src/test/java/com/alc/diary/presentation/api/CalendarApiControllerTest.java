@@ -1,12 +1,13 @@
 package com.alc.diary.presentation.api;
 
-import com.alc.diary.application.calendar.CalendarService;
+import com.alc.diary.application.calendar.CalendarServiceV1;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequest;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponse;
 import com.alc.diary.application.calendar.dto.response.GetCalendarByIdResponse;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.enums.DrinkUnitType;
+import com.alc.diary.presentation.api.calendar.CalendarApiControllerV1;
 import com.alc.diary.presentation.filter.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -34,12 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
-        value = CalendarApiController.class,
+        value = CalendarApiControllerV1.class,
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)})
 class CalendarApiControllerTest {
 
     @MockBean
-    private CalendarService calendarService;
+    private CalendarServiceV1 calendarService;
 
     @Autowired
     private MockMvc mvc;
