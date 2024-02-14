@@ -30,7 +30,7 @@ public class DrinkCategoryService {
         if (drinkCategoryRepository.findByName(request.drinkCategoryName()).isPresent()) {
             throw new DomainException(DrinkCategoryError.DUPLICATE_NAME);
         }
-        DrinkCategory drinkCategoryToSave = new DrinkCategory(request.drinkCategoryName());
+        DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.drinkCategoryName());
         DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
         return drinkCategory.getId();
     }

@@ -3,11 +3,14 @@ package com.alc.diary.presentation.api.admin;
 import com.alc.diary.application.admin.drinkcatgory.AdminDrinkCategoryServiceV1;
 import com.alc.diary.application.admin.drinkcatgory.request.AdminCreateDrinkCategoryRequest;
 import com.alc.diary.application.admin.drinkcatgory.DrinkCategoryDto;
+import com.alc.diary.application.admin.drinkunit.DrinkUnitDto;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
@@ -38,5 +41,10 @@ public class AdminDrinkCategoryApiControllerV1 {
     @GetMapping
     public ApiResponse<Page<DrinkCategoryDto>> getAllDrinkCategories(Pageable pageable) {
         return ApiResponse.getSuccess(adminDrinkCategoryServiceV1.getAllDrinkCategories(pageable));
+    }
+
+    @GetMapping("/{categoryId}/available-units")
+    public ApiResponse<List<DrinkUnitDto>> getAvailableDrinkUnitsByCategoryId(@PathVariable long categoryId) {
+        return ApiResponse.getSuccess(adminDrinkCategoryServiceV1.getAvailableDrinkUnitsByCategoryId(categoryId));
     }
 }

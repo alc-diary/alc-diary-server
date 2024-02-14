@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface DrinkCategoryRepository extends Repository<DrinkCategory, Long> {
 
+    Optional<DrinkCategory> findById(long id);
+
     DrinkCategory save(DrinkCategory drinkCategory);
 
     List<DrinkCategory> findByIdIn(Iterable<Long> drinkCategoryIds);
