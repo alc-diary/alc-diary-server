@@ -1,8 +1,6 @@
 package com.alc.diary.application.admin.drinkcatgory;
 
 import com.alc.diary.application.admin.drinkcatgory.request.AdminCreateDrinkCategoryRequest;
-import com.alc.diary.application.admin.drinkcatgory.response.AdminGetAllDrinkCategoriesResponse;
-import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategoriesResponse;
 import com.alc.diary.domain.drinkcategory.DrinkCategory;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryRepository;
@@ -35,8 +33,8 @@ public class AdminDrinkCategoryServiceV1 {
      *
      * @return
      */
-    public Page<AdminGetAllDrinkCategoriesResponse> getAllDrinkCategories(Pageable pageable) {
+    public Page<DrinkCategoryDto> getAllDrinkCategories(Pageable pageable) {
         return drinkCategoryRepository.findAll(pageable)
-                .map(AdminGetAllDrinkCategoriesResponse::from);
+                .map(DrinkCategoryDto::from);
     }
 }

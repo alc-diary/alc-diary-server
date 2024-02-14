@@ -2,7 +2,7 @@ package com.alc.diary.presentation.api.admin;
 
 import com.alc.diary.application.admin.drinkcatgory.AdminDrinkCategoryServiceV1;
 import com.alc.diary.application.admin.drinkcatgory.request.AdminCreateDrinkCategoryRequest;
-import com.alc.diary.application.admin.drinkcatgory.response.AdminGetAllDrinkCategoriesResponse;
+import com.alc.diary.application.admin.drinkcatgory.DrinkCategoryDto;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class AdminDrinkCategoryApiControllerV1 {
      * @return 음료 카테고리 목록
      */
     @GetMapping
-    public ApiResponse<Page<AdminGetAllDrinkCategoriesResponse>> getAllDrinkCategories(Pageable pageable) {
+    public ApiResponse<Page<DrinkCategoryDto>> getAllDrinkCategories(Pageable pageable) {
         return ApiResponse.getSuccess(adminDrinkCategoryServiceV1.getAllDrinkCategories(pageable));
     }
 }
