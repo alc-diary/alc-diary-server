@@ -85,6 +85,10 @@ public class DrinkRecord {
         return new DrinkRecord(DrinkType.BEER, DrinkUnitType.BOTTLE, drinkId, drinkUnitId, quantity, null);
     }
 
+    public static DrinkRecord create(DrinkType drinkType, DrinkUnitType drinkUnitType, Long drinkId, Long drinkUnitId, float quantity) { // FIXME
+        return new DrinkRecord(drinkType, drinkUnitType, drinkId, drinkUnitId, quantity, null);
+    }
+
     public void setUserCalendar(UserCalendar userCalendar) {
         this.userCalendar = userCalendar;
     }

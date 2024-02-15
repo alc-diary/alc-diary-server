@@ -6,9 +6,15 @@ import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.DrinkRecord;
 import com.alc.diary.domain.calendar.Photo;
 import com.alc.diary.domain.calendar.UserCalendar;
+import com.alc.diary.domain.calendar.enums.DrinkType;
+import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.error.DrinkRecordError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
+import com.alc.diary.domain.drink.Drink;
+import com.alc.diary.domain.drink.repository.DrinkRepository;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.enums.AlcoholType;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,6 +33,7 @@ public class CalendarServiceV2 {
 
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
+    private final DrinkRepository drinkRepository;
 
     @Transactional
     public CreateCalendarResponseV2 createCalendarAndGenerateResponse(long userId, CreateCalendarRequestV2 request) {
@@ -99,9 +106,23 @@ public class CalendarServiceV2 {
         return userCalendars;
     }
 
-    private static List<DrinkRecord> createDrinkRecords(CreateCalendarRequestV2.UserCalendarCreationDto userCalendarCreationDto) {
+    private List<DrinkRecord> createDrinkRecords(CreateCalendarRequestV2.UserCalendarCreationDto userCalendarCreationDto) {
+        // FIXME: 기존 API와 호환성 위해 이렇게 변경함. 수정해야 함.
         return userCalendarCreationDto.drinks().stream()
-                .map(drinkDto -> DrinkRecord.create(drinkDto.drinkId(), drinkDto.drinkUnitId(), drinkDto.quantity()))
+                .map(drinkDto -> {
+                    DrinkType drinkType;
+                    Drink drink = drinkRepository.findById(drinkDto.drinkId()).orElseThrow(() -> new DomainException(DrinkRecordError.NOT_FOUND));
+                    if (drink.getCategoryId() == 1) {
+                        drinkType = DrinkType.BEER;
+                    } else if (drink.getCreatorId() == 2) {
+                        drinkType = DrinkType.SOJU;
+                    } else if (drink.getCreatorId() == 3) {
+                        drinkType = DrinkType.WINE;
+                    } else {
+                        drinkType = DrinkType.MAKGEOLLI;
+                    }
+                    return DrinkRecord.create(drinkType, DrinkUnitType.BOTTLE, drinkDto.drinkId(), drinkDto.drinkUnitId(), drinkDto.quantity());
+                })
                 .toList();
     }
 }
