@@ -55,7 +55,10 @@ public class SwaggerConfig {
                 .globalRequestParameters(List.of(createAuthorizationHeader()))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.alc.diary.presentation"))
-                .paths(Predicate.not(PathSelectors.ant("/test/**")))
+                .paths(
+                        Predicate.not(PathSelectors.ant("/test/**"))
+                                .and(Predicate.not(PathSelectors.ant("/admin/**")))
+                )
                 .build();
     }
 }
