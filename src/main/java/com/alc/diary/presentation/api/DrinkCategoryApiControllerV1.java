@@ -4,6 +4,7 @@ import com.alc.diary.application.drink.DrinkDto;
 import com.alc.diary.application.drinkcategory.DrinkCategoryServiceV1;
 import com.alc.diary.application.drinkcategory.dto.request.CreateDrinkCategoryRequest;
 import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategoriesResponse;
+import com.alc.diary.application.drinkunit.DrinkUnitDto;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -61,5 +62,12 @@ public class DrinkCategoryApiControllerV1 {
     public ApiResponse<List<DrinkDto>> getDrinksByCategoryId(
             @ApiIgnore @RequestAttribute long userId, @PathVariable long categoryId) {
         return ApiResponse.getSuccess(drinkCategoryServiceV1.getDrinksByCategoryId(userId, categoryId));
+    }
+
+    @GetMapping("/{categoryId}/units")
+    public ApiResponse<List<DrinkUnitDto>> getDrinkUnitsByCategoryId(
+            @PathVariable long categoryId
+    ) {
+        return ApiResponse.getSuccess(drinkCategoryServiceV1.getDrinkUnitsByCategoryId(categoryId));
     }
 }

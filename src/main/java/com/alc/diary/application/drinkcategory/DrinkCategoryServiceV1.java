@@ -3,6 +3,9 @@ package com.alc.diary.application.drinkcategory;
 import com.alc.diary.application.drink.DrinkDto;
 import com.alc.diary.application.drinkcategory.dto.request.CreateDrinkCategoryRequest;
 import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategoriesResponse;
+import com.alc.diary.application.drinkunit.DrinkUnitDto;
+import com.alc.diary.domain.categoryunit.CategoryUnit;
+import com.alc.diary.domain.categoryunit.CategoryUnitRepository;
 import com.alc.diary.domain.drink.repository.DrinkRepository;
 import com.alc.diary.domain.drinkcategory.DrinkCategory;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
@@ -24,6 +27,7 @@ public class DrinkCategoryServiceV1 {
     private final DrinkCategoryRepository drinkCategoryRepository;
 
     private final DrinkRepository drinkRepository;
+    private final CategoryUnitRepository categoryUnitRepository;
 
     /**
      * 음료 카테고리 생성
@@ -64,6 +68,13 @@ public class DrinkCategoryServiceV1 {
     public List<DrinkDto> getDrinksByCategoryId(long userId, long categoryId) {
         return drinkRepository.findCreatedOrPublicDrinksByCategoryId(userId, categoryId).stream()
                 .map(DrinkDto::from)
+                .toList();
+    }
+
+    public List<DrinkUnitDto> getDrinkUnitsByCategoryId(long categoryId) {
+        return categoryUnitRepository.findByCategoryId(categoryId).stream()
+                .map(CategoryUnit::getUnit)
+                .map(DrinkUnitDto::fromDomainModel)
                 .toList();
     }
 }
