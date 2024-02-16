@@ -40,7 +40,7 @@ public class DrinkCategoryServiceV1 {
         if (drinkCategoryRepository.findByName(request.drinkCategoryName()).isPresent()) {
             throw new DomainException(DrinkCategoryError.DUPLICATE_NAME);
         }
-        DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.drinkCategoryName());
+        DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.drinkCategoryName(), request.imageUrl());
         DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
         return drinkCategory.getId();
     }
@@ -50,9 +50,10 @@ public class DrinkCategoryServiceV1 {
      *
      * @return
      */
-    public Page<GetAllDrinkCategoriesResponse> getAllDrinkCategories(Pageable pageable) {
-        return drinkCategoryRepository.findAll(pageable)
-                .map(GetAllDrinkCategoriesResponse::from);
+    public List<GetAllDrinkCategoriesResponse> getAllDrinkCategories() {
+        return drinkCategoryRepository.findAll().stream()
+                .map(GetAllDrinkCategoriesResponse::from)
+                .toList();
     }
 
     /**

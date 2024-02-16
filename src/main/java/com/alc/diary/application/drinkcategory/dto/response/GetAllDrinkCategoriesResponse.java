@@ -4,11 +4,15 @@ import com.alc.diary.domain.drinkcategory.DrinkCategory;
 
 public record GetAllDrinkCategoriesResponse(
 
-        long drinkCategoryId,
-        String drinkCategoryName
+        long id,
+        String name,
+        String imageUrl
 ) {
 
     public static GetAllDrinkCategoriesResponse from(DrinkCategory drinkCategory) {
-        return new GetAllDrinkCategoriesResponse(drinkCategory.getId(), drinkCategory.getName());
+        return new GetAllDrinkCategoriesResponse(
+                drinkCategory.getId(),
+                drinkCategory.getName(),
+                drinkCategory.getImageUrl());
     }
 }

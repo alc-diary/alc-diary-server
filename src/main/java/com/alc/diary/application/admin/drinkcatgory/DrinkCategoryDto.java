@@ -8,6 +8,7 @@ public record DrinkCategoryDto(
 
         long id,
         String name,
+        String imageUrl,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -16,6 +17,7 @@ public record DrinkCategoryDto(
         return new DrinkCategoryDto(
                 drinkCategory.getId(),
                 drinkCategory.getName(),
+                drinkCategory.getImageUrl(),
                 drinkCategory.getCreatedAt(),
                 drinkCategory.getUpdatedAt()
         );

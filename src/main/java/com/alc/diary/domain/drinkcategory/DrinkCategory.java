@@ -28,10 +28,13 @@ public class DrinkCategory extends BaseEntity {
     @Column(name = "name", length = 30, nullable = false)
     private String name;
 
+    @Column(name = "image_url", length = 512)
+    private String imageUrl;
+
     @OneToMany(mappedBy = "category")
     private List<CategoryUnit> categoryUnits = new ArrayList<>();
 
-    private DrinkCategory(Long id, String name) {
+    private DrinkCategory(Long id, String name, String imageUrl) {
         if (StringUtils.isBlank(name)) {
             throw new DomainException(DrinkCategoryError.INVALID_INPUT);
         }
@@ -40,9 +43,10 @@ public class DrinkCategory extends BaseEntity {
         }
         this.id = id;
         this.name = name;
+        this.imageUrl = imageUrl;
     }
 
-    public static DrinkCategory create(String name) {
-        return new DrinkCategory(null, name);
+    public static DrinkCategory create(String name, String imageUrl) {
+        return new DrinkCategory(null, name, imageUrl);
     }
 }

@@ -40,8 +40,8 @@ public class DrinkCategoryApiControllerV1 {
      * @return 음료 카테고리 목록
      */
     @GetMapping
-    private ApiResponse<Page<GetAllDrinkCategoriesResponse>> getAllDrinkCategories(Pageable pageable) {
-        return ApiResponse.getSuccess(drinkCategoryServiceV1.getAllDrinkCategories(pageable));
+    private ApiResponse<List<GetAllDrinkCategoriesResponse>> getAllDrinkCategories() {
+        return ApiResponse.getSuccess(drinkCategoryServiceV1.getAllDrinkCategories());
     }
 
     /**

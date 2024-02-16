@@ -30,7 +30,7 @@ public class AdminDrinkCategoryServiceV1 {
         if (drinkCategoryRepository.findByName(request.name()).isPresent()) {
             throw new DomainException(DrinkCategoryError.DUPLICATE_NAME);
         }
-        DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.name());
+        DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.name(), request.imageUrl());
         DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
         return drinkCategory.getId();
     }
