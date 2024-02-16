@@ -39,26 +39,13 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public Docket apiForAdmin() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("Admin APIs")
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.alc.diary.presentation"))
-                .paths(PathSelectors.ant("/admin/**"))
-                .build();
-    }
-
-    @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("General APIs")
                 .globalRequestParameters(List.of(createAuthorizationHeader()))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.alc.diary.presentation"))
-                .paths(
-                        Predicate.not(PathSelectors.ant("/test/**"))
-                                .and(Predicate.not(PathSelectors.ant("/admin/**")))
-                )
+                .paths(Predicate.not(PathSelectors.ant("/test/**")))
                 .build();
     }
 }
