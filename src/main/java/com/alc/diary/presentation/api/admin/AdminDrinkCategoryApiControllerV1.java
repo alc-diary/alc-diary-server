@@ -43,7 +43,12 @@ public class AdminDrinkCategoryApiControllerV1 {
         return ApiResponse.getSuccess(adminDrinkCategoryServiceV1.getAllDrinkCategories(pageable));
     }
 
-    @GetMapping("/{categoryId}/available-units")
+    @GetMapping("/{categoryId}")
+    public ApiResponse<DrinkCategoryDto> getDrinkCategoryById(@PathVariable long categoryId) {
+        return ApiResponse.getSuccess(adminDrinkCategoryServiceV1.getDrinkCategoryById(categoryId));
+    }
+
+    @GetMapping("/{categoryId}/drink-units")
     public ApiResponse<List<DrinkUnitDto>> getAvailableDrinkUnitsByCategoryId(@PathVariable long categoryId) {
         return ApiResponse.getSuccess(adminDrinkCategoryServiceV1.getAvailableDrinkUnitsByCategoryId(categoryId));
     }

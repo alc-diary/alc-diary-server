@@ -45,6 +45,12 @@ public class AdminDrinkCategoryServiceV1 {
                 .map(DrinkCategoryDto::from);
     }
 
+    public DrinkCategoryDto getDrinkCategoryById(long drinkCategoryId) {
+        return drinkCategoryRepository.findById(drinkCategoryId)
+                .map(DrinkCategoryDto::from)
+                .orElseThrow(() -> new DomainException(DrinkCategoryError.NOT_FOUND));
+    }
+
     public List<DrinkUnitDto> getAvailableDrinkUnitsByCategoryId(long categoryId) {
         List<CategoryUnit> categoryUnits = categoryUnitRepository.findByCategoryId(categoryId);
 
