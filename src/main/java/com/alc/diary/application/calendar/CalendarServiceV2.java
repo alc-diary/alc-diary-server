@@ -121,7 +121,18 @@ public class CalendarServiceV2 {
                     } else {
                         drinkType = DrinkType.MAKGEOLLI;
                     }
-                    return DrinkRecord.create(drinkType, DrinkUnitType.BOTTLE, drinkDto.drinkId(), drinkDto.drinkUnitId(), drinkDto.quantity());
+
+                    DrinkUnitType drinkUnit;
+                    if (drinkDto.drinkUnitId() == 1) {
+                        drinkUnit = DrinkUnitType.BOTTLE;
+                    } else if (drinkDto.drinkUnitId() == 2) {
+                        drinkUnit = DrinkUnitType.GLASS;
+                    } else if (drinkDto.drinkUnitId() == 3) {
+                        drinkUnit = DrinkUnitType.CAN;
+                    } else {
+                        drinkUnit = DrinkUnitType.ML_500;
+                    }
+                    return DrinkRecord.create(drinkType, drinkUnit, drinkDto.drinkId(), drinkDto.drinkUnitId(), drinkDto.quantity());
                 })
                 .toList();
     }
