@@ -14,6 +14,10 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static com.alc.diary.domain.calendar.enums.DrinkType.BEER;
+import static com.alc.diary.domain.calendar.enums.DrinkType.WINE;
+import static com.alc.diary.domain.user.enums.AlcoholType.SOJU;
+
 @Getter
 @ToString(exclude = {"userCalendar"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -78,11 +82,29 @@ public class DrinkRecord {
     }
 
     public static DrinkRecord create(DrinkType drinkType, DrinkUnitType drinkUnitType, float quantity) {
-        return new DrinkRecord(drinkType, drinkUnitType, null, null, quantity, null);
+        Long drinkId;
+
+        switch (drinkType) {
+            case BEER:
+                drinkId = 1L;
+                break;
+            case SOJU:
+                drinkId = 2L;
+                break;
+            case WINE:
+                drinkId = 3L;
+                break;
+            case MAKGEOLLI:
+                drinkId = 4L;
+                break;
+            default:
+                drinkId= 1L;
+        }
+        return new DrinkRecord(drinkType, drinkUnitType, drinkId, 1L, quantity, null);
     }
 
     public static DrinkRecord create(long drinkId, long drinkUnitId, float quantity) {
-        return new DrinkRecord(DrinkType.BEER, DrinkUnitType.BOTTLE, drinkId, drinkUnitId, quantity, null);
+        return new DrinkRecord(BEER, DrinkUnitType.BOTTLE, drinkId, drinkUnitId, quantity, null);
     }
 
     public static DrinkRecord create(DrinkType drinkType, DrinkUnitType drinkUnitType, Long drinkId, Long drinkUnitId, float quantity) { // FIXME
