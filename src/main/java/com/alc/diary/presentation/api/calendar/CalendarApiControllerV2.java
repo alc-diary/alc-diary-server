@@ -5,7 +5,6 @@ import com.alc.diary.application.calendar.CalendarServiceV2;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequestV2;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponseV2;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponseV2;
-import com.alc.diary.application.drink.DrinkDto;
 import com.alc.diary.presentation.dto.ApiResponse;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -35,6 +35,14 @@ public class CalendarApiControllerV2 {
     @GetMapping("/{calendarId}")
     public ApiResponse<CalendarDto> getCalendarById(@PathVariable long calendarId) {
         return ApiResponse.getSuccess(calendarServiceV2.getCalendarById(calendarId));
+    }
+
+    @GetMapping("/daily")
+    public ApiResponse<List<CalendarDto>> getDailyCalendars(
+            @ApiIgnore @RequestAttribute long userId,
+            @ApiParam(value = "yyyy-MM-dd") @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
+    ) {
+        return ApiResponse.getSuccess(calendarServiceV2.getDailyCalendars(userId, date));
     }
 
     @GetMapping("/monthly")

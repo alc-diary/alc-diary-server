@@ -145,6 +145,13 @@ public class CalendarServiceV2 {
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
     }
 
+    public List<CalendarDto> getDailyCalendars(long userId, LocalDate date) {
+        List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, date, date);
+        return calendars.stream()
+                .map(CalendarDto::fromDomainModelWithUserCalendars)
+                .toList();
+    }
+
     public List<GetMonthlyCalendarsResponseV2> getMonthlyCalendars(long userId, YearMonth yearMonth) {
         LocalDate firstDay = yearMonth.atDay(1);
         LocalDate lastDay = yearMonth.atEndOfMonth();
