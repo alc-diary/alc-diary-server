@@ -2,6 +2,7 @@ package com.alc.diary.application.calendar;
 
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequestV2;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponseV2;
+import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponseV2;
 import com.alc.diary.domain.calendar.Calendar;
 import com.alc.diary.domain.calendar.DrinkRecord;
 import com.alc.diary.domain.calendar.Photo;
@@ -14,17 +15,18 @@ import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.drink.Drink;
 import com.alc.diary.domain.drink.repository.DrinkRepository;
 import com.alc.diary.domain.exception.DomainException;
-import com.alc.diary.domain.user.enums.AlcoholType;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -73,7 +75,7 @@ public class CalendarServiceV2 {
         float totalQuantity = request.userCalendar().drinks().stream()
                 .map(CreateCalendarRequestV2.DrinkCreationDto::quantity)
                 .reduce(0f, Float::sum);
-        return Calendar.create(userId, request.title(), totalQuantity, ZonedDateTime.now(), ZonedDateTime.now());
+        return Calendar.create(userId, request.title(), totalQuantity, request.drinkDate());
     }
 
     private static List<Photo> createPhotos(long userId, CreateCalendarRequestV2 request) {
@@ -134,6 +136,27 @@ public class CalendarServiceV2 {
                     }
                     return DrinkRecord.create(drinkType, drinkUnit, drinkDto.drinkId(), drinkDto.drinkUnitId(), drinkDto.quantity());
                 })
+                .toList();
+    }
+
+    public CalendarDto getCalendarById(long calendarId) {
+        return calendarRepository.findById(calendarId)
+                .map(CalendarDto::fromDomainModelWithUserCalendars)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+    }
+
+    public List<GetMonthlyCalendarsResponseV2> getMonthlyCalendars(long userId, YearMonth yearMonth) {
+        LocalDate firstDay = yearMonth.atDay(1);
+        LocalDate lastDay = yearMonth.atEndOfMonth();
+
+        List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, firstDay, lastDay);
+
+        Map<LocalDate, List<Calendar>> collect = calendars.stream()
+                .collect(Collectors.groupingBy(Calendar::getDrinkDate));
+
+        return collect.entrySet().stream()
+                .map(entry -> GetMonthlyCalendarsResponseV2.of(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparing(GetMonthlyCalendarsResponseV2::date))
                 .toList();
     }
 }

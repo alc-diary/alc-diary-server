@@ -57,8 +57,8 @@ public class Calendar extends BaseEntity {
     private ZonedDateTime drinkEndTime;
 
     @Audited
-    @Column(name = "drink_date")
-    private String drinkDate;
+    @Column(name = "drink_date", length = 20)
+    private LocalDate drinkDate;
 
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.PERSIST)
     private List<UserCalendar> userCalendars = new ArrayList<>();
@@ -79,6 +79,7 @@ public class Calendar extends BaseEntity {
             float totalDrinkQuantity,
             ZonedDateTime drinkStartTime,
             ZonedDateTime drinkEndTime,
+            LocalDate drinkDate,
             LocalDateTime deletedAt,
             ZonedDateTime now
     ) {
@@ -100,6 +101,7 @@ public class Calendar extends BaseEntity {
         this.totalDrinkQuantity = totalDrinkQuantity;
         this.drinkStartTime = drinkStartTime;
         this.drinkEndTime = drinkEndTime;
+        this.drinkDate = drinkDate;
         this.deletedAt = deletedAt;
     }
 
@@ -117,6 +119,7 @@ public class Calendar extends BaseEntity {
                 drinkStartTime,
                 drinkEndTime,
                 null,
+                null,
                 ZonedDateTime.now()
         );
     }
@@ -129,7 +132,17 @@ public class Calendar extends BaseEntity {
             ZonedDateTime drinkEndTime,
             ZonedDateTime now
     ) {
-        return new Calendar(ownerId, title, totalDrinkQuantity, drinkStartTime, drinkEndTime, null, now);
+        return new Calendar(ownerId, title, totalDrinkQuantity, drinkStartTime, drinkEndTime, null, null, now);
+    }
+
+    public static Calendar create(
+            long ownerId,
+            String title,
+            float totalDrinkQuantity,
+            LocalDate drinkDate
+    ) {
+        ZonedDateTime date = drinkDate.atStartOfDay(ZoneId.of("Asia/Seoul"));
+        return new Calendar(ownerId, title, totalDrinkQuantity, date, date, drinkDate, null, ZonedDateTime.now());
     }
 
     public static Calendar createForMain(
@@ -144,6 +157,7 @@ public class Calendar extends BaseEntity {
                 totalDrinkQuantity,
                 drinkStartTime,
                 drinkEndTime,
+                null,
                 null,
                 ZonedDateTime.now()
         );

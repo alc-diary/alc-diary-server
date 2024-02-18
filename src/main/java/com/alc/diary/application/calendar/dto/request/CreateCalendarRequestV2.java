@@ -4,12 +4,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.List;
 
 public record CreateCalendarRequestV2(
 
         @NotNull @Size(max = 100) String title,
-        @NotNull String drinkDate,
+        @NotNull LocalDate drinkDate,
         @Valid @NotNull @Size(max = 20) List<PhotoCreateDto> photos,
         @Valid @NotNull UserCalendarCreationDto userCalendar,
         @NotNull List<Long> taggedUserIds

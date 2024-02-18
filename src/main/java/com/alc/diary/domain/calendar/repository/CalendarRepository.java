@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,15 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
            "AND uc.deletedAt IS NULL " +
            "AND c.deletedAt IS NULL")
     List<Calendar> findAllUserCalendarsInCalendarsWithInRangeAndUserId(long userId, ZonedDateTime rangeStart, ZonedDateTime rangeEnd);
+
+    @Query("SELECT DISTINCT c " +
+           "FROM Calendar c " +
+           "JOIN FETCH c.userCalendars uc " +
+           "WHERE uc.userId = :userId " +
+           "AND c.drinkDate BETWEEN :rangeStart AND :rangeEnd " +
+           "AND uc.deletedAt IS NULL " +
+           "AND c.deletedAt IS NULL")
+    List<Calendar> findAllUserCalendarsInCalendarsWithInRangeAndUserId(long userId, LocalDate rangeStart, LocalDate rangeEnd);
 
     @Query("SELECT DISTINCT c " +
            "FROM Calendar c " +

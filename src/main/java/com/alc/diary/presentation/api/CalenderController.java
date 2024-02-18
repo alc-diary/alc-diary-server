@@ -36,7 +36,7 @@ public class CalenderController {
      *
      * @param query  검색어
      * @param date   날짜
-     * @param userId 사용자 ID
+     * @param userId 사용자 ID 
      * @return 캘린더 검색 결과
      */
     @GetMapping(value = "v1/calender/search")
