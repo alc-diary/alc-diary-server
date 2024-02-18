@@ -55,7 +55,7 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     @Query("SELECT DISTINCT c " +
            "FROM Calendar c " +
            "JOIN FETCH c.userCalendars uc " +
-           "WHERE uc.userId = :userId " +
+           "WHERE EXISTS (SELECT 1 FROM UserCalendar uc2 WHERE uc2.calendar = c AND uc2.userId = :userId AND uc2.deletedAt IS NULL) " +
            "AND c.drinkDate BETWEEN :rangeStart AND :rangeEnd " +
            "AND uc.deletedAt IS NULL " +
            "AND c.deletedAt IS NULL")
