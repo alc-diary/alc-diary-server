@@ -2,7 +2,7 @@ package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.LogoutAppService;
-import com.alc.diary.application.user.UserAppService;
+import com.alc.diary.application.user.UserServiceV1;
 import com.alc.diary.application.user.dto.request.UpdateAlcoholLimitAndGoalAppRequest;
 import com.alc.diary.application.user.dto.request.UpdateDescriptionStyleAppRequest;
 import com.alc.diary.application.user.dto.request.UpdateNicknameAppRequest;
@@ -35,9 +35,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
-        value = UserApiController.class,
+        value = UserApiControllerV1.class,
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)})
-class UserApiControllerTest {
+class UserApiControllerV1Test {
 
     @Autowired
     private MockMvc mvc;
@@ -46,7 +46,7 @@ class UserApiControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private UserAppService userAppService;
+    private UserServiceV1 userServiceV1;
 
     @MockBean
     private NicknameAppService nicknameAppService;
@@ -59,7 +59,7 @@ class UserApiControllerTest {
     void shouldReturnUserInfoWhenSearchUserByNickname() throws Exception {
         // given
         String nickname = "nickname";
-        given(userAppService.searchUser(nickname))
+        given(userServiceV1.searchUser(nickname))
                 .willReturn(new SearchUserAppResponse(1L, "profile image url", nickname));
 
         // when & then
@@ -73,7 +73,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.data.userId").value(1L))
                 .andExpect(jsonPath("$.data.profileImage").value("profile image url"))
                 .andExpect(jsonPath("$.data.nickname").value(nickname));
-        then(userAppService).should().searchUser(nickname);
+        then(userServiceV1).should().searchUser(nickname);
     }
 
     @DisplayName("null으로 유저를 검색하면 400 응답 코드로 응답한다.")
@@ -90,7 +90,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.code").value("E9998"))
                 .andExpect(jsonPath("$.message").value("Required request parameter 'nickname' for method parameter type String is not present"));
-        then(userAppService).shouldHaveNoInteractions();
+        then(userServiceV1).shouldHaveNoInteractions();
     }
 
     @DisplayName("잘못된 형식의 닉네임으로 유저를 검색하면 400 응답 코드로 응답한다.")
@@ -106,7 +106,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.code").value("US_E0011"))
                 .andExpect(jsonPath("$.message").value("닉네임은 한글, 영어 대소문자, 숫자로만 검색할 수 있습니다."));
-        then(userAppService).shouldHaveNoInteractions();
+        then(userServiceV1).shouldHaveNoInteractions();
     }
 
     @DisplayName("유저 ID로 유저를 조회한다.")
@@ -124,7 +124,7 @@ class UserApiControllerTest {
                 "profile image url",
                 UserStatus.ACTIVE
         );
-        given(userAppService.getUserInfo(userId))
+        given(userServiceV1.getUserInfo(userId))
                 .willReturn(response);
 
         // when & then
@@ -144,7 +144,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.data.nonAlcoholGoal").value(3))
                 .andExpect(jsonPath("$.data.profileImage").value("profile image url"))
                 .andExpect(jsonPath("$.data.status").value("ACTIVE"));
-        then(userAppService).should().getUserInfo(userId);
+        then(userServiceV1).should().getUserInfo(userId);
     }
 
     @DisplayName("존재하지 않는 유저 ID로 조회하면 400 응답 코드를 응답한다.")
@@ -152,7 +152,7 @@ class UserApiControllerTest {
     void shouldReturn400WhenUserIdIsInvalid() throws Exception {
         // given
         long userId = 2L;
-        given(userAppService.getUserInfo(userId))
+        given(userServiceV1.getUserInfo(userId))
                 .willThrow((new DomainException(UserError.USER_NOT_FOUND)));
 
         // when & then
@@ -164,7 +164,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.code").value("US_E0000"))
                 .andExpect(jsonPath("$.message").value("User not found."));
-        then(userAppService).should().getUserInfo(userId);
+        then(userServiceV1).should().getUserInfo(userId);
     }
 
     @DisplayName("프로필 이미지를 업데이트하면 성공 코드를 응답한다.")
@@ -184,7 +184,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("S0000"))
                 .andExpect(jsonPath("$.message").value("success"));
-        then(userAppService).should().updateUserProfileImage(userId, request);
+        then(userServiceV1).should().updateUserProfileImage(userId, request);
     }
 
     @DisplayName("주량과 금주 목표를 업데이트하면 성공 코드를 응답한다.")
@@ -205,7 +205,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("S0000"))
                 .andExpect(jsonPath("$.message").value("success"));
-        then(userAppService).should().updateAlcoholLimitAndGoal(userId, request);
+        then(userServiceV1).should().updateAlcoholLimitAndGoal(userId, request);
     }
 
     @DisplayName("닉네임을 업데이트하면 성공 코드를 응답한다.")
@@ -225,7 +225,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("S0000"))
                 .andExpect(jsonPath("$.message").value("success"));
-        then(userAppService).should().updateNickname(userId, request);
+        then(userServiceV1).should().updateNickname(userId, request);
     }
 
     @DisplayName("잘못된 형식의 닉네임으로 업데이트를 시도하면 하면 400 응답 코드로 응답한다.")
@@ -246,7 +246,7 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.code").value("E9996"))
                 .andExpect(jsonPath("$.message").value("[newNickname] 닉네임은 한글, 영어 대소문자, 숫자만 가능합니다."));
-        then(userAppService).shouldHaveNoInteractions();
+        then(userServiceV1).shouldHaveNoInteractions();
     }
 
     @DisplayName("설명 방식을 변경하면 성공 코드를 응답한다.")
@@ -265,6 +265,6 @@ class UserApiControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("S0000"))
                 .andExpect(jsonPath("$.message").value("success"));
-        then(userAppService).should().updateDescriptionStyle(userId, request);
+        then(userServiceV1).should().updateDescriptionStyle(userId, request);
     }
 }

@@ -26,16 +26,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class UserAppService {
+public class UserServiceV1 {
 
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
@@ -57,6 +54,18 @@ public class UserAppService {
         return optionalUser.map(SearchUserAppResponse::from).orElse(null);
     }
 
+    public UserDto getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .map(UserDto::fromDomainModel)
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
+    }
+
+    public List<UserDto> getUsersByIds(List<Long> userIds) {
+        return userRepository.findByIdIn(userIds).stream()
+                .map(UserDto::fromDomainModel)
+                .toList();
+    }
+
     /**
      * userId로 유저 정보 조회
      *
@@ -64,7 +73,7 @@ public class UserAppService {
      * @return GetUserInfoAppResponse
      */
     public GetUserInfoAppResponse getUserInfo(Long userId) {
-        User foundUser = getUserById(userId);
+        User foundUser = fetchUserById(userId);
         return GetUserInfoAppResponse.from(foundUser);
     }
 
@@ -76,7 +85,7 @@ public class UserAppService {
      */
     @Transactional
     public void updateUserProfileImage(Long userId, UpdateUserProfileImageAppRequest request) {
-        User foundUser = getUserById(userId);
+        User foundUser = fetchUserById(userId);
         foundUser.updateProfileImage(request.newProfileImage());
     }
 
@@ -88,7 +97,7 @@ public class UserAppService {
      */
     @Transactional
     public void updateAlcoholLimitAndGoal(Long userId, UpdateAlcoholLimitAndGoalAppRequest request) {
-        User foundUser = getUserById(userId);
+        User foundUser = fetchUserById(userId);
         foundUser.updateAlcoholLimitAndGoal(
                 request.newPersonalAlcoholLimit(),
                 request.newNonAlcoholGoal(),
@@ -104,7 +113,7 @@ public class UserAppService {
      */
     @Transactional
     public void updateNickname(Long userId, UpdateNicknameAppRequest request) {
-        User foundUser = getUserById(userId);
+        User foundUser = fetchUserById(userId);
         List<BannedWord> blackList = nicknameBlackListRepository.findAll();
         for (BannedWord bannedWord : blackList) {
             if (request.newNickname().contains(bannedWord.getWord())) {
@@ -125,7 +134,7 @@ public class UserAppService {
      */
     @Transactional
     public void updateDescriptionStyle(Long userId, UpdateDescriptionStyleAppRequest request) {
-        User foundUser = getUserById(userId);
+        User foundUser = fetchUserById(userId);
         foundUser.getDetail().updateDescriptionStyle(request.newDescriptionStyle());
     }
 
@@ -137,7 +146,7 @@ public class UserAppService {
      */
     @Transactional
     public void deactivateUser(Long requesterId, DeactivateUserAppRequest request) {
-        User targetUser = getUserById(request.targetUserId());
+        User targetUser = fetchUserById(request.targetUserId());
         String nickname = targetUser.getNickname();
 
         targetUser.deactivate(createDeactivateNickname());
@@ -151,7 +160,7 @@ public class UserAppService {
         return "탈퇴한유저" + RandomStringUtils.randomAlphanumeric(8);
     }
 
-    private User getUserById(Long userId) {
+    private User fetchUserById(Long userId) {
         return userRepository.findActiveUserById(userId)
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }

@@ -2,7 +2,8 @@ package com.alc.diary.presentation.api;
 
 import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.LogoutAppService;
-import com.alc.diary.application.user.UserAppService;
+import com.alc.diary.application.user.UserServiceV1;
+import com.alc.diary.application.user.UserDto;
 import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.*;
 import com.alc.diary.domain.exception.DomainException;
@@ -11,10 +12,8 @@ import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -23,9 +22,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/users")
-public class UserApiController {
+public class UserApiControllerV1 {
 
-    private final UserAppService userAppService;
+    private final UserServiceV1 userServiceV1;
     private final NicknameAppService nicknameAppService;
     private final LogoutAppService logoutAppService;
 
@@ -42,7 +41,17 @@ public class UserApiController {
         if (nickname == null || !UserDetail.NICKNAME_PATTERN.matcher(nickname).matches()) {
             throw new DomainException(UserError.INVALID_NICKNAME_FORMAT);
         }
-        return ApiResponse.getSuccess(userAppService.searchUser(nickname));
+        return ApiResponse.getSuccess(userServiceV1.searchUser(nickname));
+    }
+
+    @GetMapping("/{userId}")
+    public ApiResponse<UserDto> getUserById(@PathVariable Long userId) {
+        return ApiResponse.getSuccess(userServiceV1.getUserById(userId));
+    }
+
+    @GetMapping("/batch")
+    public ApiResponse<List<UserDto>> getUsersByIds(@RequestParam List<Long> userIds) {
+        return ApiResponse.getSuccess(userServiceV1.getUsersByIds(userIds));
     }
 
     /**
@@ -55,7 +64,7 @@ public class UserApiController {
     public ApiResponse<GetUserInfoAppResponse> getUserInfo(
             @ApiIgnore @RequestAttribute Long userId
     ) {
-        return ApiResponse.getSuccess(userAppService.getUserInfo(userId));
+        return ApiResponse.getSuccess(userServiceV1.getUserInfo(userId));
     }
 
     /**
@@ -94,7 +103,7 @@ public class UserApiController {
             @ApiIgnore @RequestAttribute Long userId,
             @Validated @RequestBody UpdateUserProfileImageAppRequest request
     ) {
-        userAppService.updateUserProfileImage(userId, request);
+        userServiceV1.updateUserProfileImage(userId, request);
         return ApiResponse.getSuccess();
     }
 
@@ -110,7 +119,7 @@ public class UserApiController {
             @ApiIgnore @RequestAttribute Long userId,
             @Validated @RequestBody UpdateAlcoholLimitAndGoalAppRequest request
     ) {
-        userAppService.updateAlcoholLimitAndGoal(userId, request);
+        userServiceV1.updateAlcoholLimitAndGoal(userId, request);
         return ApiResponse.getSuccess();
     }
 
@@ -126,7 +135,7 @@ public class UserApiController {
             @ApiIgnore @RequestAttribute Long userId,
             @Validated @RequestBody UpdateNicknameAppRequest request
     ) {
-        userAppService.updateNickname(userId, request);
+        userServiceV1.updateNickname(userId, request);
         return ApiResponse.getSuccess();
     }
 
@@ -142,7 +151,7 @@ public class UserApiController {
             @ApiIgnore @RequestAttribute Long userId,
             @Validated @RequestBody UpdateDescriptionStyleAppRequest request
     ) {
-        userAppService.updateDescriptionStyle(userId, request);
+        userServiceV1.updateDescriptionStyle(userId, request);
         return ApiResponse.getSuccess();
     }
 
@@ -158,7 +167,7 @@ public class UserApiController {
             @ApiIgnore @RequestAttribute("userId") Long requesterId,
             @Validated @RequestBody DeactivateUserAppRequest request
     ) {
-        userAppService.deactivateUser(requesterId, request);
+        userServiceV1.deactivateUser(requesterId, request);
         return ApiResponse.getSuccess();
     }
 
@@ -172,7 +181,7 @@ public class UserApiController {
     public ApiResponse<GetNotificationSettingAppResponse> getNotificationSetting(
             @ApiIgnore @RequestAttribute("userId") Long userId
     ) {
-        return ApiResponse.getSuccess(userAppService.getNotificationSetting(userId));
+        return ApiResponse.getSuccess(userServiceV1.getNotificationSetting(userId));
     }
 
     /**
@@ -185,7 +194,7 @@ public class UserApiController {
     public ApiResponse<Void> enableNotificationSetting(
             @ApiIgnore @RequestAttribute("userId") Long userId
     ) {
-        userAppService.enableNotificationSetting(userId);
+        userServiceV1.enableNotificationSetting(userId);
         return ApiResponse.getSuccess();
     }
 
@@ -199,7 +208,7 @@ public class UserApiController {
     public ApiResponse<Void> disableNotificationSetting(
             @ApiIgnore @RequestAttribute("userId") Long userId
     ) {
-        userAppService.disableNotificationSetting(userId);
+        userServiceV1.disableNotificationSetting(userId);
         return ApiResponse.getSuccess();
     }
 
@@ -219,6 +228,6 @@ public class UserApiController {
 
     @GetMapping("/drinks")
     public ApiResponse<List<GetDrinksResponse>> getDrinks(@ApiIgnore @RequestAttribute("userId") Long userId) {
-        return ApiResponse.getSuccess(userAppService.getDrinks(userId));
+        return ApiResponse.getSuccess(userServiceV1.getDrinks(userId));
     }
 }

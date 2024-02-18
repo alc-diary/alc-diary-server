@@ -18,6 +18,8 @@ public interface UserRepository extends Repository<User, Long>, CustomUserReposi
 
     Optional<User> findById(long id);
 
+    List<User> findByIdIn(Collection<Long> ids);
+
     User save(User user);
 
     @Query("SELECT u " +
