@@ -12,8 +12,7 @@ public record UpdateUserCalendarRequest(
         String condition,
         boolean conditionShouldBeUpdated,
         UpdateDrinkRecordData drinks,
-        UpdatePhotoData photos
-) {
+        UpdatePhotoData photos) {
 
     public record UpdateDrinkRecordData(
 

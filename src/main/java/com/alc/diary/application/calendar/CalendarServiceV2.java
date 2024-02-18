@@ -23,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,14 +139,14 @@ public class CalendarServiceV2 {
 
     public CalendarDto getCalendarById(long calendarId) {
         return calendarRepository.findById(calendarId)
-                .map(CalendarDto::fromDomainModelWithUserCalendars)
+                .map(CalendarDto::fromDomainModelDetail)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
     }
 
     public List<CalendarDto> getDailyCalendars(long userId, LocalDate date) {
         List<Calendar> calendars = calendarRepository.findAllUserCalendarsInCalendarsWithInRangeAndUserId(userId, date, date);
         return calendars.stream()
-                .map(CalendarDto::fromDomainModelWithUserCalendars)
+                .map(CalendarDto::fromDomainModelDetail)
                 .toList();
     }
 

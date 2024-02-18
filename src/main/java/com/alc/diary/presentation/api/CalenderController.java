@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-@Deprecated
+@Deprecated(since = "2024-02-18", forRemoval = true)
 @RestController
 @RequiredArgsConstructor
 public class CalenderController {
@@ -26,6 +26,7 @@ public class CalenderController {
      * @param calenderId 캘린더 ID
      * @return 캘린더 상세
      */
+    @Deprecated
     @GetMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<FindCalenderDetailResponse> find(@PathVariable Long calenderId) {
         return ApiResponse.getSuccess(calenderService.find(calenderId));
@@ -36,9 +37,10 @@ public class CalenderController {
      *
      * @param query  검색어
      * @param date   날짜
-     * @param userId 사용자 ID 
+     * @param userId 사용자 ID
      * @return 캘린더 검색 결과
      */
+    @Deprecated
     @GetMapping(value = "v1/calender/search")
     public ApiResponse<SearchCalenderResponse> search(
             @RequestParam(value = "query", required = false) String query,
@@ -56,6 +58,7 @@ public class CalenderController {
      * @param userId 사용자 ID
      * @return 캘린더 검색 결과
      */
+    @Deprecated
     @GetMapping(value = "v2/calender/search")
     public ApiResponse<SearchCalenderResponse> searchV2(
             @RequestParam(value = "query", required = false) String query,
@@ -72,6 +75,7 @@ public class CalenderController {
      * @param userId  사용자 ID
      * @return 성공
      */
+    @Deprecated
     @PostMapping(value = "v1/calender")
     public ApiResponse<Void> save(@RequestBody @Validated SaveCalenderRequest request,
                                   @ApiIgnore @RequestAttribute Long userId) {
@@ -87,6 +91,7 @@ public class CalenderController {
      * @param request 캘린더 수정 요청
      * @return 성공
      */
+    @Deprecated
     @PutMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<Void> update(@PathVariable Long calenderId,
                                     @ApiIgnore @RequestAttribute Long userId,
@@ -102,6 +107,7 @@ public class CalenderController {
      * @param userId 사용자 ID
      * @return 성공
      */
+    @Deprecated
     @DeleteMapping(value = "v1/calender/{calenderId}")
     public ApiResponse<Void> delete(@PathVariable Long calenderId,
                                     @ApiIgnore @RequestAttribute Long userId) {

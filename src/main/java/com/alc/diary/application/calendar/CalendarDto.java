@@ -2,7 +2,6 @@ package com.alc.diary.application.calendar;
 
 import com.alc.diary.domain.calendar.Calendar;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public record CalendarDto(
@@ -11,8 +10,8 @@ public record CalendarDto(
         long ownerId,
         String title,
         String drinkDate,
-        List<UserCalendarDto> userCalendars
-        ) {
+        List<UserCalendarDto> userCalendars,
+        List<PhotoDto> photos) {
 
     public static CalendarDto fromDomainModel(Calendar calendar) {
         return new CalendarDto(
@@ -20,11 +19,12 @@ public record CalendarDto(
                 calendar.getOwnerId(),
                 calendar.getTitle(),
                 calendar.getDrinkDate().toString(),
+                List.of(),
                 List.of()
         );
     }
 
-    public static CalendarDto fromDomainModelWithUserCalendars(Calendar calendar) {
+    public static CalendarDto fromDomainModelDetail(Calendar calendar) {
         return new CalendarDto(
                 calendar.getId(),
                 calendar.getOwnerId(),
@@ -32,6 +32,9 @@ public record CalendarDto(
                 calendar.getDrinkDate().toString(),
                 calendar.getUserCalendars().stream()
                         .map(UserCalendarDto::fromDomainModelWithDrinkRecords)
+                        .toList(),
+                calendar.getPhotos().stream()
+                        .map(PhotoDto::fromDomainModel)
                         .toList()
         );
     }
