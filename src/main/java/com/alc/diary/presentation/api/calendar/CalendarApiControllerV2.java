@@ -4,7 +4,6 @@ import com.alc.diary.application.calendar.CalendarDto;
 import com.alc.diary.application.calendar.CalendarServiceV2;
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequestV2;
 import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequestV2;
-import com.alc.diary.application.calendar.dto.request.UpdateUserCalendarRequestV2;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponseV2;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponseV2;
 import com.alc.diary.presentation.dto.ApiResponse;
@@ -39,23 +38,14 @@ public class CalendarApiControllerV2 {
         return ApiResponse.getSuccess(calendarServiceV2.getCalendarById(calendarId));
     }
 
-    @PutMapping("/{calendarId}")
+    @PatchMapping("/{calendarId}")
     public ApiResponse<Void> updateCalendar(
             @ApiIgnore @RequestAttribute long userId,
             @PathVariable long calendarId,
             @Validated @RequestBody UpdateCalendarRequestV2 request
     ) {
-        return null;
-    }
-
-    @PatchMapping("/{calendarId}/user-calendars/{userCalendarId}")
-    public ApiResponse<Void> updateUserCalendarCalendar(
-            @ApiIgnore @RequestAttribute long userId,
-            @PathVariable long calendarId,
-            @PathVariable long userCalendarId,
-            @Validated @RequestBody UpdateUserCalendarRequestV2 request
-    ) {
-        return null;
+        calendarServiceV2.updateCalendar(userId, calendarId, request);
+        return ApiResponse.getSuccess();
     }
 
     @GetMapping("/daily")

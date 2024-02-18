@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum PhotoError implements ErrorModel {
 
     NO_PERMISSION_TO_DELETE_PHOTO("P_E0001", "You do not have permission to delete this photo"),
+    NOT_FOUND_PHOTO("P_E0002", "Photo not found"),
     ;
 
     private final String code;

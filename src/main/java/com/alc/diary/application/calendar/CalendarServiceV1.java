@@ -227,7 +227,7 @@ public class CalendarServiceV1 {
 
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
-        calendar.deleteUserCalendar(userCalendarId);
+        calendar.deleteUserCalendar(userId, userCalendarId);
         evictMonthlyReportCacheForCurrentAndNextMonth(userId, calendar.getDrinkStartTime());
     }
 
@@ -278,7 +278,7 @@ public class CalendarServiceV1 {
 
         addUserCalendars(userId, request, taggedUserCalendarIds, calendar);
 
-        deleteUserCalendars(request, taggedUserCalendars, calendar);
+        deleteUserCalendars(userId, request, taggedUserCalendars, calendar);
     }
 
     private static void checkOwnership(long userId, Calendar calendar) {
@@ -320,12 +320,12 @@ public class CalendarServiceV1 {
                 .forEach(taggedUserId -> notificationService.sendFcm(taggedUserId, "술렁술렁", "[" + user.getNickname() + "] 친구가 음주기록에 널 태그했어!\n어떤 기록인지 봐볼까?", "FRIEND_TAGGED"));
     }
 
-    private static void deleteUserCalendars(UpdateCalendarRequest request, List<UserCalendar> taggedUserCalendars, Calendar calendar) {
+    private static void deleteUserCalendars(long userId, UpdateCalendarRequest request, List<UserCalendar> taggedUserCalendars, Calendar calendar) {
         List<Long> userCalendarIdsToDelete = taggedUserCalendars.stream()
                 .filter(userCalendar -> !request.newTaggedUserIds().contains(userCalendar.getUserId()))
                 .map(UserCalendar::getId)
                 .toList();
-        calendar.deleteUserCalendars(userCalendarIdsToDelete);
+        calendar.deleteUserCalendars(userId, userCalendarIdsToDelete);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
 import com.alc.diary.domain.calendar.error.CalendarError;
+import com.alc.diary.domain.calendar.error.PhotoError;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
 import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
@@ -180,6 +181,18 @@ public class Calendar extends BaseEntity {
         }
         for (Photo photo : photos) {
             addPhoto(photo);
+        }
+    }
+
+    public void deletePhoto(long userId, long photoId) {
+        Photo findPhoto = photos.stream()
+                .filter(photo -> photo.getId() == photoId)
+                .findFirst()
+                .orElseThrow(() -> new DomainException(PhotoError.NOT_FOUND_PHOTO));
+        if (findPhoto.canBeDeletedBy(userId)) {
+            findPhoto.delete();
+        } else {
+            throw new DomainException(PhotoError.NO_PERMISSION_TO_DELETE_PHOTO);
         }
     }
 
@@ -366,21 +379,25 @@ public class Calendar extends BaseEntity {
                 .sum();
     }
 
-    public void deleteUserCalendars(Collection<Long> userCalendarIds) {
-        userCalendarIds.forEach(this::deleteUserCalendar);
+    public void deleteUserCalendars(long userId, Collection<Long> userCalendarIds) {
+        userCalendarIds.forEach(userCalendarId -> deleteUserCalendar(userId, userCalendarId));
     }
 
-    public void deleteUserCalendar(long userCalendarId) {
+    public void deleteUserCalendar(long userId, long userCalendarId) {
         UserCalendar foundUserCalendar = userCalendars.stream()
                 .filter(userCalendar -> userCalendar.getId() == userCalendarId)
                 .findFirst()
                 .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
-        long userId = foundUserCalendar.getUserId();
+        long foundUserId = foundUserCalendar.getUserId();
+        if (!isOwner(foundUserId) || foundUserId != userId) {
+            throw new DomainException(UserCalendarError.NO_PERMISSION);
+        }
+
         foundUserCalendar.delete();
 
-        if (isOwner(userId)) {
+        if (isOwner(foundUserId)) {
             userCalendars.stream()
-                    .filter(userCalendar -> !userCalendar.isOwner(userId))
+                    .filter(userCalendar -> !userCalendar.isOwner(foundUserId))
                     .findFirst()
                     .ifPresentOrElse(
                             userCalendar -> ownerId = userCalendar.getUserId(),
@@ -389,7 +406,7 @@ public class Calendar extends BaseEntity {
         }
 
         photos.stream()
-                .filter(photo -> photo.isOwner(userId))
+                .filter(photo -> photo.isOwner(foundUserId))
                 .forEach(Photo::delete);
     }
 

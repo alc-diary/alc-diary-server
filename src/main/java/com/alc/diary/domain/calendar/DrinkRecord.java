@@ -141,6 +141,21 @@ public class DrinkRecord {
         quantity = updateVo.quantity();
     }
 
+    public void updateDrinkId(long drinkId) {
+        this.drinkId = drinkId;
+    }
+
+    public void updateDrinkUnitId(long drinkUnitId) {
+        this.drinkUnitId = drinkUnitId;
+    }
+
+    public void updateQuantity(float quantity) {
+        if (quantity == 0) {
+            throw new DomainException(DrinkRecordError.ZERO_QUANTITY);
+        }
+        this.quantity = quantity;
+    }
+
     public void delete() {
         deletedAt = LocalDateTime.now();
     }

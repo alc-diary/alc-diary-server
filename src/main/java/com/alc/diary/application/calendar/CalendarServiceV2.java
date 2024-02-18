@@ -1,6 +1,7 @@
 package com.alc.diary.application.calendar;
 
 import com.alc.diary.application.calendar.dto.request.CreateCalendarRequestV2;
+import com.alc.diary.application.calendar.dto.request.UpdateCalendarRequestV2;
 import com.alc.diary.application.calendar.dto.response.CreateCalendarResponseV2;
 import com.alc.diary.application.calendar.dto.response.GetMonthlyCalendarsResponseV2;
 import com.alc.diary.domain.calendar.Calendar;
@@ -12,6 +13,7 @@ import com.alc.diary.domain.calendar.enums.DrinkUnitType;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.error.DrinkRecordError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
+import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
 import com.alc.diary.domain.drink.Drink;
 import com.alc.diary.domain.drink.repository.DrinkRepository;
 import com.alc.diary.domain.exception.DomainException;
@@ -34,6 +36,7 @@ public class CalendarServiceV2 {
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
     private final DrinkRepository drinkRepository;
+    private final UserCalendarRepository userCalendarRepository;
 
     @Transactional
     public CreateCalendarResponseV2 createCalendarAndGenerateResponse(long userId, CreateCalendarRequestV2 request) {
@@ -141,6 +144,103 @@ public class CalendarServiceV2 {
         return calendarRepository.findById(calendarId)
                 .map(CalendarDto::fromDomainModelDetail)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+    }
+
+    @Transactional
+    public void updateCalendar(long userId, long calendarId, UpdateCalendarRequestV2 request) {
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
+        if (request.title() != null) {
+            if (userId != calendar.getOwnerId()) {
+                throw new DomainException(CalendarError.NO_PERMISSION);
+            }
+        }
+        if (request.drinkDate() != null) {
+            if (userId != calendar.getOwnerId()) {
+                throw new DomainException(CalendarError.NO_PERMISSION);
+            }
+        }
+        if (!CollectionUtils.isEmpty(request.userCalendars())) {
+            List<UpdateCalendarRequestV2.UserCalendarDto> create = request.userCalendars().stream()
+                    .filter(userCalendarDto -> userCalendarDto.id() == null)
+                    .toList();
+            if (!create.isEmpty()) {
+                if (userId != calendar.getOwnerId()) {
+                    throw new DomainException(CalendarError.NO_PERMISSION);
+                }
+
+                List<UserCalendar> userCalendarsToSave = request.userCalendars().stream()
+                        .map(userCalendarDto -> UserCalendar.createTaggedUserCalendar(userCalendarDto.userId()))
+                        .toList();
+                calendar.addUserCalendars(userCalendarsToSave);
+            }
+            Map<Long, UpdateCalendarRequestV2.UserCalendarDto> userCalendarsToUpdate = request.userCalendars().stream()
+                    .filter(userCalendarDto -> userCalendarDto.id() != null)
+                    .collect(Collectors.toMap(UpdateCalendarRequestV2.UserCalendarDto::id, it -> it));
+            calendar.getUserCalendars().stream()
+                    .filter(userCalendar -> userCalendarsToUpdate.containsKey(userCalendar.getId()))
+                    .forEach(userCalendar -> {
+                        UpdateCalendarRequestV2.UserCalendarDto userCalendarUpdateData = userCalendarsToUpdate.get(userCalendar.getId());
+
+                        if (userCalendarUpdateData.contentShouldBeUpdated()) {
+                            userCalendar.updateContent(userCalendarUpdateData.content());
+                        }
+                        if (userCalendarUpdateData.drinkConditionShouldBeUpdated()) {
+                            userCalendar.updateCondition(userCalendarUpdateData.drinkCondition());
+                        }
+
+                        if (!CollectionUtils.isEmpty(userCalendarUpdateData.drinkRecords())) {
+                            List<UpdateCalendarRequestV2.UserCalendarDto.DrinkRecordDto> drinkRecordsToCreate = userCalendarUpdateData.drinkRecords().stream()
+                                    .filter(drinkRecordDto -> drinkRecordDto.id() == null)
+                                    .toList();
+                            List<DrinkRecord> drinkRecordsToSave = drinkRecordsToCreate.stream()
+                                    .map(drinkRecordDto -> DrinkRecord.create(drinkRecordDto.drinkId(), drinkRecordDto.drinkUnitId(), drinkRecordDto.quantity()))
+                                    .toList();
+                            userCalendar.addDrinkRecords(drinkRecordsToSave);
+
+                            Map<Long, UpdateCalendarRequestV2.UserCalendarDto.DrinkRecordDto> drinkRecordsToUpdate = userCalendarUpdateData.drinkRecords().stream()
+                                    .filter(drinkRecordDto -> drinkRecordDto.id() != null)
+                                    .collect(Collectors.toMap(UpdateCalendarRequestV2.UserCalendarDto.DrinkRecordDto::id, it -> it));
+
+                            userCalendar.getDrinkRecords().stream()
+                                    .filter(drinkRecord -> drinkRecordsToUpdate.containsKey(drinkRecord.getId()))
+                                    .forEach(drinkRecord -> {
+                                        UpdateCalendarRequestV2.UserCalendarDto.DrinkRecordDto drinkRecordUpdateData = drinkRecordsToUpdate.get(drinkRecord.getId());
+                                        if (drinkRecordUpdateData.drinkId() != null) {
+                                            drinkRecord.updateDrinkId(drinkRecordUpdateData.drinkId());
+                                        }
+                                        if (drinkRecordUpdateData.drinkUnitId() != null) {
+                                            drinkRecord.updateDrinkUnitId(drinkRecordUpdateData.drinkUnitId());
+                                        }
+                                        if (drinkRecordUpdateData.quantity() != null) {
+                                            drinkRecord.updateQuantity(drinkRecordUpdateData.quantity());
+                                        }
+                                    });
+                        }
+
+                        userCalendar.deleteDrinkRecords(userId, userCalendarUpdateData.deleteDrinkRecords());
+                    });
+            if (!CollectionUtils.isEmpty(request.deleteUserCalendars())) {
+                if (userId == calendar.getOwnerId()) {
+                    calendar.deleteUserCalendars(userId, request.deleteUserCalendars());
+                } else {
+                    if (request.deleteUserCalendars().size() != 1) {
+                        throw new DomainException(CalendarError.INVALID_REQUEST);
+                    }
+                    Long userCalendarIdToBeDeleted = request.deleteUserCalendars().get(0);
+                    calendar.deleteUserCalendar(userId, userCalendarIdToBeDeleted);
+                }
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(request.photos())) {
+            List<Photo> photosToSave = request.photos().stream()
+                    .map(photoDto -> Photo.create(userId, photoDto.url()))
+                    .toList();
+            calendar.addPhotos(photosToSave);
+        }
+
+        request.deletePhotos().forEach(photoId -> calendar.deletePhoto(userId, photoId));
     }
 
     public List<CalendarDto> getDailyCalendars(long userId, LocalDate date) {

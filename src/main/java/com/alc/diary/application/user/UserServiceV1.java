@@ -54,15 +54,17 @@ public class UserServiceV1 {
         return optionalUser.map(SearchUserAppResponse::from).orElse(null);
     }
 
-    public UserDto getUserById(Long userId) {
+    public UserPublicDto getUserById(Long userId) {
         return userRepository.findById(userId)
-                .map(UserDto::fromDomainModel)
+                .filter(User::isActive)
+                .map(UserPublicDto::fromDomainModel)
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND, "User ID: " + userId));
     }
 
-    public List<UserDto> getUsersByIds(List<Long> userIds) {
+    public List<UserPublicDto> getUsersByIds(List<Long> userIds) {
         return userRepository.findByIdIn(userIds).stream()
-                .map(UserDto::fromDomainModel)
+                .filter(User::isActive)
+                .map(UserPublicDto::fromDomainModel)
                 .toList();
     }
 

@@ -3,7 +3,7 @@ package com.alc.diary.presentation.api;
 import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.LogoutAppService;
 import com.alc.diary.application.user.UserServiceV1;
-import com.alc.diary.application.user.UserDto;
+import com.alc.diary.application.user.UserPublicDto;
 import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.*;
 import com.alc.diary.domain.exception.DomainException;
@@ -45,12 +45,12 @@ public class UserApiControllerV1 {
     }
 
     @GetMapping("/{userId}")
-    public ApiResponse<UserDto> getUserById(@PathVariable Long userId) {
+    public ApiResponse<UserPublicDto> getUserById(@PathVariable Long userId) {
         return ApiResponse.getSuccess(userServiceV1.getUserById(userId));
     }
 
     @GetMapping("/batch")
-    public ApiResponse<List<UserDto>> getUsersByIds(@RequestParam List<Long> userIds) {
+    public ApiResponse<List<UserPublicDto>> getUsersByIds(@RequestParam List<Long> userIds) {
         return ApiResponse.getSuccess(userServiceV1.getUsersByIds(userIds));
     }
 
