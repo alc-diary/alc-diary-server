@@ -18,6 +18,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RequestMapping("/v2/calendars")
@@ -72,5 +73,24 @@ public class CalendarApiControllerV2 {
             @ApiParam(value = "yyyy-MM") @RequestParam(name = "yearMonth", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth
     ) {
         return ApiResponse.getSuccess(calendarServiceV2.getMonthlyCalendars(userId, yearMonth));
+    }
+
+    @PostMapping("/test")
+    public ApiResponse<String> test(@RequestBody TestDto testDto) {
+        if (testDto.name().isPresent()) {
+            return ApiResponse.getSuccess("name is present");
+        }
+
+        if (testDto.name.isEmpty()) {
+            return ApiResponse.getSuccess("name is empty");
+        }
+
+        return ApiResponse.getSuccess("name is null");
+    }
+
+    private record TestDto(
+
+            Optional<String> name
+    ) {
     }
 }

@@ -16,7 +16,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.List;
 
-@Deprecated(since = "2024-03-01", forRemoval = true)
+@Deprecated(since = "2024-03-01", forRemoval = false)
 @RequiredArgsConstructor
 @RequestMapping("/v1/calendars")
 @RestController
