@@ -389,7 +389,7 @@ public class Calendar extends BaseEntity {
                 .findFirst()
                 .orElseThrow(() -> new DomainException(UserCalendarError.USER_CALENDAR_NOT_FOUND));
         long foundUserId = foundUserCalendar.getUserId();
-        if (!isOwner(foundUserId) || foundUserId != userId) {
+        if (!isOwner(userId) && foundUserId != userId) {
             throw new DomainException(UserCalendarError.NO_PERMISSION);
         }
 
