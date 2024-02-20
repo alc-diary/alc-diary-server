@@ -4,4 +4,5 @@ public enum DrinkType {
 
     BASIC,
     CUSTOM,
+    DEFAULT,
 }

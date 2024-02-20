@@ -51,6 +51,10 @@ public class Drink extends BaseEntity {
         this.type = type;
     }
 
+    public static Drink createDefault(long categoryId, String categoryName) {
+        return new Drink(null, categoryId, categoryName + " 기본", null, false, DrinkType.DEFAULT);
+    }
+
     public static Drink createBasicDrink(long categoryId, String name) {
         return new Drink(null, categoryId, name, null, true, DrinkType.BASIC);
     }
