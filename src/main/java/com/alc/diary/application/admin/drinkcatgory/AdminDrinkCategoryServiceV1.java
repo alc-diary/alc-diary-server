@@ -36,7 +36,7 @@ public class AdminDrinkCategoryServiceV1 {
         DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.name(), request.imageUrl());
         DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
 
-        Drink drinkToSave = Drink.createBasicDrink(drinkCategory.getId(), "기본");
+        Drink drinkToSave = Drink.createBasicDrink(drinkCategory.getId(), drinkCategory.getName() + " 기본");
         Drink drink = drinkRepository.save(drinkToSave);
 
         drinkCategory.setDefaultDrinkBrandId(drink.getId());

@@ -9,6 +9,7 @@ public record DrinkCategoryDto(
         long id,
         String name,
         String imageUrl,
+        long defaultDrinkBrandId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -18,6 +19,7 @@ public record DrinkCategoryDto(
                 drinkCategory.getId(),
                 drinkCategory.getName(),
                 drinkCategory.getImageUrl(),
+                drinkCategory.getDefaultDrinkBrandId(),
                 drinkCategory.getCreatedAt(),
                 drinkCategory.getUpdatedAt()
         );

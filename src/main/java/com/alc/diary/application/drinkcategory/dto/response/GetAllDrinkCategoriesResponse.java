@@ -6,13 +6,15 @@ public record GetAllDrinkCategoriesResponse(
 
         long id,
         String name,
-        String imageUrl
+        String imageUrl,
+        long defaultDrinkBrandId
 ) {
 
     public static GetAllDrinkCategoriesResponse from(DrinkCategory drinkCategory) {
         return new GetAllDrinkCategoriesResponse(
                 drinkCategory.getId(),
                 drinkCategory.getName(),
-                drinkCategory.getImageUrl());
+                drinkCategory.getImageUrl(),
+                drinkCategory.getDefaultDrinkBrandId());
     }
 }
