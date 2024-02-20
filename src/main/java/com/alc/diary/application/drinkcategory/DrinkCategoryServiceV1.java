@@ -6,6 +6,7 @@ import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategorie
 import com.alc.diary.application.drinkunit.DrinkUnitDto;
 import com.alc.diary.domain.categoryunit.CategoryUnit;
 import com.alc.diary.domain.categoryunit.CategoryUnitRepository;
+import com.alc.diary.domain.drink.Drink;
 import com.alc.diary.domain.drink.repository.DrinkRepository;
 import com.alc.diary.domain.drinkcategory.DrinkCategory;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
@@ -30,22 +31,6 @@ public class DrinkCategoryServiceV1 {
     private final CategoryUnitRepository categoryUnitRepository;
 
     /**
-     * 음료 카테고리 생성
-     *
-     * @param request
-     * @return
-     */
-    @Transactional
-    public long createDrinkCategory(CreateDrinkCategoryRequest request) {
-        if (drinkCategoryRepository.findByName(request.drinkCategoryName()).isPresent()) {
-            throw new DomainException(DrinkCategoryError.DUPLICATE_NAME);
-        }
-        DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.drinkCategoryName(), request.imageUrl());
-        DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
-        return drinkCategory.getId();
-    }
-
-    /**
      * 모든 음료 카테고리 조회
      *
      * @return
@@ -54,16 +39,6 @@ public class DrinkCategoryServiceV1 {
         return drinkCategoryRepository.findAll().stream()
                 .map(GetAllDrinkCategoriesResponse::from)
                 .toList();
-    }
-
-    /**
-     * 음료 카테고리 삭제
-     *
-     * @param drinkCategoryId
-     */
-    @Transactional
-    public void deleteDrinkCategory(long drinkCategoryId) {
-        drinkCategoryRepository.deleteById(drinkCategoryId);
     }
 
     public List<DrinkDto> getDrinksByCategoryId(long userId, long categoryId) {

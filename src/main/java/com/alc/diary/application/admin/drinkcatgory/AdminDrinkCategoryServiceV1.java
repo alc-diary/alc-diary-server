@@ -4,6 +4,8 @@ import com.alc.diary.application.admin.drinkcatgory.request.AdminCreateDrinkCate
 import com.alc.diary.application.admin.drinkunit.DrinkUnitDto;
 import com.alc.diary.domain.categoryunit.CategoryUnit;
 import com.alc.diary.domain.categoryunit.CategoryUnitRepository;
+import com.alc.diary.domain.drink.Drink;
+import com.alc.diary.domain.drink.repository.DrinkRepository;
 import com.alc.diary.domain.drinkcategory.DrinkCategory;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryRepository;
@@ -24,6 +26,7 @@ public class AdminDrinkCategoryServiceV1 {
     private final DrinkCategoryRepository drinkCategoryRepository;
 
     private final CategoryUnitRepository categoryUnitRepository;
+    private final DrinkRepository drinkRepository;
 
     @Transactional
     public long createDrinkCategory(AdminCreateDrinkCategoryRequest request) {
@@ -32,6 +35,11 @@ public class AdminDrinkCategoryServiceV1 {
         }
         DrinkCategory drinkCategoryToSave = DrinkCategory.create(request.name(), request.imageUrl());
         DrinkCategory drinkCategory = drinkCategoryRepository.save(drinkCategoryToSave);
+
+        Drink drinkToSave = Drink.createBasicDrink(drinkCategory.getId(), "기본");
+        Drink drink = drinkRepository.save(drinkToSave);
+
+        drinkCategory.setDefaultDrinkBrandId(drink.getId());
         return drinkCategory.getId();
     }
 

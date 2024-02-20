@@ -22,19 +22,6 @@ public class DrinkCategoryApiControllerV1 {
     private final DrinkCategoryServiceV1 drinkCategoryServiceV1;
 
     /**
-     * 음료 카테고리를 생성한다.
-     *
-     * @param request 음료 카테고리 생성 요청
-     * @return 생성된 음료 카테고리 ID
-     */
-    @PostMapping
-    private ApiResponse<Long> createDrinkCategory(
-            @RequestBody CreateDrinkCategoryRequest request
-    ) {
-        return ApiResponse.getCreated(drinkCategoryServiceV1.createDrinkCategory(request));
-    }
-
-    /**
      * 음료 카테고리를 가져온다.
      *
      * @return 음료 카테고리 목록
@@ -42,20 +29,6 @@ public class DrinkCategoryApiControllerV1 {
     @GetMapping
     private ApiResponse<List<GetAllDrinkCategoriesResponse>> getAllDrinkCategories() {
         return ApiResponse.getSuccess(drinkCategoryServiceV1.getAllDrinkCategories());
-    }
-
-    /**
-     * 음료 카테고리를 삭제한다.
-     *
-     * @param drinkCategoryId 음료 카테고리 ID
-     * @return 성공
-     */
-    @DeleteMapping("/{drinkCategoryId}")
-    private ApiResponse<Void> deleteDrinkCategory(
-            @PathVariable long drinkCategoryId
-    ) {
-        drinkCategoryServiceV1.deleteDrinkCategory(drinkCategoryId);
-        return ApiResponse.getSuccess();
     }
 
     @GetMapping("/{categoryId}/drinks")

@@ -31,6 +31,9 @@ public class DrinkCategory extends BaseEntity {
     @Column(name = "image_url", length = 512)
     private String imageUrl;
 
+    @Column(name = "default_drink_brand_id")
+    private long defaultDrinkBrandId;
+
     @OneToMany(mappedBy = "category")
     private List<CategoryUnit> categoryUnits = new ArrayList<>();
 
@@ -46,7 +49,11 @@ public class DrinkCategory extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
-    public static DrinkCategory create(String name, String imageUrl) {
+    public static DrinkCategory create(String name, String imageUrl) { // Default로 지정할 Drink를 생성해서 추가해줘야 함.
         return new DrinkCategory(null, name, imageUrl);
+    }
+
+    public void setDefaultDrinkBrandId(long defaultDrinkBrandId) {
+        this.defaultDrinkBrandId = defaultDrinkBrandId;
     }
 }
