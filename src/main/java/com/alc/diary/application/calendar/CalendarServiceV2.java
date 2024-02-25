@@ -117,9 +117,9 @@ public class CalendarServiceV2 {
                     Drink drink = drinkRepository.findById(drinkDto.drinkId()).orElseThrow(() -> new DomainException(DrinkRecordError.NOT_FOUND));
                     if (drink.getCategoryId() == 1) {
                         drinkType = DrinkType.BEER;
-                    } else if (drink.getCreatorId() == 2) {
+                    } else if (drink.getCategoryId() == 2) {
                         drinkType = DrinkType.SOJU;
-                    } else if (drink.getCreatorId() == 3) {
+                    } else if (drink.getCategoryId() == 3) {
                         drinkType = DrinkType.WINE;
                     } else {
                         drinkType = DrinkType.MAKGEOLLI;
