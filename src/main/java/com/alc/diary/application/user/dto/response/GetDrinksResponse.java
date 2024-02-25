@@ -11,10 +11,10 @@ public record GetDrinksResponse(
 
         long categoryId,
         String categoryName,
-        List<DrinkDto> drinks
+        List<GetDrinkResponse_DrinkDto> drinks
 ) {
 
-    public record DrinkDto(
+    public record GetDrinkResponse_DrinkDto(
             long id,
             String name
     ) {
@@ -28,7 +28,7 @@ public record GetDrinksResponse(
                         drinkCategory.getId(),
                         drinkCategory.getName(),
                         idToDrinks.getOrDefault(drinkCategory.getId(), List.of()).stream()
-                                .map(drink -> new DrinkDto(drink.getId(), drink.getName()))
+                                .map(drink -> new GetDrinkResponse_DrinkDto(drink.getId(), drink.getName()))
                                 .toList()
                 ))
                 .toList();
