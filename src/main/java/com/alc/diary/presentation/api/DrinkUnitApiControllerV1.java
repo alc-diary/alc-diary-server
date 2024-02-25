@@ -26,8 +26,8 @@ public class DrinkUnitApiControllerV1 {
     }
 
     @GetMapping("/batch")
-    public ApiResponse<List<DrinkUnitDto>> getDrinkUnitsByIds(List<Long> drinkUnitIds) {
-        return ApiResponse.getSuccess(service.getDrinkUnitsByIds(drinkUnitIds));
+    public ApiResponse<List<DrinkUnitDto>> getDrinkUnitsByIds(@RequestParam List<Long> ids) {
+        return ApiResponse.getSuccess(service.getDrinkUnitsByIds(ids));
     }
 
     @GetMapping("/{drinkUnitId}")
