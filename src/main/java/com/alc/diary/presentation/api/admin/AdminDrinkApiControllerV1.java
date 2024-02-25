@@ -1,7 +1,7 @@
 package com.alc.diary.presentation.api.admin;
 
 import com.alc.diary.application.admin.drink.AdminDrinkServiceV1;
-import com.alc.diary.application.admin.drink.DrinkDto;
+import com.alc.diary.application.admin.drink.AdminDrinkDto;
 import com.alc.diary.application.admin.drink.request.AdminCreateDrinkRequest;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public class AdminDrinkApiControllerV1 {
     private final AdminDrinkServiceV1 adminDrinkServiceV1;
 
     @PostMapping
-    public ApiResponse<DrinkDto> createDrink(@RequestBody AdminCreateDrinkRequest request) {
+    public ApiResponse<AdminDrinkDto> createDrink(@RequestBody AdminCreateDrinkRequest request) {
         return ApiResponse.getCreated(adminDrinkServiceV1.createDrink(request));
     }
 
     @GetMapping
-    public ApiResponse<Page<DrinkDto>> getAllDrinks(Pageable pageable) {
+    public ApiResponse<Page<AdminDrinkDto>> getAllDrinks(Pageable pageable) {
         return ApiResponse.getSuccess(adminDrinkServiceV1.getAllDrinks(pageable));
     }
 }

@@ -5,7 +5,7 @@ import com.alc.diary.domain.drink.enums.DrinkType;
 
 import java.time.LocalDateTime;
 
-public record DrinkDto(
+public record AdminDrinkDto(
 
         long id,
         long categoryId,
@@ -17,8 +17,8 @@ public record DrinkDto(
         LocalDateTime updatedAt
 ) {
 
-    public static DrinkDto from(Drink drink) {
-        return new DrinkDto(
+    public static AdminDrinkDto from(Drink drink) {
+        return new AdminDrinkDto(
                 drink.getId(),
                 drink.getCategoryId(),
                 drink.getName(),

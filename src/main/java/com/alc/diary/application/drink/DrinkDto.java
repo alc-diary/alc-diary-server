@@ -10,7 +10,7 @@ public record DrinkDto(
         String name,
         DrinkType type) {
 
-    public static DrinkDto from(Drink drink) {
+    public static DrinkDto fromDomainModel(Drink drink) {
         return new DrinkDto(
                 drink.getId(),
                 drink.getCategoryId(),

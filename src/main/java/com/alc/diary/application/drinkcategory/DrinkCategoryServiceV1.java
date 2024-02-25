@@ -1,20 +1,14 @@
 package com.alc.diary.application.drinkcategory;
 
 import com.alc.diary.application.drink.DrinkDto;
-import com.alc.diary.application.drinkcategory.dto.request.CreateDrinkCategoryRequest;
-import com.alc.diary.application.drinkcategory.dto.response.GetAllDrinkCategoriesResponse;
 import com.alc.diary.application.drinkunit.DrinkUnitDto;
 import com.alc.diary.domain.categoryunit.CategoryUnit;
 import com.alc.diary.domain.categoryunit.CategoryUnitRepository;
-import com.alc.diary.domain.drink.Drink;
 import com.alc.diary.domain.drink.repository.DrinkRepository;
-import com.alc.diary.domain.drinkcategory.DrinkCategory;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryError;
 import com.alc.diary.domain.drinkcategory.DrinkCategoryRepository;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +49,7 @@ public class DrinkCategoryServiceV1 {
 
     public List<DrinkDto> getDrinksByCategoryId(long userId, long categoryId) {
         return drinkRepository.findCreatedOrPublicDrinksByCategoryId(userId, categoryId).stream()
-                .map(DrinkDto::from)
+                .map(DrinkDto::fromDomainModel)
                 .toList();
     }
 

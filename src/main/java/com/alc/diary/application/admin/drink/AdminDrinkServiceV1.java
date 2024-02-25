@@ -17,14 +17,14 @@ public class AdminDrinkServiceV1 {
     private final DrinkRepository drinkRepository;
 
     @Transactional
-    public DrinkDto createDrink(AdminCreateDrinkRequest request) {
+    public AdminDrinkDto createDrink(AdminCreateDrinkRequest request) {
         Drink drinkToSave = Drink.createBasicDrink(request.drinkCategoryId(), request.name());
         Drink drink = drinkRepository.save(drinkToSave);
-        return DrinkDto.from(drink);
+        return AdminDrinkDto.from(drink);
     }
 
-    public Page<DrinkDto> getAllDrinks(Pageable pageable) {
+    public Page<AdminDrinkDto> getAllDrinks(Pageable pageable) {
         return drinkRepository.findAll(pageable)
-                .map(DrinkDto::from);
+                .map(AdminDrinkDto::from);
     }
 }
