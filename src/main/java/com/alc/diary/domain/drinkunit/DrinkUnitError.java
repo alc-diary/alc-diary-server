@@ -8,9 +8,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum DrinkUnitError implements ErrorModel {
 
-    INVALID_INPUT("DU_E0000", "Invalid input parameter."),
-    NAME_LENGTH_EXCEED("DU_E0001", "Drink unit name length cannot exceed 30 characters."),
-    DUPLICATE_NAME("DU_E0002", "Duplicate drink unit name."),
+    NOT_FOUND("DRINK_UNIT_E0000", "Drink unit not found"),
+    INVALID_INPUT("DRINK_UNIT_E0001", "Invalid input parameter."),
+    NAME_LENGTH_EXCEED("DRINK_UNIT_E0002", "Drink unit name length cannot exceed 30 characters."),
+    DUPLICATE_NAME("DRINK_UNIT_E0003", "Duplicate drink unit name."),
     ;
 
     private final String code;

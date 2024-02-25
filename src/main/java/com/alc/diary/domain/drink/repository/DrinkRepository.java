@@ -13,6 +13,8 @@ public interface DrinkRepository extends Repository<Drink, Long> {
 
     Optional<Drink> findById(long id);
 
+    List<Drink> findByIdIn(List<Long> drinkIds);
+
     Drink save(Drink drink);
 
     List<Drink> findAll();

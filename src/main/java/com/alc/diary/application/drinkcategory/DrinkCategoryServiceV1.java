@@ -35,9 +35,21 @@ public class DrinkCategoryServiceV1 {
      *
      * @return
      */
-    public List<GetAllDrinkCategoriesResponse> getAllDrinkCategories() {
+    public List<DrinkCategoryDto> getAllDrinkCategories() {
         return drinkCategoryRepository.findAll().stream()
-                .map(GetAllDrinkCategoriesResponse::from)
+                .map(DrinkCategoryDto::fromDomainModel)
+                .toList();
+    }
+
+    public DrinkCategoryDto getDrinkCategoryById(long drinkCategoryId) {
+        return drinkCategoryRepository.findById(drinkCategoryId)
+                .map(DrinkCategoryDto::fromDomainModel)
+                .orElseThrow(() -> new DomainException(DrinkCategoryError.NOT_FOUND));
+    }
+
+    public List<DrinkCategoryDto> getDrinkCategoriesByIds(List<Long> drinkCategoryIds) {
+        return drinkCategoryRepository.findByIdIn(drinkCategoryIds).stream()
+                .map(DrinkCategoryDto::fromDomainModel)
                 .toList();
     }
 

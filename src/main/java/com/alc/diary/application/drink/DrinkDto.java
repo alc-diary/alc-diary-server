@@ -8,7 +8,6 @@ public record DrinkDto(
         long id,
         long categoryId,
         String name,
-        Boolean isPublic,
         DrinkType type) {
 
     public static DrinkDto from(Drink drink) {
@@ -16,7 +15,6 @@ public record DrinkDto(
                 drink.getId(),
                 drink.getCategoryId(),
                 drink.getName(),
-                drink.getIsPublic(),
                 drink.getType()
         );
     }
