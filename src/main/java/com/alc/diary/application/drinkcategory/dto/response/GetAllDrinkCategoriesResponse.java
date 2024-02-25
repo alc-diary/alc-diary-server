@@ -7,7 +7,7 @@ public record GetAllDrinkCategoriesResponse(
         long id,
         String name,
         String imageUrl,
-        long defaultDrinkBrandId
+        long defaultDrinkId
 ) {
 
     public static GetAllDrinkCategoriesResponse from(DrinkCategory drinkCategory) {
