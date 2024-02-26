@@ -1,10 +1,10 @@
 package com.alc.diary.domain.calendar;
 
 import com.alc.diary.domain.BaseEntity;
+import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.error.PhotoError;
 import com.alc.diary.domain.calendar.error.UserCalendarError;
-import com.alc.diary.domain.calendar.enums.DrinkType;
 import com.alc.diary.domain.calendar.vo.DrinkRecordUpdateVo;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.AccessLevel;
@@ -119,7 +119,7 @@ public class Calendar extends BaseEntity {
                 totalDrinkQuantity,
                 drinkStartTime,
                 drinkEndTime,
-                null,
+                drinkStartTime.toLocalDate(),
                 null,
                 ZonedDateTime.now()
         );
