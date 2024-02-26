@@ -8,6 +8,8 @@ public record DrinkDto(
         long id,
         long categoryId,
         String name,
+        long creatorId,
+        boolean isPublic,
         DrinkType type) {
 
     public static DrinkDto fromDomainModel(Drink drink) {
@@ -15,6 +17,8 @@ public record DrinkDto(
                 drink.getId(),
                 drink.getCategoryId(),
                 drink.getName(),
+                drink.getCreatorId(),
+                drink.getIsPublic(),
                 drink.getType()
         );
     }
