@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum DrinkError implements ErrorModel {
 
     NOT_FOUND("DRINK_E0000", "Drink not found"),
+    NO_PERMISSION("DRINK_E0001", "No permission"),
     ;
 
     private final String code;

@@ -50,4 +50,17 @@ public class ApiResponse<T> {
         apiResponse.data = data;
         return apiResponse;
     }
+
+    public static ApiResponse<Void> getNoContent() {
+        return getNoContent(null);
+    }
+
+    public static <T> ApiResponse<T> getNoContent(T data) {
+        ApiResponse<T> apiResponse = new ApiResponse<>();
+        apiResponse.status = HttpStatus.NO_CONTENT.value();
+        apiResponse.code = "S0002";
+        apiResponse.message = "no content";
+        apiResponse.data = data;
+        return apiResponse;
+    }
 }

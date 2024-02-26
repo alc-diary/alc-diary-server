@@ -36,6 +36,12 @@ public class DrinkApiControllerV1 {
         return ApiResponse.getSuccess(drink);
     }
 
+    @DeleteMapping("/{drinkId}/")
+    public ApiResponse<Long> deleteDrinkById(@ApiIgnore @RequestAttribute long userId, @PathVariable long drinkId) {
+        long deletedDrinkId = service.deleteDrinkById(userId, drinkId);
+        return ApiResponse.getNoContent(deletedDrinkId);
+    }
+
     @GetMapping("/batch")
     public ApiResponse<List<DrinkDto>> getDrinksByIds(@RequestParam List<Long> ids) {
         List<DrinkDto> drinks = service.getDrinksByIds(ids);

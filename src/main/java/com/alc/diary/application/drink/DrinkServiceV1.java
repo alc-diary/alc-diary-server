@@ -3,6 +3,7 @@ package com.alc.diary.application.drink;
 import com.alc.diary.application.drink.dto.request.CreateDrinkRequest;
 import com.alc.diary.domain.drink.Drink;
 import com.alc.diary.domain.drink.DrinkError;
+import com.alc.diary.domain.drink.enums.DrinkType;
 import com.alc.diary.domain.drink.repository.DrinkRepository;
 import com.alc.diary.domain.exception.DomainException;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,25 @@ public class DrinkServiceV1 {
         return drinkRepository.findById(drinkId)
                 .map(DrinkDto::fromDomainModel)
                 .orElseThrow(() -> new DomainException(DrinkError.NOT_FOUND));
+    }
+
+    @Transactional
+    public long deleteDrinkById(long userId, long drinkId) {
+        Drink drink = drinkRepository.findById(drinkId)
+                .orElseThrow(() -> new DomainException(DrinkError.NOT_FOUND));
+
+        if (drink.getCreatorId() == null || !drink.getCreatorId().equals(userId)) {
+            throw new DomainException((DrinkError.NO_PERMISSION));
+        }
+        if (drink.getIsPublic()) {
+            throw new DomainException(DrinkError.NO_PERMISSION);
+        }
+        if (drink.getType() != DrinkType.CUSTOM) {
+            throw new DomainException(DrinkError.NO_PERMISSION);
+        }
+        drinkRepository.delete(drink);
+
+        return drinkId;
     }
 
     public List<DrinkDto> getDrinksByIds(List<Long> drinkIds) {

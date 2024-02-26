@@ -39,10 +39,7 @@ public class Drink extends BaseEntity {
     @Column(name = "type", length = 20, nullable = false)
     private DrinkType type;
 
-    // @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
-    // private List<DrinkUnitInfo> drinkUnitInfos = new ArrayList<>();
-
-    private Drink(Long id, long categoryId, String name, Long creatorId, Boolean isPublic, DrinkType type) {
+    private Drink(Long id, long categoryId, String name, Long creatorId, boolean isPublic, DrinkType type) {
         this.id = id;
         this.categoryId = categoryId;
         this.name = name;
@@ -62,15 +59,4 @@ public class Drink extends BaseEntity {
     public static Drink createCustomDrink(long categoryId, String name, long creatorId) {
         return new Drink(null, categoryId, name, creatorId, false, DrinkType.CUSTOM);
     }
-
-    // public void addDrinkUnitInfos(List<DrinkUnitInfo> drinkUnitInfos) {
-    //     for (DrinkUnitInfo drinkUnitInfo : drinkUnitInfos) {
-    //         addDrinkUnitInfo(drinkUnitInfo);
-    //     }
-    // }
-    //
-    // public void addDrinkUnitInfo(DrinkUnitInfo drinkUnitInfo) {
-    //     drinkUnitInfos.add(drinkUnitInfo);
-    //     drinkUnitInfo.setDrink(this);
-    // }
 }

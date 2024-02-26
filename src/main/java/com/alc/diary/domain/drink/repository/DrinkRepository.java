@@ -13,6 +13,10 @@ public interface DrinkRepository extends Repository<Drink, Long> {
 
     Optional<Drink> findById(long id);
 
+    void delete(Drink drink);
+
+    void deleteById(long drinkId);
+
     List<Drink> findByIdIn(List<Long> drinkIds);
 
     Drink save(Drink drink);
