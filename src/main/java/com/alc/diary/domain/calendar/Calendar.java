@@ -121,8 +121,7 @@ public class Calendar extends BaseEntity {
                 drinkEndTime,
                 drinkStartTime.toLocalDate(),
                 null,
-                ZonedDateTime.now()
-        );
+                ZonedDateTime.now());
     }
 
     public static Calendar create(
@@ -133,7 +132,15 @@ public class Calendar extends BaseEntity {
             ZonedDateTime drinkEndTime,
             ZonedDateTime now
     ) {
-        return new Calendar(ownerId, title, totalDrinkQuantity, drinkStartTime, drinkEndTime, null, null, now);
+        return new Calendar(
+                ownerId,
+                title,
+                totalDrinkQuantity,
+                drinkStartTime,
+                drinkEndTime,
+                drinkStartTime.toLocalDate(),
+                null,
+                now);
     }
 
     public static Calendar create(
@@ -158,10 +165,9 @@ public class Calendar extends BaseEntity {
                 totalDrinkQuantity,
                 drinkStartTime,
                 drinkEndTime,
+                drinkStartTime.toLocalDate(),
                 null,
-                null,
-                ZonedDateTime.now()
-        );
+                ZonedDateTime.now());
     }
 
     public void addUserCalendars(Collection<UserCalendar> userCalendarEntries) {
