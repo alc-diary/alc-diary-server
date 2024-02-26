@@ -8,7 +8,7 @@ public record DrinkDto(
         long id,
         long categoryId,
         String name,
-        long creatorId,
+        Long creatorId,
         boolean isPublic,
         DrinkType type) {
 
