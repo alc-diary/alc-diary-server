@@ -138,7 +138,7 @@ public class Calendar extends BaseEntity {
                 totalDrinkQuantity,
                 drinkStartTime,
                 drinkEndTime,
-                drinkStartTime.toLocalDate(),
+                drinkStartTime != null ? drinkStartTime.toLocalDate() : null,
                 null,
                 now);
     }
