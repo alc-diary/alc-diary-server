@@ -67,9 +67,6 @@ public class DrinkRecord {
         if (drinkUnitType == null) {
             throw new DomainException(DrinkRecordError.NULL_DRINK_UNIT);
         }
-        if (!drinkType.isUnitAllowed(drinkUnitType)) {
-            throw new DomainException(DrinkRecordError.INVALID_DRINK_UNIT);
-        }
         if (quantity == 0) {
             throw new DomainException(DrinkRecordError.ZERO_QUANTITY);
         }

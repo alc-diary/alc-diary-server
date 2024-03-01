@@ -14,8 +14,12 @@ import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.error.DrinkRecordError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.calendar.repository.UserCalendarRepository;
+import com.alc.diary.domain.categoryunit.CategoryUnit;
+import com.alc.diary.domain.categoryunit.CategoryUnitRepository;
 import com.alc.diary.domain.drink.Drink;
 import com.alc.diary.domain.drink.repository.DrinkRepository;
+import com.alc.diary.domain.drinkunit.DrinkUnit;
+import com.alc.diary.domain.drinkunit.DrinkUnitRepository;
 import com.alc.diary.domain.exception.DomainException;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +41,8 @@ public class CalendarServiceV2 {
     private final CalendarRepository calendarRepository;
     private final DrinkRepository drinkRepository;
     private final UserCalendarRepository userCalendarRepository;
+    private final DrinkUnitRepository drinkUnitRepository;
+    private final CategoryUnitRepository categoryUnitRepository;
 
     @Transactional
     public CreateCalendarResponseV2 createCalendarAndGenerateResponse(long userId, CreateCalendarRequestV2 request) {
@@ -134,6 +140,13 @@ public class CalendarServiceV2 {
                         drinkUnit = DrinkUnitType.CAN;
                     } else {
                         drinkUnit = DrinkUnitType.ML_500;
+                    }
+
+                    Set<Long> availableUnitIds = categoryUnitRepository.findByCategoryId(drink.getCategoryId()).stream()
+                            .map(categoryUnit -> categoryUnit.getUnit().getId())
+                            .collect(Collectors.toSet());
+                    if (!availableUnitIds.contains(drinkDto.drinkUnitId())) {
+                        throw new DomainException(DrinkRecordError.INVALID_DRINK_UNIT);
                     }
                     return DrinkRecord.create(drinkType, drinkUnit, drinkDto.drinkId(), drinkDto.drinkUnitId(), drinkDto.quantity());
                 })
