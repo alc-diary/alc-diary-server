@@ -257,6 +257,12 @@ public class Calendar extends BaseEntity {
         title = newTitle;
     }
 
+    public void updateDrinkDate(LocalDate newDrinkDate) {
+        drinkDate = newDrinkDate;
+        drinkStartTime = newDrinkDate.atStartOfDay(ZoneId.of("Asia/Seoul"));
+        drinkEndTime = newDrinkDate.atStartOfDay(ZoneId.of("Asia/Seoul"));
+    }
+
     /**
      * 캘린더 데이터 업데이트
      *

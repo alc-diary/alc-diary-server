@@ -167,11 +167,13 @@ public class CalendarServiceV2 {
             if (userId != calendar.getOwnerId()) {
                 throw new DomainException(CalendarError.NO_PERMISSION);
             }
+            calendar.updateTitle(request.title());
         }
         if (request.drinkDate() != null) {
             if (userId != calendar.getOwnerId()) {
                 throw new DomainException(CalendarError.NO_PERMISSION);
             }
+            calendar.updateDrinkDate(request.drinkDate());
         }
         if (!CollectionUtils.isEmpty(request.userCalendars())) {
             List<UpdateCalendarRequestV2.UserCalendarDto> create = request.userCalendars().stream()
