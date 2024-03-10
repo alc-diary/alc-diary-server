@@ -197,6 +197,8 @@ public class CalendarServiceV2 {
                     .forEach(userCalendar -> {
                         UpdateCalendarRequestV2.UserCalendarDto userCalendarUpdateData = userCalendarsToUpdate.get(userCalendar.getId());
 
+                        userCalendar.markAsRecorded();
+
                         if (userCalendarUpdateData.contentShouldBeUpdated()) {
                             userCalendar.updateContent(userCalendarUpdateData.content());
                         }
