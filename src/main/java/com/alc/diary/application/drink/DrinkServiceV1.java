@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -21,9 +22,19 @@ public class DrinkServiceV1 {
 
     @Transactional
     public DrinkDto createDrink(long userId, CreateDrinkRequest request) {
-        Drink drinkToSave = Drink.createCustomDrink(request.drinkCategoryId(), request.drinkName(), userId);
-        Drink drink = drinkRepository.save(drinkToSave);
-        return DrinkDto.fromDomainModel(drink);
+        String drinkName = request.drinkName().trim();
+
+        List<Drink> allDrinks = drinkRepository.findCreatedOrPublicDrinksByCategoryId(userId, request.drinkCategoryId());
+
+        for (Drink drink : allDrinks) {
+            if (drink.getName().equals(drinkName)) {
+                return DrinkDto.fromDomainModel(drink);
+            }
+        }
+
+        Drink newDrink = Drink.createCustomDrink(request.drinkCategoryId(), drinkName, userId);
+        Drink savedDrink = drinkRepository.save(newDrink);
+        return DrinkDto.fromDomainModel(savedDrink);
     }
 
     public List<DrinkDto> getAllDrinks() {
