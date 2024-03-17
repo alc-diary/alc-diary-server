@@ -121,14 +121,16 @@ public class CalendarServiceV2 {
                 .map(drinkDto -> {
                     DrinkType drinkType;
                     Drink drink = drinkRepository.findById(drinkDto.drinkId()).orElseThrow(() -> new DomainException(DrinkRecordError.NOT_FOUND));
-                    if (drink.getCategoryId() == 1) {
+                    if (drink.getCategoryId() == 8) {
                         drinkType = DrinkType.BEER;
-                    } else if (drink.getCategoryId() == 2) {
+                    } else if (drink.getCategoryId() == 9) {
                         drinkType = DrinkType.SOJU;
-                    } else if (drink.getCategoryId() == 3) {
+                    } else if (drink.getCategoryId() == 10) {
                         drinkType = DrinkType.WINE;
-                    } else {
+                    } else if (drink.getCreatorId() == 11) {
                         drinkType = DrinkType.MAKGEOLLI;
+                    } else {
+                        drinkType = DrinkType.BEER;
                     }
 
                     DrinkUnitType drinkUnit;

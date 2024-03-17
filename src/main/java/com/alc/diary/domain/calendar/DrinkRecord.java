@@ -83,19 +83,19 @@ public class DrinkRecord {
 
         switch (drinkType) {
             case BEER:
-                drinkId = 1L;
+                drinkId = 8L;
                 break;
             case SOJU:
-                drinkId = 2L;
+                drinkId = 9L;
                 break;
             case WINE:
-                drinkId = 3L;
+                drinkId = 10L;
                 break;
             case MAKGEOLLI:
-                drinkId = 4L;
+                drinkId = 11L;
                 break;
             default:
-                drinkId= 1L;
+                drinkId= 8L;
         }
         return new DrinkRecord(drinkType, drinkUnitType, drinkId, 1L, quantity, null);
     }
