@@ -127,7 +127,7 @@ public class CalendarServiceV2 {
                         drinkType = DrinkType.SOJU;
                     } else if (drink.getCategoryId() == 10) {
                         drinkType = DrinkType.WINE;
-                    } else if (drink.getCreatorId() == 11) {
+                    } else if (drink.getCategoryId() == 11) {
                         drinkType = DrinkType.MAKGEOLLI;
                     } else {
                         drinkType = DrinkType.BEER;
