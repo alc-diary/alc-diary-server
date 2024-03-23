@@ -39,7 +39,7 @@ public class CustomerRequestServiceV1 {
         UserGroup adminUserGroup = userGroupRepository.findByName("관리자")
                 .orElseThrow(() -> new DomainException(UserGroupError.NOT_FOUND));
         for (UserGroupMembership membership : adminUserGroup.getMemberships()) {
-            String messageBody = "만족도: " + savedCustomerRequest.getServiceSatisfactionLevel();
+            String messageBody = "만족도: " + savedCustomerRequest.getServiceSatisfactionLevel().getDescription();
             notificationService.sendFcm(
                     membership.getUser().getId(),
                     "고객 요청사항이 등록됐어요!",
