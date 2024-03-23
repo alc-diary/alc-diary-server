@@ -27,7 +27,7 @@ public class UserGroup extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.PERSIST)
     private Set<UserGroupMembership> memberships = new HashSet<>();
 
     private UserGroup(String name, String description) {
