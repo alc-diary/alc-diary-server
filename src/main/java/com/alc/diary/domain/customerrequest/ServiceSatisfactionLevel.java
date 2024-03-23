@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ServiceSatisfactionLevel {
 
-    EXCELLENT("매우 만족"),
-    GOOD("만족"),
-    AVERAGE("보통"),
-    BELOW_AVERAGE("불만족"),
-    POOR("매우 불만족"),
+    EXCELLENT("매우 좋아"),
+    GOOD("좋아"),
+    AVERAGE("보통이야"),
+    BELOW_AVERAGE("별로야"),
+    POOR("매우 별로야"),
     ;
 
     private final String description;
