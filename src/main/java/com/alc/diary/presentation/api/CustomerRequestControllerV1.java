@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/customer-requests")
+@RequestMapping("/v1/customer-requests")
 @RestController
 public class CustomerRequestControllerV1 {
 
