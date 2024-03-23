@@ -5,8 +5,6 @@ import com.alc.diary.application.customerrequest.CustomerRequestDto;
 import com.alc.diary.application.customerrequest.CustomerRequestServiceV1;
 import com.alc.diary.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -21,15 +19,5 @@ public class CustomerRequestControllerV1 {
     public ApiResponse<CustomerRequestDto> create(
             @ApiIgnore @RequestAttribute long userId, @RequestBody CreateCustomerRequestRequestV1 request) {
         return ApiResponse.getCreated(customerRequestService.create(userId, request));
-    }
-
-    @GetMapping
-    public ApiResponse<Page<CustomerRequestDto>> getAll(Pageable pageable) {
-        return ApiResponse.getSuccess(customerRequestService.getAll(pageable));
-    }
-
-    @GetMapping("/{customerRequestId}")
-    public ApiResponse<CustomerRequestDto> getById(@PathVariable long customerRequestId) {
-        return ApiResponse.getSuccess(customerRequestService.getById(customerRequestId));
     }
 }

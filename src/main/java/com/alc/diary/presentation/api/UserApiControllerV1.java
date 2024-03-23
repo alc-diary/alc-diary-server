@@ -1,9 +1,11 @@
 package com.alc.diary.presentation.api;
 
+import com.alc.diary.application.customerrequest.CustomerRequestDto;
+import com.alc.diary.application.customerrequest.CustomerRequestServiceV1;
 import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.LogoutAppService;
-import com.alc.diary.application.user.UserServiceV1;
 import com.alc.diary.application.user.UserPublicDto;
+import com.alc.diary.application.user.UserServiceV1;
 import com.alc.diary.application.user.dto.request.*;
 import com.alc.diary.application.user.dto.response.*;
 import com.alc.diary.domain.exception.DomainException;
@@ -27,6 +29,8 @@ public class UserApiControllerV1 {
     private final UserServiceV1 userServiceV1;
     private final NicknameAppService nicknameAppService;
     private final LogoutAppService logoutAppService;
+
+    private final CustomerRequestServiceV1 customerRequestService;
 
     /**
      * 닉네임으로 사용자 검색
@@ -94,7 +98,7 @@ public class UserApiControllerV1 {
     /**
      * 사용자 프로필 이미지 수정
      *
-     * @param userId 사용자 ID
+     * @param userId  사용자 ID
      * @param request 사용자 프로필 이미지 수정 요청
      * @return 성공
      */
@@ -110,7 +114,7 @@ public class UserApiControllerV1 {
     /**
      * 주량과 금주 목표량 수정
      *
-     * @param userId 사용자 ID
+     * @param userId  사용자 ID
      * @param request 주량과 금주 목표량 수정 요청
      * @return 성공
      */
@@ -126,7 +130,7 @@ public class UserApiControllerV1 {
     /**
      * 사용자 닉네임 수정
      *
-     * @param userId 사용자 ID
+     * @param userId  사용자 ID
      * @param request 사용자 닉네임 수정 요청
      * @return 성공
      */
@@ -142,7 +146,7 @@ public class UserApiControllerV1 {
     /**
      * 앱 설명 타입 수정
      *
-     * @param userId 사용자 ID
+     * @param userId  사용자 ID
      * @param request 앱 설명 타입 수정 요청
      * @return 성공
      */
@@ -159,7 +163,7 @@ public class UserApiControllerV1 {
      * 사용자 비활성화
      *
      * @param requesterId 요청자 ID
-     * @param request 사용자 비활성화 요청
+     * @param request     사용자 비활성화 요청
      * @return 성공
      */
     @PutMapping("/deactivate")
@@ -229,5 +233,10 @@ public class UserApiControllerV1 {
     @GetMapping("/drinks")
     public ApiResponse<List<GetDrinksResponse>> getDrinks(@ApiIgnore @RequestAttribute("userId") Long userId) {
         return ApiResponse.getSuccess(userServiceV1.getDrinks(userId));
+    }
+
+    @GetMapping("/my/customer-requests")
+    public ApiResponse<List<CustomerRequestDto>> getCustomerRequests(@ApiIgnore @RequestAttribute long userId) {
+        return ApiResponse.getSuccess(customerRequestService.getByUserId(userId));
     }
 }
