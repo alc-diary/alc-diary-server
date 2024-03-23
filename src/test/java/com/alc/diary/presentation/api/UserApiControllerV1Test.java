@@ -1,5 +1,6 @@
 package com.alc.diary.presentation.api;
 
+import com.alc.diary.application.customerrequest.CustomerRequestServiceV1;
 import com.alc.diary.application.nickname.NicknameAppService;
 import com.alc.diary.application.user.LogoutAppService;
 import com.alc.diary.application.user.UserServiceV1;
@@ -53,6 +54,9 @@ class UserApiControllerV1Test {
 
     @MockBean
     private LogoutAppService logoutAppService;
+
+    @MockBean
+    private CustomerRequestServiceV1 customerRequestServiceV1;
 
     @DisplayName("닉네임으로 유저를 검색하면 유저 정보를 응답한다.")
     @Test
