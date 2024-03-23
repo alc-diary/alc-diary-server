@@ -1,5 +1,6 @@
 package com.alc.diary.presentation.api.admin;
 
+import com.alc.diary.application.admin.usergroup.AdminAddUserToGroupRequestV1;
 import com.alc.diary.application.admin.usergroup.AdminCreateUserGroupRequestV1;
 import com.alc.diary.application.admin.usergroup.AdminUserGroupDto;
 import com.alc.diary.application.admin.usergroup.AdminUserGroupServiceV1;
@@ -29,5 +30,12 @@ public class AdminUserGroupControllerV1 {
     @GetMapping("/{userGroupId}")
     public ApiResponse<AdminUserGroupDto> getById(@PathVariable long userGroupId) {
         return ApiResponse.getSuccess(adminUserGroupService.getById(userGroupId));
+    }
+
+    @PostMapping("/{userGroupId}/users")
+    public ApiResponse<Void> addUserToGroup(
+            @PathVariable long userGroupId, @RequestBody AdminAddUserToGroupRequestV1 request) {
+        adminUserGroupService.addUserToGroup(userGroupId, request);
+        return ApiResponse.getSuccess();
     }
 }

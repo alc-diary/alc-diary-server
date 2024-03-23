@@ -1,9 +1,12 @@
 package com.alc.diary.application.admin.usergroup;
 
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserGroup;
+import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.error.UserGroupError;
 import com.alc.diary.domain.user.repository.UserGroupRepository;
+import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminUserGroupServiceV1 {
 
     private final UserGroupRepository userGroupRepository;
+
+    private final UserRepository userRepository;
 
     @Transactional
     public AdminUserGroupDto create(AdminCreateUserGroupRequestV1 request) {
@@ -34,5 +39,15 @@ public class AdminUserGroupServiceV1 {
         return userGroupRepository.findById(userGroupId)
                 .map(AdminUserGroupDto::fromDomain)
                 .orElseThrow(() -> new DomainException(UserGroupError.NOT_FOUND));
+    }
+
+    @Transactional
+    public void addUserToGroup(long userGroupId, AdminAddUserToGroupRequestV1 request) {
+        UserGroup userGroup = userGroupRepository.findById(userGroupId)
+                .orElseThrow(() -> new DomainException(UserGroupError.NOT_FOUND));
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+
+        userGroup.addUser(user);
     }
 }
