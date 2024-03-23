@@ -5,6 +5,7 @@ import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserGroup;
 import com.alc.diary.domain.user.error.UserError;
 import com.alc.diary.domain.user.error.UserGroupError;
+import com.alc.diary.domain.user.repository.UserGroupMembershipRepository;
 import com.alc.diary.domain.user.repository.UserGroupRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class AdminUserGroupServiceV1 {
     private final UserGroupRepository userGroupRepository;
 
     private final UserRepository userRepository;
+    private final UserGroupMembershipRepository userGroupMembershipRepository;
 
     @Transactional
     public AdminUserGroupDto create(AdminCreateUserGroupRequestV1 request) {
@@ -47,6 +49,10 @@ public class AdminUserGroupServiceV1 {
                 .orElseThrow(() -> new DomainException(UserGroupError.NOT_FOUND));
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new DomainException(UserError.USER_NOT_FOUND));
+
+        if (userGroupMembershipRepository.existsByUserAndUserGroup(user, userGroup)) {
+            return;
+        }
 
         userGroup.addUser(user);
     }
