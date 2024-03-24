@@ -39,7 +39,7 @@ public class AdminUserGroupServiceV1 {
 
     public AdminUserGroupDto getById(long userGroupId) {
         return userGroupRepository.findById(userGroupId)
-                .map(AdminUserGroupDto::fromDomain)
+                .map(AdminUserGroupDto::fromDomainWithUsers)
                 .orElseThrow(() -> new DomainException(UserGroupError.NOT_FOUND));
     }
 
