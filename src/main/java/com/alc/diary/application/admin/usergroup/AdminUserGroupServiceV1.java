@@ -13,6 +13,7 @@ import com.alc.diary.domain.user.repository.UserGroupMembershipRepository;
 import com.alc.diary.domain.user.repository.UserGroupRepository;
 import com.alc.diary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -75,6 +77,7 @@ public class AdminUserGroupServiceV1 {
                 .orElseThrow(() -> new DomainException(PushMessageError.NOT_FOUND));
 
         for (Long userId : userIds) {
+            log.info("user id: {}", userId);
             notificationService
                     .sendFcm(userId, pushMessage.getTitle(), pushMessage.getBody(), pushMessage.getEventName());
         }

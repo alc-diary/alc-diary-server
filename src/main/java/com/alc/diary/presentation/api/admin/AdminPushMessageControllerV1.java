@@ -31,4 +31,10 @@ public class AdminPushMessageControllerV1 {
     public ApiResponse<AdminPushMessageDto> getById(@PathVariable long pushMessageId) {
         return ApiResponse.getSuccess(adminPushMessageService.getById(pushMessageId));
     }
+
+    @PostMapping("/{pushMessageId}/users/send")
+    public ApiResponse<Void> sendPushToAllUsers(@PathVariable long pushMessageId) {
+        adminPushMessageService.sendPushToAllUsers(pushMessageId);
+        return ApiResponse.getSuccess();
+    }
 }
