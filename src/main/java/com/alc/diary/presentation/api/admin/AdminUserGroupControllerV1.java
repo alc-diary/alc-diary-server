@@ -39,4 +39,10 @@ public class AdminUserGroupControllerV1 {
         adminUserGroupService.addUserToGroup(userGroupId, request);
         return ApiResponse.getSuccess();
     }
+
+    @PostMapping("/{userGroupId}/push-messages/{pushMessageId}/send")
+    public ApiResponse<Void> sendPush(@PathVariable long userGroupId, @PathVariable long pushMessageId) {
+        adminUserGroupService.sendPush(userGroupId, pushMessageId);
+        return ApiResponse.getSuccess();
+    }
 }

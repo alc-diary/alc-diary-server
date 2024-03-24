@@ -1,6 +1,10 @@
 package com.alc.diary.application.admin.usergroup;
 
+import com.alc.diary.application.notification.NotificationService;
 import com.alc.diary.domain.exception.DomainException;
+import com.alc.diary.domain.pushmessage.PushMessage;
+import com.alc.diary.domain.pushmessage.PushMessageError;
+import com.alc.diary.domain.pushmessage.PushMessageRepository;
 import com.alc.diary.domain.user.User;
 import com.alc.diary.domain.user.UserGroup;
 import com.alc.diary.domain.user.error.UserError;
@@ -14,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -23,6 +29,9 @@ public class AdminUserGroupServiceV1 {
 
     private final UserRepository userRepository;
     private final UserGroupMembershipRepository userGroupMembershipRepository;
+
+    private final NotificationService notificationService;
+    private final PushMessageRepository pushMessageRepository;
 
     @Transactional
     public AdminUserGroupDto create(AdminCreateUserGroupRequestV1 request) {
@@ -55,5 +64,19 @@ public class AdminUserGroupServiceV1 {
         }
 
         userGroup.addUser(user);
+    }
+
+    public void sendPush(long userGroupId, long pushMessageId) {
+        List<Long> userIds = userGroupRepository.findById(userGroupId).stream()
+                .flatMap(userGroup -> userGroup.getMemberships().stream())
+                .map(userGroupMembership -> userGroupMembership.getUser().getId())
+                .toList();
+        PushMessage pushMessage = pushMessageRepository.findById(pushMessageId)
+                .orElseThrow(() -> new DomainException(PushMessageError.NOT_FOUND));
+
+        for (Long userId : userIds) {
+            notificationService
+                    .sendFcm(userId, pushMessage.getTitle(), pushMessage.getBody(), pushMessage.getEventName());
+        }
     }
 }
