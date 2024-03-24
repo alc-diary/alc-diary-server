@@ -1,6 +1,6 @@
 package com.alc.diary.application.admin.calendar;
 
-import com.alc.diary.application.admin.calendar.response.CalendarDto;
+import com.alc.diary.application.admin.calendar.response.AdminCalendarDto;
 import com.alc.diary.domain.calendar.error.CalendarError;
 import com.alc.diary.domain.calendar.repository.CalendarRepository;
 import com.alc.diary.domain.exception.DomainException;
@@ -17,14 +17,14 @@ public class AdminCalendarService {
 
     private final CalendarRepository calendarRepository;
 
-    public Page<CalendarDto> getAllCalendars(Pageable pageable) {
+    public Page<AdminCalendarDto> getAllCalendars(Pageable pageable) {
         return calendarRepository.findAll(pageable)
-                .map(CalendarDto::fromDomainModel);
+                .map(AdminCalendarDto::fromDomainModel);
     }
 
-    public CalendarDto getCalendarById(Long calendarId) {
+    public AdminCalendarDto getCalendarById(Long calendarId) {
         return calendarRepository.findById(calendarId)
-                .map(CalendarDto::fromDomainModel)
+                .map(AdminCalendarDto::fromDomainModel)
                 .orElseThrow(() -> new DomainException(CalendarError.CALENDAR_NOT_FOUND));
     }
 }

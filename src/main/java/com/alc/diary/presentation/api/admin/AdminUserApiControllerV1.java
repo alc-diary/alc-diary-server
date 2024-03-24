@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RequestMapping("/admin/v1/users")
@@ -24,5 +26,10 @@ public class AdminUserApiControllerV1 {
     @GetMapping("/{userId}")
     public ApiResponse<UserDto> getUserById(@PathVariable long userId) {
         return ApiResponse.getSuccess(adminUserService.getUserById(userId));
+    }
+
+    @GetMapping("/search-by-nickname")
+    public ApiResponse<List<UserDto>> searchUserByNickname(@RequestParam String query) {
+        return null;
     }
 }
