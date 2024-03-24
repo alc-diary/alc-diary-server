@@ -22,4 +22,6 @@ public interface DrinkCategoryRepository extends Repository<DrinkCategory, Long>
     Page<DrinkCategory> findAll(Pageable pageable);
 
     void deleteById(long id);
+
+    boolean existsById(long id);
 }
