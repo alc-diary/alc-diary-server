@@ -17,6 +17,7 @@ public class AdminPushMessageServiceV1 {
 
     private final PushMessageRepository pushMessageRepository;
 
+    @Transactional
     public AdminPushMessageDto create(AdminCreatePushMessageRequestV1 request) {
         PushMessage newPushMessage = PushMessage.create(request.title(), request.body(), request.eventName());
         PushMessage savedPushMessage = pushMessageRepository.save(newPushMessage);
