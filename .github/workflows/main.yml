@@ -39,9 +39,9 @@ jobs:
         id: deploy-ec2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.AWS_EC2_HOST }}
+          host: ${{ secrets.TEST_AWS_EC2_HOST }}
           username: ubuntu
-          key: ${{ secrets.AWS_SSH_SECRET_KEY }}
+          key: ${{ secrets.TEST_AWS_SSH_SECRET_KEY }}
           port: 22
           script: |
             docker rm -f $(docker ps -aq)
@@ -52,11 +52,11 @@ jobs:
             -p 8080:8080 \
             -v /var/log/alc:/logs \
             -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-            -e DB_URL=${{ secrets.DB_URL }} \
-            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
-            -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+            -e DB_URL=${{ secrets.TEST_DB_URL }} \
+            -e DB_USERNAME=${{ secrets.TEST_DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.TEST_DB_PASSWORD }} \
+            -e REDIS_HOST=${{ secrets.TEST_REDIS_HOST }} \
+            -e REDIS_PORT=${{ secrets.TEST_REDIS_PORT }} \
             -e LOG_DIR=${{ secrets.LOG_DIR }} \
             -e TOMCAT_ACCESS_LOG_DIR=${{ secrets.TOMCAT_ACCESS_LOG_DIR }} \
             -e TOMCAT_ACCESS_LOG_PATTERN=${{ secrets.TOMCAT_ACCESS_LOG_PATTERN }} \
