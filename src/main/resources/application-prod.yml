@@ -30,6 +30,7 @@ spring:
         show_sql: false
         format_sql: false
         default_batch_fetch_size: 1000
+        dialect: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
   mvc:
     path match:
