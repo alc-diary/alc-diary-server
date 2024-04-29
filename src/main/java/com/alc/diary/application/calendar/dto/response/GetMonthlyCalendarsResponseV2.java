@@ -16,7 +16,7 @@ public record GetMonthlyCalendarsResponseV2(
         return new GetMonthlyCalendarsResponseV2(
                 date.toString(),
                 calendars.stream()
-                        .map(CalendarDto::fromDomainModel)
+                        .map(CalendarDto::fromDomainModelDetail)
                         .toList());
     }
 }
