@@ -1,7 +1,5 @@
 package com.alc.diary.infrastructure.persistence.user;
 
-import com.alc.diary.domain.notification.QFcmToken;
-import com.alc.diary.domain.user.QNotificationSetting;
 import com.alc.diary.domain.user.enums.UserStatus;
 import com.alc.diary.domain.user.repository.CustomUserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
